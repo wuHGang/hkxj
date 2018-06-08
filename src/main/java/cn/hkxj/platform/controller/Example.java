@@ -1,13 +1,18 @@
-package cn.hkxj.platform.helloworld;
+package cn.hkxj.platform.controller;
 
+import cn.hkxj.platform.service.WechatMessageService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.*;
 import org.springframework.boot.autoconfigure.*;
-import org.springframework.stereotype.*;
 import org.springframework.web.bind.annotation.*;
+
+
 
 @RestController
 @EnableAutoConfiguration
 public class Example {
+    @Autowired
+    WechatMessageService service;
 
     @RequestMapping("/")
     String home() {
