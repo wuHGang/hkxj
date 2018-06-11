@@ -24,10 +24,10 @@ public class HttpRequest {
         URL postURL = new URL(this.url);
         connection = (HttpURLConnection) postURL.openConnection();
         connection.setDoOutput(true);
-        connection.setRequestProperty("Host","222.171.107.108");
-        connection.setRequestProperty("Connection","Keep-Alive");
-        connection.setRequestProperty("Accept-Encoding","gzip");
-        connection.setRequestProperty("User-Agent","okhttp/3.3.1");
+        connection.setRequestProperty("Host", "222.171.107.108");
+        connection.setRequestProperty("Connection", "Keep-Alive");
+        connection.setRequestProperty("Accept-Encoding", "gzip");
+        connection.setRequestProperty("User-Agent", "okhttp/3.3.1");
     }
 
     public HttpRequest(String url, Object header) throws IOException {
@@ -66,13 +66,13 @@ public class HttpRequest {
         connection.setRequestMethod("POST");
         connection.setDoInput(true);
 
-        connection.setRequestProperty("Content-Type","application/json");
+        connection.setRequestProperty("Content-Type", "application/json");
         connection.connect();
 
         Gson gson = new Gson();
         String json = gson.toJson(data);
 
-        OutputStream out =  connection.getOutputStream();
+        OutputStream out = connection.getOutputStream();
         out.write(json.getBytes());
         out.flush();
         out.close();
