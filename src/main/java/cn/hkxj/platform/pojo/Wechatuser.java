@@ -62,7 +62,7 @@ public class Wechatuser {
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return "WechatUser{" +
                 "账号=" + account +
                 ", 姓名='" + name + '\'' +

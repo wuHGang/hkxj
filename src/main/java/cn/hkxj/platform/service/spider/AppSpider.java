@@ -30,7 +30,7 @@ public class AppSpider {
     private String key;
     private final static String urlRoot = "http://222.171.107.108";
 
-    public AppSpider(){
+    public AppSpider() {
 
     }
 
@@ -61,7 +61,7 @@ public class AppSpider {
         String route = "//university-facade/Murp/Login";
         HttpRequest request = null;
 
-        String url = urlRoot+route;
+        String url = urlRoot + route;
 
         try {
             request = new HttpRequest(url);
@@ -72,7 +72,7 @@ public class AppSpider {
         postData.put("u", account.toString());
         try {
             if (passwd == null)
-                passwd = account.toString()+key;
+                passwd = account.toString() + key;
             else
                 passwd += key;
             postData.put("p", DigestUtils.md5Hex(passwd.getBytes("UTF-8")));
@@ -102,51 +102,64 @@ public class AppSpider {
     }
 
     public ArrayList getGrade() throws IOException {
-        if(this.token == null)
+        if (this.token == null)
             throw new RuntimeException("token is null");
-        return (ArrayList)getGrade(this.token);
+        return (ArrayList) getGrade(this.token);
     }
 
     public ArrayList getGrade(String token) throws IOException {
         String route = "//university-facade/MyUniversity/MyGrades";
-        String url = urlRoot+route+"?token="+token;
+        String url = urlRoot + route + "?token=" + token;
 
         return (ArrayList) getData(url);
     }
 
     public ArrayList getLesson() throws IOException {
-        if(this.token == null)
+        if (this.token == null)
             throw new RuntimeException("token is null");
         return getLesson(this.token);
     }
 
     public ArrayList getLesson(String token) throws IOException {
         String route = "//university-facade/MyUniversity/MyLessons";
-        String url = urlRoot+route+"?token="+token;
+        String url = urlRoot + route + "?token=" + token;
 
-        return  (ArrayList) getData(url);
+        return (ArrayList) getData(url);
     }
 
     public Map getSchedule() throws IOException {
-        if(this.token == null)
+        if (this.token == null)
             throw new RuntimeException("token is null");
         return getSchedule(this.token);
     }
 
     public Map getSchedule(String token) throws IOException {
         String route = "//university-facade/Schedule/ScheduleList";
-        String url = urlRoot+route+"?token="+token;
+        String url = urlRoot + route + "?token=" + token;
 
         return (Map) getData(url);
     }
 
-    private Object result2Data(String data){
+    public ArrayList getExam() throws IOException {
+        if (this.token == null)
+            throw new RuntimeException("token is null");
+        return getExam(this.token);
+    }
+
+    public ArrayList getExam(String token) throws IOException {
+        String route = "//university-facade/MyUniversity/Exam";
+        String url = urlRoot + route + "?token=" + token;
+
+        return (ArrayList) getData(url);
+    }
+
+    private Object result2Data(String data) {
         Gson gson = new Gson();
         Map resultMap = gson.fromJson(data, Map.class);
 
-        int state = ((Double)resultMap.get("state")).intValue();
+        int state = ((Double) resultMap.get("state")).intValue();
 
-        if (state != 200){
+        if (state != 200) {
             String msg = (String) resultMap.get("message");
             throw new RuntimeException(msg);
         }

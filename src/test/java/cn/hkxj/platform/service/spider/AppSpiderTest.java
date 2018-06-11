@@ -8,6 +8,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * @author JR Chan
@@ -55,7 +57,26 @@ public class AppSpiderTest {
 
     @Test
     public void getSchedule() throws IOException {
-        System.out.println(spider.getSchedule());
+        /*
+         *
+         */
+        Map map = spider.getSchedule();
+        ArrayList slist = (ArrayList) map.get("slist");
+        ArrayList wlist = (ArrayList) map.get("wlist");
+//        for(Object sc: slist){
+//            System.out.println((Map)sc);
+//        }
+
+        for (Object sc : wlist) {
+            System.out.println((Map) sc);
+        }
+
+    }
+
+    @Test
+    public void getExam() throws IOException {
+        ArrayList list = spider.getExam();
+        System.out.println(list);
     }
 
 }
