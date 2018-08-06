@@ -15,10 +15,10 @@ import java.util.Map;
  * @date 2018/6/11 18:16
  */
 public class ExampleHandler extends AbstractHandler {
-    @Override
-    public WxMpXmlOutMessage handle(WxMpXmlMessage wxMessage, Map<String, Object> map, WxMpService wxService, WxSessionManager wxSessionManager) throws WxErrorException {
-        String content = "测试信息";
-        return new TextBuilder().build(content, wxMessage, wxService);
-    }
+	@Override
+	public WxMpXmlOutMessage handle(WxMpXmlMessage wxMessage, Map<String, Object> map, WxMpService wxService, WxSessionManager wxSessionManager) throws WxErrorException {
+		String content = "测试信息";
+		return new TextBuilder().build(content, wxMessage, wxService);
+	}
 
 }

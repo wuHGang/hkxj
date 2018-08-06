@@ -1,0 +1,105 @@
+﻿<html>
+<head>
+    <title>黑科校际</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,
+                                     initial-scale=1.0,
+                                     maximum-scale=1.0,
+                                     user-scalable=no">
+    <title>用户登录</title>
+    <!-- 新 Bootstrap 核心 CSS 文件 -->
+    <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css">
+    <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+    <script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
+    <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+    <script src="http://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <style>
+        #from {
+            background-color: #ffffff;
+        }
+
+        .mycenter {
+            margin-top: auto;
+            margin-left: auto;
+            margin-right: auto;
+            height: auto;
+            width: auto;
+            padding: 5%;
+            padding-left: 5%;
+            padding-right: 5%;
+        }
+
+        .mycenter mysign {
+            width: auto;
+            height: auto;
+        }
+
+        .mycenter label, button {
+            margin-top: 2%;
+        }
+
+        .mycenter img {
+            height: 200px;
+            width: 200px;
+        }
+    </style>
+    <script type="text/javascript">
+        function getUrlParams(names) {
+            var urlSearch = location.search;
+            var urlValue = "";
+            var params = urlSearch.split(/[?*&]/);
+            for (var i = 0; i < params.length; i++) {
+                if (params[i].indexOf(names) >= 0) {
+                    urlValue = params[i].split("=")[1];
+                    return urlValue;
+                }
+            }
+            return urlValue;
+        }
+
+        $(function () {
+            $("#login").click(function () {
+                var account = $("#account").val();
+                var password = $("#password").val();
+                var openid = getUrlParams("openid");
+                var user_json = {
+                    "account": account,
+                    "passwd": password,
+                    "openid": openid
+                };
+                $.ajax({
+                    type: "post",
+                    url: "/Login",
+                    dataType: 'json',
+                    contentType: "application/json;charset=utf-8",
+                    data: JSON.stringify(user_json)
+                });
+            });
+        });
+    </script>
+</head>
+
+<body>
+<form id="from">
+    <div class="mycenter">
+        <div class="mysign">
+            <div align="center">
+                <img src="img/hkxjLogo.JPG"/>
+                <h2> 用户登录</h2>
+            </div>
+            <div class="form-group col-lg-12">
+                <label for="account">学号</label>
+                <input type="text" class="form-control" id="account" placeholder="请输入学号">
+            </div>
+            <div class="form-group col-lg-12">
+                <label for="password">密码</label>
+                <input type="password" class="form-control" id="password" placeholder="请输入密码">
+            </div>
+            <div class="form-group " align="center">
+                <button class="btn btn-success" type="submit" id="login">登录</button>
+            </div>
+        </div>
+    </div>
+</form>
+</body>
+</html>

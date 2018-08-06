@@ -21,16 +21,16 @@ import org.springframework.context.annotation.Configuration;
 @ConditionalOnClass(WxMpService.class)
 @EnableConfigurationProperties(WechatMpProperties.class)
 public class WechatMpConfiguration {
-    @Autowired
-    protected LogHandler logHandler;
-    //  @Autowired
+	@Autowired
+	protected LogHandler logHandler;
+	//  @Autowired
 //  protected NullHandler nullHandler;
 //  @Autowired
 //  protected KfSessionHandler kfSessionHandler;
 //  @Autowired
 //  protected StoreCheckNotifyHandler storeCheckNotifyHandler;
-    @Autowired
-    private WechatMpProperties properties;
+	@Autowired
+	private WechatMpProperties properties;
 //  @Autowired
 //  private LocationHandler locationHandler;
 //  @Autowired
@@ -42,36 +42,36 @@ public class WechatMpConfiguration {
 //  @Autowired
 //  private SubscribeHandler subscribeHandler;
 
-    @Bean
-    @ConditionalOnMissingBean
-    public WxMpConfigStorage configStorage() {
-        WxMpInMemoryConfigStorage configStorage = new WxMpInMemoryConfigStorage();
-        configStorage.setAppId(this.properties.getAppId());
-        configStorage.setSecret(this.properties.getSecret());
-        configStorage.setToken(this.properties.getToken());
-        configStorage.setAesKey(this.properties.getAesKey());
-        return configStorage;
-    }
+	@Bean
+	@ConditionalOnMissingBean
+	public WxMpConfigStorage configStorage() {
+		WxMpInMemoryConfigStorage configStorage = new WxMpInMemoryConfigStorage();
+		configStorage.setAppId(this.properties.getAppId());
+		configStorage.setSecret(this.properties.getSecret());
+		configStorage.setToken(this.properties.getToken());
+		configStorage.setAesKey(this.properties.getAesKey());
+		return configStorage;
+	}
 
-    @Bean
-    @ConditionalOnMissingBean
-    public WxMpService wxMpService(WxMpConfigStorage configStorage) {
+	@Bean
+	@ConditionalOnMissingBean
+	public WxMpService wxMpService(WxMpConfigStorage configStorage) {
 //        WxMpService wxMpService = new me.chanjar.weixin.mp.api.impl.okhttp.WxMpServiceImpl();
 //        WxMpService wxMpService = new me.chanjar.weixin.mp.api.impl.jodd.WxMpServiceImpl();
 //        WxMpService wxMpService = new me.chanjar.weixin.mp.api.impl.apache.WxMpServiceImpl();
-        WxMpService wxMpService = new me.chanjar.weixin.mp.api.impl.WxMpServiceImpl();
-        wxMpService.setWxMpConfigStorage(configStorage);
-        return wxMpService;
-    }
+		WxMpService wxMpService = new me.chanjar.weixin.mp.api.impl.WxMpServiceImpl();
+		wxMpService.setWxMpConfigStorage(configStorage);
+		return wxMpService;
+	}
 
-    @Bean
-    public WxMpMessageRouter router(WxMpService wxMpService) {
-        final WxMpMessageRouter newRouter = new WxMpMessageRouter(wxMpService);
+	@Bean
+	public WxMpMessageRouter router(WxMpService wxMpService) {
+		final WxMpMessageRouter newRouter = new WxMpMessageRouter(wxMpService);
 
-        // 记录所有事件的日志 （异步执行）
-        newRouter.rule().handler(this.logHandler).next();
+		// 记录所有事件的日志 （异步执行）
+		newRouter.rule().handler(this.logHandler).next();
 
-        // 接收客服会话管理事件
+		// 接收客服会话管理事件
 //    newRouter.rule().async(false).msgType(XmlMsgType.EVENT)
 //        .event(WxMpEventConstants.CustomerService.KF_CREATE_SESSION)
 //        .handler(this.kfSessionHandler).end();
@@ -122,8 +122,8 @@ public class WechatMpConfiguration {
 //    // 默认
 //    newRouter.rule().async(false).handler(this.getMsgHandler()).end();
 
-        return newRouter;
-    }
+		return newRouter;
+	}
 
 //  protected MenuHandler getMenuHandler() {
 //    return this.menuHandler;

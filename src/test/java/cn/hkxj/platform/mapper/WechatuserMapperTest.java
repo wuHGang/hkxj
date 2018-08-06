@@ -13,11 +13,11 @@ import org.springframework.test.context.junit4.SpringRunner;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class WechatuserMapperTest {
-    @Autowired
-    private WechatuserMapper mapper;
+	@Autowired
+	private WechatuserMapper mapper;
 
-    @Test
-    public void selectByPrimaryKey() {
-        System.out.println(mapper.selectByPrimaryKey(2014025838));
-    }
+	@Test
+	public void selectByPrimaryKey() {
+		System.out.println(mapper.selectByPrimaryKey(2014025838));
+	}
 }

@@ -17,102 +17,106 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/wechat/portal")
 public class WechatController {
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private final WxMpService wxService;
+	private final WxMpService wxService;
 
-    private final WxMpMessageRouter router;
+	private final WxMpMessageRouter router;
 
-    private final HandlerRouteService handlerService;
+	private final HandlerRouteService handlerService;
 
-    @Autowired
-    public WechatController(WxMpService wxService, WxMpMessageRouter router, HandlerRouteService handlerService) {
-        this.wxService = wxService;
-        this.router = router;
-        this.handlerService = handlerService;
-        this.handlerService.handlerRegister();
-    }
+	@Autowired
+	public WechatController(WxMpService wxService, WxMpMessageRouter router, HandlerRouteService handlerService) {
+		this.wxService = wxService;
+		this.router = router;
+		this.handlerService = handlerService;
+		init();
+	}
 
 
-    @GetMapping(produces = "text/plain;charset=utf-8")
-    public String authGet(
-            @RequestParam(name = "signature", required = false) String signature,
-            @RequestParam(name = "timestamp", required = false) String timestamp,
-            @RequestParam(name = "nonce", required = false) String nonce,
-            @RequestParam(name = "echostr", required = false) String echostr) {
+	private void init() {
+		this.handlerService.handlerRegister();
+	}
 
-        this.logger.info("\n接收到来自微信服务器的认证消息：[{}, {}, {}, {}]", signature,
-                timestamp, nonce, echostr);
+	@GetMapping(produces = "text/plain;charset=utf-8")
+	public String authGet(
+			@RequestParam(name = "signature", required = false) String signature,
+			@RequestParam(name = "timestamp", required = false) String timestamp,
+			@RequestParam(name = "nonce", required = false) String nonce,
+			@RequestParam(name = "echostr", required = false) String echostr) {
 
-        if (StringUtils.isAnyBlank(signature, timestamp, nonce, echostr)) {
-            return ("请求参数非法，请核实!");
-        }
+		this.logger.info("\n接收到来自微信服务器的认证消息：[{}, {}, {}, {}]", signature,
+				timestamp, nonce, echostr);
 
-        if (this.wxService.checkSignature(timestamp, nonce, signature)) {
-            return echostr;
-        }
+		if (StringUtils.isAnyBlank(signature, timestamp, nonce, echostr)) {
+			return ("请求参数非法，请核实!");
+		}
 
-        return "非法请求";
-    }
+		if (this.wxService.checkSignature(timestamp, nonce, signature)) {
+			return echostr;
+		}
 
-    @PostMapping(produces = "application/xml; charset=UTF-8")
-    public String post(@RequestBody String requestBody,
-                       @RequestParam("signature") String signature,
-                       @RequestParam("timestamp") String timestamp,
-                       @RequestParam("nonce") String nonce,
-                       @RequestParam(name = "encrypt_type",
-                               required = false) String encType,
-                       @RequestParam(name = "msg_signature",
-                               required = false) String msgSignature) {
-        this.logger.info(
-                "\n接收微信请求：[signature=[{}], encType=[{}], msgSignature=[{}],"
-                        + " timestamp=[{}], nonce=[{}], requestBody=[\n{}\n] ",
-                signature, encType, msgSignature, timestamp, nonce, requestBody);
+		return "非法请求";
+	}
 
-        if (!this.wxService.checkSignature(timestamp, nonce, signature)) {
-            throw new IllegalArgumentException("非法请求，可能属于伪造的请求！");
-        }
+	@PostMapping(produces = "application/xml; charset=UTF-8")
+	public String post(@RequestBody String requestBody,
+	                   @RequestParam("signature") String signature,
+	                   @RequestParam("timestamp") String timestamp,
+	                   @RequestParam("nonce") String nonce,
+	                   @RequestParam(name = "encrypt_type",
+			                   required = false) String encType,
+	                   @RequestParam(name = "msg_signature",
+			                   required = false) String msgSignature) {
+		this.logger.info(
+				"\n接收微信请求：[signature=[{}], encType=[{}], msgSignature=[{}],"
+						+ " timestamp=[{}], nonce=[{}], requestBody=[\n{}\n] ",
+				signature, encType, msgSignature, timestamp, nonce, requestBody);
 
-        String out = null;
-        if (encType == null) {
-            // 明文传输的消息
+		if (!this.wxService.checkSignature(timestamp, nonce, signature)) {
+			throw new IllegalArgumentException("非法请求，可能属于伪造的请求！");
+		}
 
-            WxMpXmlMessage inMessage = WxMpXmlMessage.fromXml(requestBody);
-            WxMpXmlOutMessage outMessage = this.route(inMessage);
-            if (outMessage == null) {
-                return "";
-            }
+		String out = null;
+		if (encType == null) {
+			// 明文传输的消息
 
-            out = outMessage.toXml();
-        } else if ("aes".equals(encType)) {
-            // aes加密的消息
-            WxMpXmlMessage inMessage = WxMpXmlMessage.fromEncryptedXml(
-                    requestBody, this.wxService.getWxMpConfigStorage(), timestamp,
-                    nonce, msgSignature);
-            this.logger.debug("\n消息解密后内容为：\n{} ", inMessage.toString());
-            WxMpXmlOutMessage outMessage = this.route(inMessage);
-            if (outMessage == null) {
-                return "";
-            }
+			WxMpXmlMessage inMessage = WxMpXmlMessage.fromXml(requestBody);
+			WxMpXmlOutMessage outMessage = this.route(inMessage);
+			if (outMessage == null) {
+				return "";
+			}
 
-            out = outMessage
-                    .toEncryptedXml(this.wxService.getWxMpConfigStorage());
-        }
+			out = outMessage.toXml();
+		} else if ("aes".equals(encType)) {
+			// aes加密的消息
+			WxMpXmlMessage inMessage = WxMpXmlMessage.fromEncryptedXml(
+					requestBody, this.wxService.getWxMpConfigStorage(), timestamp,
+					nonce, msgSignature);
+			this.logger.debug("\n消息解密后内容为：\n{} ", inMessage.toString());
+			WxMpXmlOutMessage outMessage = this.route(inMessage);
+			if (outMessage == null) {
+				return "";
+			}
 
-        this.logger.debug("\n组装回复信息：{}", out);
+			out = outMessage
+					.toEncryptedXml(this.wxService.getWxMpConfigStorage());
+		}
 
-        return out;
-    }
+		this.logger.debug("\n组装回复信息：{}", out);
 
-    private WxMpXmlOutMessage route(WxMpXmlMessage message) {
-        try {
-            return this.router.route(message);
-        } catch (Exception e) {
-            this.logger.error(e.getMessage(), e);
-        }
+		return out;
+	}
 
-        return null;
-    }
+	private WxMpXmlOutMessage route(WxMpXmlMessage message) {
+		try {
+			return this.router.route(message);
+		} catch (Exception e) {
+			this.logger.error(e.getMessage(), e);
+		}
+
+		return null;
+	}
 
 
 }
