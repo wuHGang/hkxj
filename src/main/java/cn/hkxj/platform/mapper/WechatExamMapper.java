@@ -10,13 +10,13 @@ import java.util.Map;
 
 /**
  * @author flattery
- * */
+ */
 
 @Mapper
 @Repository
 public interface WechatExamMapper {
-    void insertExam(Map<String, Object> params);
+	void insertExam(Map<String, Object> params);
 
-    List<Exam> getExamByClassname(String classname);
+	List<Exam> getExamByClassname(String classname);
 
 }

@@ -11,25 +11,25 @@ import java.util.List;
 @Mapper
 @Repository
 public interface WechatuserMapper {
-    int countByExample(WechatuserExample example);
+	int countByExample(WechatuserExample example);
 
-    int deleteByExample(WechatuserExample example);
+	int deleteByExample(WechatuserExample example);
 
-    int deleteByPrimaryKey(Integer account);
+	int deleteByPrimaryKey(Integer account);
 
-    int insert(Wechatuser record);
+	int insert(Wechatuser record);
 
-    int insertSelective(Wechatuser record);
+	int insertSelective(Wechatuser record);
 
-    List<Wechatuser> selectByExample(WechatuserExample example);
+	List<Wechatuser> selectByExample(WechatuserExample example);
 
-    Wechatuser selectByPrimaryKey(Integer account);
+	Wechatuser selectByPrimaryKey(Integer account);
 
-    int updateByExampleSelective(@Param("record") Wechatuser record, @Param("example") WechatuserExample example);
+	int updateByExampleSelective(@Param("record") Wechatuser record, @Param("example") WechatuserExample example);
 
-    int updateByExample(@Param("record") Wechatuser record, @Param("example") WechatuserExample example);
+	int updateByExample(@Param("record") Wechatuser record, @Param("example") WechatuserExample example);
 
-    int updateByPrimaryKeySelective(Wechatuser record);
+	int updateByPrimaryKeySelective(Wechatuser record);
 
-    int updateByPrimaryKey(Wechatuser record);
+	int updateByPrimaryKey(Wechatuser record);
 }

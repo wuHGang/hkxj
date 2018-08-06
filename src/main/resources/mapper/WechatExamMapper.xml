@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="cn.hkxj.platform.mapper.WechatExamMapper" >
+<mapper namespace="cn.hkxj.platform.mapper.WechatExamMapper">
     <select id="getExamByClassname" parameterType="java.lang.String" resultType="cn.hkxj.platform.pojo.Exam">
         SELECT * FROM exam WHERE className = #{classname}
     </select>
@@ -11,8 +11,9 @@
          </selectKey> -->
         INSERT INTO exam(className, examName, classRoom, xn, examWeek, examDay, specificTime)
         VALUES
-        <foreach collection="examList" item="exam" index = "index" separator=",">
-            (#{classname}, #{exam.examName}, #{exam.classRoom}, #{exam.xn}, #{exam.examWeek}, #{exam.examDay}, #{exam.specificTime})
+        <foreach collection="examList" item="exam" index="index" separator=",">
+            (#{classname}, #{exam.examName}, #{exam.classRoom}, #{exam.xn}, #{exam.examWeek}, #{exam.examDay},
+            #{exam.specificTime})
         </foreach>
     </insert>
 </mapper>

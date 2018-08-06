@@ -19,64 +19,61 @@ import java.util.Map;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class AppSpiderTest {
-    @Autowired
-    AppSpider spider;
+	@Autowired
+	AppSpider spider;
 
-    @Before
-    public void setUp() throws Exception {
-        spider.setAccount(2015025838);
-        spider.getToken();
-    }
+	@Before
+	public void setUp() throws Exception {
+		spider.setAccount(2015025838);
+		spider.getToken();
+	}
 
-    @Test
-    public void getToken() {
-        try {
-            System.out.println(spider.getToken());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+	@Test
+	public void getToken() throws IOException {
+		System.out.println(spider.getToken());
 
-    @Test
-    public void getGrade() {
-        try {
-            System.out.println(spider.getGrade());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+	}
 
-    @Test
-    public void getLesson() {
-        try {
-            System.out.println(spider.getLesson());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+	@Test
+	public void getGrade() {
+		try {
+			System.out.println(spider.getGrade());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 
-    @Test
-    public void getSchedule() throws IOException {
-        /*
-         *
-         */
-        Map map = spider.getSchedule();
-        ArrayList slist = (ArrayList) map.get("slist");
-        ArrayList wlist = (ArrayList) map.get("wlist");
+	@Test
+	public void getLesson() {
+		try {
+			System.out.println(spider.getLesson());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Test
+	public void getSchedule() throws IOException {
+		/*
+		 *
+		 */
+		Map map = spider.getSchedule();
+		ArrayList slist = (ArrayList) map.get("slist");
+		ArrayList wlist = (ArrayList) map.get("wlist");
 //        for(Object sc: slist){
 //            System.out.println((Map)sc);
 //        }
 
-        for (Object sc : wlist) {
-            System.out.println((Map) sc);
-        }
+		for (Object sc : wlist) {
+			System.out.println((Map) sc);
+		}
 
-    }
+	}
 
-    @Test
-    public void getExam() throws IOException {
-        ArrayList list = spider.getExam();
-        System.out.println(list);
-    }
+	@Test
+	public void getExam() throws IOException {
+		ArrayList list = spider.getExam();
+		System.out.println(list);
+	}
 
 }

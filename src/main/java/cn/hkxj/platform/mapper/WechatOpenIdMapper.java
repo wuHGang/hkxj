@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 @Mapper
 @Repository
 public interface WechatOpenIdMapper {
-    Wechatuser getStudentByOpenId(String openId);
+	Wechatuser getStudentByOpenId(String openId);
 
 }
