@@ -1,12 +1,19 @@
 package cn.hkxj.platform.service.spider;
 
+import cn.hkxj.platform.exceptions.PasswordUncorrectException;
+import com.google.gson.Gson;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
+@Slf4j
 public class UrpSpiderTest {
 	UrpSpider spider;
+	private final static Gson gson = new Gson();
 
 	@Before
 	public void init() {
@@ -14,9 +21,12 @@ public class UrpSpiderTest {
 	}
 
 	@Test
-	public void getInformaton() throws IOException {
+	public void getInformaton() throws IOException, PasswordUncorrectException {
 
-		spider.getInformaton();
+		String result = spider.getInformaton();
+
+//		log.info(result);
+//		Double stau = (Double) 200.0;
 
 	}
 
