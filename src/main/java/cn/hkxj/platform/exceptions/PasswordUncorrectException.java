@@ -5,6 +5,10 @@ public class PasswordUncorrectException extends Exception {
 		super();
 	}
 
+	public PasswordUncorrectException(String description) {
+		super(description);
+	}
+
 	public PasswordUncorrectException(String description, Exception e) {
 		super(description, e);
 	}

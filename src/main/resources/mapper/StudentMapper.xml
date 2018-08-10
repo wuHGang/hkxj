@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.hkxj.platform.mapper.StudentMapper">
+    <resultMap id="BaseResultMap" type="cn.hkxj.platform.pojo.Student">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="selectFields">
+        id as id ,
+        account as account ,
+        password as password ,
+        name as name ,
+        sex as sex ,
+        ethnic as ethnic ,
+        academy as academy,
+        major as major,
+        classname as classname,
+        is_correct as isCorrect,
+        gmt_create as gmtCreate,
+        gmt_modified as gmtModified
+    </sql>
+
+    <select id="selectByAccount" parameterType="Integer" resultMap="BaseResultMap">
+        SELECT
+          <include refid="selectFields"/>
+        FROM
+          hkxj.student
+        WHERE
+          account = #{account}
+    </select>
+</mapper>
