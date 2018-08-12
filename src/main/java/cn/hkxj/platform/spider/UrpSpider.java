@@ -72,7 +72,7 @@ public class UrpSpider {
 		Double statu = (Double) resultMap.get("statu");
 
 		if(statu.intValue() == 400) {
-			throw new PasswordUncorrectException("账号: "+account+"密码："+password);
+			throw new PasswordUncorrectException("账号: "+account+"  密码："+password);
 		}
 		else if(statu.intValue() == 500) {
 			throw new ReadTimeoutException("学校服务器连接超时");
