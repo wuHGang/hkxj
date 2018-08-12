@@ -61,18 +61,17 @@
             $("#login").click(function () {
                 var account = $("#account").val();
                 var password = $("#password").val();
-                var openid = getUrlParams("openid");
+                // var openid = getUrlParams("openid");
                 var user_json = {
                     "account": account,
-                    "passwd": password,
-                    "openid": openid
+                    "password": password
                 };
                 $.ajax({
                     type: "post",
-                    url: "/Login",
-                    dataType: 'text',
-                    contentType: "application/json;charset=utf-8",
-                    data: JSON.stringify(user_json),
+                    url: "/login",
+                    // dataType: 'text',
+                    // contentType: "application/json;charset=utf-8",
+                    data: user_json,
                     success : function (data) {
                         if (data!=""){
                             $("#from").html("绑定成功！");
@@ -93,7 +92,7 @@
     <div class="mycenter">
         <div class="mysign">
             <div align="center">
-                <img src="img/hkxjLogo.JPG"/>
+                <img src="/img/hkxjLogo.JPG"/>
                 <h2> 用户绑定</h2>
             </div>
             <div class="form-group col-lg-12">
@@ -104,14 +103,12 @@
                 <label for="password">密码</label>
                 <input type="password" class="form-control" id="password" placeholder="请输入密码">
             </div>
-<<<<<<< HEAD
             <div class="form-group " align="center" >
                 <button class="btn btn-success" type="button" id="login" >绑定</button>
-=======
-            <div class="form-group " align="center">
-                <button class="btn btn-success" type="submit" id="login">登录</button>
->>>>>>> f287fa2c45bed936c1fd0913f054f4d714066660
             </div>
+            <!--<div class="form-group " align="center">-->
+                <!--<button class="btn btn-success" type="submit" id="login">登录</button>-->
+            <!--</div>-->
         </div>
     </div>
 </form>
