@@ -1,5 +1,6 @@
 package cn.hkxj.platform.service.spider;
 
+import cn.hkxj.platform.spider.AppSpider;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
