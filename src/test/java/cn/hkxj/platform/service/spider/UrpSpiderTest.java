@@ -1,6 +1,7 @@
 package cn.hkxj.platform.service.spider;
 
 import cn.hkxj.platform.exceptions.PasswordUncorrectException;
+import cn.hkxj.platform.spider.UrpSpider;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Before;
@@ -23,7 +24,7 @@ public class UrpSpiderTest {
 	@Test
 	public void getInformaton() throws IOException, PasswordUncorrectException {
 
-		String result = spider.getInformaton();
+//		String result = spider.getInformaton();
 
 //		log.info(result);
 //		Double stau = (Double) 200.0;
@@ -33,7 +34,11 @@ public class UrpSpiderTest {
 	@Test
 	public void getGrade() {
 		try {
-			spider.getGrade();
+			try {
+				spider.getGrade();
+			} catch (PasswordUncorrectException e) {
+				e.printStackTrace();
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

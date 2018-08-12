@@ -1,4 +1,4 @@
-package cn.hkxj.platform.service.spider;
+package cn.hkxj.platform.spider;
 
 import cn.hkxj.platform.exceptions.PasswordUncorrectException;
 import cn.hkxj.platform.exceptions.ReadTimeoutException;
@@ -7,6 +7,7 @@ import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
 import org.apache.commons.beanutils.BeanUtils;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -20,10 +21,10 @@ public class UrpSpider {
 	private String account;
 	private String password;
 	private final static Gson gson = new Gson();
-	private static final String information = "http://119.29.119.49:10086/information";
-	private static final String grade = "http://119.29.119.49:10086/grade";
+	private static final String informationURL = "http://119.29.119.49:10086/information";
+	private static final String gradeURL = "http://119.29.119.49:10086/grade";
 	private static OkHttpClient client = new OkHttpClient.Builder()
-			.connectTimeout(11, TimeUnit.SECONDS)
+			.connectTimeout(15, TimeUnit.SECONDS)
 			.build();
 
 	public UrpSpider(String account, String password) {
@@ -32,21 +33,14 @@ public class UrpSpider {
 	}
 
 	public Student getInformaton() throws PasswordUncorrectException, ReadTimeoutException {
-		String result = null;
+		Map result = null;
 		try {
-			result = getResult(information);
+			result = getResult(informationURL);
 		} catch (IOException e) {
 			throw new ReadTimeoutException("本地服务器读取超时", e);
 		}
-		HashMap resultMap = gson.fromJson(result, HashMap.class);
-		Double statu = (Double) resultMap.get("statu");
-		Map information = (Map) resultMap.get("information");
-		if(statu.intValue() == 400) {
-			throw new PasswordUncorrectException("账号: "+account+"密码："+password);
-		}
-		else if(statu.intValue() == 500 || information==null) {
-			throw new ReadTimeoutException("学校服务器连接超时");
-		}
+
+		Map information = (Map)result.get("information");
 
 		Student student = new Student();
 		try {
@@ -60,18 +54,30 @@ public class UrpSpider {
 		return student;
 	}
 
-	public void getGrade() throws IOException {
-		getResult(grade);
+	public void getGrade() throws IOException, PasswordUncorrectException {
+		getResult(gradeURL);
 	}
 
-	private String getResult(String url) throws IOException {
+	private Map getResult(String url) throws IOException, PasswordUncorrectException {
 		RequestBody requestBody = getRequestBody();
 		Request request = new Request.Builder()
 				.url(url)
 				.post(requestBody)
 				.build();
 		Response response = client.newCall(request).execute();
-		return response.body().string();
+
+		String result = response.body().string();
+
+		HashMap resultMap = gson.fromJson(result, HashMap.class);
+		Double statu = (Double) resultMap.get("statu");
+
+		if(statu.intValue() == 400) {
+			throw new PasswordUncorrectException("账号: "+account+"密码："+password);
+		}
+		else if(statu.intValue() == 500) {
+			throw new ReadTimeoutException("学校服务器连接超时");
+		}
+		return resultMap;
 	}
 
 	private RequestBody getRequestBody() {

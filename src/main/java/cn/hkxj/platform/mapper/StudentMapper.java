@@ -16,4 +16,8 @@ public interface StudentMapper {
 	 * @return
 	 */
 	Student selectByAccount(Integer account);
+
+	int insertByStudent(Student student);
+
+	int updateByStudent(Student student);
 }

@@ -1,4 +1,4 @@
-package cn.hkxj.platform.service.spider;
+package cn.hkxj.platform.spider;
 
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;

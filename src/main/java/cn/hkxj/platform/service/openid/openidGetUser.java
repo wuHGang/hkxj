@@ -1,7 +1,7 @@
 package cn.hkxj.platform.service.openid;
 
 import cn.hkxj.platform.mapper.WechatOpenIdMapper;
-import cn.hkxj.platform.pojo.OpenId;
+import cn.hkxj.platform.pojo.Openid;
 import cn.hkxj.platform.pojo.Wechatuser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,9 +22,9 @@ public class openidGetUser {
 	 * @return list
 	 */
 	public Wechatuser getStudentByOpenId(String openId) throws IOException {
-		OpenId user = new OpenId();
-		user.setOpenId(openId);
-		Wechatuser wechatuser = openIdMapper.getStudentByOpenId(user.getOpenId());
+		Openid user = new Openid();
+		user.setOpenid(openId);
+		Wechatuser wechatuser = openIdMapper.getStudentByOpenId(user.getOpenid());
 		return wechatuser;
 	}
 

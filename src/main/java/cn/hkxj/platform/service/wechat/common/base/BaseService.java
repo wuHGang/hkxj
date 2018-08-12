@@ -1,7 +1,7 @@
 package cn.hkxj.platform.service.wechat.common.base;
 
 import cn.hkxj.platform.pojo.Wechatuser;
-import cn.hkxj.platform.service.spider.AppSpider;
+import cn.hkxj.platform.spider.AppSpider;
 
 import java.io.IOException;
 

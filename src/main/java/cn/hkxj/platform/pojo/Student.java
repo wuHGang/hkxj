@@ -47,7 +47,7 @@ public class Student {
     /**
      * 
      */
-    private Boolean isCorrect;
+    private Boolean correct;
     /**
      * 
      */
@@ -70,7 +70,7 @@ public class Student {
 		this.academy = academy;
 		this.major = major;
 		this.classname = classname;
-		this.isCorrect = isCorrect;
+		this.correct = isCorrect;
 		this.gmtCreate = gmtCreate;
 		this.gmtModified = gmtModified;
 	}
@@ -142,12 +142,12 @@ public class Student {
     public void setClassname(String classname) {
         this.classname = classname;
     }
-    public Boolean getIsCorrect() {
-        return isCorrect;
+    public Boolean getCorrect() {
+        return correct;
     }
 
-    public void setIsCorrect(Boolean isCorrect) {
-        this.isCorrect = isCorrect;
+    public void setCorrect(Boolean isCorrect) {
+        this.correct = isCorrect;
     }
     public Date getGmtCreate() {
         return gmtCreate;
@@ -177,7 +177,7 @@ public class Student {
 				.add("academy", academy)
 				.add("major", major)
 				.add("classname", classname)
-				.add("isCorrect", isCorrect)
+				.add("isCorrect", correct)
 				.add("gmtCreate", gmtCreate)
 				.add("gmtModified", gmtModified)
 				.toString();
