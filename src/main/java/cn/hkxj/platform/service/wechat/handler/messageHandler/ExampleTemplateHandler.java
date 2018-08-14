@@ -40,7 +40,7 @@ public class ExampleTemplateHandler extends AbstractHandler {
 			datas.add(first);
 			datas.add(name);
 			datas.add(grade);
-			String url = "http://suagr.tunnel.echomod.cn/Login?openid=" + wxMpXmlMessage.getFromUser();
+			String url = "http://suagr.tunnel.echomod.cn/login/" + wxMpXmlMessage.getFromUser();
 			wxMpService.getTemplateMsgService().sendTemplateMsg(templateBuilder.build(wxMpXmlMessage, datas, url));
 			return null;
 		} catch (Exception e) {
