@@ -44,24 +44,10 @@
         }
     </style>
     <script type="text/javascript">
-        function getUrlParams(names) {
-            var urlSearch = location.search;
-            var urlValue = "";
-            var params = urlSearch.split(/[?*&]/);
-            for (var i = 0; i < params.length; i++) {
-                if (params[i].indexOf(names) >= 0) {
-                    urlValue = params[i].split("=")[1];
-                    return urlValue;
-                }
-            }
-            return urlValue;
-        }
-
         $(function () {
             $("#login").click(function () {
                 var account = $("#account").val();
                 var password = $("#password").val();
-                // var openid = getUrlParams("openid");
                 var user_json = {
                     "account": account,
                     "password": password
@@ -73,12 +59,21 @@
                     // contentType: "application/json;charset=utf-8",
                     data: user_json,
                     success : function (data) {
-                        if (data!=""){
-                            $("#from").html("绑定成功！");
-                        }
-                        else {
-                            alert("账号密码错误");
-                            window.location.reload();
+                        for(var key in data){
+                            if (data.statu==200){
+                                $("#from").html("绑定成功！");
+                            }
+                            else if (data.statu==300){
+                                alert(key+"账号密码错误");
+                                window.location.reload();
+                            }
+                            else if (data.statu==400){
+                                $("#from").html("账号已绑定");
+                            }
+                            else {
+                                alert(key+"服务器读取超时");
+                                window.location.reload();
+                            }
                         }
                     }
                 });
@@ -106,9 +101,6 @@
             <div class="form-group " align="center" >
                 <button class="btn btn-success" type="button" id="login" >绑定</button>
             </div>
-            <!--<div class="form-group " align="center">-->
-                <!--<button class="btn btn-success" type="submit" id="login">登录</button>-->
-            <!--</div>-->
         </div>
     </div>
 </form>
