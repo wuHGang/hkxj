@@ -1,6 +1,8 @@
 package cn.hkxj.platform.spider;
 
+import cn.hkxj.platform.utils.ReadProperties;
 import com.google.gson.Gson;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -29,10 +31,9 @@ public class AppSpider {
 	 * 如果有密码错误异常，如果能设置密码需要自己声明
 	 */
 	private Integer account = null;
-	private String passwd = null;
+	private String password = null;
 	private String token = null;
-	@Value("${appspider.key}")
-	private String key;
+	private final static String key = ReadProperties.get("appspider.key");
 	private final static Gson gson = new Gson();
 	private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 	private final static String urlRoot = "http://222.171.107.108";
@@ -45,28 +46,29 @@ public class AppSpider {
 			.connectTimeout(5, TimeUnit.SECONDS)
 			.build();
 
-	public AppSpider() {
+	private final static Headers headers = new Headers.Builder()
+			.add("Host", "222.171.107.108")
+			.add("Connection", "Keep-Alive")
+			.add("Accept-Encoding", "gzip")
+			.add("User-Agent", "okhttp/3.3.1")
+			.build();
+
+	AppSpider() {
 
 	}
 
-
-	public Integer getAccount() {
-		return account;
-	}
-
-	public void setAccount(Integer account) {
+	public AppSpider(Integer account) {
+		log.info(key);
 		this.account = account;
+		this.password = account.toString()+key;
 	}
 
-	public String getPasswd() {
-		return passwd;
+	public AppSpider(Integer account, String password) {
+		this.account = account;
+		this.password = password+key;
 	}
 
-	public void setPasswd(String passwd) {
-		this.passwd = passwd;
-	}
-
-	public void setToken(String token) {
+	public AppSpider(@NonNull String token){
 		this.token = token;
 	}
 
@@ -75,108 +77,84 @@ public class AppSpider {
 			return token;
 
 		RequestBody loginRequestBody = getLoginRequestBody();
-		Request request = new Request.Builder()
-				.url(login)
-				.post(loginRequestBody)
-				.build();
-
-		Response response = client.newCall(request).execute();
-		String result = response.body().string();
-
-		Map data = (Map) result2Data(result);
+		Map data = postData(login, loginRequestBody);
 		String token = (String) data.get("token");
 
 		this.token = token;
 		return token;
 	}
 
-	private RequestBody getLoginRequestBody() {
-		HashMap<String, String> postData = new HashMap<String, String>();
-		try {
-			if (passwd == null)
-				passwd = account.toString() + key;
-			else
-				passwd += key;
-			postData.put("p", DigestUtils.md5Hex(passwd.getBytes("UTF-8")));
-			postData.put("u", account.toString());
-		} catch (UnsupportedEncodingException e) {
-			log.error(e.toString());
-		}
-		String json = gson.toJson(postData);
-		RequestBody requestBody = RequestBody.create(JSON, json);
-
-		return requestBody;
-	}
-
-	private Object getData(String url) throws IOException {
-		Request request = new Request.Builder()
-				.url(url)
-				.build();
-		Response response = client.newCall(request).execute();
-		String message = response.body().string();
-		return result2Data(message);
-	}
-
 	public ArrayList getGrade() throws IOException {
-		if (this.token == null)
-			throw new RuntimeException("token is null");
-		return (ArrayList) getGrade(this.token);
-	}
-
-	public ArrayList getGrade(String token) throws IOException {
 		String url = grade + "?token=" + token;
+		Map data = getData(url);
 
-		return (ArrayList) getData(url);
+		return (ArrayList) data.get("data");
 	}
 
 	public ArrayList getLesson() throws IOException {
-		if (this.token == null)
-			throw new RuntimeException("token is null");
-		return getLesson(this.token);
-	}
-
-	public ArrayList getLesson(String token) throws IOException {
 		String url = lesson + "?token=" + token;
-
-		return (ArrayList) getData(url);
+		Map data = getData(url);
+		return (ArrayList) data.get("data");
 	}
 
 	public Map getSchedule() throws IOException {
-		if (this.token == null)
-			throw new RuntimeException("token is null");
-		return getSchedule(this.token);
-	}
-
-	public Map getSchedule(String token) throws IOException {
 		String url = schedule + "?token=" + token;
-
-		return (Map) getData(url);
+		Map data = getData(url);
+		return (Map) data.get("data");
 	}
 
 	public ArrayList getExam() throws IOException {
-		if (this.token == null)
-			throw new RuntimeException("token is null");
-		return getExam(this.token);
-	}
-
-	public ArrayList getExam(String token) throws IOException {
 		String url = exam + "?token=" + token;
-
-		return (ArrayList) getData(url);
+		Map data = getData(url);
+		return (ArrayList) data.get("data");
 	}
 
-	private Object result2Data(String data) {
-		Gson gson = new Gson();
+
+	private RequestBody getLoginRequestBody() {
+		HashMap<String, String> postData = new HashMap<>();
+		try {
+			postData.put("u", account.toString());
+			postData.put("p", DigestUtils.md5Hex(password.getBytes("UTF-8")));
+		} catch (UnsupportedEncodingException e) {
+			log.error(e.getMessage(), e);
+		}
+		String json = gson.toJson(postData);
+
+		return RequestBody.create(JSON, json);
+	}
+
+	private Map getData(String url) throws IOException {
+		Request request = new Request.Builder()
+				.url(url)
+				.headers(headers)
+				.build();
+		return execute(request);
+	}
+
+	private Map postData(String url, RequestBody requestBody) throws IOException {
+		Request request = new Request.Builder()
+				.url(url)
+				.headers(headers)
+				.post(requestBody)
+				.build();
+		return execute(request);
+
+	}
+
+	private Map execute(Request request) throws IOException {
+		Response response = client.newCall(request).execute();
+		String data = response.body().string();
+
 		Map resultMap = gson.fromJson(data, Map.class);
 
 		int state = ((Double) resultMap.get("state")).intValue();
 
 		if (state != 200) {
 			String msg = (String) resultMap.get("message");
-			throw new RuntimeException(msg);
+			throw new IOException(msg);
 		}
 
-		return resultMap.get("data");
+		return resultMap;
 	}
 
 }

@@ -1,6 +1,7 @@
 package cn.hkxj.platform.service.spider;
 
 import cn.hkxj.platform.spider.AppSpider;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,28 +18,30 @@ import java.util.Map;
  * @date 2018/6/5 9:57
  */
 
+@Slf4j
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class AppSpiderTest {
-	@Autowired
-	AppSpider spider;
+	private AppSpider spider;
 
 	@Before
 	public void setUp() throws Exception {
-		spider.setAccount(2015025838);
-		spider.getToken();
+		spider = new AppSpider(2015025838);
 	}
 
 	@Test
 	public void getToken() throws IOException {
 		System.out.println(spider.getToken());
-
 	}
 
 	@Test
 	public void getGrade() {
 		try {
-			System.out.println(spider.getGrade());
+			ArrayList grade = spider.getGrade();
+			for (Object item: grade) {
+				log.info(item.toString());
+			}
+			System.out.println();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

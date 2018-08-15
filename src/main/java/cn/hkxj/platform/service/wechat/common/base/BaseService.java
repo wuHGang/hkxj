@@ -1,5 +1,6 @@
 package cn.hkxj.platform.service.wechat.common.base;
 
+import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.pojo.Wechatuser;
 import cn.hkxj.platform.spider.AppSpider;
 
@@ -19,11 +20,9 @@ public class BaseService {
 	 * @throws IOException
 	 */
 	protected AppSpider getAppsSider(Wechatuser wechatuser) throws IOException {
-		AppSpider appSpider = new AppSpider();
-		appSpider.setAccount(wechatuser.getAccount());
-		appSpider.setPasswd(wechatuser.getPasswd() + "murp");
+		AppSpider appSpider = new AppSpider(wechatuser.getAccount());
 		String token = appSpider.getToken();
-		appSpider.setToken(token);
+//		appSpider.setToken(token);
 		return appSpider;
 	}
 

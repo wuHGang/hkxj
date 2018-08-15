@@ -7,12 +7,12 @@ import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
 import org.apache.commons.beanutils.BeanUtils;
-import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
@@ -40,22 +40,25 @@ public class UrpSpider {
 			throw new ReadTimeoutException("本地服务器读取超时", e);
 		}
 
-		Map information = (Map)result.get("information");
+		Map information = (Map)Optional
+				.ofNullable(result.get("information"))
+				.orElseThrow(() -> new ReadTimeoutException("学校服务器读取超时"));
 
 		Student student = new Student();
 		try {
 			BeanUtils.populate(student, information);
 		} catch (IllegalAccessException e) {
-			log.error(e.toString());
+			log.error(e.getMessage());
 		} catch (InvocationTargetException e) {
-			log.error(e.toString());
+			log.error(e.getMessage());
 		}
 
 		return student;
 	}
 
 	public void getGrade() throws IOException, PasswordUncorrectException {
-		getResult(gradeURL);
+		Map result = getResult(gradeURL);
+		log.info(result.toString());
 	}
 
 	private Map getResult(String url) throws IOException, PasswordUncorrectException {
