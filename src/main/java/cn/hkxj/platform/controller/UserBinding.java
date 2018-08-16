@@ -27,7 +27,6 @@ public class UserBinding {
 	@RequestMapping(value = "/login/{openid}", method = RequestMethod.GET)
 	public String loginHtml(@PathVariable("openid") String openid) {
 		session.setAttribute("openid", openid);
-//		log.info(openid);
 		return "LoginWeb/Login";
 	}
 
