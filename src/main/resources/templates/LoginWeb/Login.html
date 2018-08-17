@@ -44,10 +44,23 @@
         }
     </style>
     <script type="text/javascript">
+        function isPositiveInteger(s){
+                re = /^[0-9]\d+$/ ;
+                return re.test(s)
+        }
+
         $(function () {
             $("#login").click(function () {
                 var account = $("#account").val();
                 var password = $("#password").val();
+                if(account.length!=10||!isPositiveInteger(account)){
+                    alert("请正确填写账号!");
+                    return ;
+                }
+                if(password==""){
+                    alert("请正确填写密码!");
+                    return ;
+                }
                 var user_json = {
                     "account": account,
                     "password": password

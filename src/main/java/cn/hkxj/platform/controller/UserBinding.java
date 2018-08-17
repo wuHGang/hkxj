@@ -40,7 +40,7 @@ public class UserBinding {
 		try {
 			studentBindService.studentBind(openid,account,password);
 		} catch (PasswordUncorrectException e) {
-			statu = 400;
+			statu = 300;
 			message = "密码错误";
 		} catch (OpenidExistException e) {
 			statu = 400;
