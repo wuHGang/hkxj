@@ -37,7 +37,7 @@ public class AppSpider {
 	private final static Gson gson = new Gson();
 	private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 	private final static String urlRoot = "http://222.171.107.108";
-	private final static String login = urlRoot + "/university-facade/Murp/Login";
+	private final static String login = urlRoot + "//university-facade/Murp/Login";
 	private final static String grade = urlRoot + "//university-facade/MyUniversity/MyGrades";
 	private final static String lesson = urlRoot + "//university-facade/MyUniversity/MyLessons";
 	private final static String schedule = urlRoot + "//university-facade/Schedule/ScheduleList";
