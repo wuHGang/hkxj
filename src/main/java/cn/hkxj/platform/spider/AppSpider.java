@@ -37,7 +37,7 @@ public class AppSpider {
 	private final static Gson gson = new Gson();
 	private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 	private final static String urlRoot = "http://222.171.107.108";
-	private final static String login = urlRoot + "//university-facade/Murp/Login";
+	private final static String login = urlRoot + "/university-facade/Murp/Login";
 	private final static String grade = urlRoot + "//university-facade/MyUniversity/MyGrades";
 	private final static String lesson = urlRoot + "//university-facade/MyUniversity/MyLessons";
 	private final static String schedule = urlRoot + "//university-facade/Schedule/ScheduleList";
@@ -78,9 +78,12 @@ public class AppSpider {
 
 		RequestBody loginRequestBody = getLoginRequestBody();
 		Map data = postData(login, loginRequestBody);
-		String token = (String) data.get("token");
-
+		System.out.println(data);
+		Map data2=(Map) data.get("data");
+		String token = (String) data2.get("token");
+		System.out.println(token);
 		this.token = token;
+
 		return token;
 	}
 
