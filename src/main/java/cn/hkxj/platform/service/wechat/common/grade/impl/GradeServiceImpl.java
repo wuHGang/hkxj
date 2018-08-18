@@ -70,46 +70,46 @@ public class GradeServiceImpl extends BaseService implements GradeService {
 	 */
 	private List<Grade> getGradeList(List<LinkedTreeMap> gradeList) {
 		List<Grade> grades = new ArrayList<>();
-		for (LinkedTreeMap<Object, Object> val : gradeList) {
-			Grade grade = new Grade();
-			for (Map.Entry entry : val.entrySet()) {
-				String key = (String) entry.getKey();
-				try {
-					switch (key) {
-						case "kcxz": {//课程类型
-							String type = (String) entry.getValue();
-							grade.setType(new String(type.getBytes(), "UTF-8"));
-							break;
-						}
-						case "cj": {//成绩
-							String str = (String) entry.getValue();
-							grade.setCj(Double.parseDouble(str));
-							break;
-						}
-						case "jd": {//绩点
-							Double jd = (Double) entry.getValue();
-							grade.setJd(jd);
-							break;
-						}
-						case "kcmc": {//课程名称
-							String str = (String) entry.getValue();
-							grade.setCourseName(new String(str.getBytes(), "UTF-8"));
-							break;
-						}
-						case "xf": {//学分
-							Double str = (Double) entry.getValue();
-							grade.setXf(str);
-							break;
-						}
-						default:
-							break;
-					}
-				} catch (UnsupportedEncodingException e) {
-					e.printStackTrace();
-				}
-			}
-			grades.add(grade);
-		}
+//		for (LinkedTreeMap<Object, Object> val : gradeList) {
+//			Grade grade = new Grade();
+//			for (Map.Entry entry : val.entrySet()) {
+//				String key = (String) entry.getKey();
+//				try {
+//					switch (key) {
+//						case "kcxz": {//课程类型
+//							String type = (String) entry.getValue();
+//							grade.setType(new String(type.getBytes(), "UTF-8"));
+//							break;
+//						}
+//						case "cj": {//成绩
+//							String str = (String) entry.getValue();
+//							grade.setCj(Double.parseDouble(str));
+//							break;
+//						}
+//						case "jd": {//绩点
+//							Double jd = (Double) entry.getValue();
+//							grade.setJd(jd);
+//							break;
+//						}
+//						case "kcmc": {//课程名称
+//							String str = (String) entry.getValue();
+//							grade.setCourseName(new String(str.getBytes(), "UTF-8"));
+//							break;
+//						}
+//						case "xf": {//学分
+//							Double str = (Double) entry.getValue();
+//							grade.setXf(str);
+//							break;
+//						}
+//						default:
+//							break;
+//					}
+//				} catch (UnsupportedEncodingException e) {
+//					e.printStackTrace();
+//				}
+//			}
+//			grades.add(grade);
+//		}
 		return grades;
 	}
 
@@ -120,17 +120,17 @@ public class GradeServiceImpl extends BaseService implements GradeService {
 
 	public String toText(List<GradeDTO> gradeDTOS) {
 		StringBuffer buffer = new StringBuffer();
-		gradeDTOS.forEach(gradeDTO -> {
-			if (gradeDTO.getXn().equals("2017-2018") && gradeDTO.getXq().equals("2")) {
-				buffer.append("学年").append(gradeDTO.getXn()).append("第").append(gradeDTO.getXq()).append("学期\n");
-				gradeDTO.getGradeList().forEach(grade -> {
-					buffer.append("课程名称").append(grade.getCourseName()).append("\n");
-					buffer.append("成绩").append(grade.getCj())
-							.append("绩点").append(grade.getJd());
-				});
-			}
-
-		});
+//		gradeDTOS.forEach(gradeDTO -> {
+//			if (gradeDTO.getXn().equals("2017-2018") && gradeDTO.getXq().equals("2")) {
+//				buffer.append("学年").append(gradeDTO.getXn()).append("第").append(gradeDTO.getXq()).append("学期\n");
+//				gradeDTO.getGradeList().forEach(grade -> {
+//					buffer.append("课程名称").append(grade.getCourseName()).append("\n");
+//					buffer.append("成绩").append(grade.getCj())
+//							.append("绩点").append(grade.getJd());
+//				});
+//			}
+//
+//		});
 		return buffer.toString();
 	}
 }

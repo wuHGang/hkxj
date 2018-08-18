@@ -23,11 +23,7 @@ public class StudentBindServiceTest {
     public void studentBind() {
         try {
             studentBindService.studentBind("2","2014025846","3664");
-        } catch (PasswordUncorrectException e) {
-            log.error(e.toString());
-        } catch (ReadTimeoutException e) {
-            log.error(e.toString());
-        } catch (OpenidExistException e) {
+        } catch (PasswordUncorrectException | ReadTimeoutException | OpenidExistException e) {
             log.error(e.toString());
         }
     }

@@ -1,13 +1,10 @@
 package cn.hkxj.platform.service.spider;
 
+import cn.hkxj.platform.pojo.Course;
 import cn.hkxj.platform.spider.AppSpider;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -19,14 +16,13 @@ import java.util.Map;
  */
 
 @Slf4j
-@RunWith(SpringRunner.class)
-@SpringBootTest
 public class AppSpiderTest {
 	private AppSpider spider;
 
 	@Before
 	public void setUp() throws Exception {
 		spider = new AppSpider(2015025838);
+		spider.getToken();
 	}
 
 	@Test
@@ -36,12 +32,27 @@ public class AppSpiderTest {
 
 	@Test
 	public void getGrade() {
+//		{xh=2015025838, kcdm=1705045, xn=2016-2017, cj=76, kcxz=必修, xq=1, kcmc=物联网结构与数据分析, xf=3.0
+//		{xh=2014025838, kcdm=1705045, xn=2015-2016, cj=60, kcxz=必修, xq=1, kcmc=物联网结构与数据分析, xf=3.0}
 		try {
-			ArrayList grade = spider.getGrade();
-			for (Object item: grade) {
+			ArrayList<Map> grade = spider.getGrade();
+			for (Map item: grade) {
 				log.info(item.toString());
+				ArrayList<Map> items = (ArrayList)item.get("items");
+				Object xn = item.get("xn");
+				Object xq = item.get("xq");
+				for(Map detail: items) {
+					Course course = new Course();
+					String uid = detail.get("kcdm").toString();
+					String type = detail.get("kcxz").toString();
+					String name = detail.get("kcmc").toString();
+					Float cj = (Float)detail.get("cj");
+					Float xf = (Float)detail.get("xf");
+					log.info(detail.toString());
+//					break;
+				}
+//				log.info(items.toString());
 			}
-			System.out.println();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

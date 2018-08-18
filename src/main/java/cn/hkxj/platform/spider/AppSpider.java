@@ -58,7 +58,6 @@ public class AppSpider {
 	}
 
 	public AppSpider(Integer account) {
-		log.info(key);
 		this.account = account;
 		this.password = account.toString()+key;
 	}
@@ -78,10 +77,8 @@ public class AppSpider {
 
 		RequestBody loginRequestBody = getLoginRequestBody();
 		Map data = postData(login, loginRequestBody);
-		System.out.println(data);
 		Map data2=(Map) data.get("data");
 		String token = (String) data2.get("token");
-		System.out.println(token);
 		this.token = token;
 
 		return token;
