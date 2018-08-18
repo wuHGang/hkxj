@@ -1,69 +1,85 @@
 package cn.hkxj.platform.pojo;
 
-/**
- * @author Yuki
- * @date 2018/7/14 12:20
- */
+import java.util.Date;
+
 public class Grade {
+    private Integer id;
 
-	private String type;    //类型分为任选和必修
+    private Integer account;
 
-	private String courseName;  //课程名称
+    private Integer courseId;
 
-	private Double xf;   //学分
+    private Date year;
 
-	private Double jd;   //绩点
+    private Short term;
 
-	private Double cj;   //成绩
+    private Float score;
 
-	public String getType() {
-		return type;
-	}
+    private Float point;
 
-	public void setType(String type) {
-		this.type = type;
-	}
+    private Date gmtCreate;
 
-	public String getCourseName() {
-		return courseName;
-	}
+    public Integer getId() {
+        return id;
+    }
 
-	public void setCourseName(String courseName) {
-		this.courseName = courseName;
-	}
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	public Double getXf() {
-		return xf;
-	}
+    public Integer getAccount() {
+        return account;
+    }
 
-	public void setXf(Double xf) {
-		this.xf = xf;
-	}
+    public void setAccount(Integer account) {
+        this.account = account;
+    }
 
-	public Double getJd() {
-		return jd;
-	}
+    public Integer getCourseId() {
+        return courseId;
+    }
 
-	public void setJd(Double jd) {
-		this.jd = jd;
-	}
+    public void setCourseId(Integer courseId) {
+        this.courseId = courseId;
+    }
 
-	public Double getCj() {
-		return cj;
-	}
+    public Date getYear() {
+        return year;
+    }
 
-	public void setCj(Double cj) {
-		this.cj = cj;
-	}
+    public void setYear(Date year) {
+        this.year = year;
+    }
 
-	@Override
-	public String toString() {
-		return "Grade{" +
-				"type='" + type + '\'' +
-				", courseName='" + courseName + '\'' +
-				", xf=" + xf +
-				", jd=" + jd +
-				", cj=" + cj +
-				'}';
-	}
+    public Short getTerm() {
+        return term;
+    }
+
+    public void setTerm(Short term) {
+        this.term = term;
+    }
+
+    public Float getScore() {
+        return score;
+    }
+
+    public void setScore(Float score) {
+        this.score = score;
+    }
+
+    public Float getPoint() {
+        return point;
+    }
+
+    public void setPoint(Float point) {
+        this.point = point;
+    }
+
+    public Date getGmtCreate() {
+        return gmtCreate;
+    }
+
+    public void setGmtCreate(Date gmtCreate) {
+        this.gmtCreate = gmtCreate;
+    }
 }

@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.hkxj.platform.mapper.GradeMapper">
+  <resultMap id="BaseResultMap" type="cn.hkxj.platform.pojo.Grade">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="account" jdbcType="INTEGER" property="account" />
+    <result column="course_id" jdbcType="INTEGER" property="courseId" />
+    <result column="year" jdbcType="DATE" property="year" />
+    <result column="term" jdbcType="SMALLINT" property="term" />
+    <result column="score" jdbcType="REAL" property="score" />
+    <result column="point" jdbcType="REAL" property="point" />
+    <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, account, course_id, year, term, score, point, gmt_create
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from grade
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from grade
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="cn.hkxj.platform.pojo.Grade">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into grade (account, course_id, year, 
+      term, score, point, gmt_create
+      )
+    values (#{account,jdbcType=INTEGER}, #{courseId,jdbcType=INTEGER}, #{year,jdbcType=DATE}, 
+      #{term,jdbcType=SMALLINT}, #{score,jdbcType=REAL}, #{point,jdbcType=REAL}, #{gmtCreate,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="cn.hkxj.platform.pojo.Grade">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into grade
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="account != null">
+        account,
+      </if>
+      <if test="courseId != null">
+        course_id,
+      </if>
+      <if test="year != null">
+        year,
+      </if>
+      <if test="term != null">
+        term,
+      </if>
+      <if test="score != null">
+        score,
+      </if>
+      <if test="point != null">
+        point,
+      </if>
+      <if test="gmtCreate != null">
+        gmt_create,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="account != null">
+        #{account,jdbcType=INTEGER},
+      </if>
+      <if test="courseId != null">
+        #{courseId,jdbcType=INTEGER},
+      </if>
+      <if test="year != null">
+        #{year,jdbcType=DATE},
+      </if>
+      <if test="term != null">
+        #{term,jdbcType=SMALLINT},
+      </if>
+      <if test="score != null">
+        #{score,jdbcType=REAL},
+      </if>
+      <if test="point != null">
+        #{point,jdbcType=REAL},
+      </if>
+      <if test="gmtCreate != null">
+        #{gmtCreate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.hkxj.platform.pojo.Grade">
+    update grade
+    <set>
+      <if test="account != null">
+        account = #{account,jdbcType=INTEGER},
+      </if>
+      <if test="courseId != null">
+        course_id = #{courseId,jdbcType=INTEGER},
+      </if>
+      <if test="year != null">
+        year = #{year,jdbcType=DATE},
+      </if>
+      <if test="term != null">
+        term = #{term,jdbcType=SMALLINT},
+      </if>
+      <if test="score != null">
+        score = #{score,jdbcType=REAL},
+      </if>
+      <if test="point != null">
+        point = #{point,jdbcType=REAL},
+      </if>
+      <if test="gmtCreate != null">
+        gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.hkxj.platform.pojo.Grade">
+    update grade
+    set account = #{account,jdbcType=INTEGER},
+      course_id = #{courseId,jdbcType=INTEGER},
+      year = #{year,jdbcType=DATE},
+      term = #{term,jdbcType=SMALLINT},
+      score = #{score,jdbcType=REAL},
+      point = #{point,jdbcType=REAL},
+      gmt_create = #{gmtCreate,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>
