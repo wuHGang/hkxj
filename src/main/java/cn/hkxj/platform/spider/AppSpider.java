@@ -88,6 +88,8 @@ public class AppSpider {
 		String url = grade + "?token=" + token;
 		Map data = getData(url);
 
+		new AppGradeResult((ArrayList) data.get("data"));
+
 		return (ArrayList) data.get("data");
 	}
 
