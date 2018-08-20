@@ -42,13 +42,12 @@ public class AppSpiderTest {
 				Object xn = item.get("xn");
 				Object xq = item.get("xq");
 				for(Map detail: items) {
-					Course course = new Course();
 					String uid = detail.get("kcdm").toString();
 					String type = detail.get("kcxz").toString();
 					String name = detail.get("kcmc").toString();
-					Float cj = (Float)detail.get("cj");
-					Float xf = (Float)detail.get("xf");
-					log.info(detail.toString());
+					String cj = detail.get("cj").toString();
+					Double xf = (Double)detail.get("xf");
+//					log.info(detail.toString());
 //					break;
 				}
 //				log.info(items.toString());
