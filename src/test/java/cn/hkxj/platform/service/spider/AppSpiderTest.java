@@ -46,8 +46,8 @@ public class AppSpiderTest {
 					String uid = detail.get("kcdm").toString();
 					String type = detail.get("kcxz").toString();
 					String name = detail.get("kcmc").toString();
-					Float cj = (Float)detail.get("cj");
-					Float xf = (Float)detail.get("xf");
+					String cj = detail.get("cj").toString();
+					Double xf = (Double)detail.get("xf");
 					log.info(detail.toString());
 //					break;
 				}
