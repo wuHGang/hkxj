@@ -30,9 +30,9 @@ public class AppSpider {
 	 * 获取数据时可以填入指定token作参数，不填入默认使用初始化生成token。
 	 * 如果有密码错误异常，如果能设置密码需要自己声明
 	 */
-	private Integer account = null;
-	private String password = null;
-	private String token = null;
+	private Integer account;
+	private String password;
+	private String token;
 	private final static String key = ReadProperties.get("appspider.key");
 	private final static Gson gson = new Gson();
 	private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
