@@ -36,6 +36,7 @@ public class AppSpiderTest {
 //		{xh=2014025838, kcdm=1705045, xn=2015-2016, cj=60, kcxz=必修, xq=1, kcmc=物联网结构与数据分析, xf=3.0}
 		try {
 			ArrayList<Map> grade = spider.getGrade();
+//			System.out.println(grade);
 			for (Map item: grade) {
 				log.info(item.toString());
 				ArrayList<Map> items = (ArrayList)item.get("items");
@@ -43,6 +44,7 @@ public class AppSpiderTest {
 				Object xq = item.get("xq");
 				for(Map detail: items) {
 					Course course = new Course();
+
 					String uid = detail.get("kcdm").toString();
 					String type = detail.get("kcxz").toString();
 					String name = detail.get("kcmc").toString();
