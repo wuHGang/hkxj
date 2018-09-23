@@ -8,6 +8,9 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+/**
+ * @author junrong.chen
+ */
 @Mapper
 @Repository
 public interface OpenidMapper {
