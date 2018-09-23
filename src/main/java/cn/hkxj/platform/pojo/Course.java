@@ -1,21 +1,27 @@
 package cn.hkxj.platform.pojo;
 
+import com.google.common.base.MoreObjects;
+import com.google.common.base.Objects;
+
 import java.util.Date;
 
+/**
+ * @author junrong.chen
+ */
 public class Course {
-    private Integer id;
+    private int id;
 
     private String uid;
 
     private String name;
 
-    private Float credit;
+    private int credit;
 
-    private Byte type;
+    private CourseType type;
 
     private Date gmtCreate;
 
-    public Integer getId() {
+    public int getId() {
         return id;
     }
 
@@ -39,19 +45,19 @@ public class Course {
         this.name = name == null ? null : name.trim();
     }
 
-    public Float getCredit() {
+    public Integer getCredit() {
         return credit;
     }
 
-    public void setCredit(Float credit) {
+    public void setCredit(Integer credit) {
         this.credit = credit;
     }
 
-    public Byte getType() {
+    public CourseType getType() {
         return type;
     }
 
-    public void setType(Byte type) {
+    public void setType(CourseType type) {
         this.type = type;
     }
 
@@ -62,4 +68,16 @@ public class Course {
     public void setGmtCreate(Date gmtCreate) {
         this.gmtCreate = gmtCreate;
     }
+
+	@Override
+	public String toString() {
+		return MoreObjects.toStringHelper(this)
+				.add("id", id)
+				.add("uid", uid)
+				.add("name", name)
+				.add("credit", credit)
+				.add("type", type)
+				.add("gmtCreate", gmtCreate)
+				.toString();
+	}
 }
