@@ -29,8 +29,6 @@ public class HandlerRouteService {
 	ExampleTemplateHandler exampleTemplateHandler;
 
 	public void handlerRegister() {
-		System.out.println("register");
-
 		router
 				.rule()
 				.async(false)

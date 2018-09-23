@@ -4,11 +4,11 @@
   <resultMap id="BaseResultMap" type="cn.hkxj.platform.pojo.Grade">
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="account" jdbcType="INTEGER" property="account" />
-    <result column="course_id" jdbcType="INTEGER" property="courseId" />
-    <result column="year" jdbcType="DATE" property="year" />
-    <result column="term" jdbcType="SMALLINT" property="term" />
-    <result column="score" jdbcType="REAL" property="score" />
-    <result column="point" jdbcType="REAL" property="point" />
+    <result column="course_id" jdbcType="VARCHAR" property="courseId" />
+    <result column="year" jdbcType="INTEGER" property="year" />
+    <result column="term" jdbcType="TINYINT" property="term" />
+    <result column="score" jdbcType="INTEGER" property="score" />
+    <result column="point" jdbcType="INTEGER" property="point" />
     <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
   </resultMap>
   <sql id="Base_Column_List">
@@ -29,11 +29,11 @@
       SELECT LAST_INSERT_ID()
     </selectKey>
     insert into grade (account, course_id, year, 
-      term, score, point, gmt_create
-      )
-    values (#{account,jdbcType=INTEGER}, #{courseId,jdbcType=INTEGER}, #{year,jdbcType=DATE}, 
-      #{term,jdbcType=SMALLINT}, #{score,jdbcType=REAL}, #{point,jdbcType=REAL}, #{gmtCreate,jdbcType=TIMESTAMP}
-      )
+      term, score, point, 
+      gmt_create)
+    values (#{account,jdbcType=INTEGER}, #{courseId,jdbcType=VARCHAR}, #{year,jdbcType=INTEGER}, 
+      #{term,jdbcType=TINYINT}, #{score,jdbcType=INTEGER}, #{point,jdbcType=INTEGER}, 
+      #{gmtCreate,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="cn.hkxj.platform.pojo.Grade">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
@@ -68,19 +68,19 @@
         #{account,jdbcType=INTEGER},
       </if>
       <if test="courseId != null">
-        #{courseId,jdbcType=INTEGER},
+        #{courseId,jdbcType=VARCHAR},
       </if>
       <if test="year != null">
-        #{year,jdbcType=DATE},
+        #{year,jdbcType=INTEGER},
       </if>
       <if test="term != null">
-        #{term,jdbcType=SMALLINT},
+        #{term,jdbcType=TINYINT},
       </if>
       <if test="score != null">
-        #{score,jdbcType=REAL},
+        #{score,jdbcType=INTEGER},
       </if>
       <if test="point != null">
-        #{point,jdbcType=REAL},
+        #{point,jdbcType=INTEGER},
       </if>
       <if test="gmtCreate != null">
         #{gmtCreate,jdbcType=TIMESTAMP},
@@ -94,19 +94,19 @@
         account = #{account,jdbcType=INTEGER},
       </if>
       <if test="courseId != null">
-        course_id = #{courseId,jdbcType=INTEGER},
+        course_id = #{courseId,jdbcType=VARCHAR},
       </if>
       <if test="year != null">
-        year = #{year,jdbcType=DATE},
+        year = #{year,jdbcType=INTEGER},
       </if>
       <if test="term != null">
-        term = #{term,jdbcType=SMALLINT},
+        term = #{term,jdbcType=TINYINT},
       </if>
       <if test="score != null">
-        score = #{score,jdbcType=REAL},
+        score = #{score,jdbcType=INTEGER},
       </if>
       <if test="point != null">
-        point = #{point,jdbcType=REAL},
+        point = #{point,jdbcType=INTEGER},
       </if>
       <if test="gmtCreate != null">
         gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
@@ -117,11 +117,11 @@
   <update id="updateByPrimaryKey" parameterType="cn.hkxj.platform.pojo.Grade">
     update grade
     set account = #{account,jdbcType=INTEGER},
-      course_id = #{courseId,jdbcType=INTEGER},
-      year = #{year,jdbcType=DATE},
-      term = #{term,jdbcType=SMALLINT},
-      score = #{score,jdbcType=REAL},
-      point = #{point,jdbcType=REAL},
+      course_id = #{courseId,jdbcType=VARCHAR},
+      year = #{year,jdbcType=INTEGER},
+      term = #{term,jdbcType=TINYINT},
+      score = #{score,jdbcType=INTEGER},
+      point = #{point,jdbcType=INTEGER},
       gmt_create = #{gmtCreate,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
   </update>

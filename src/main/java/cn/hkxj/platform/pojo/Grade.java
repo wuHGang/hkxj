@@ -1,5 +1,7 @@
 package cn.hkxj.platform.pojo;
 
+import com.google.common.base.MoreObjects;
+
 import java.util.Date;
 
 public class Grade {
@@ -7,15 +9,15 @@ public class Grade {
 
     private Integer account;
 
-    private Integer courseId;
+    private String courseId;
 
-    private Date year;
+    private Integer year;
 
-    private Short term;
+    private Byte term;
 
-    private Float score;
+    private Integer score;
 
-    private Float point;
+    private Integer point;
 
     private Date gmtCreate;
 
@@ -35,43 +37,43 @@ public class Grade {
         this.account = account;
     }
 
-    public Integer getCourseId() {
+    public String getCourseId() {
         return courseId;
     }
 
-    public void setCourseId(Integer courseId) {
-        this.courseId = courseId;
+    public void setCourseId(String courseId) {
+        this.courseId = courseId == null ? null : courseId.trim();
     }
 
-    public Date getYear() {
+    public Integer getYear() {
         return year;
     }
 
-    public void setYear(Date year) {
+    public void setYear(Integer year) {
         this.year = year;
     }
 
-    public Short getTerm() {
+    public Byte getTerm() {
         return term;
     }
 
-    public void setTerm(Short term) {
+    public void setTerm(Byte term) {
         this.term = term;
     }
 
-    public Float getScore() {
+    public Integer getScore() {
         return score;
     }
 
-    public void setScore(Float score) {
+    public void setScore(Integer score) {
         this.score = score;
     }
 
-    public Float getPoint() {
+    public Integer getPoint() {
         return point;
     }
 
-    public void setPoint(Float point) {
+    public void setPoint(Integer point) {
         this.point = point;
     }
 
@@ -82,4 +84,19 @@ public class Grade {
     public void setGmtCreate(Date gmtCreate) {
         this.gmtCreate = gmtCreate;
     }
+
+
+	@Override
+	public String toString() {
+		return MoreObjects.toStringHelper(this)
+				.add("id", id)
+				.add("account", account)
+				.add("courseId", courseId)
+				.add("year", year)
+				.add("term", term)
+				.add("score", score)
+				.add("point", point)
+				.add("gmtCreate", gmtCreate)
+				.toString();
+	}
 }

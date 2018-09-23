@@ -1,13 +1,19 @@
 package cn.hkxj.platform.service.spider;
 
+import cn.hkxj.platform.pojo.AllGradeAndCourse;
 import cn.hkxj.platform.pojo.Course;
+import cn.hkxj.platform.pojo.CourseType;
+import cn.hkxj.platform.pojo.Grade;
 import cn.hkxj.platform.spider.AppSpider;
+import cn.hkxj.platform.utils.TypeUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.coyote.http2.ByteUtil;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Map;
 
 /**
@@ -18,10 +24,11 @@ import java.util.Map;
 @Slf4j
 public class AppSpiderTest {
 	private AppSpider spider;
+	private int account = 2015025838;
 
 	@Before
 	public void setUp() throws Exception {
-		spider = new AppSpider(2015025838);
+		spider = new AppSpider(account);
 		spider.getToken();
 	}
 
@@ -31,43 +38,20 @@ public class AppSpiderTest {
 	}
 
 	@Test
-	public void getGrade() {
-//		{xh=2015025838, kcdm=1705045, xn=2016-2017, cj=76, kcxz=必修, xq=1, kcmc=物联网结构与数据分析, xf=3.0
-//		{xh=2014025838, kcdm=1705045, xn=2015-2016, cj=60, kcxz=必修, xq=1, kcmc=物联网结构与数据分析, xf=3.0}
-		try {
-			ArrayList<Map> grade = spider.getGrade();
-			for (Map item: grade) {
-				log.info(item.toString());
-				ArrayList<Map> items = (ArrayList)item.get("items");
-				Object xn = item.get("xn");
-				Object xq = item.get("xq");
-				for(Map detail: items) {
-					String uid = detail.get("kcdm").toString();
-					String type = detail.get("kcxz").toString();
-					String name = detail.get("kcmc").toString();
-					String cj = detail.get("cj").toString();
-					Double xf = (Double)detail.get("xf");
-//					log.info(detail.toString());
-//					break;
-				}
-//				log.info(items.toString());
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	public void getGrade() throws IOException {
+		AllGradeAndCourse gradeAndCourse = spider.getGradeAndCourse();
+		log.info(gradeAndCourse.toString());
 	}
 
 	@Test
 	public void getLesson() {
-		try {
-			System.out.println(spider.getLesson());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+
+		System.out.println(spider.getLesson());
+
 	}
 
 	@Test
-	public void getSchedule() throws IOException {
+	public void getSchedule() {
 		/*
 		 *
 		 */
@@ -85,9 +69,19 @@ public class AppSpiderTest {
 	}
 
 	@Test
-	public void getExam() throws IOException {
+	public void getExam() {
 		ArrayList list = spider.getExam();
 		System.out.println(list);
 	}
 
+	@Test
+	public void yearToDate(){
+		double cj = 3.5;
+
+	}
+
+	private static int xnToYear(String xn){
+		String[] split = xn.split("-");
+		return Integer.parseInt(split[0]);
+	}
 }
