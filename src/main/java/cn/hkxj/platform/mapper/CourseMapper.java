@@ -1,9 +1,16 @@
 package cn.hkxj.platform.mapper;
 
 import cn.hkxj.platform.pojo.Course;
+import org.apache.ibatis.annotations.Mapper;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+/**
+ * @author junrong.chen
+ */
+@Mapper
+@Repository
 public interface CourseMapper {
     int deleteByPrimaryKey(Integer id);
 
@@ -19,7 +26,7 @@ public interface CourseMapper {
 
     int insertStudentAndCourse(int account, String uid);
 
-    List<Integer> getCourseIdsByStudentId(Integer studentId);
+    List<Integer> getCourseIdsByClassId(Integer classId);
 
-    List<Course> getCoursesByIds(String ids);
+    List<Course> getAllCourses(String ids);
 }
