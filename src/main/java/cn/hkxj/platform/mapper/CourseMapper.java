@@ -3,6 +3,8 @@ package cn.hkxj.platform.mapper;
 import cn.hkxj.platform.pojo.Course;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.List;
+
 /**
  * @author junrong.chen
  */
@@ -21,4 +23,8 @@ public interface CourseMapper {
     int updateByPrimaryKey(Course record);
 
     int insertStudentAndCourse(int account, String uid);
+
+    List<Integer> getCourseIdsByStudentId(Integer studentId);
+
+    List<Course> getCoursesByIds(String ids);
 }
