@@ -101,4 +101,15 @@
       gmt_create = #{gmtCreate,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+  <insert id="insertStudentAndCourse">
+    insert into student_course (student_id, course_id) values(#{0}, #{1})
+  </insert>
+
+  <select id="getCourseIdsByStudentId" parameterType="Integer" resultType="Integer">
+    select course_id from student_course where student_id = #{studentId}
+  </select>
+  <select id="getCoursesByIds" parameterType="String" resultType="cn.hkxj.platform.pojo.Course">
+    select * from course where id IN ${value}
+  </select>
 </mapper>
