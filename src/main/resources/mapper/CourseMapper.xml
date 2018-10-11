@@ -5,8 +5,8 @@
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="uid" jdbcType="VARCHAR" property="uid" />
     <result column="name" jdbcType="VARCHAR" property="name" />
-    <result column="credit" jdbcType="INTEGER" property="credit" />
-    <result column="type" jdbcType="TINYINT" property="type" typeHandler="cn.hkxj.platform.handler.CourseTypeHandler" />
+    <result column="credit" jdbcType="REAL" property="credit" />
+    <result column="type" jdbcType="TINYINT" property="type" />
     <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
   </resultMap>
   <sql id="Base_Column_List">
@@ -26,12 +26,10 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert ignore into course (uid, name, credit,
-      type, 
-      gmt_create)
-    values (#{uid,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{credit,jdbcType=INTEGER}, 
-      #{type,jdbcType=TINYINT,typeHandler=cn.hkxj.platform.handler.CourseTypeHandler}, 
-      #{gmtCreate,jdbcType=TIMESTAMP})
+    insert into course (uid, name, credit,
+    type, gmt_create)
+    values (#{uid,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{credit,jdbcType=REAL},
+    #{type,jdbcType=TINYINT}, #{gmtCreate,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="cn.hkxj.platform.pojo.Course">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
@@ -63,10 +61,10 @@
         #{name,jdbcType=VARCHAR},
       </if>
       <if test="credit != null">
-        #{credit,jdbcType=INTEGER},
+        #{credit,jdbcType=REAL},
       </if>
       <if test="type != null">
-        #{type,jdbcType=TINYINT,typeHandler=cn.hkxj.platform.handler.CourseTypeHandler},
+        #{type,jdbcType=TINYINT},
       </if>
       <if test="gmtCreate != null">
         #{gmtCreate,jdbcType=TIMESTAMP},
@@ -86,10 +84,10 @@
         name = #{name,jdbcType=VARCHAR},
       </if>
       <if test="credit != null">
-        credit = #{credit,jdbcType=INTEGER},
+        credit = #{credit,jdbcType=REAL},
       </if>
       <if test="type != null">
-        type = #{type,jdbcType=TINYINT,typeHandler=cn.hkxj.platform.handler.CourseTypeHandler},
+        type = #{type,jdbcType=TINYINT},
       </if>
       <if test="gmtCreate != null">
         gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
@@ -101,8 +99,8 @@
     update course
     set uid = #{uid,jdbcType=VARCHAR},
       name = #{name,jdbcType=VARCHAR},
-      credit = #{credit,jdbcType=INTEGER},
-      type = #{type,jdbcType=TINYINT,typeHandler=cn.hkxj.platform.handler.CourseTypeHandler},
+      credit = #{credit,jdbcType=REAL},
+      type = #{type,jdbcType=TINYINT},
       gmt_create = #{gmtCreate,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
   </update>
