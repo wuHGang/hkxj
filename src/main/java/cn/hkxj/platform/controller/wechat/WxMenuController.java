@@ -52,18 +52,10 @@ public class WxMenuController implements WxMpMenuService {
 		button1.setName("今日歌曲");
 		button1.setKey("V1001_TODAY_MUSIC");
 
-//        WxMenuButton button2 = new WxMenuButton();
-//        button2.setType(WxConsts.BUTTON_MINIPROGRAM);
-//        button2.setName("小程序");
-//        button2.setAppId("wx286b93c14bbf93aa");
-//        button2.setPagePath("pages/lunar/index.html");
-//        button2.setUrl("http://mp.weixin.qq.com");
-
 		WxMenuButton button3 = new WxMenuButton();
 		button3.setName("菜单");
 
 		menu.getButtons().add(button1);
-//        menu.getButtons().add(button2);
 		menu.getButtons().add(button3);
 
 		WxMenuButton button31 = new WxMenuButton();
