@@ -1,5 +1,7 @@
 package cn.hkxj.platform.pojo;
 
+import com.google.common.base.MoreObjects;
+
 import java.util.Date;
 
 public class Course {
@@ -61,5 +63,17 @@ public class Course {
 
     public void setGmtCreate(Date gmtCreate) {
         this.gmtCreate = gmtCreate;
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("id", id)
+                .add("uid", uid)
+                .add("name", name)
+                .add("credit", credit)
+                .add("type", type)
+                .add("gmtCreate", gmtCreate)
+                .toString();
     }
 }

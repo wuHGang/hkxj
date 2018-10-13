@@ -1,5 +1,7 @@
 package cn.hkxj.platform.pojo;
 
+import com.google.common.base.MoreObjects;
+
 import java.util.Objects;
 
 /**
@@ -56,6 +58,24 @@ public enum Academy {
         return null;
     }
 
+    public static Integer getAcademyCodeByName(String name){
+        for(Academy aca : Academy.values()){
+            if(Objects.equals(aca.getAcademyName(), name)){
+                return aca.getAcademyCode();
+            }
+        }
+        return null;
+    }
+
+    public static Integer getAcademyCodeBySimpleName(String simpleName){
+        for(Academy aca : Academy.values()){
+            if(Objects.equals(aca.getAcademySimpleName(), simpleName)){
+                return aca.getAcademyCode();
+            }
+        }
+        return null;
+    }
+
     public String getAcademyName() {
         return academyName;
     }
@@ -68,4 +88,12 @@ public enum Academy {
         return academyCode;
     }
 
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("academyName", academyName)
+                .add("academySimpleName", academySimpleName)
+                .add("academyCode", academyCode)
+                .toString();
+    }
 }

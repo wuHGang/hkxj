@@ -1,5 +1,7 @@
 package cn.hkxj.platform.pojo;
 
+import com.google.common.base.MoreObjects;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -566,5 +568,14 @@ public class ClassesExample {
         protected Criterion(String condition, Object value, Object secondValue) {
             this(condition, value, secondValue, null);
         }
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("orderByClause", orderByClause)
+                .add("distinct", distinct)
+                .add("oredCriteria", oredCriteria)
+                .toString();
     }
 }

@@ -5,15 +5,15 @@
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="uid" jdbcType="VARCHAR" property="uid" />
     <result column="name" jdbcType="VARCHAR" property="name" />
-    <result column="credit" jdbcType="REAL" property="credit" />
-    <result column="type" jdbcType="TINYINT" property="type" />
+    <result column="credit" jdbcType="INTEGER" property="credit" />
+    <result column="type" jdbcType="TINYINT" property="type" typeHandler="cn.hkxj.platform.handler.CourseTypeHandler" />
     <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
   </resultMap>
   <sql id="Base_Column_List">
     id, uid, name, credit, type, gmt_create
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-    select 
+    select
     <include refid="Base_Column_List" />
     from course
     where id = #{id,jdbcType=INTEGER}
@@ -26,10 +26,12 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into course (uid, name, credit,
-    type, gmt_create)
-    values (#{uid,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{credit,jdbcType=REAL},
-    #{type,jdbcType=TINYINT}, #{gmtCreate,jdbcType=TIMESTAMP})
+    insert ignore into course (uid, name, credit,
+    type,
+    gmt_create)
+    values (#{uid,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{credit,jdbcType=INTEGER},
+    #{type,jdbcType=TINYINT,typeHandler=cn.hkxj.platform.handler.CourseTypeHandler},
+    #{gmtCreate,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="cn.hkxj.platform.pojo.Course">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
@@ -61,20 +63,20 @@
         #{name,jdbcType=VARCHAR},
       </if>
       <if test="credit != null">
-        #{credit,jdbcType=REAL},
+        #{credit,jdbcType=INTEGER},
       </if>
       <if test="type != null">
-        #{type,jdbcType=TINYINT},
+        #{type,jdbcType=TINYINT,typeHandler=cn.hkxj.platform.handler.CourseTypeHandler},
       </if>
       <if test="gmtCreate != null">
         #{gmtCreate,jdbcType=TIMESTAMP},
       </if>
     </trim>
   </insert>
-    <insert id="insertStudentAndCourse">
-        insert into student_course (student_id, course_id) values(#{0}, #{1})
-    </insert>
-    <update id="updateByPrimaryKeySelective" parameterType="cn.hkxj.platform.pojo.Course">
+  <insert id="insertStudentAndCourse">
+    insert into student_course (student_id, course_id) values(#{0}, #{1})
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.hkxj.platform.pojo.Course">
     update course
     <set>
       <if test="uid != null">
@@ -84,10 +86,10 @@
         name = #{name,jdbcType=VARCHAR},
       </if>
       <if test="credit != null">
-        credit = #{credit,jdbcType=REAL},
+        credit = #{credit,jdbcType=INTEGER},
       </if>
       <if test="type != null">
-        type = #{type,jdbcType=TINYINT},
+        type = #{type,jdbcType=TINYINT,typeHandler=cn.hkxj.platform.handler.CourseTypeHandler},
       </if>
       <if test="gmtCreate != null">
         gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
@@ -98,18 +100,18 @@
   <update id="updateByPrimaryKey" parameterType="cn.hkxj.platform.pojo.Course">
     update course
     set uid = #{uid,jdbcType=VARCHAR},
-      name = #{name,jdbcType=VARCHAR},
-      credit = #{credit,jdbcType=REAL},
-      type = #{type,jdbcType=TINYINT},
-      gmt_create = #{gmtCreate,jdbcType=TIMESTAMP}
+    name = #{name,jdbcType=VARCHAR},
+    credit = #{credit,jdbcType=INTEGER},
+    type = #{type,jdbcType=TINYINT,typeHandler=cn.hkxj.platform.handler.CourseTypeHandler},
+    gmt_create = #{gmtCreate,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
   </update>
-    <select id="getCourseIdsByClassId" parameterType="Integer" resultType="Integer">
-        select course_id from class_course where class_id = #{classId}
-    </select>
-    <select id="getAllCourses" parameterType="String" resultType="cn.hkxj.platform.pojo.Course">
-        select
-        <include refid="Base_Column_List"/>
-         from course where id IN ${value}
-    </select>
+  <select id="getCourseIdsByClassId" parameterType="Integer" resultType="Integer">
+    select course_id from class_course where class_id = #{classId}
+  </select>
+  <select id="getAllCourses" parameterType="String" resultType="cn.hkxj.platform.pojo.Course">
+    select
+    <include refid="Base_Column_List"/>
+    from course where id IN ${value}
+  </select>
 </mapper>

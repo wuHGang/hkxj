@@ -3,10 +3,7 @@ package cn.hkxj.platform.service.wechat.common.course.impl;
 import cn.hkxj.platform.mapper.ClassesMapper;
 import cn.hkxj.platform.mapper.CourseMapper;
 import cn.hkxj.platform.mapper.StudentMapper;
-import cn.hkxj.platform.pojo.Classes;
-import cn.hkxj.platform.pojo.ClassesExample;
-import cn.hkxj.platform.pojo.Course;
-import cn.hkxj.platform.pojo.Student;
+import cn.hkxj.platform.pojo.*;
 import cn.hkxj.platform.service.wechat.common.course.CourseService;
 import cn.hkxj.platform.utils.JsonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,27 +30,52 @@ public class CourseServiceImpl implements CourseService{
     private  CourseMapper courseMapper;
 
     @Override
-    public String getCoursesByAccount(Integer account) {
+    public List<Course> getCoursesByAccount(Integer account) {
         Student student = studentMapper.selectByAccount(account);
-        String classname = student.getClassname();
+        String[] targets = getClassnameAndYearAndNum(student.getClassname());
+        Integer academyCode = Academy.getAcademyCodeByName(student.getAcademy());
+
+        ClassesExample classesExample = new ClassesExample();
+        ClassesExample.Criteria criteria = classesExample.createCriteria();
+        criteria.andNameEqualTo(targets[0]);
+        criteria.andYearEqualTo(Integer.parseInt(targets[1]));
+        criteria.andNumEqualTo(Integer.parseInt(targets[2]));
+        criteria.andAcademyEqualTo(academyCode);
+
+        List<Classes> classesList = classesMapper.selectByExample(classesExample);
+        List<Integer> courseIds = courseMapper.getCourseIdsByClassId(classesList.get(0).getId());
+        List<Course> courses = courseMapper.getAllCourses(getIdsString(courseIds));
+
+        return courses;
+    }
+
+    /**
+     * 将传入的字符串切割成班级名 年级 班级序号
+     * @param classname student表中字段classname的值
+     * @return new String[] {班级名, 年级, 班级序号}
+     */
+    private String[] getClassnameAndYearAndNum(String classname){
         String[] strs = classname.split("-");
-        String year = null;
+        String[] targets = new String[3];
+        targets[2] = strs[1];
         int length = strs[0].length();
         for(int i = 0; i < length; i++){
             char c = strs[0].charAt(i);
             if(c >= '0' && c <= '9'){
-                year = strs[0].substring(i, length);        //year代表第几级 如16级
-                strs[0] = strs[0].substring(0, i);          //此时的strs[0]是专业名,strs[1]是班级在所在的序号
-                break;
+                targets[1] = strs[0].substring(i, length);        //year代表第几级 如16级
+                targets[0] = strs[0].substring(0, i);          //此时的strs[0]是专业名,strs[1]是班级在所在的序号
+                return targets;
             }
         }
-        ClassesExample classesExample = new ClassesExample();
-        ClassesExample.Criteria criteria = classesExample.createCriteria();
-        criteria.andNameEqualTo(strs[0]);
-        criteria.andYearEqualTo(Integer.parseInt(year));
-        criteria.andNumEqualTo(Integer.parseInt(strs[1]));
-        List<Classes> classesList = classesMapper.selectByExample(classesExample);
-        List<Integer> courseIds = courseMapper.getCourseIdsByClassId(classesList.get(0).getId());
+        return targets;
+    }
+
+    /**
+     * 将包含课程编号的list转换成(数字,数字)的形式
+     * @param courseIds 包含课程id的列表
+     * @return (数字,数字);
+     */
+    private String getIdsString(List<Integer> courseIds){
         StringBuilder builder = new StringBuilder();
         builder.append("(" + courseIds.get(0) + ",");
         int size = courseIds.size();
@@ -61,7 +83,6 @@ public class CourseServiceImpl implements CourseService{
             builder.append(courseIds.get(i) + ",");
         }
         builder.append(courseIds.get(size - 1) + ")");
-        List<Course> courses = courseMapper.getAllCourses(builder.toString());
-        return JsonUtils.toJson(courses);
+        return builder.toString();
     }
 }
