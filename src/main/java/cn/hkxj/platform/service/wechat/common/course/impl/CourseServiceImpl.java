@@ -37,7 +37,7 @@ public class CourseServiceImpl implements CourseService{
 
     @Override
     public List<CourseTimeTable> getCoursesByAccount(Integer account) {
-       List<Integer> courseIds = getCourseIds(account);
+        List<Integer> courseIds = getCourseIds(account);
         if(courseIds.size() == 0){
             logger.error("没有相关的课程，查询失败");
             throw new RuntimeException("没有相关的课程，查询失败");
