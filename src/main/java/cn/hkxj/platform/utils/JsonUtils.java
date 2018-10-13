@@ -12,7 +12,7 @@ import java.util.HashMap;
 public class JsonUtils {
 	private static final Gson gson = new Gson();
 
-	public static String toJson(Object obj) {
+	public static String wxToJson(Object obj) {
 		return WxMpGsonBuilder.create().toJson(obj);
 	}
 
