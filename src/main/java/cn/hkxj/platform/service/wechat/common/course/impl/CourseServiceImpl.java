@@ -63,8 +63,6 @@ public class CourseServiceImpl implements CourseService{
             });
         });
 
-        System.out.println("在这停顿");
-
         return courseTimeTables;
     }
 

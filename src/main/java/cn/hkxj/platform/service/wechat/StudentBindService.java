@@ -9,7 +9,6 @@ import cn.hkxj.platform.pojo.Openid;
 import cn.hkxj.platform.pojo.OpenidExample;
 import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.spider.UrpSpider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -31,12 +30,27 @@ public class StudentBindService {
             saveOpenid(openid, account);
         }
         else {
-            Student student = getStudent(account, password);
+            Student student = getStudentBySpider(account, password);
             studentMapper.insertByStudent(student);
             saveOpenid(openid, account);
         }
 
     }
+
+	/**
+	 * 用于学生从非微信渠道登录
+	 * @param account 账号
+	 * @param password 密码
+	 * @return 学生信息
+	 */
+	public Student studentLogin(String account, String password) throws PasswordUncorrectException {
+		Student student = getStudentByDB(account);
+		if (student == null){
+			student = getStudentBySpider(account, password);
+			saveStudent(student);
+		}
+		return student;
+	}
 
     private boolean isStudentBind(String openid) {
         OpenidExample openidExample = new OpenidExample();
@@ -44,18 +58,22 @@ public class StudentBindService {
                 .createCriteria()
                 .andOpenidEqualTo(openid);
         List<Openid> openids = openidMapper.selectByExample(openidExample);
-        return !(openids.size()==0);
+        return openids.size() != 0;
     }
 
     private boolean isStudentExist(String account) {
         Student student = studentMapper.selectByAccount(Integer.parseInt(account));
-        return !(student==null);
+        return student!=null;
     }
 
-    private Student getStudent(String account, String password) throws PasswordUncorrectException, ReadTimeoutException {
+    private Student getStudentBySpider(String account, String password) throws PasswordUncorrectException, ReadTimeoutException {
         UrpSpider urpSpider = new UrpSpider(account, password);
 
         return urpSpider.getInformation();
+    }
+
+    private Student getStudentByDB(String account) {
+	    return studentMapper.selectByAccount(Integer.parseInt(account));
     }
 
     private int saveStudent(Student student) {

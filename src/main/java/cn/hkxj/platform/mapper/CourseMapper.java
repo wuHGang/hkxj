@@ -29,4 +29,5 @@ public interface CourseMapper {
     List<Integer> getCourseIdsByClassId(Integer classId);
 
     List<Course> getAllCourses(String ids);
+
 }
