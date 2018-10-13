@@ -6,13 +6,11 @@ import cn.hkxj.platform.mapper.CourseTimeTableMapper;
 import cn.hkxj.platform.mapper.StudentMapper;
 import cn.hkxj.platform.pojo.*;
 import cn.hkxj.platform.service.wechat.common.course.CourseService;
-import cn.hkxj.platform.utils.JsonUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
-import javax.annotation.PostConstruct;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -22,6 +20,8 @@ import java.util.Objects;
  */
 @Service
 public class CourseServiceImpl implements CourseService{
+
+    private static final Logger logger = LoggerFactory.getLogger(CourseServiceImpl.class);
 
     @Autowired
     private StudentMapper studentMapper;
@@ -37,19 +37,11 @@ public class CourseServiceImpl implements CourseService{
 
     @Override
     public List<CourseTimeTable> getCoursesByAccount(Integer account) {
-        Student student = studentMapper.selectByAccount(account);
-        String[] targets = getClassnameAndYearAndNum(student.getClassname());
-        Integer academyCode = Academy.getAcademyCodeByName(student.getAcademy());
-
-        ClassesExample classesExample = new ClassesExample();
-        ClassesExample.Criteria criteria = classesExample.createCriteria();
-        criteria.andNameEqualTo(targets[0]);
-        criteria.andYearEqualTo(Integer.parseInt(targets[1]));
-        criteria.andNumEqualTo(Integer.parseInt(targets[2]));
-        criteria.andAcademyEqualTo(academyCode);
-
-        List<Classes> classesList = classesMapper.selectByExample(classesExample);
-        List<Integer> courseIds = courseMapper.getCourseIdsByClassId(classesList.get(0).getId());
+       List<Integer> courseIds = getCourseIds(account);
+        if(courseIds.size() == 0){
+            logger.error("没有相关的课程，查询失败");
+            throw new RuntimeException("没有相关的课程，查询失败");
+        }
 
         String ids = getIdsString(courseIds);
         List<Course> courses = courseMapper.getAllCourses(ids);
@@ -62,8 +54,6 @@ public class CourseServiceImpl implements CourseService{
                 }
             });
         });
-
-        System.out.println("在这停顿");
 
         return courseTimeTables;
     }
@@ -90,6 +80,16 @@ public class CourseServiceImpl implements CourseService{
     }
 
     /**
+     * 判断是否拥有课程
+     * @param account 序号
+     * @return boolean
+     */
+    public boolean isHaveCourses(Integer account){
+        List<Integer> courseIds = getCourseIds(account);
+        return courseIds.size() != 0;
+    }
+
+    /**
      * 将包含课程编号的list转换成(数字,数字)的形式
      * @param courseIds 包含课程id的列表
      * @return (数字,数字);
@@ -103,5 +103,33 @@ public class CourseServiceImpl implements CourseService{
         }
         builder.append(courseIds.get(size - 1) + ")");
         return builder.toString();
+    }
+
+    /**
+     * 返回一个包含对应学生信息的classes对象
+     * @param strs 包含有专业名，年级，班级序号
+     * @param academy 学院名
+     * @return classes对象
+     */
+    private Classes getStudentClasses(String[] strs, String academy){
+        ClassesExample example = new ClassesExample();
+        ClassesExample.Criteria criteria = example.createCriteria();
+        criteria.andNameEqualTo(strs[0]);
+        criteria.andYearEqualTo(Integer.parseInt(strs[1]));
+        criteria.andNumEqualTo(Integer.parseInt(strs[2]));
+        criteria.andAcademyEqualTo(Academy.getAcademyCodeByName(academy));
+        List<Classes> classesList = classesMapper.selectByExample(example);
+        return classesList.get(0);
+    }
+
+    /**
+     * 获取相关的课程id列表
+     * @param account 学号
+     * @return 课程id列表
+     */
+    private List<Integer> getCourseIds(Integer account){
+        Student student = studentMapper.selectByAccount(account);
+        String[] strs = getClassnameAndYearAndNum(student.getClassname());
+        return courseMapper.getCourseIdsByClassId(getStudentClasses(strs, student.getAcademy()).getId());
     }
 }
