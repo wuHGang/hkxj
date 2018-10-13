@@ -8,12 +8,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 @Slf4j
 public class UrpSpiderTest {
-	UrpSpider spider;
+	private UrpSpider spider;
 	private final static Gson gson = new Gson();
 
 	@Before
@@ -42,5 +40,15 @@ public class UrpSpiderTest {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Test
+	public void getCurrent() throws IOException, PasswordUncorrectException {
+		spider.getCurrentGrade();
+	}
+
+	@Test
+	public void getEver() throws IOException, PasswordUncorrectException {
+		spider.getEverGrade();
 	}
 }

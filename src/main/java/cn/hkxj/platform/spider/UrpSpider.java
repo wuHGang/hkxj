@@ -3,6 +3,7 @@ package cn.hkxj.platform.spider;
 import cn.hkxj.platform.exceptions.PasswordUncorrectException;
 import cn.hkxj.platform.exceptions.ReadTimeoutException;
 import cn.hkxj.platform.pojo.Student;
+import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
@@ -20,9 +21,11 @@ public class UrpSpider {
 	private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 	private String account;
 	private String password;
-	private final static Gson gson = new Gson();
-	private static final String informationURL = "http://119.29.119.49:10086/information";
-	private static final String gradeURL = "http://119.29.119.49:10086/grade";
+	private final static Gson GSON = new Gson();
+	private static final String INFORMATION_URL = "http://119.29.119.49:10086/information";
+	private static final String GRADE_URL = "http://119.29.119.49:10086/grade";
+	private static final String CURRENT_GRADE_URL = GRADE_URL+"/current";
+	private static final String EVER_GRADE_URL = GRADE_URL+"/ever";
 	private static OkHttpClient client = new OkHttpClient.Builder()
 			.connectTimeout(15, TimeUnit.SECONDS)
 			.build();
@@ -32,10 +35,10 @@ public class UrpSpider {
 		this.password = password;
 	}
 
-	public Student getInformaton() throws PasswordUncorrectException, ReadTimeoutException {
+	public Student getInformation() throws PasswordUncorrectException, ReadTimeoutException {
 		Map result = null;
 		try {
-			result = getResult(informationURL);
+			result = getResult(INFORMATION_URL);
 		} catch (IOException e) {
 			throw new ReadTimeoutException("本地服务器读取超时", e);
 		}
@@ -47,17 +50,26 @@ public class UrpSpider {
 		Student student = new Student();
 		try {
 			BeanUtils.populate(student, information);
-		} catch (IllegalAccessException e) {
+		} catch (IllegalAccessException | InvocationTargetException e) {
 			log.error(e.getMessage());
-		} catch (InvocationTargetException e) {
-			log.error(e.getMessage());
+			throw new RuntimeException("个人信息json解析出错", e);
 		}
 
 		return student;
 	}
 
 	public void getGrade() throws IOException, PasswordUncorrectException {
-		Map result = getResult(gradeURL);
+		Map result = getResult(GRADE_URL);
+		log.info(result.toString());
+	}
+
+	public void getCurrentGrade() throws IOException, PasswordUncorrectException {
+		Map result = getResult(CURRENT_GRADE_URL);
+		log.info(result.toString());
+	}
+
+	public void getEverGrade() throws IOException, PasswordUncorrectException {
+		Map result = getResult(EVER_GRADE_URL);
 		log.info(result.toString());
 	}
 
@@ -71,7 +83,7 @@ public class UrpSpider {
 
 		String result = response.body().string();
 
-		HashMap resultMap = gson.fromJson(result, HashMap.class);
+		HashMap resultMap = GSON.fromJson(result, HashMap.class);
 		Double statu = (Double) resultMap.get("statu");
 
 		if(statu.intValue() == 400) {
@@ -84,10 +96,10 @@ public class UrpSpider {
 	}
 
 	private RequestBody getRequestBody() {
-		HashMap<String, String> postData = new HashMap<String, String>();
+		HashMap<String, String> postData = Maps.newHashMapWithExpectedSize(2);
 		postData.put("account", account);
 		postData.put("password", password);
-		String json = gson.toJson(postData);
+		String json = GSON.toJson(postData);
 
 		return RequestBody.create(JSON, json);
 	}

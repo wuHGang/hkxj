@@ -12,14 +12,15 @@ import cn.hkxj.platform.spider.UrpSpider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.List;
 
-@Service
+@Service("studentBindService")
 public class StudentBindService {
     private static final String template = "account: %s openid: %s is exist";
-    @Autowired
+    @Resource
     private StudentMapper studentMapper;
-    @Autowired
+    @Resource
     private OpenidMapper openidMapper;
 
     public void studentBind(String openid, String account, String password) throws PasswordUncorrectException, ReadTimeoutException, OpenidExistException {
@@ -54,7 +55,7 @@ public class StudentBindService {
     private Student getStudent(String account, String password) throws PasswordUncorrectException, ReadTimeoutException {
         UrpSpider urpSpider = new UrpSpider(account, password);
 
-        return urpSpider.getInformaton();
+        return urpSpider.getInformation();
     }
 
     private int saveStudent(Student student) {

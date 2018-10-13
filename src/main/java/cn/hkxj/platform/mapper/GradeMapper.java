@@ -2,10 +2,18 @@ package cn.hkxj.platform.mapper;
 
 import cn.hkxj.platform.pojo.Grade;
 import org.apache.ibatis.annotations.Mapper;
+<<<<<<< HEAD
 import org.springframework.stereotype.Repository;
 
 @Mapper
 @Repository
+=======
+
+/**
+ * @author junrong.chen
+ */
+@Mapper
+>>>>>>> forkOrigin/dev
 public interface GradeMapper {
     int deleteByPrimaryKey(Integer id);
 

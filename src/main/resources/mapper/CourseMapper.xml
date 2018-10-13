@@ -32,6 +32,11 @@
     values (#{uid,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{credit,jdbcType=INTEGER},
     #{type,jdbcType=TINYINT,typeHandler=cn.hkxj.platform.handler.CourseTypeHandler},
     #{gmtCreate,jdbcType=TIMESTAMP})
+      type,
+      gmt_create)
+    values (#{uid,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{credit,jdbcType=INTEGER}, 
+      #{type,jdbcType=TINYINT,typeHandler=cn.hkxj.platform.handler.CourseTypeHandler}, 
+      #{gmtCreate,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="cn.hkxj.platform.pojo.Course">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
@@ -76,7 +81,7 @@
   <insert id="insertStudentAndCourse">
     insert into student_course (student_id, course_id) values(#{0}, #{1})
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="cn.hkxj.platform.pojo.Course">
+    <update id="updateByPrimaryKeySelective" parameterType="cn.hkxj.platform.pojo.Course">
     update course
     <set>
       <if test="uid != null">
@@ -104,6 +109,10 @@
     credit = #{credit,jdbcType=INTEGER},
     type = #{type,jdbcType=TINYINT,typeHandler=cn.hkxj.platform.handler.CourseTypeHandler},
     gmt_create = #{gmtCreate,jdbcType=TIMESTAMP}
+      name = #{name,jdbcType=VARCHAR},
+      credit = #{credit,jdbcType=INTEGER},
+      type = #{type,jdbcType=TINYINT,typeHandler=cn.hkxj.platform.handler.CourseTypeHandler},
+      gmt_create = #{gmtCreate,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
   </update>
   <select id="getCourseIdsByClassId" parameterType="Integer" resultType="Integer">

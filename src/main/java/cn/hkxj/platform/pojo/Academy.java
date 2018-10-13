@@ -96,4 +96,5 @@ public enum Academy {
                 .add("academyCode", academyCode)
                 .toString();
     }
+
 }

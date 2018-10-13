@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 /**
  * @author JR Chan
  * @date 2018/6/11 17:19
- * <p>
  * 所有handle的路由规则都在这个service里配置
  */
 @Service
@@ -29,8 +28,6 @@ public class HandlerRouteService {
 	ExampleTemplateHandler exampleTemplateHandler;
 
 	public void handlerRegister() {
-		System.out.println("register");
-
 		router
 				.rule()
 				.async(false)

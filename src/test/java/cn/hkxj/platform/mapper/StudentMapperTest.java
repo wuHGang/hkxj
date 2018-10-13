@@ -11,13 +11,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.annotation.Resource;
+
 import static org.junit.Assert.*;
 
 @Slf4j
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class StudentMapperTest {
-	@Autowired
+	@Resource
 	private StudentMapper studentMapper;
 
 
