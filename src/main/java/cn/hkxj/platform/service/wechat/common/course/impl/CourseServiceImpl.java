@@ -2,6 +2,7 @@ package cn.hkxj.platform.service.wechat.common.course.impl;
 
 import cn.hkxj.platform.mapper.ClassesMapper;
 import cn.hkxj.platform.mapper.CourseMapper;
+import cn.hkxj.platform.mapper.CourseTimeTableMapper;
 import cn.hkxj.platform.mapper.StudentMapper;
 import cn.hkxj.platform.pojo.*;
 import cn.hkxj.platform.service.wechat.common.course.CourseService;
@@ -11,7 +12,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author Yuki
@@ -29,8 +32,11 @@ public class CourseServiceImpl implements CourseService{
     @Autowired
     private  CourseMapper courseMapper;
 
+    @Autowired
+    private CourseTimeTableMapper courseTimeTableMapper;
+
     @Override
-    public List<Course> getCoursesByAccount(Integer account) {
+    public List<CourseTimeTable> getCoursesByAccount(Integer account) {
         Student student = studentMapper.selectByAccount(account);
         String[] targets = getClassnameAndYearAndNum(student.getClassname());
         Integer academyCode = Academy.getAcademyCodeByName(student.getAcademy());
@@ -44,9 +50,22 @@ public class CourseServiceImpl implements CourseService{
 
         List<Classes> classesList = classesMapper.selectByExample(classesExample);
         List<Integer> courseIds = courseMapper.getCourseIdsByClassId(classesList.get(0).getId());
-        List<Course> courses = courseMapper.getAllCourses(getIdsString(courseIds));
 
-        return courses;
+        String ids = getIdsString(courseIds);
+        List<Course> courses = courseMapper.getAllCourses(ids);
+        List<CourseTimeTable> courseTimeTables = courseTimeTableMapper.getAllTimeTableByCourseIds(ids);
+
+        courseTimeTables.forEach(courseTimeTable -> {
+            courses.forEach(course -> {
+                if(Objects.equals(course.getId(), courseTimeTable.getCourse())){
+                    courseTimeTable.setCourseObject(course);
+                }
+            });
+        });
+
+        System.out.println("在这停顿");
+
+        return courseTimeTables;
     }
 
     /**

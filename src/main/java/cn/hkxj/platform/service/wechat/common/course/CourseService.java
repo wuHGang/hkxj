@@ -1,6 +1,6 @@
 package cn.hkxj.platform.service.wechat.common.course;
 
-import cn.hkxj.platform.pojo.Course;
+import cn.hkxj.platform.pojo.CourseTimeTable;
 
 import java.util.List;
 
@@ -15,5 +15,5 @@ public interface CourseService {
      * @param account 学号
      * @return 学号列表
      */
-    List<Course> getCoursesByAccount(Integer account);
+    List<CourseTimeTable> getCoursesByAccount(Integer account);
 }

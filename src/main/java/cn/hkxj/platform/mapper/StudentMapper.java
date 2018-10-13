@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
  * @author junrong.chen
  */
 @Mapper
+@Repository
 public interface StudentMapper {
 	/**
 	 * 通过学号查找学生信息
