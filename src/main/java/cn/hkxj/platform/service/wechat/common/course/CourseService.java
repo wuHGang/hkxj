@@ -16,4 +16,6 @@ public interface CourseService {
      * @return 学号列表
      */
     List<CourseTimeTable> getCoursesByAccount(Integer account);
+
+    boolean isHaveCourses(Integer account);
 }

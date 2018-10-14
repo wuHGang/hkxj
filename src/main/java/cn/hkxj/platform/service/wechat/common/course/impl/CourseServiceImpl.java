@@ -37,10 +37,18 @@ public class CourseServiceImpl implements CourseService{
 
     @Override
     public List<CourseTimeTable> getCoursesByAccount(Integer account) {
-        List<Integer> courseIds = getCourseIds(account);
+        Student student = studentMapper.selectByAccount(account);
+        String[] strs = getClassnameAndYearAndNum(student.getClassname());
+        List<Classes> classesList = getStudentClassesList(strs, student.getAcademy());
+
+        if(classesList.size() == 0){
+            logger.error("学号为{}没有相关的班级信息", account);
+            throw new RuntimeException("学号为" + account + "没有相关的班级信息");
+        }
+        List<Integer> courseIds = getCourseIds(classesList.get(0));
         if(courseIds.size() == 0){
-            logger.error("没有相关的课程，查询失败");
-            throw new RuntimeException("没有相关的课程，查询失败");
+            logger.error("学号为{}没有相关课程", account);
+            throw new RuntimeException("学号为" + account + "没有相关的课程");
         }
 
         String ids = getIdsString(courseIds);
@@ -56,6 +64,22 @@ public class CourseServiceImpl implements CourseService{
         });
 
         return courseTimeTables;
+    }
+
+    /**
+     * 判断对应的学号是否有课程信息
+     * @param account 学号
+     * @return boolean
+     */
+    public boolean isHaveCourses(Integer account){
+        Student student = studentMapper.selectByAccount(account);
+        String[] strs = getClassnameAndYearAndNum(student.getClassname());
+        List<Classes> classesList = getStudentClassesList(strs, student.getAcademy());
+        if(classesList.size() != 0){
+            List<Integer> courseIds = getCourseIds(classesList.get(0));
+            return courseIds.size() != 0;
+        }
+        return false;
     }
 
     /**
@@ -80,16 +104,6 @@ public class CourseServiceImpl implements CourseService{
     }
 
     /**
-     * 判断是否拥有课程
-     * @param account 序号
-     * @return boolean
-     */
-    public boolean isHaveCourses(Integer account){
-        List<Integer> courseIds = getCourseIds(account);
-        return courseIds.size() != 0;
-    }
-
-    /**
      * 将包含课程编号的list转换成(数字,数字)的形式
      * @param courseIds 包含课程id的列表
      * @return (数字,数字);
@@ -106,30 +120,27 @@ public class CourseServiceImpl implements CourseService{
     }
 
     /**
-     * 返回一个包含对应学生信息的classes对象
+     * 返回一个包含对应学生信息的classes的List
      * @param strs 包含有专业名，年级，班级序号
      * @param academy 学院名
-     * @return classes对象
+     * @return classesList
      */
-    private Classes getStudentClasses(String[] strs, String academy){
+    private List<Classes> getStudentClassesList(String[] strs, String academy){
         ClassesExample example = new ClassesExample();
         ClassesExample.Criteria criteria = example.createCriteria();
         criteria.andNameEqualTo(strs[0]);
         criteria.andYearEqualTo(Integer.parseInt(strs[1]));
         criteria.andNumEqualTo(Integer.parseInt(strs[2]));
         criteria.andAcademyEqualTo(Academy.getAcademyCodeByName(academy));
-        List<Classes> classesList = classesMapper.selectByExample(example);
-        return classesList.get(0);
+        return classesMapper.selectByExample(example);
     }
 
     /**
      * 获取相关的课程id列表
-     * @param account 学号
+     * @param classes
      * @return 课程id列表
      */
-    private List<Integer> getCourseIds(Integer account){
-        Student student = studentMapper.selectByAccount(account);
-        String[] strs = getClassnameAndYearAndNum(student.getClassname());
-        return courseMapper.getCourseIdsByClassId(getStudentClasses(strs, student.getAcademy()).getId());
+    private List<Integer> getCourseIds(Classes classes){
+        return courseMapper.getCourseIdsByClassId(classes.getId());
     }
 }
