@@ -14,6 +14,10 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.List;
 
+/**
+ * @author junrong.chen
+ * @date 2018/10/13
+ */
 @Service("studentBindService")
 public class StudentBindService {
     private static final String template = "account: %s openid: %s is exist";
@@ -22,19 +26,32 @@ public class StudentBindService {
     @Resource
     private OpenidMapper openidMapper;
 
-    public void studentBind(String openid, String account, String password) throws PasswordUncorrectException, ReadTimeoutException, OpenidExistException {
+	/**
+	 * 学号与微信公众平台openID关联
+	 *
+	 * 现在的一个问题是，如果是从一次订阅的接口路由过来的用户，如何帮他们实现快速绑定呢？
+	 * 点击地址以后将openID存在session中，查看是否已经绑定
+	 *
+	 * @param openid 微信用户唯一标识
+	 * @param account 学生教务网账号
+	 * @param password 学生教务网密码
+	 * @throws PasswordUncorrectException
+	 * @throws ReadTimeoutException
+	 * @throws OpenidExistException
+	 */
+    public Student studentBind(String openid, String account, String password) throws PasswordUncorrectException, ReadTimeoutException, OpenidExistException {
         if (isStudentBind(openid)){
             throw new OpenidExistException(String.format(template, account, openid));
         }
+	    Student student = null;
         if (isStudentExist(account)) {
             saveOpenid(openid, account);
         }
         else {
-            Student student = getStudentBySpider(account, password);
-            studentMapper.insertByStudent(student);
-            saveOpenid(openid, account);
+            student = getStudentBySpider(account, password);
+			studentBind(student, openid);
         }
-
+		return student;
     }
 
 	/**
@@ -44,7 +61,7 @@ public class StudentBindService {
 	 * @return 学生信息
 	 */
 	public Student studentLogin(String account, String password) throws PasswordUncorrectException {
-		Student student = getStudentByDB(account);
+		Student student = getStudentByDB(Integer.parseInt(account));
 		if (student == null){
 			student = getStudentBySpider(account, password);
 			saveStudent(student);
@@ -52,13 +69,14 @@ public class StudentBindService {
 		return student;
 	}
 
-    private boolean isStudentBind(String openid) {
-        OpenidExample openidExample = new OpenidExample();
-        openidExample
-                .createCriteria()
-                .andOpenidEqualTo(openid);
-        List<Openid> openids = openidMapper.selectByExample(openidExample);
-        return openids.size() != 0;
+	public Student studentBind(Student student, String openid){
+		studentMapper.insertByStudent(student);
+		saveOpenid(openid, student.getAccount().toString());
+		return student;
+	}
+
+    public boolean isStudentBind(String openid) {
+        return getOpenID(openid).size() != 0;
     }
 
     private boolean isStudentExist(String account) {
@@ -72,8 +90,25 @@ public class StudentBindService {
         return urpSpider.getInformation();
     }
 
-    private Student getStudentByDB(String account) {
-	    return studentMapper.selectByAccount(Integer.parseInt(account));
+    private Student getStudentByDB(int account) {
+	    return studentMapper.selectByAccount(account);
+    }
+
+    public Student getStudentByOpenID(String openid) {
+	    List<Openid> openidList = getOpenID(openid);
+	    if (openidList.size() != 0){
+	    	return getStudentByDB(openidList.get(0).getAccount());
+	    }
+	    throw new RuntimeException("用户未绑定");
+
+    }
+
+    private List<Openid> getOpenID(String openid) {
+	    OpenidExample openidExample = new OpenidExample();
+	    openidExample
+			    .createCriteria()
+			    .andOpenidEqualTo(openid);
+	    return openidMapper.selectByExample(openidExample);
     }
 
     private int saveStudent(Student student) {

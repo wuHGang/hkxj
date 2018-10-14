@@ -4,7 +4,6 @@ import cn.hkxj.platform.builder.TemplateBuilder;
 import cn.hkxj.platform.builder.TextBuilder;
 import cn.hkxj.platform.mapper.WechatOpenIdMapper;
 import cn.hkxj.platform.pojo.Exam;
-import cn.hkxj.platform.pojo.Wechatuser;
 import cn.hkxj.platform.service.wechat.common.exam.impl.ExamServiceImpl;
 import cn.hkxj.platform.service.wechat.handler.AbstractHandler;
 import me.chanjar.weixin.common.exception.WxErrorException;
@@ -41,17 +40,7 @@ public class ExamMessageHandler extends AbstractHandler {
 
 	@Override
 	public WxMpXmlOutMessage handle(WxMpXmlMessage wxMpXmlMessage, Map<String, Object> map, WxMpService wxMpService, WxSessionManager wxSessionManager) throws WxErrorException {
-		String openid = wxMpXmlMessage.getFromUser();
-		Wechatuser wechatuser = openIdMapper.getStudentByOpenId(openid);
-		try {
-			List<Exam> examList = examServiceImpl.getListByClassname(wechatuser);
-			String examMsg = examServiceImpl.toText(examList);
 
-			return textBuilder.build(examMsg, wxMpXmlMessage, wxMpService);
-//            return null;
-		} catch (IOException e) {
-			this.logger.error("在组装返回信息时出现错误 {}", e.getMessage());
-		}
 		return null;
 	}
 

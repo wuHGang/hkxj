@@ -61,16 +61,14 @@
                     alert("请正确填写密码!");
                     return ;
                 }
-                var user_json = {
+                var data = {
                     "account": account,
                     "password": password
                 };
                 $.ajax({
                     type: "post",
-                    url: "/login",
-                    // dataType: 'text',
-                    // contentType: "application/json;charset=utf-8",
-                    data: user_json,
+                    url: "/login/student",
+                    data: data,
                     success : function (data) {
                         for(var key in data){
                             if (data.statu==200){

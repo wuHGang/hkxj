@@ -1,6 +1,7 @@
 package cn.hkxj.platform.controller;
 
 import cn.hkxj.platform.pojo.CourseTimeTable;
+import cn.hkxj.platform.pojo.ErrorCode;
 import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.pojo.WebResponse;
 import cn.hkxj.platform.service.wechat.common.course.CourseService;
@@ -31,10 +32,16 @@ public class CourseController {
 	public WebResponse getTimeTable(){
 
 		Student student = (Student) session.getAttribute("student");
-		log.info("course timetable start-- account:{}", student.getAccount());
-		List<CourseTimeTable> courseTimeTables = courseService.getCoursesByAccount(student.getAccount());
-		log.info("course timetable success-- account:{}", student.getAccount());
-		return WebResponse.success(courseTimeTables);
+		Integer account = student.getAccount();
+		log.info("course timetable start-- account:{}", account);
+		if (courseService.isHaveCourses(account)){
+			List<CourseTimeTable> courseTimeTables = courseService.getCoursesByAccount(account);
+			log.info("course timetable success-- account:{}没有数据", account);
+			return WebResponse.success(courseTimeTables);
+		}
+
+		log.info("course timetable success-- account:{}没有数据", account);
+		return WebResponse.fail(ErrorCode.NO_DATA.getErrorCode(), "该学号没有对应数据");
 	}
 
 }

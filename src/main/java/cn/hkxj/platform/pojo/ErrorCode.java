@@ -8,6 +8,7 @@ public enum  ErrorCode {
 	/**
 	 * 客户端错误
 	 */
+	NO_DATA(400),
 	USER_UNAUTHORIZED(401),
 	ACCOUNT_OR_PASSWORD_INVALID(402),
 	/**

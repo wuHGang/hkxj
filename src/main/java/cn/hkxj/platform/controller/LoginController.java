@@ -5,6 +5,7 @@ import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.pojo.WebResponse;
 import cn.hkxj.platform.service.wechat.StudentBindService;
 import lombok.extern.slf4j.Slf4j;
+import me.chanjar.weixin.mp.api.WxMpService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,9 +28,12 @@ public class LoginController {
 	private StudentBindService studentBindService;
 	@Autowired
 	private HttpSession session;
+	@Autowired
+	private WxMpService wxMpService;
 
 	@PostMapping("/student")
-	public WebResponse studentLogin(@RequestParam("account")String account, @RequestParam("password")String password) throws PasswordUncorrectException {
+	public WebResponse studentLogin(@RequestParam("account")String account,
+	                                @RequestParam("password")String password) throws PasswordUncorrectException {
 		log.info("student login--account:{} password:{}", account, password);
 		Student student = studentBindService.studentLogin(account, password);
 		session.setAttribute("student", student);
