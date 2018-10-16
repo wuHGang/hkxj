@@ -1,6 +1,7 @@
 package cn.hkxj.platform.controller;
 
 import cn.hkxj.platform.exceptions.PasswordUncorrectException;
+import cn.hkxj.platform.pojo.ErrorCode;
 import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.pojo.WebResponse;
 import cn.hkxj.platform.service.wechat.StudentBindService;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
+import java.util.Objects;
 
 /**
  * @author junrong.chen
@@ -30,11 +32,17 @@ public class LoginController {
 	private HttpSession session;
 	@Autowired
 	private WxMpService wxMpService;
+	private static final int ACCOUNT_LENGTH = 10;
+	private static final String ACCOUNT_PREFIX = "201";
 
 	@PostMapping("/student")
 	public WebResponse studentLogin(@RequestParam("account")String account,
 	                                @RequestParam("password")String password) throws PasswordUncorrectException {
 		log.info("student login--account:{} password:{}", account, password);
+		if (!isAccountValid(account)){
+			log.info("student login fail--invalid account:{}", account, password);
+			return WebResponse.fail(ErrorCode.ACCOUNT_OR_PASSWORD_INVALID.getErrorCode(), "账号无效");
+		}
 		Student student = studentBindService.studentLogin(account, password);
 		session.setAttribute("student", student);
 		log.info("student login success--account:{} password:{}", account, password);
@@ -42,5 +50,10 @@ public class LoginController {
 		return WebResponse.success(student);
 	}
 
+	private boolean isAccountValid(String account){
+		if(Objects.isNull(account) || account.length() != ACCOUNT_LENGTH || !account.startsWith(ACCOUNT_PREFIX))
+			return false;
+		return true;
+	}
 
 }

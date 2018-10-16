@@ -3,7 +3,6 @@ package cn.hkxj.platform.service.wechat.handler.messageHandler;
 import cn.hkxj.platform.builder.TemplateBuilder;
 import cn.hkxj.platform.builder.TextBuilder;
 import cn.hkxj.platform.mapper.WechatOpenIdMapper;
-import cn.hkxj.platform.pojo.Exam;
 import cn.hkxj.platform.service.wechat.common.exam.impl.ExamServiceImpl;
 import cn.hkxj.platform.service.wechat.handler.AbstractHandler;
 import me.chanjar.weixin.common.exception.WxErrorException;
@@ -14,8 +13,6 @@ import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 
 /**
