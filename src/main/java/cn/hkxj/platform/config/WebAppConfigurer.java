@@ -26,12 +26,4 @@ public class WebAppConfigurer implements WebMvcConfigurer {
 		registry.addInterceptor(loginInterceptor()).addPathPatterns("/course/timetable");
 	}
 
-	@Override
-	public void addCorsMappings(CorsRegistry registry) {
-		log.info("registry cors");
-		registry.addMapping("/**")
-				.allowedHeaders("*")
-				.allowedMethods("*")
-				.allowedOrigins("*");
-	}
 }
