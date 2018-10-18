@@ -23,7 +23,7 @@ public class WebAppConfigurer implements WebMvcConfigurer {
 
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
-		registry.addInterceptor(loginInterceptor()).addPathPatterns("/course/timetable");
+//		registry.addInterceptor(loginInterceptor()).addPathPatterns("/course/timetable");
 	}
 
 }
