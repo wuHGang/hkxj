@@ -40,11 +40,11 @@ public class CourseController {
 		int accountInt = Integer.parseInt(account);
 		if (courseService.isHaveCourses(accountInt)){
 			List<CourseTimeTable> courseTimeTables = courseService.getCoursesByAccount(accountInt);
-			log.info("course timetable success-- account:{}没有数据", account);
+			log.info("course timetable success-- account:{}", account);
 			return WebResponse.success(courseTimeTables);
 		}
 
-		log.info("course timetable success-- account:{}没有数据", account);
+		log.info("course timetable fail-- account:{}没有数据", account);
 		return WebResponse.fail(ErrorCode.NO_DATA.getErrorCode(), "该学号没有对应数据");
 	}
 
