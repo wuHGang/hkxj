@@ -34,5 +34,5 @@ public interface CourseTimeTableMapper {
 
     int updateByPrimaryKey(CourseTimeTable record);
 
-    List<CourseTimeTable> getAllTimeTableByCourseIds(String ids);
+    List<CourseTimeTable> getTimeTables(String ids);
 }

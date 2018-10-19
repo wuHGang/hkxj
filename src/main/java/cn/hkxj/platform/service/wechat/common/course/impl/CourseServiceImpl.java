@@ -1,11 +1,9 @@
 package cn.hkxj.platform.service.wechat.common.course.impl;
 
-import cn.hkxj.platform.mapper.ClassesMapper;
-import cn.hkxj.platform.mapper.CourseMapper;
-import cn.hkxj.platform.mapper.CourseTimeTableMapper;
-import cn.hkxj.platform.mapper.StudentMapper;
+import cn.hkxj.platform.mapper.*;
 import cn.hkxj.platform.pojo.*;
 import cn.hkxj.platform.service.wechat.common.course.CourseService;
+import org.checkerframework.checker.units.qual.A;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +33,9 @@ public class CourseServiceImpl implements CourseService{
     @Autowired
     private CourseTimeTableMapper courseTimeTableMapper;
 
+    @Autowired
+    private ClassTimeTableMapper classTimeTableMapper;
+
     @Override
     public List<CourseTimeTable> getCoursesByAccount(Integer account) {
         Student student = studentMapper.selectByAccount(account);
@@ -52,8 +53,16 @@ public class CourseServiceImpl implements CourseService{
         }
 
         String ids = getIdsString(courseIds);
+        Classes classes = classesList.get(0);
+        List<Integer> classTimetables = classTimeTableMapper.getTimeTableIdByClassId(classes.getId());
+
+        if(classTimetables.size() == 0){
+            logger.error("学号为{}所在的对应的班级id为{},名称为{}的班级没有对应时间表信息", account, classes.getId(), classes.getName());
+            throw new RuntimeException("学号为" + account + "所在的对应的班级id为" + classes.getId() + ",名称为" + classes.getName() + "的班级没有对应时间表信息");
+        }
         List<Course> courses = courseMapper.getAllCourses(ids);
-        List<CourseTimeTable> courseTimeTables = courseTimeTableMapper.getAllTimeTableByCourseIds(ids);
+        String timeTableIds = getIdsString(classTimetables);
+        List<CourseTimeTable> courseTimeTables = courseTimeTableMapper.getTimeTables(timeTableIds);
 
         courseTimeTables.forEach(courseTimeTable -> {
             courses.forEach(course -> {
@@ -105,17 +114,17 @@ public class CourseServiceImpl implements CourseService{
 
     /**
      * 将包含课程编号的list转换成(数字,数字)的形式
-     * @param courseIds 包含课程id的列表
+     * @param origin 想要转话成的列表
      * @return (数字,数字);
      */
-    private String getIdsString(List<Integer> courseIds){
+    private String getIdsString(List<Integer> origin){
         StringBuilder builder = new StringBuilder();
-        builder.append("(" + courseIds.get(0) + ",");
-        int size = courseIds.size();
+        builder.append("(" + origin.get(0) + ",");
+        int size = origin.size();
         for(int i = 1; i < size; i++){
-            builder.append(courseIds.get(i) + ",");
+            builder.append(origin.get(i) + ",");
         }
-        builder.append(courseIds.get(size - 1) + ")");
+        builder.append(origin.get(size - 1) + ")");
         return builder.toString();
     }
 
