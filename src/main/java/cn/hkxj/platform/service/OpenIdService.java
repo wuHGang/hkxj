@@ -18,11 +18,15 @@ public class OpenIdService {
 	private OpenidMapper openidMapper;
 
 	public boolean openidIsExist(String openid) {
+		return getOpenid(openid).size() == 1;
+	}
+
+	public List<Openid> getOpenid(String openid) {
 		OpenidExample openidExample = new OpenidExample();
 		openidExample
 				.createCriteria()
 				.andOpenidEqualTo(openid);
-		return openidMapper.selectByExample(openidExample).size() == 1;
+		return openidMapper.selectByExample(openidExample);
 	}
 
 
