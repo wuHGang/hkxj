@@ -26,7 +26,7 @@ public class ExceptionHandlerAdvice {
 		else if (e instanceof ReadTimeoutException) {
 			return WebResponse.fail(ErrorCode.READ_TIMEOUT.getErrorCode(), e.getMessage());
 		}
-		log.warn("error ----", e);
+		log.warn("error ---- {}",e.getMessage(), e);
 
 		return WebResponse.fail(ErrorCode.SYSTEM_ERROR.getErrorCode(), e.getMessage());
 	}

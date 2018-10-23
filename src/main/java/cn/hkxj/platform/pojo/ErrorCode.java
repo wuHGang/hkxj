@@ -11,6 +11,7 @@ public enum  ErrorCode {
 	NO_DATA(400),
 	USER_UNAUTHORIZED(401),
 	ACCOUNT_OR_PASSWORD_INVALID(402),
+	OPENID_EXIST(403),
 	/**
 	 *服务器端错误
 	 */

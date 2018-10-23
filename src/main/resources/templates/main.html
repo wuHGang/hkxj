@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="#">
+    <script src="/js/jquery.js"></script>
+    <script src="/js/angular.min.js"></script>
+</head>
+<style>
+    .ui-body-d{
+        background:url("../static/img/main.jpeg") ;
+        background-size: cover;
+        border-radius: 1rem;
+    }
+    .userDiv{
+        width: 100%;
+        text-align: left;
+        line-height: 1rem;
+        margin-top: -1rem;
+    }
+    .flex-container{
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        flex-wrap: wrap;
+        align-items: center;
+        margin-top: 1rem;
+        padding: 0;
+        width: 100%;
+        border-radius: 1rem;
+        margin-right: 1rem;
+    }
+    .flex-item{
+        text-align: center;
+        line-height: 12rem;
+        width: 42%;
+        height: 14rem;
+        border-radius: 1rem;
+        font-size: 1rem;
+        margin-bottom: 1rem;
+        color: white;
+        box-shadow: 0 10px 18px 0 rgba(0,0,0,0.2) ,0 26px 40px 0 rgba(0,0,0,0.19);
+    }
+    #item1{
+        background-color: #2dd2a2;
+
+         }
+    #item2{
+        background-color: #d26212;
+
+         }
+    #item3{
+        background-color: #0f5fd2;
+
+         }
+    #item4{
+        background-color: #6c0ed2;
+
+
+
+    }
+    #item5{
+        background-color: #d20d2e;
+
+         }
+    #item6{
+        background-color: #0facd2;
+
+    }
+    .header{
+        text-align: center;
+        line-height: 4rem;
+        color: white;
+        width: 100%;
+        height: 4rem;
+    }
+    .footer{
+        width: 100%;
+        color: white;
+        height: 6rem;
+        text-align: center;
+    }
+    .flex-item img{
+        border-radius: 50%;
+    }
+    .op{
+        opacity: 1;
+    }
+</style>
+<body ng-app="myApp" ng-controller="myCtrl">
+
+    <div  class="ui-body-d">
+        <div class="header" >
+            <h2><i>{{hello}}!</i><b>{{name}}</b></h2>
+        </div>
+
+        <div class="flex-container">
+
+            <div class="flex-item" id="item1" ng-click="chedu()">
+                <img src="../source/item1-3.jpeg" alt="" width="30%">
+                本周课表
+            </div>
+            <div class="flex-item" id="item2" ng-click="hold()">
+                <img src="../source/item2-3.jpeg" alt="" width="30%">
+                今日课表</div>
+            <div class="flex-item" id="item3" ng-click="hold()">
+                <img src="../source/item3-3.jpeg" alt="" width="30%">
+                学业情况</div>
+            <div class="flex-item" id="item4" ng-click="hold()">
+                <img src="../source/item4-3.jpeg" alt="" width="30%">
+                成绩分析</div>
+            <div class="flex-item" id="item5" ng-click="hold()">
+                <img src="../source/item5-3.jpeg" alt="" width="30%">
+                专业排名</div>
+            <div class="flex-item" id="item6" ng-click="hold()">
+                <img src="../source/item6-3.jpeg" alt="" width="30%">
+                综合报告</div>
+
+        </div>
+        <div class="footer">
+            <hr>
+            <h3><b>{{talk}}</b>------《论语》</h3>
+
+        </div>
+
+
+
+
+
+        </div>
+<script>
+    var app=angular.module("myApp",[]);
+    app.controller("myCtrl",function ($scope) {
+
+
+        $(".flex-container").children().click(function () {
+            $(this).css({opacity:"0.5"});
+            $(".flex-container").children().not(this).css({opacity:"1"});
+        });
+
+    function getCookie(useraccount) {
+    var name=useraccount+"=";
+    var ca=document.cookie.split(';');
+    for(var i=0;i<ca.length;i++){
+        var c=ca[i].trim();
+        if(c.indexOf(name)==0){
+            return c.substring(useraccount.length+1,c.length)
+            }
+        }
+    }
+
+   var account=getCookie("account");
+   var name=getCookie("name");
+   var academy=getCookie("academy");
+   var classname=getCookie("classname");
+
+        $scope.chedu=function() {
+          location.href="classTable.html";
+        };
+        $scope.hold=function () {
+            alert("设计中!");
+
+        };
+
+        $scope.hello=new Date();
+        $scope.hello=$scope.hello.getHours();
+        var numB=$scope.hello;
+        if(numB>=6&&numB<=11){
+            $scope.hello="上午好";
+        }
+        else if(numB>=12&&numB<=17){
+            $scope.hello="下午好";
+        }
+        else if(numB>=18&&numB<=24){
+            $scope.hello="晚上好";
+        }
+        else{
+            $scope.hello="夜深了";
+        }
+        var arr=[];
+        var numA=Math.floor(Math.random()*7);
+        arr[0]="己所不欲，勿施于人。";
+        arr[1]= "学而时习之，不亦说乎？有朋自远方来，不亦乐乎？人不知而不愠，不亦君子乎？";
+        arr[2]="吾日三省吾身：为人谋而不忠乎？与朋友交而不信乎？传不习乎";
+        arr[3]="温故而知新，可以为师矣";
+        arr[4]="见贤思齐焉，见不贤而内自省也";
+        arr[5]="三人行，必有我师焉。择其善者而从之，其不善者而改之。";
+        arr[6]="士不可以不弘毅，任重而道远。仁以为己任，不亦重乎？死而后已，不亦远乎？";
+        arr[7]="岁寒，然后知松柏之后凋也";
+        $scope.talk=arr[numA];
+        $scope.name=name;
+
+    });
+
+
+
+
+
+
+
+
+</script>
+
+</body>
+</html>

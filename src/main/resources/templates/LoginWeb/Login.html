@@ -67,25 +67,25 @@
                 };
                 $.ajax({
                     type: "post",
-                    url: "/login/student",
+                    url: "/bind/wechat",
                     data: data,
                     success : function (data) {
-                        for(var key in data){
-                            if (data.statu==200){
-                                $("#from").html("绑定成功！");
-                            }
-                            else if (data.statu==300){
-                                alert(key+"账号密码错误");
-                                window.location.reload();
-                            }
-                            else if (data.statu==400){
-                                $("#from").html("账号已绑定");
-                            }
-                            else {
-                                alert(key+"服务器读取超时");
-                                window.location.reload();
-                            }
+                        if (data.status==200){
+                            alert("绑定成功")
+                            window.location="/show/timetable";
                         }
+                        else if (data.status==402){
+                            alert(key+"账号密码错误");
+                            window.location.reload();
+                        }
+                        else if (data.status==403){
+                            alert("账号已经绑定")
+                        }
+                        else {
+                            alert(key+"服务器读取超时");
+                            window.location.reload();
+                        }
+
                     }
                 });
             });

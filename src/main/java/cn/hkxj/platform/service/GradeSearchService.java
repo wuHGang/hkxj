@@ -41,7 +41,7 @@ public class GradeSearchService {
 		for (AllGradeAndCourse.GradeAndCourse andCourse : gradeAndCourse.getCurrentTermGrade()) {
 //			gradeMapper.insert(andCourse.getGrade());
 			saveCourse(account, andCourse.getCourse());
-		};
+		}
 
 
 	}

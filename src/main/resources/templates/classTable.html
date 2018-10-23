@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>oneTestPage</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/css/jquery.mobile-1.4.5.css">
+    <script src="/js/jquery.js"></script>
+    <script src="/js/jquery.mobile-1.4.5.min.js"></script>
+    <!---->
+    <style>
+        td {
+
+            border: 8px solid white;
+        }
+        th{
+            color: black;
+        }
+         .ui-body-d{
+             background-color: #2dd2a2;
+         }
+
+        .ui-body-d table{
+            border: 4px solid white;
+            color: white;
+        }
+        #infomation{
+            width: 100%;
+            height: 6rem;
+            text-align: center;
+            margin-top: -1rem;
+            margin-bottom: 1rem;
+        }
+        #infomation #thisweek{
+            font-size: 2rem;
+            color: white;
+        }
+    </style>
+</head>
+<body onload="getData()">
+
+<div data-role="page" id="pageone">
+    <div data-role="main"  class="ui-body-d" data-theme="d">
+        <div id="infomation">
+            <br><h2><span id="time"></span><span id="week"></span><br><i>第<span id="thisweek"></span>周</i></h2>
+        </div>
+        <form class="ui-filterable">
+            <input id="myFilter" data-type="search" placeholder="关键字搜索......">
+        </form>
+       <table data-role="table" data-mode="columntoggle" data-column-btn-text="显示调控按钮" class="ui-responsive" data-filter="true" data-input="#myFilter">
+           <thead>
+            <tr>
+                <th>The day</th>
+
+                <th data-priority="1">上午:1/2</th>
+                <th data-priority="1">上午:3/4</th>
+                <th data-priority="1">下午:1/2</th>
+                <th data-priority="1">下午:3/4</th>
+                <th data-priority="1">晚课</th>
+
+            </tr>
+           </thead>
+           <tbody>
+           <tr class="move1">
+               <td style="">星期一</td>
+               <td></td>
+               <td></td>
+               <td></td>
+               <td></td>
+               <td></td>
+           </tr>
+           <tr>
+               <td style="">星期二</td>
+               <td></td>
+               <td></td>
+               <td></td>
+               <td></td>
+               <td></td>
+           </tr>
+           <tr>
+               <td style="">星期三</td>
+               <td></td>
+               <td></td>
+               <td></td>
+               <td></td>
+               <td></td>
+           </tr>
+           <tr>
+               <td style="">星期四</td>
+               <td></td>
+               <td></td>
+               <td></td>
+               <td></td>
+               <td></td>
+           </tr>
+           <tr>
+               <td style="">星期五</td>
+               <td></td>
+               <td></td>
+               <td></td>
+               <td></td>
+               <td></td>
+           </tr>
+           <tr>
+               <td style="" >星期六</td>
+               <td></td>
+               <td></td>
+               <td></td>
+               <td></td>
+               <td></td>
+           </tr>
+           <tr class="move2">
+               <td style="">星期日</td>
+               <td></td>
+               <td></td>
+               <td></td>
+               <td></td>
+               <td></td>
+           </tr>
+           </tbody>
+
+       </table>
+    </div>
+</div>
+
+<script>
+
+        //获取当前时间
+        var time = new Date();
+        //获取表格的td集合
+        var arr = document.getElementsByTagName('td');
+        //获取0-6的星期数字代码
+        var week = time.getDay();
+        //设置txt为id为week的DOM节点
+        var txt=$("#week");
+        //设置当前周
+        var weekNumber=8;
+        //设置id为time节点的输出文本
+        $("#time").text(time.toLocaleString());
+        //设置ajax参数
+        var account;
+        //设置一个数组存储课表信息
+        var arrClass=[];
+        //设置循环调用时间
+        setInterval(function () {
+            time = new Date();
+            $("#time").text(time.toLocaleString());
+        },1000);
+
+        //判断今天是周几
+        switch (week) {
+            case 0:
+                txt.text("星期日");
+                break;
+            case 1:
+                txt.text("星期一");
+                break;
+            case 2:
+                txt.text("星期二");
+                break;
+            case 3:
+                txt.text("星期三");
+                break;
+            case 4:
+                txt.text("星期四");
+                break;
+            case 5:
+                txt.text("星期五");
+                break;
+            case 6:
+                txt.text("星期六");
+                break;
+
+        }
+        //设置周累加,当变为星期一时实现周加一
+        if(txt.text()=="星期一"){
+            weekNumber+=1;
+
+        }
+        //设置当前周
+        $("#thisweek").text(weekNumber);
+        //设置表格样式
+        function tableCss() {
+
+            for (var a = 0; a < arr.length; a++) {
+                //判断是否为星期
+                if (a % 6 == 0) {
+                    //去掉星期的边框
+                    arr[a].style.border = "none";
+                    arr[a].style.color = "black";
+                }
+                //为当前星期加上背景样式
+                if (a % 6 == 0 && $(arr[a]).text() == txt.text()) {
+                    arr[a].style.backgroundColor = "#0099d4";
+                    //判断是否为已经上过的课程
+                    for (var b = 0; b < a; b++) {
+                        if ((b % 6 != 0&&$(arr[b]).text()!='')) {
+                            //设置背景为灰色
+                            arr[b].style.backgroundColor = 'gray';
+                        }
+                    }
+                    //判断为没有上过的课程
+                    for (var c = a; c < arr.length; c++) {
+                        if ((c % 6 != 0) && (arr[c].innerHTML != '')) {
+                            //设置背景
+                            arr[c].style.backgroundColor = 'lightgreen';
+                        }
+                    }
+                }
+            }
+        }
+
+        //ajax请求数据
+        function getData(){
+            $.ajax({
+                type:"get",
+                url:"/course/timetable",
+                timout:10000,
+                success:function (json) {
+                    arrClass=json.data;
+                    if (json.status != 200){
+                        alert(json.message);
+                        if (json.status == 401){
+                            window.location="/bind";
+                        }
+                    }
+                    for(var j=0;j<=arrClass.length;j++) {
+                        //判断是否已经开课
+                        if (arrClass[j].start <= weekNumber && arrClass[j].end >= weekNumber) {
+                            //判读是否为周一
+                            if (arrClass[j].week == 1) {
+                                if (arrClass[j].order == 1) {
+                                    $(arr[1]).text(arrClass[j].courseObject.name + "@" + arrClass[j].position);
+                                }
+                                if (arrClass[j].order == 3) {
+                                    $(arr[2]).text(arrClass[j].courseObject.name + "@" + arrClass[j].position);
+                                }
+                                if (arrClass[j].order == 5) {
+                                    $(arr[3]).text(arrClass[j].courseObject.name + "@" + arrClass[j].position);
+                                }
+                                if (arrClass[j].order == 7) {
+                                    $(arr[4]).text(arrClass[j].courseObject.name + "@" + arrClass[j].position);
+                                }
+                                if (arrClass[j].order == 9) {
+                                    $(arr[5]).text(arrClass[j].courseObject.name + "@" + arrClass[j].position);
+                                }
+
+                            }
+                            //判断是否为周二
+                            if (arrClass[j].week == 2) {
+                                if (arrClass[j].order == 1) {
+                                    $(arr[7]).text(arrClass[j].courseObject.name + "@" + arrClass[j].position);
+                                }
+                                if (arrClass[j].order == 3) {
+                                    $(arr[8]).text(arrClass[j].courseObject.name + "@" + arrClass[j].position);
+                                }
+                                if (arrClass[j].order == 5) {
+                                    $(arr[9]).text(arrClass[j].courseObject.name + "@" + arrClass[j].position);
+                                }
+                                if (arrClass[j].order == 7) {
+                                    $(arr[10]).text(arrClass[j].courseObject.name + "@" + arrClass[j].position);
+                                }
+                                if (arrClass[j].order == 9) {
+                                    $(arr[11]).text(arrClass[j].courseObject.name + "@" + arrClass[j].position);
+                                }
+
+                            }
+                            //周三
+                            if (arrClass[j].week == 3) {
+                                if (arrClass[j].order == 1) {
+                                    $(arr[13]).text(arrClass[j].courseObject.name + "@" + arrClass[j].position);
+                                }
+                                if (arrClass[j].order == 3) {
+                                    $(arr[14]).text(arrClass[j].courseObject.name + "@" + arrClass[j].position);
+                                }
+                                if (arrClass[j].order == 5) {
+                                    $(arr[15]).text(arrClass[j].courseObject.name + "@" + arrClass[j].position);
+                                }
+                                if (arrClass[j].order == 7) {
+                                    $(arr[16]).text(arrClass[j].courseObject.name + "@" + arrClass[j].position);
+                                }
+                                if (arrClass[j].order == 9) {
+                                    $(arr[17]).text(arrClass[j].courseObject.name + "@" + arrClass[j].position);
+                                }
+
+                            }
+                            // /周四
+                            if (arrClass[j].week == 4) {
+                                if (arrClass[j].order == 1) {
+                                    $(arr[19]).text(arrClass[j].courseObject.name + "@" + arrClass[j].position);
+                                }
+                                if (arrClass[j].order == 3) {
+                                    $(arr[20]).text(arrClass[j].courseObject.name + "@" + arrClass[j].position);
+                                }
+                                if (arrClass[j].order == 5) {
+                                    $(arr[21]).text(arrClass[j].courseObject.name + "@" + arrClass[j].position);
+                                }
+                                if (arrClass[j].order == 7) {
+                                    $(arr[22]).text(arrClass[j].courseObject.name + "@" + arrClass[j].position);
+                                }
+                                if (arrClass[j].order == 9) {
+                                    $(arr[23]).text(arrClass[j].courseObject.name + "@" + arrClass[j].position);
+                                }
+
+                            }
+                            //周五
+                            if (arrClass[j].week == 5) {
+                                if (arrClass[j].order == 1) {
+                                    $(arr[25]).text(arrClass[j].courseObject.name + "@" + arrClass[j].position);
+                                }
+                                if (arrClass[j].order == 3) {
+                                    $(arr[26]).text(arrClass[j].courseObject.name + "@" + arrClass[j].position);
+                                }
+                                if (arrClass[j].order == 5) {
+                                    $(arr[27]).text(arrClass[j].courseObject.name + "@" + arrClass[j].position);
+                                }
+                                if (arrClass[j].order == 7) {
+                                    $(arr[28]).text(arrClass[j].courseObject.name + "@" + arrClass[j].position);
+                                }
+                                if (arrClass[j].order == 9) {
+                                    $(arr[29]).text(arrClass[j].courseObject.name + "@" + arrClass[j].position);
+                                }
+                            }
+                            //周六
+                            if (arrClass[j].week == 6) {
+                                if (arrClass[j].order == 1) {
+                                    $(arr[31]).text(arrClass[j].courseObject.name + "@" + arrClass[j].position);
+                                }
+                                if (arrClass[j].order == 3) {
+                                    $(arr[32]).text(arrClass[j].courseObject.name + "@" + arrClass[j].position);
+                                }
+                                if (arrClass[j].order == 5) {
+                                    $(arr[33]).text(arrClass[j].courseObject.name + "@" + arrClass[j].position);
+                                }
+                                if (arrClass[j].order == 7) {
+                                    $(arr[34]).text(arrClass[j].courseObject.name + "@" + arrClass[j].position);
+                                }
+                                if (arrClass[j].order == 9) {
+                                    $(arr[35]).text(arrClass[j].courseObject.name + "@" + arrClass[j].position);
+                                }
+                            }
+                            //周日
+                            if (arrClass[j].week == 7) {
+                                if (arrClass[j].order == 1) {
+                                    $(arr[37]).text(arrClass[j].courseObject.name + "@" + arrClass[j].position);
+                                }
+                                if (arrClass[j].order == 3) {
+                                    $(arr[38]).text(arrClass[j].courseObject.name + "@" + arrClass[j].position);
+                                }
+                                if (arrClass[j].order == 5) {
+                                    $(arr[39]).text(arrClass[j].courseObject.name + "@" + arrClass[j].position);
+                                }
+                                if (arrClass[j].order == 7) {
+                                    $(arr[40]).text(arrClass[j].courseObject.name + "@" + arrClass[j].position);
+                                }
+                                if (arrClass[j].order == 9) {
+                                    $(arr[41]).text(arrClass[j].courseObject.name + "@" + arrClass[j].position);
+                                }
+                            }
+
+                        }//外层if判断开课结束
+                    }//for循环结束
+                },//success结束
+
+                error:function () {
+                 alert("加载失败");
+                }
+            });//ajax请求完成
+        }//get函数结束
+
+    setTimeout(tableCss,3000);
+
+</script>
+</body>
+</html>

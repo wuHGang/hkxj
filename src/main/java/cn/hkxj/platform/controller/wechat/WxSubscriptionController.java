@@ -19,7 +19,7 @@ import java.io.IOException;
  * @author junrong.chen
  * @date 2018/10/7
  */
-@RestController
+@Controller
 @RequestMapping("/wechat/sub")
 @Slf4j
 public class WxSubscriptionController {
@@ -32,8 +32,8 @@ public class WxSubscriptionController {
 	 * @param openid 微信平台用户唯一标识
 	 * @param templateId 订阅消息模板ID
 	 * @param action 用户点击动作，”confirm”代表用户确认授权，”cancel”代表用户取消授权
-	 * @param scene
-	 * @param response
+	 * @param scene 点击的具体场景类型
+	 * @param response 用于重定向
 	 * @throws IOException 页面重定向异常
 	 */
 	@GetMapping("/test")
@@ -47,12 +47,12 @@ public class WxSubscriptionController {
 
 		if (studentBindService.isStudentBind(openid)) {
 			Student student = studentBindService.getStudentByOpenID(openid);
-			session.setAttribute("student", student);
-			return "重定向到课表展示页面";
+			session.setAttribute("account", student.getAccount().toString());
+			return "classTable";
 		}
 		else {
 			session.setAttribute("openid", openid);
-			return "重定向到绑定界面";
+			return "LoginWeb/Login";
 		}
 
 
