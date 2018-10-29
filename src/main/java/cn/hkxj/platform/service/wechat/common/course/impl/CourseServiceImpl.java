@@ -99,7 +99,11 @@ public class CourseServiceImpl implements CourseService{
     private String[] getClassnameAndYearAndNum(String classname){
         String[] strs = classname.split("-");
         String[] targets = new String[3];
-        targets[2] = strs[1];
+        if(strs[1].length() > 1){
+            targets[2] = strs[1].substring(0, 1);
+        } else {
+            targets[2] = strs[1];
+        }
         int length = strs[0].length();
         for(int i = 0; i < length; i++){
             char c = strs[0].charAt(i);
@@ -119,6 +123,9 @@ public class CourseServiceImpl implements CourseService{
      */
     private String getIdsString(List<Integer> origin){
         StringBuilder builder = new StringBuilder();
+        if(origin.size() == 1){
+            return builder.append("(" + origin.get(0) +  ")").toString();
+        }
         builder.append("(" + origin.get(0) + ",");
         int size = origin.size();
         for(int i = 1; i < size; i++){
