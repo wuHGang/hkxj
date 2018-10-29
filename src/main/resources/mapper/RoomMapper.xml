@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.hkxj.platform.mapper.RoomMapper">
+  <resultMap id="BaseResultMap" type="cn.hkxj.platform.pojo.Room">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="area" jdbcType="VARCHAR" property="area" typeHandler="cn.hkxj.platform.handler.BuildingHandler" />
+    <result column="direction" jdbcType="INTEGER" property="direction" typeHandler="cn.hkxj.platform.handler.DirectionHandler" />
+    <result column="floor" jdbcType="INTEGER" property="floor" />
+    <result column="number" jdbcType="INTEGER" property="number" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="is_allow" jdbcType="TINYINT" property="isAllow" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+            <foreach collection="criteria.areaCriteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value,typeHandler=cn.hkxj.platform.handler.BuildingHandler}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value,typeHandler=cn.hkxj.platform.handler.BuildingHandler} and #{criterion.secondValue,typeHandler=cn.hkxj.platform.handler.BuildingHandler}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem,typeHandler=cn.hkxj.platform.handler.BuildingHandler}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+            <foreach collection="criteria.directionCriteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value,typeHandler=cn.hkxj.platform.handler.DirectionHandler}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value,typeHandler=cn.hkxj.platform.handler.DirectionHandler} and #{criterion.secondValue,typeHandler=cn.hkxj.platform.handler.DirectionHandler}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem,typeHandler=cn.hkxj.platform.handler.DirectionHandler}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, area, direction, floor, number, name, is_allow
+  </sql>
+  <select id="selectByExample" parameterType="cn.hkxj.platform.pojo.RoomExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    'false' as QUERYID,
+    <include refid="Base_Column_List" />
+    from room
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from room
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from room
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="cn.hkxj.platform.pojo.Room">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into room (area, 
+      direction, 
+      floor, number, name, 
+      is_allow)
+    values (#{area,jdbcType=VARCHAR,typeHandler=cn.hkxj.platform.handler.BuildingHandler}, 
+      #{direction,jdbcType=INTEGER,typeHandler=cn.hkxj.platform.handler.DirectionHandler}, 
+      #{floor,jdbcType=INTEGER}, #{number,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, 
+      #{isAllow,jdbcType=TINYINT})
+  </insert>
+  <insert id="insertSelective" parameterType="cn.hkxj.platform.pojo.Room">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into room
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="area != null">
+        area,
+      </if>
+      <if test="direction != null">
+        direction,
+      </if>
+      <if test="floor != null">
+        floor,
+      </if>
+      <if test="number != null">
+        number,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="isAllow != null">
+        is_allow,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="area != null">
+        #{area,jdbcType=VARCHAR,typeHandler=cn.hkxj.platform.handler.BuildingHandler},
+      </if>
+      <if test="direction != null">
+        #{direction,jdbcType=INTEGER,typeHandler=cn.hkxj.platform.handler.DirectionHandler},
+      </if>
+      <if test="floor != null">
+        #{floor,jdbcType=INTEGER},
+      </if>
+      <if test="number != null">
+        #{number,jdbcType=INTEGER},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="isAllow != null">
+        #{isAllow,jdbcType=TINYINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.hkxj.platform.pojo.Room">
+    update room
+    <set>
+      <if test="area != null">
+        area = #{area,jdbcType=VARCHAR,typeHandler=cn.hkxj.platform.handler.BuildingHandler},
+      </if>
+      <if test="direction != null">
+        direction = #{direction,jdbcType=INTEGER,typeHandler=cn.hkxj.platform.handler.DirectionHandler},
+      </if>
+      <if test="floor != null">
+        floor = #{floor,jdbcType=INTEGER},
+      </if>
+      <if test="number != null">
+        number = #{number,jdbcType=INTEGER},
+      </if>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="isAllow != null">
+        is_allow = #{isAllow,jdbcType=TINYINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.hkxj.platform.pojo.Room">
+    update room
+    set area = #{area,jdbcType=VARCHAR,typeHandler=cn.hkxj.platform.handler.BuildingHandler},
+      direction = #{direction,jdbcType=INTEGER,typeHandler=cn.hkxj.platform.handler.DirectionHandler},
+      floor = #{floor,jdbcType=INTEGER},
+      number = #{number,jdbcType=INTEGER},
+      name = #{name,jdbcType=VARCHAR},
+      is_allow = #{isAllow,jdbcType=TINYINT}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

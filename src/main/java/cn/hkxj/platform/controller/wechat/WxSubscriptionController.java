@@ -46,15 +46,17 @@ public class WxSubscriptionController {
 		log.info("{},{},{},{}", openid, templateId, action, scene);
 
 		if (studentBindService.isStudentBind(openid)) {
+
 			Student student = studentBindService.getStudentByOpenID(openid);
-			session.setAttribute("account", student.getAccount().toString());
-			return "classTable";
+			String account = student.getAccount().toString();
+			session.setAttribute("account", account);
+			log.info("redirect to timetable account：{}", account);
+			return "new";
 		}
 		else {
 			session.setAttribute("openid", openid);
+			log.info("redirect to login");
 			return "LoginWeb/Login";
 		}
-
-
 	}
 }

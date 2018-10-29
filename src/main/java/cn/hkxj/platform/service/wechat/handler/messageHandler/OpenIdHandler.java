@@ -24,7 +24,7 @@ import java.util.Map;
 public class OpenIdHandler implements WxMpMessageHandler {
 	@Autowired
 	private HttpServletRequest request;
-	@Value("${domain}")
+//	@Value("${domain}")
 	private String domain;
 	private static String PATTERN = "<a href=\"%s\\bind?openid=%s\">点击我绑定</a>";
 

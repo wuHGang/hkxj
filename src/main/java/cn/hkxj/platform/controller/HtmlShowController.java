@@ -16,7 +16,7 @@ public class HtmlShowController {
 
 	@GetMapping(value = "/timetable")
 	public String courseTimeTable(){
-		return "classTable";
+		return "new";
 	}
 
 	@GetMapping(value = "/menu")
