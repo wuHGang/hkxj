@@ -9,6 +9,7 @@ import cn.hkxj.platform.pojo.Openid;
 import cn.hkxj.platform.pojo.OpenidExample;
 import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.spider.UrpSpider;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -19,6 +20,7 @@ import java.util.List;
  * @date 2018/10/13
  */
 @Service("studentBindService")
+@Slf4j
 public class StudentBindService {
     private static final String template = "account: %s openid: %s is exist";
     @Resource
@@ -85,6 +87,7 @@ public class StudentBindService {
     }
 
     private Student getStudentBySpider(String account, String password) throws PasswordUncorrectException, ReadTimeoutException {
+		log.info("urpSpider start");
         UrpSpider urpSpider = new UrpSpider(account, password);
 
         return urpSpider.getInformation();

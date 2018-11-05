@@ -1,5 +1,8 @@
 package cn.hkxj.platform.pojo;
 
+import com.google.common.base.MoreObjects;
+import com.google.common.base.Objects;
+
 /**
  * @author junrong.chen
  * @date 2018/10/28
@@ -37,6 +40,23 @@ public enum Building {
 		}
 	}
 
+	public static boolean isExist(String name){
+		switch (name){
+			case "主楼":
+				return true;
+			case "科厦":
+				return true;
+			case "科高":
+				return true;
+			case "操场":
+				return true;
+			case "实验室":
+				return true;
+			default:
+				return false;
+		}
+	}
+
 	public String getChinese() {
 		return chinese;
 	}
@@ -45,4 +65,10 @@ public enum Building {
 		this.chinese = chinese;
 	}
 
+	@Override
+	public String toString() {
+		return MoreObjects.toStringHelper(this)
+				.add("chinese", chinese)
+				.toString();
+	}
 }

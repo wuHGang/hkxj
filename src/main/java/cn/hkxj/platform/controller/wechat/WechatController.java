@@ -1,6 +1,7 @@
 package cn.hkxj.platform.controller.wechat;
 
 import cn.hkxj.platform.service.wechat.HandlerRouteService;
+import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.mp.api.WxMpMessageRouter;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 /**
  * @author Binary Wang(https://github.com/binarywang)
  */
+@Slf4j
 @RestController
 @RequestMapping("/wechat/portal")
 public class WechatController {
@@ -68,7 +70,7 @@ public class WechatController {
 			                   required = false) String encType,
 	                   @RequestParam(name = "msg_signature",
 			                   required = false) String msgSignature) {
-		this.logger.info(
+		log.info(
 				"\n接收微信请求：[signature=[{}], encType=[{}], msgSignature=[{}],"
 						+ " timestamp=[{}], nonce=[{}], requestBody=[\n{}\n] ",
 				signature, encType, msgSignature, timestamp, nonce, requestBody);
@@ -84,7 +86,7 @@ public class WechatController {
 			WxMpXmlMessage inMessage = WxMpXmlMessage.fromXml(requestBody);
 			WxMpXmlOutMessage outMessage = this.route(inMessage);
 			if (outMessage == null) {
-				return "";
+				return "success";
 			}
 
 			out = outMessage.toXml();
@@ -99,11 +101,10 @@ public class WechatController {
 				return "";
 			}
 
-			out = outMessage
-					.toEncryptedXml(this.wxService.getWxMpConfigStorage());
+			out = outMessage.toEncryptedXml(this.wxService.getWxMpConfigStorage());
 		}
 
-		this.logger.debug("\n组装回复信息：{}", out);
+		log.info("\n组装回复信息：{}", out);
 
 		return out;
 	}

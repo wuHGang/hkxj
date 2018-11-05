@@ -86,4 +86,26 @@ public class Room {
 				.add("isAllow", isAllow)
 				.toString();
 	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		Room that = (Room) o;
+
+		return Objects.equal(this.id, that.id) &&
+				Objects.equal(this.area, that.area) &&
+				Objects.equal(this.direction, that.direction) &&
+				Objects.equal(this.floor, that.floor) &&
+				Objects.equal(this.number, that.number) &&
+				Objects.equal(this.name, that.name) &&
+				Objects.equal(this.isAllow, that.isAllow);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hashCode(id, area, direction, floor, number, name,
+				isAllow);
+	}
 }

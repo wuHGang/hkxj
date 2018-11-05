@@ -198,4 +198,7 @@
       is_allow = #{isAllow,jdbcType=TINYINT}
     where id = #{id,jdbcType=INTEGER}
   </update>
+    <select id="selectCourseTimeTableID" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        select course_timetable_id from room_course_timetable where room_id = #{roomId,jdbcType=INTEGER}
+    </select>
 </mapper>

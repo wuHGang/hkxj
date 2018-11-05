@@ -30,8 +30,6 @@ public class LoginController {
 	private StudentBindService studentBindService;
 	@Autowired
 	private HttpSession session;
-	@Autowired
-	private WxMpService wxMpService;
 	private static final int ACCOUNT_LENGTH = 10;
 	private static final String ACCOUNT_PREFIX = "201";
 

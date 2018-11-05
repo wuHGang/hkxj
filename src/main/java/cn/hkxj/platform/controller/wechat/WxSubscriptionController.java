@@ -14,6 +14,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.Objects;
 
 /**
  * @author junrong.chen
@@ -43,7 +44,12 @@ public class WxSubscriptionController {
 			@RequestParam(name = "action", required = false) String action,
 			@RequestParam(name = "scene", required = false) String scene,
 			HttpServletResponse response) throws IOException {
+
 		log.info("{},{},{},{}", openid, templateId, action, scene);
+		if (Objects.isNull(openid)){
+			log.info("redirect to login");
+			return "LoginWeb/Login";
+		}
 
 		if (studentBindService.isStudentBind(openid)) {
 
