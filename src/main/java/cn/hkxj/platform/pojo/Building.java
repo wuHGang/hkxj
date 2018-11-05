@@ -36,7 +36,7 @@ public enum Building {
 			case "实验室":
 				return LABORATORY;
 			default:
-				throw new IllegalArgumentException("no building match");
+				throw new IllegalArgumentException("no building match:" + name);
 		}
 	}
 

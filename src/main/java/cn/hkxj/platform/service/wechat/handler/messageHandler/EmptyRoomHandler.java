@@ -30,7 +30,7 @@ import java.util.stream.StreamSupport;
 @Component
 @Slf4j
 public class EmptyRoomHandler implements WxMpMessageHandler {
-	private static final String PATTERN = "格式不正确:\n具体教室 ：空教室 教室 E0405\n查询教学楼的某一层：例如查询科厦四楼空教室\n空教室 科厦 4";
+	private static final String PATTERN = "格式不正确:\n具体教室 ：空教室 教室 主楼E0405（主楼教室前要加主楼俩字 科厦教室需要加上科字如：科S308）\n查询教学楼的某一层：\n例如查询科厦四楼空教室\n空教室 科厦 4";
 	private static Splitter SPLITTER = Splitter.on(" ").trimResults().omitEmptyStrings();
 	private static final int CONTENT_SIZE = 3;
 	private static final String SINGLE_ROOM = "教室";
@@ -40,6 +40,7 @@ public class EmptyRoomHandler implements WxMpMessageHandler {
 	@Override
 	public WxMpXmlOutMessage handle(WxMpXmlMessage wxMessage, Map<String, Object> context, WxMpService wxMpService, WxSessionManager sessionManager){
 		String reply = parseContent(wxMessage.getContent());
+		log.info("check empty room success openid:{}", wxMessage.getFromUser());
 
 		return new TextBuilder().build(reply, wxMessage, wxMpService);
 	}
@@ -101,10 +102,21 @@ public class EmptyRoomHandler implements WxMpMessageHandler {
 		return new String(buffer);
 	}
 
+
+	private boolean isParamValid(Building building, int floor) {
+		if (floor < 1){
+			return false;
+		}
+		if ((building == Building.SCIENCE)&& (floor< 6)){
+			return true;
+		}
+		return (building == Building.MAIN) && (floor < 9);
+	}
+
 	public String tableToText(RoomTimeTable roomTimeTable) {
 		Room room = roomTimeTable.getRoom();
 		List<CourseTimeTable> courseTimeTable = roomTimeTable.getCourseTimeTable();
-		StringBuilder builder = new StringBuilder(room.getName()).append(":");
+		StringBuilder builder = new StringBuilder(room.getName()).append(":\n");
 		if (Objects.isNull(courseTimeTable) || courseTimeTable.size() == 0){
 			builder.append("今天没课");
 		}
