@@ -58,7 +58,7 @@ public class EmptyRoomHandler implements WxMpMessageHandler {
 
 			Building building = Building.getBuildingByName(searchType);
 			Integer floor = new Integer(strings[2]);
-			if ((isParamValid(building, floor))){
+			if ((!isParamValid(building, floor))){
 				return "你的查询超出了我们理解范围";
 			}
 			return getReply(roomService.getTodayRoomTimeTable(building, floor));
