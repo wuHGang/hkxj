@@ -30,7 +30,7 @@ import java.util.stream.StreamSupport;
 @Component
 @Slf4j
 public class EmptyRoomHandler implements WxMpMessageHandler {
-	private static final String PATTERN = "格式不正确:\n具体教室 ：空教室 教室 主楼E0405（主楼教室前要加主楼俩字 科厦教室需要加上科字如：科S308）\n查询教学楼的某一层：\n例如查询科厦四楼空教室\n空教室 科厦 4";
+	private static final String PATTERN = "格式不正确:\n\n具体教室 \n：空教室 教室 主楼E0405\n（主楼教室前要加主楼俩字 科厦教室需要加上科字如：科S308）\n\n查询教学楼的某一层：\n例如查询科厦四楼空教室\n空教室 科厦 4";
 	private static Splitter SPLITTER = Splitter.on(" ").trimResults().omitEmptyStrings();
 	private static final int CONTENT_SIZE = 3;
 	private static final String SINGLE_ROOM = "教室";
@@ -55,8 +55,12 @@ public class EmptyRoomHandler implements WxMpMessageHandler {
 			return searchSingleRoom(strings[2]);
 		}
 		else {
+
 			Building building = Building.getBuildingByName(searchType);
 			Integer floor = new Integer(strings[2]);
+			if ((isParamValid(building, floor))){
+				return "你的查询超出了我们理解范围";
+			}
 			return getReply(roomService.getTodayRoomTimeTable(building, floor));
 		}
 	}
