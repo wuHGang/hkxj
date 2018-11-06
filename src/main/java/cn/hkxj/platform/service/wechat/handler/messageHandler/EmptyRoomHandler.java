@@ -22,6 +22,7 @@ import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.StreamSupport;
 
 /**
@@ -135,14 +136,19 @@ public class EmptyRoomHandler implements WxMpMessageHandler {
 	}
 
 	private String singleToText(RoomTimeTable roomTimeTable) {
-		StringBuffer sb = new StringBuffer();
-		for (CourseTimeTable courseTimeTable : roomTimeTable.getCourseTimeTable()) {
+		StringBuilder sb = new StringBuilder(roomTimeTable.getRoom().getName());
+		List<CourseTimeTable> timeTable = roomTimeTable.getCourseTimeTable();
+		if (Objects.isNull(timeTable)){
+			sb.append("今天没课");
+			return new String(sb);
+		}
+		for (CourseTimeTable courseTimeTable : timeTable) {
 
 			Course course = courseService.getCourseById(courseTimeTable.getCourse());
 			if(Objects.isNull(course)){
 				continue;
 			}
-			sb.append("第").append(courseTimeTable.getOrder()).append("节： ");
+			sb.append("\n").append("第").append(courseTimeTable.getOrder()).append("节： ");
 			sb.append(course.getName());
 			sb.append('\n');
 		}
