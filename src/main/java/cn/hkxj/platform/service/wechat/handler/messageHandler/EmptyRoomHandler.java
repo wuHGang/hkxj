@@ -8,7 +8,6 @@ import cn.hkxj.platform.pojo.RoomTimeTable;
 import cn.hkxj.platform.service.EmptyRoomService;
 import com.google.common.base.Splitter;
 import lombok.extern.slf4j.Slf4j;
-import me.chanjar.weixin.common.exception.WxErrorException;
 import me.chanjar.weixin.common.session.WxSessionManager;
 import me.chanjar.weixin.mp.api.WxMpMessageHandler;
 import me.chanjar.weixin.mp.api.WxMpService;
@@ -114,7 +113,7 @@ public class EmptyRoomHandler implements WxMpMessageHandler {
 		if ((building == Building.SCIENCE)&& (floor< 6)){
 			return true;
 		}
-		return (building == Building.MAIN) && (floor < 9);
+		return (building == Building.MAIN) && (floor < 10);
 	}
 
 	public String tableToText(RoomTimeTable roomTimeTable) {
