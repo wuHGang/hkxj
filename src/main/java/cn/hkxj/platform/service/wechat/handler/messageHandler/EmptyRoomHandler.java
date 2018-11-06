@@ -2,10 +2,12 @@ package cn.hkxj.platform.service.wechat.handler.messageHandler;
 
 import cn.hkxj.platform.builder.TextBuilder;
 import cn.hkxj.platform.pojo.Building;
+import cn.hkxj.platform.pojo.Course;
 import cn.hkxj.platform.pojo.CourseTimeTable;
 import cn.hkxj.platform.pojo.Room;
 import cn.hkxj.platform.pojo.RoomTimeTable;
 import cn.hkxj.platform.service.EmptyRoomService;
+import cn.hkxj.platform.service.wechat.common.course.CourseService;
 import com.google.common.base.Splitter;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.session.WxSessionManager;
@@ -35,6 +37,8 @@ public class EmptyRoomHandler implements WxMpMessageHandler {
 	private static final String SINGLE_ROOM = "教室";
 	@Resource(name = "emptyRoomService")
 	private EmptyRoomService roomService;
+	@Resource
+	private CourseService courseService;
 
 	@Override
 	public WxMpXmlOutMessage handle(WxMpXmlMessage wxMessage, Map<String, Object> context, WxMpService wxMpService, WxSessionManager sessionManager){
@@ -44,7 +48,7 @@ public class EmptyRoomHandler implements WxMpMessageHandler {
 		return new TextBuilder().build(reply, wxMessage, wxMpService);
 	}
 
-	private String parseContent(String content){
+	public String parseContent(String content){
 		String[] strings = StreamSupport.stream(SPLITTER.split(content).spliterator(), false).toArray(String[]::new);
 		if ((strings.length != CONTENT_SIZE)){
 			return PATTERN;
@@ -99,10 +103,7 @@ public class EmptyRoomHandler implements WxMpMessageHandler {
 	}
 
 	private String getReply(RoomTimeTable roomTimeTable){
-		log.debug(roomTimeTable.toString());
-		StringBuffer buffer = new StringBuffer();
-		buffer.append(tableToText(roomTimeTable));
-		return new String(buffer);
+		return singleToText(roomTimeTable);
 	}
 
 
@@ -116,7 +117,7 @@ public class EmptyRoomHandler implements WxMpMessageHandler {
 		return (building == Building.MAIN) && (floor < 10);
 	}
 
-	public String tableToText(RoomTimeTable roomTimeTable) {
+	private String tableToText(RoomTimeTable roomTimeTable) {
 		Room room = roomTimeTable.getRoom();
 		List<CourseTimeTable> courseTimeTable = roomTimeTable.getCourseTimeTable();
 		StringBuilder builder = new StringBuilder(room.getName()).append(":\n");
@@ -124,10 +125,28 @@ public class EmptyRoomHandler implements WxMpMessageHandler {
 			builder.append("今天没课");
 		}
 		else {
+			builder.append("第");
 			for (CourseTimeTable table : courseTimeTable) {
-				builder.append("第").append(table.getOrder()).append("节有课 ");
+				builder.append(table.getOrder()).append(" ");
 			}
+			builder.append("节有课 ");
 		}
 		return new String(builder);
+	}
+
+	private String singleToText(RoomTimeTable roomTimeTable) {
+		StringBuffer sb = new StringBuffer();
+		for (CourseTimeTable courseTimeTable : roomTimeTable.getCourseTimeTable()) {
+
+			Course course = courseService.getCourseById(courseTimeTable.getCourse());
+			if(Objects.isNull(course)){
+				continue;
+			}
+			sb.append("第").append(courseTimeTable.getOrder()).append("节： ");
+			sb.append(course.getName());
+			sb.append('\n');
+		}
+
+		return new String(sb);
 	}
 }

@@ -69,6 +69,7 @@ public class EmptyRoomService {
 			Room room = todayRoomMap.get(name);
 			ArrayList<CourseTimeTable> courseTimeTableArrayList = new ArrayList<>(todayRoomTimeTableMap.get(room));
 			timeTable.setRoom(room);
+			courseTimeTableArrayList.sort(Comparator.comparing(CourseTimeTable::getOrder));
 			timeTable.setCourseTimeTable(courseTimeTableArrayList);
 		}
 		else {
@@ -94,14 +95,22 @@ public class EmptyRoomService {
 		todayRoomMap = new HashMap<>();
 		for (CourseTimeTable timeTable : timeTableService.getTimeTableFromDB(SchoolTimeUtil.getSchoolWeek())) {
 			String position = timeTable.getPosition();
-			if (!todayRoomMap.containsKey(position)){
-				Room room = roomService.getRoomByName(position);
-				todayRoomMap.put(position, room);
+			if (checkDistinct(timeTable.getDistinct())){
+				Room room;
+				if (!todayRoomMap.containsKey(position) ){
+					room = roomService.getRoomByName(position);
+					todayRoomMap.put(position, room);
+				}
+				else {
+					room = todayRoomMap.get(position);
+				}
+
 				todayRoomTimeTableMap.put(room, timeTable);
 			}
-			else {
-				todayRoomTimeTableMap.put(todayRoomMap.get(position), timeTable);
-			}
 		}
+	}
+
+	private boolean checkDistinct(int distinct){
+		return (distinct == 0) || (distinct == SchoolTimeUtil.getWeekDistinct());
 	}
 }

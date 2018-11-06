@@ -91,7 +91,12 @@ public class CourseServiceImpl implements CourseService{
         return false;
     }
 
-    /**
+	@Override
+	public Course getCourseById(int id) {
+    	return courseMapper.selectByPrimaryKey(id);
+	}
+
+	/**
      * 将传入的字符串切割成班级名 年级 班级序号
      * @param classname student表中字段classname的值
      * @return new String[] {班级名, 年级, 班级序号}

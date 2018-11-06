@@ -36,7 +36,17 @@ public class SchoolTimeUtil {
 		return 0;
 	}
 
+	public static int getWeekDistinct() {
+		 if(getSchoolWeek() % 2 == 0){
+		 	return 2;
+		 }
+		 else {
+		 	return 1;
+		 }
+	}
+
 	public static void main(String[] args) {
-		System.out.println(getDayOfWeek());
+		System.out.println(getSchoolWeek());
+		System.out.println(getWeekDistinct());
 	}
 }
