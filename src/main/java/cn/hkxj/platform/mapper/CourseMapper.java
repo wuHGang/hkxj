@@ -2,6 +2,7 @@ package cn.hkxj.platform.mapper;
 
 import cn.hkxj.platform.pojo.Course;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -29,5 +30,9 @@ public interface CourseMapper {
     List<Integer> getCourseIdsByClassId(Integer classId);
 
     List<Course> getAllCourses(String ids);
+
+    String selectNameByUid(String uid);
+
+    boolean ifExistCourse(String uid);
 
 }

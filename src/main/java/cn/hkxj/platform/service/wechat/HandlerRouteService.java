@@ -25,6 +25,9 @@ public class HandlerRouteService {
 	private OpenIdHandler openIdHandler;
 
 	@Resource
+	private GradeMessageHandler gradeMessageHandler;
+
+	@Resource
 	private EmptyRoomHandler emptyRoomHandler;
 
 	@Resource
@@ -41,6 +44,12 @@ public class HandlerRouteService {
 //			.end()
 			.rule()
 				.async(false)
+				.interceptor(wechatOpenIdInterceptor)
+				.content("成绩")
+				.handler(gradeMessageHandler)
+				.end()
+			.rule()
+				.async(false)
 //				.interceptor(wechatOpenIdInterceptor)
 				.rContent("空教室.*?")
 				.handler(emptyRoomHandler)
@@ -50,5 +59,6 @@ public class HandlerRouteService {
 //				.interceptor(wechatOpenIdInterceptor)
 //				.handler(openIdHandler)
 //			.end();
+
 	}
 }
