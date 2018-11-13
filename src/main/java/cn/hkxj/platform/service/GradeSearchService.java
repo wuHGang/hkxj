@@ -40,14 +40,42 @@ public class GradeSearchService {
 		AllGradeAndCourse gradeAndCourse = appSpider.getGradeAndCourse();
 		for (AllGradeAndCourse.GradeAndCourse andCourse : gradeAndCourse.getCurrentTermGrade()) {
 //			gradeMapper.insert(andCourse.getGrade());
-			saveCourse(account, andCourse.getCourse());
+//			saveCourse(account, andCourse.getCourse());
+			if (!courseMapper.ifExistCourse(andCourse.getCourse().getUid()))
+				saveCourse(account,andCourse.getCourse());
+			if(!gradeMapper.ifExistGrade(andCourse.getGrade().getAccount(),andCourse.getGrade().getCourseId()))
+				saveGrade(account,andCourse.getGrade());
 		}
+	}
 
-
+	public List<Grade> getStudentGrades(int account, String password){
+		getCurrentGrade(account, password);
+		List<Grade> studentGrades=gradeMapper.selectByAccount(account);
+		return studentGrades;
 	}
 
 	private void saveCourse(int account, Course course){
 		courseMapper.insert(course);
 		courseMapper.insertStudentAndCourse(account, course.getUid());
+	}
+
+	private void saveGrade(int account,Grade grade){
+		gradeMapper.insert(grade);
+	}
+
+	public String toText(List<Grade> studentGrades){
+		StringBuffer buffer = new StringBuffer();
+		int i=1;
+		for (Grade grade:studentGrades){
+			if(i==1){
+				buffer.append("- - - - - - - - - - - - - -\n");
+				buffer.append("|"+grade.getYear()+"学年，第"+grade.getTerm()+"学期|\n");i--;
+				buffer.append("- - - - - - - - - - - - - -\n\n");
+			}
+			buffer.append("考试名称："+courseMapper.selectNameByUid(grade.getCourseId())+"\n")
+			.append("成绩："+grade.getScore()/10).append("   学分："+grade.getPoint()/10+"\n\n");
+			System.out.println(buffer);
+		}
+		return buffer.toString();
 	}
 }

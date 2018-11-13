@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
@@ -38,18 +39,22 @@ public class UrpSpider {
 	public Student getInformation() throws PasswordUncorrectException, ReadTimeoutException {
 		Map result = null;
 		try {
+			log.info("urp spider start get student info account{}", this.account);
 			result = getResult(INFORMATION_URL);
 		} catch (IOException e) {
+			log.error("read spider server timeout");
 			throw new ReadTimeoutException("本地服务器读取超时", e);
 		}
 
-		Map information = (Map)Optional
-				.ofNullable(result.get("information"))
-				.orElseThrow(() -> new ReadTimeoutException("学校服务器读取超时"));
+		Object information = result.get("information");
+		if (Objects.isNull(information)){
+			log.info("read school server timeout account{}", this.account);
+			throw new ReadTimeoutException("学校服务器读取超时");
+		}
 
 		Student student = new Student();
 		try {
-			BeanUtils.populate(student, information);
+			BeanUtils.populate(student, (Map)information);
 		} catch (IllegalAccessException | InvocationTargetException e) {
 			log.error(e.getMessage());
 			throw new RuntimeException("个人信息json解析出错", e);
@@ -60,17 +65,14 @@ public class UrpSpider {
 
 	public void getGrade() throws IOException, PasswordUncorrectException {
 		Map result = getResult(GRADE_URL);
-		log.info(result.toString());
 	}
 
 	public void getCurrentGrade() throws IOException, PasswordUncorrectException {
 		Map result = getResult(CURRENT_GRADE_URL);
-		log.info(result.toString());
 	}
 
 	public void getEverGrade() throws IOException, PasswordUncorrectException {
 		Map result = getResult(EVER_GRADE_URL);
-		log.info(result.toString());
 	}
 
 	private Map getResult(String url) throws IOException, PasswordUncorrectException {
@@ -87,6 +89,7 @@ public class UrpSpider {
 		Double statu = (Double) resultMap.get("statu");
 
 		if(statu.intValue() == 400) {
+			log.info("password uncorrect account{} password{}", account, password);
 			throw new PasswordUncorrectException("账号: "+account+"  密码："+password);
 		}
 		else if(statu.intValue() == 500) {

@@ -28,6 +28,6 @@ public class ExceptionHandlerAdvice {
 		}
 		log.warn("error ---- {}",e.getMessage(), e);
 
-		return WebResponse.fail(ErrorCode.SYSTEM_ERROR.getErrorCode(), e.getMessage());
+		return WebResponse.fail(ErrorCode.SYSTEM_ERROR.getErrorCode(), "服务器出了点小问题");
 	}
 }

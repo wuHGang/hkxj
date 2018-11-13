@@ -15,23 +15,20 @@ import javax.annotation.Resource;
  */
 @Service
 public class HandlerRouteService {
-	@Autowired
-	WxMpMessageRouter router;
+	@Resource
+	private WxMpMessageRouter router;
 
-	@Autowired
-	ExamMessageHandler examMessageHandler;
-
-	@Autowired
-	GradeMessageHandler gradeMessageHandler;
-
-	@Autowired
+	@Resource
     CourseMessageHandler courseMessageHandler;
 
-	@Autowired
-	ExampleTemplateHandler exampleTemplateHandler;
-
-	@Autowired
+	@Resource
 	private OpenIdHandler openIdHandler;
+
+	@Resource
+	private GradeMessageHandler gradeMessageHandler;
+
+	@Resource
+	private EmptyRoomHandler emptyRoomHandler;
 
 	@Resource
 	private WechatOpenIdInterceptor wechatOpenIdInterceptor;
@@ -45,10 +42,6 @@ public class HandlerRouteService {
 					.handler(openIdHandler)
 				.end()
 				.rule()
-					.content("考试安排")
-					.handler(examMessageHandler)
-				.end()
-				.rule()
 					.content("课表")
 					.handler(courseMessageHandler)
 				.end()
@@ -56,9 +49,29 @@ public class HandlerRouteService {
 					.content("成绩")
 					.handler(gradeMessageHandler)
 				.end()
+//			.rule()
+//			.async(false)
+//				.content("课表")
+//				.interceptor(wechatOpenIdInterceptor)
+//				.handler(lessonMessageHandler)
+//			.end()
 				.rule()
-					.content("绑定学号")
-					.handler(exampleTemplateHandler)
-				.end();
+				.async(false)
+				.interceptor(wechatOpenIdInterceptor)
+				.content("成绩")
+				.handler(gradeMessageHandler)
+				.end()
+			.rule()
+				.async(false)
+//				.interceptor(wechatOpenIdInterceptor)
+				.rContent("空教室.*?")
+				.handler(emptyRoomHandler)
+			.end();
+//			.rule()
+//				.async(false)
+//				.interceptor(wechatOpenIdInterceptor)
+//				.handler(openIdHandler)
+//			.end();
+
 	}
 }

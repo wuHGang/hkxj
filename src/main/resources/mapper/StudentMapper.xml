@@ -6,14 +6,6 @@
         <result column="is_correct" property="correct"/>
     </resultMap>
 
-    <!--<parameterMap id="BaseParameterMap" type="cn.hkxj.platform.pojo.Student">-->
-        <!--<parameter property="correct" -->
-    <!--</parameterMap>-->
-
-    <!--<parameterMap id="BaseParameterMap" type="cn.hkxj.platform.pojo.Student">-->
-        <!--<parameter property="id"/>-->
-    <!--</parameterMap>-->
-
     <sql id="selectFields">
         id as id ,
         account as account ,
@@ -109,7 +101,7 @@
     </select>
 
     <insert id="insertByStudent" parameterType="cn.hkxj.platform.pojo.Student">
-        INSERT INTO
+        INSERT ignore INTO
           student (<include refid="key"/>)
         VALUES
           (<include refid="value"/>)

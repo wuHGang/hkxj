@@ -1,6 +1,7 @@
 package cn.hkxj.platform.service.wechat.handler.messageHandler;
 
 import cn.hkxj.platform.builder.TextBuilder;
+import jdk.nashorn.internal.objects.annotations.Property;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.exception.WxErrorException;
 import me.chanjar.weixin.common.session.WxSessionManager;
@@ -22,16 +23,17 @@ import java.util.Map;
 @Component
 @Slf4j
 public class OpenIdHandler implements WxMpMessageHandler {
-	@Autowired
-	private HttpServletRequest request;
-	@Value("${domain}")
-	private String domain;
+//	@Value("${domain}")
+//	private String domain;
+
 	private static String PATTERN = "<a href=\"%s\\bind?openid=%s\">点击我绑定</a>";
 
 	@Override
 	public WxMpXmlOutMessage handle(WxMpXmlMessage wxMpXmlMessage, Map<String, Object> map, WxMpService wxMpService, WxSessionManager wxSessionManager) throws WxErrorException {
 		String openId = wxMpXmlMessage.getFromUser();
-		String content = String.format(PATTERN, domain, openId);
+//		String content = String.format(PATTERN, domain, openId);
+		String content = "test";
+		log.info(content);
 		return new TextBuilder().build(content, wxMpXmlMessage, wxMpService);
 	}
 }

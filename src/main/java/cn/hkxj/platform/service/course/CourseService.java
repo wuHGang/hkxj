@@ -1,6 +1,7 @@
 package cn.hkxj.platform.service.course;
 
 import cn.hkxj.platform.pojo.CourseGroupMsg;
+import cn.hkxj.platform.pojo.Course;
 import cn.hkxj.platform.pojo.CourseTimeTable;
 
 import java.util.List;
@@ -25,4 +26,5 @@ public interface CourseService {
     List<CourseTimeTable> getCoursesCurrentDay(Integer account);
 
     String toText(List<CourseTimeTable> courseTimeTables);
+
 }

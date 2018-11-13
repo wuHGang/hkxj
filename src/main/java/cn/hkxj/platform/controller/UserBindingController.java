@@ -42,6 +42,7 @@ public class UserBindingController {
 	@RequestMapping(value = "/bind/wechat", method = RequestMethod.POST, produces="application/json;charset=UTF-8")
 	@ResponseBody
 	public WebResponse loginHtmlPost(@RequestParam("account") String account, @RequestParam("password") String password, HttpServletRequest request) {
+		log.info("student bind start account:{} password:{}", account, password);
 		String openid = (String) session.getAttribute("openid");
 
 		try {
@@ -56,12 +57,14 @@ public class UserBindingController {
 			}
 			session.setAttribute("account", account);
 		} catch (PasswordUncorrectException e) {
+			log.info("student bind fail Password not correct account:{} password:{} openid:{}", account, password, openid);
 			return WebResponse.fail(ErrorCode.ACCOUNT_OR_PASSWORD_INVALID.getErrorCode(), "账号或者密码错误");
 		} catch (OpenidExistException e) {
+			log.info("student bind fail openid is exist account:{} password:{}", account, password);
 			return WebResponse.fail(ErrorCode.OPENID_EXIST.getErrorCode(), "该账号已经绑定");
 		}
 
-
+		log.info("student bind success account:{} password:{} openid{}", account, password, openid);
 		return WebResponse.success();
 	}
 

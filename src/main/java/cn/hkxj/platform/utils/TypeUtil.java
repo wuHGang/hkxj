@@ -13,7 +13,8 @@ public class TypeUtil {
 			int index = value.indexOf(POINT);
 			value = value.substring(0, index) + value.substring(index +1);
 		}
-		return Integer.parseInt(value+"0");
+		return Integer.parseInt(value);
+		//原句是return Integer.parseInt(value+"0"); 不知道是你们是特意这么写还是手误，导致学分变成3位数，如果是特意的请自己更改一下
 	}
 
 	public static int gradeToInt(String value){

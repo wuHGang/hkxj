@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.Objects;
 
 /**
  * @author junrong.chen
@@ -52,16 +53,23 @@ public class WxSubscriptionController {
 			HttpServletResponse response, HttpServletRequest request) throws IOException {
 		log.info("{},{},{},{}", openid, templateId, action, scene);
 
-		if (studentBindService.isStudentBind(openid)) {
-			Student student = studentBindService.getStudentByOpenID(openid);
-			session.setAttribute("account", student.getAccount().toString());
-			return "classTable";
-		} else {
-			session.setAttribute("openid", openid);
-			request.setAttribute("scene", scene);
+		if (Objects.isNull(openid)) {
+			log.info("redirect to login");
 			return "LoginWeb/Login";
 		}
 
+		if (studentBindService.isStudentBind(openid)) {
+			Student student = studentBindService.getStudentByOpenID(openid);
+			String account = student.getAccount().toString();
+			session.setAttribute("account", account);
+			log.info("redirect to timetable account：{}", account);
+			return "new";
+
+		} else {
+			session.setAttribute("openid", openid);
+			log.info("redirect to login");
+			return "LoginWeb/Login";
+		}
 	}
 
 }

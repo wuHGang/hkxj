@@ -3,9 +3,11 @@ package cn.hkxj.platform.service.wechat.handler.messageHandler;
 import cn.hkxj.platform.builder.TemplateBuilder;
 import cn.hkxj.platform.builder.TextBuilder;
 import cn.hkxj.platform.mapper.WechatOpenIdMapper;
+import cn.hkxj.platform.pojo.Grade;
 import cn.hkxj.platform.pojo.GradeDTO;
 import cn.hkxj.platform.pojo.Wechatuser;
 import cn.hkxj.platform.service.grade.impl.GradeServiceImpl;
+import cn.hkxj.platform.service.GradeSearchService;
 import cn.hkxj.platform.service.wechat.handler.AbstractHandler;
 import me.chanjar.weixin.common.exception.WxErrorException;
 import me.chanjar.weixin.common.session.WxSessionManager;
@@ -38,18 +40,21 @@ public class GradeMessageHandler extends AbstractHandler {
 	@Autowired
 	private TemplateBuilder templateBuilder;
 
+	@Autowired
+	private GradeSearchService gradeSearchService;
+
 	@Override
 	public WxMpXmlOutMessage handle(WxMpXmlMessage wxMpXmlMessage, Map<String, Object> map, WxMpService wxMpService, WxSessionManager wxSessionManager) throws WxErrorException {
 		String openid = wxMpXmlMessage.getFromUser();
 		Wechatuser wechatuser = openIdMapper.getStudentByOpenId(openid);
 		try {
-			List<GradeDTO> gradeDTOS = gradeService.getGradesByClassname(wechatuser);
-			String examMsg = gradeService.toText(gradeDTOS);
-			System.out.println(examMsg);
+			System.out.println("here!!!!!!!!!!!!!!");
+			List<Grade> studentGrades = gradeSearchService.getStudentGrades(wechatuser.getAccount(),wechatuser.getAccount().toString());
+			String gradesMsg = gradeSearchService.toText(studentGrades);
 
-			return textBuilder.build(examMsg, wxMpXmlMessage, wxMpService);
+			return textBuilder.build(gradesMsg , wxMpXmlMessage, wxMpService);
 //            return null;
-		} catch (IOException e) {
+		} catch (Exception e) {
 			this.logger.error("在组装返回信息时出现错误 {}", e.getMessage());
 		}
 		return null;

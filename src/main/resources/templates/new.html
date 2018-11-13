@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>my_Timetable</title>
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,width=device-width,user-scalable=no">
+
+    <script
+            src="https://code.jquery.com/jquery-1.12.4.min.js"
+            integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ="
+            crossorigin="anonymous"></script>
+    <!---->
+    <style>
+        th{
+            font-size: 78%;
+            background-color:transparent;
+            height: 1rem;
+            color:grey;
+        }
+        td {
+            font-size:64%;
+            padding: 0;
+            height: 4.4rem;
+            border: 3px solid transparent;
+            border-radius: .5rem;
+        }
+        tr td:nth-of-type(1){
+            font-size: 78%;
+            width: 1rem;
+            color:grey;
+            background-color:white;
+            border: none;
+            border-radius: 0;
+        }
+        table{
+            box-sizing: content-box;
+            opacity: 1;
+            width: 100%;
+            color: mintcream;
+        }
+    </style>
+</head>
+<body>
+<div style="margin: 0;padding: 0; border:none;background-color: white;width: 100%">
+    <div style="width: 100%;height: 2.2rem; text-align: center;line-height: 2.6rem">
+        <label for="week"></label>
+        <select name="week" id="week" style="font-size: 1.2rem;border: none;padding: 2px;background-color: transparent">
+            <option value="1">第1周</option>
+            <option value="2">第2周</option>
+            <option value="3">第3周</option>
+            <option value="4">第4周</option>
+            <option value="5">第5周</option>
+            <option value="6">第6周</option>
+            <option value="7">第7周</option>
+            <option value="8">第8周</option>
+            <option value="9">第9周</option>
+            <option value="10">第10周</option>
+            <option value="11">第11周</option>
+            <option value="12">第12周</option>
+            <option value="13">第13周</option>
+            <option value="14">第14周</option>
+            <option value="15">第15周</option>
+            <option value="16">第16周</option>
+            <option value="17">第17周</option>
+            <option value="18">第18周</option>
+            <option value="19">第19周</option>
+            <option value="20">第20周</option>
+        </select>
+    </div>
+
+    <table data-filter="true" data-input="#myFilter" cellspacing="6" style="background-color: white;">
+        <thead >
+        <tr>
+            <th style="background-color: transparent"></th>
+            <th>周一</th>
+            <th>周二</th>
+            <th>周三</th>
+            <th>周四</th>
+            <th>周五</th>
+            <th>周六</th>
+            <th>周日</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>1</td>
+            <td rowspan="2"></td>
+            <td rowspan="2"></td>
+            <td rowspan="2"></td>
+            <td rowspan="2"></td>
+            <td rowspan="2"></td>
+            <td rowspan="2"></td>
+            <td rowspan="2"></td>
+        </tr>
+        <tr>
+            <td>2</td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td rowspan="2"></td>
+            <td rowspan="2"></td>
+            <td rowspan="2"></td>
+            <td rowspan="2"></td>
+            <td rowspan="2"></td>
+            <td rowspan="2"></td>
+            <td rowspan="2"></td>
+        </tr>
+        <tr>
+            <td>4</td>
+        </tr>
+        <tr>
+            <td>5</td>
+            <td rowspan="2"></td>
+            <td rowspan="2"></td>
+            <td rowspan="2"></td>
+            <td rowspan="2"></td>
+            <td rowspan="2"></td>
+            <td rowspan="2"></td>
+            <td rowspan="2"></td>
+        </tr>
+        <tr>
+            <td>6</td>
+        </tr>
+        <tr>
+            <td>7</td>
+            <td rowspan="2"></td>
+            <td rowspan="2"></td>
+            <td rowspan="2"></td>
+            <td rowspan="2"></td>
+            <td rowspan="2"></td>
+            <td rowspan="2"></td>
+            <td rowspan="2"></td>
+        </tr>
+        <tr>
+            <td>8</td>
+        </tr>
+        <tr>
+            <td>9</td>
+            <td rowspan="2"></td>
+            <td rowspan="2"></td>
+            <td rowspan="2"></td>
+            <td rowspan="2"></td>
+            <td rowspan="2"></td>
+            <td rowspan="2"></td>
+            <td rowspan="2"></td>
+        </tr>
+        <tr>
+            <td>10</td>
+        </tr>
+        </tbody>
+
+    </table>
+</div>
+
+<script>
+
+    //获取当前时间
+    var time = new Date();
+    //获取表格的td集合
+    var arrTd = $('td');
+    //        alert(arrTd.length);
+    //获取表格th集合
+    var arrTh=$("th");
+    //获取0-6的星期数字代码
+    var week = time.getDay();
+    //设置txt为id为week的DOM节点
+    var txt;
+    //设置ajax参数
+    var account;
+    //设置一个数组存储课表信息
+    var arrClass=[];
+
+    //蓝色系列数组
+    var arrBlue=[];
+    arrBlue[0]=arrBlue[1];
+    arrBlue[1]="dd5061";
+    arrBlue[2]="bf98de";
+    arrBlue[3]="00bece";
+    arrBlue[4]="009ace";
+    arrBlue[5]="00aada";
+    arrBlue[6]="d34899";
+    arrBlue[7]="0099a7";
+    //绿色系列
+    arrBlue[8]="D34899";
+    arrBlue[9]="00a282";
+    arrBlue[10]="8bb8bd";
+    arrBlue[11]="40806c";
+    arrBlue[12]="76aba4";
+
+    //红色系列
+    arrBlue[13]="f26b5b";
+    arrBlue[14]="b35568";
+    arrBlue[15]="883841";
+    arrBlue[16]="ce3d48";
+    arrBlue[17]="c05d49";
+    arrBlue[18]="c05565";
+    arrBlue[19]="fd9cba";
+    arrBlue[20]="fe87a3";
+    arrBlue[21]="c55265";
+    arrBlue[22]="b05468";
+    arrBlue[23]="dd5061";
+    arrBlue[24]="dd5061";
+
+    //更新周
+    function theWeek() {
+
+        var x = new Date();
+        var y = x.setFullYear(2018, 7, 24);
+        var today = new Date();
+        return Math.ceil((today - y) / (24 * 60 * 60 * 1000) / 7);
+
+    }
+    //设置当前周
+    var weekNumber=theWeek();
+
+    //初始化选择
+    $("select").children('option').each(function () {
+        var selected=$(this).val();
+        if(selected==weekNumber){
+            $(this).attr("selected","selected");
+        }
+    });
+
+    //设置获取cookie函数
+    function getCookie(useraccount) {
+        var value=useraccount+"=";
+        var ca=document.cookie.split(';');
+        for(var i=0;i<ca.length;i++){
+            var c=ca[i].trim();
+            if(c.indexOf(value)==0){
+                return c.substring(useraccount.length+1,c.length)
+            }
+        }
+    }
+
+    //实现文本换行
+    function brText(elementText) {
+
+        let txt=$(elementText).text();
+        let repl=txt.replace("#","<br>");
+        $(elementText).html(repl);
+    }
+    account=getCookie("account");
+
+    //ajax请求数据
+    function getData(week){
+
+        $.ajax({
+
+            type:"get",
+            url:"/platform/course/timetable",
+            timeout:10000,
+            success:function (json) {
+                if (json.status != 200){
+                    alert(json.message);
+                    if (json.status == 401){
+                        window.location="/bind";
+                    }
+                }
+                $("td").not($("td:nth-of-type(1)")).text('').css({"background-color":"white"});
+                arrClass=json.data;
+                function getText(a,b) {
+                    var raN=Math.floor(Math.random() *23+1);
+                    $(arrTd[a]).text(arrClass[b].courseObject.name+"#"+"@"+arrClass[b].position)
+                        .css({"background-color":"#"+arrBlue[raN]});
+                }
+                for (var k=0;k<arrClass.length;k++) {
+                    //判断是否开课;
+                    if(arrClass[k].start <= week && arrClass[k].end >= week&&(arrClass[k].distinct==0||(arrClass[k].distinct+week)%2==0)){
+                        //实现数据放置;
+                        for (var i = 1; i <= 7; i++) {
+                            //判断是周几的课;
+                            if (arrClass[k].week == i) {
+                                switch (arrClass[k].order) {
+                                    case 1:
+                                        getText(i,k);
+                                        brText(arrTd[i]);
+                                        break;
+                                    case 3:
+                                        getText(i+9,k);
+                                        brText(arrTd[i+9]);
+                                        break;
+                                    case 5:
+                                        getText(i+18,k);
+                                        brText(arrTd[i+18]);
+                                        break;
+                                    case 7:
+                                        getText(i+27,k);
+                                        brText(arrTd[i+27]);
+                                        break;
+                                    case 9:
+                                        getText(i+37,k);
+                                        brText(arrTd[i=36]);
+                                        break;
+                                }//switch结束
+                            }//内存if结束
+                        }//内层for循环结束
+                    }//外层if结束
+                }//外层for循环结束
+            },//success结束
+
+            error:function () {
+                alert("加载失败");
+            }
+        });//ajax请求完成
+    }//get函数结束
+
+    //选择周函数
+    $("select#week").change(function () {
+        getData($(this).val());
+    });
+
+    //初始加载函数
+    window.onload=getData(weekNumber);
+</script>
+</body>
+</html>
