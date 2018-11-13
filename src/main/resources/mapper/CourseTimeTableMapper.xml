@@ -13,6 +13,9 @@
     <result column="distinct" property="distinct" jdbcType="INTEGER" />
     <result column="position" property="position" jdbcType="VARCHAR" />
   </resultMap>
+  <sql id="selectCurrentDay">
+    c.year = #{0} and c.start &lt;= #{1} and c.end &gt;=#{1} and c.week = #{2}
+  </sql>
   <sql id="Example_Where_Clause" >
     <where >
       <foreach collection="oredCriteria" item="criteria" separator="or" >
@@ -287,9 +290,29 @@
        c.position = #{position,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <select id="getTimeTables" parameterType="String" resultType="cn.hkxj.platform.pojo.CourseTimeTable">
+  <select id="getTimeTables" resultType="cn.hkxj.platform.pojo.CourseTimeTable">
       select
       <include refid="Base_Column_List"/>
-      from course_time_table c where c.id IN ${value}
+      from course_time_table c where c.id IN
+      <foreach collection="ids" item="id" open="(" close=")" separator=",">
+        #{id}
+      </foreach>
+  </select>
+  <select id="getTimetablesByTimeCondition" parameterType="Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from
+    course_time_table c where <include refid="selectCurrentDay"/>
+    order by c.order ASC
+  </select>
+  <select id="getTimetablesByIdsForCurrentDay" parameterType="java.util.List" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from
+    course_time_table c where id IN
+    <foreach collection="ids" item="id" open="(" close=")" separator=",">
+      #{id}
+    </foreach>
+    group by id having (<include refid="selectCurrentDay"/>)
   </select>
 </mapper>

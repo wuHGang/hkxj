@@ -3,7 +3,7 @@ package cn.hkxj.platform.service.wechat.handler.messageHandler;
 import cn.hkxj.platform.builder.TemplateBuilder;
 import cn.hkxj.platform.builder.TextBuilder;
 import cn.hkxj.platform.mapper.WechatOpenIdMapper;
-import cn.hkxj.platform.service.wechat.common.exam.impl.ExamServiceImpl;
+import cn.hkxj.platform.service.exam.impl.ExamServiceImpl;
 import cn.hkxj.platform.service.wechat.handler.AbstractHandler;
 import me.chanjar.weixin.common.exception.WxErrorException;
 import me.chanjar.weixin.common.session.WxSessionManager;

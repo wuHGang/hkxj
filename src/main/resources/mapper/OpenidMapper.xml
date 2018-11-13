@@ -225,4 +225,12 @@
       is_bind = #{isBind,jdbcType=BIT}
     where id = #{id,jdbcType=INTEGER}
   </update>
+  <select id="getOpenIdsByAccount" parameterType="java.util.List" resultType="cn.hkxj.platform.pojo.Openid">
+    select
+    account, openid
+    from openid where account IN
+    <foreach collection="accounts" item="account" open="(" close=")" separator=",">
+      #{account}
+    </foreach>
+  </select>
 </mapper>

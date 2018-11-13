@@ -1,5 +1,6 @@
-package cn.hkxj.platform.service.wechat.common.course;
+package cn.hkxj.platform.service.course;
 
+import cn.hkxj.platform.pojo.CourseGroupMsg;
 import cn.hkxj.platform.pojo.CourseTimeTable;
 
 import java.util.List;
@@ -18,4 +19,10 @@ public interface CourseService {
     List<CourseTimeTable> getCoursesByAccount(Integer account);
 
     boolean isHaveCourses(Integer account);
+
+    List<CourseGroupMsg> getCoursesSubscribeForCurrentDay();
+
+    List<CourseTimeTable> getCoursesCurrentDay(Integer account);
+
+    String toText(List<CourseTimeTable> courseTimeTables);
 }

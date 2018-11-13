@@ -35,4 +35,6 @@ public interface OpenidMapper {
     int updateByPrimaryKeySelective(Openid record);
 
     int updateByPrimaryKey(Openid record);
+
+    List<Openid> getOpenIdsByAccount(@Param("accounts") List<Integer> accounts);
 }

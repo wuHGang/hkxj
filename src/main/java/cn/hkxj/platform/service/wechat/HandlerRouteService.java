@@ -25,7 +25,7 @@ public class HandlerRouteService {
 	GradeMessageHandler gradeMessageHandler;
 
 	@Autowired
-	LessonMessageHandler lessonMessageHandler;
+    CourseMessageHandler courseMessageHandler;
 
 	@Autowired
 	ExampleTemplateHandler exampleTemplateHandler;
@@ -45,16 +45,12 @@ public class HandlerRouteService {
 					.handler(openIdHandler)
 				.end()
 				.rule()
-					.content("haha")
-					.handler(new ExampleHandler())
-				.end()
-				.rule()
 					.content("考试安排")
 					.handler(examMessageHandler)
 				.end()
 				.rule()
 					.content("课表")
-					.handler(lessonMessageHandler)
+					.handler(courseMessageHandler)
 				.end()
 				.rule()
 					.content("成绩")

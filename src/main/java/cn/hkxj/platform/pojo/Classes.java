@@ -1,5 +1,11 @@
 package cn.hkxj.platform.pojo;
 
+import com.google.common.base.MoreObjects;
+import lombok.Data;
+
+import java.util.List;
+
+@Data
 public class Classes {
     private Integer id;
 
@@ -13,51 +19,6 @@ public class Classes {
 
     private Integer num;
 
-    public Integer getId() {
-        return id;
-    }
+    private List<Integer> courseTimeTableIds;
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name == null ? null : name.trim();
-    }
-
-    public Integer getAcademy() {
-        return academy;
-    }
-
-    public void setAcademy(Integer academy) {
-        this.academy = academy;
-    }
-
-    public Integer getSubject() {
-        return subject;
-    }
-
-    public void setSubject(Integer subject) {
-        this.subject = subject;
-    }
-
-    public Integer getYear() {
-        return year;
-    }
-
-    public void setYear(Integer year) {
-        this.year = year;
-    }
-
-    public Integer getNum() {
-        return num;
-    }
-
-    public void setNum(Integer num) {
-        this.num = num;
-    }
 }

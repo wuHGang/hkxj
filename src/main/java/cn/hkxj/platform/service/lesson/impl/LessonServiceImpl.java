@@ -1,9 +1,9 @@
-package cn.hkxj.platform.service.wechat.common.lesson.impl;
+package cn.hkxj.platform.service.lesson.impl;
 
 import cn.hkxj.platform.pojo.Lesson;
 import cn.hkxj.platform.pojo.Wechatuser;
-import cn.hkxj.platform.service.wechat.common.base.BaseService;
-import cn.hkxj.platform.service.wechat.common.lesson.LessonService;
+import cn.hkxj.platform.service.base.BaseService;
+import cn.hkxj.platform.service.lesson.LessonService;
 import com.google.gson.internal.LinkedTreeMap;
 import org.springframework.stereotype.Service;
 

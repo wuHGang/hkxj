@@ -2,10 +2,8 @@ package cn.hkxj.platform.controller;
 
 import cn.hkxj.platform.pojo.CourseTimeTable;
 import cn.hkxj.platform.pojo.ErrorCode;
-import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.pojo.WebResponse;
-import cn.hkxj.platform.service.wechat.common.course.CourseService;
-import cn.hkxj.platform.service.wechat.common.course.impl.CourseServiceImpl;
+import cn.hkxj.platform.service.course.CourseService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;

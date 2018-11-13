@@ -5,7 +5,9 @@ import cn.hkxj.platform.exceptions.OpenidExistException;
 import cn.hkxj.platform.exceptions.PasswordUncorrectException;
 import cn.hkxj.platform.exceptions.ReadTimeoutException;
 import cn.hkxj.platform.pojo.ErrorCode;
+import cn.hkxj.platform.pojo.SubscribeOpenid;
 import cn.hkxj.platform.pojo.WebResponse;
+import cn.hkxj.platform.service.SubscribeService;
 import cn.hkxj.platform.service.wechat.StudentBindService;
 import cn.hkxj.platform.utils.JsonUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.HashMap;
@@ -26,6 +29,8 @@ public class UserBindingController {
 	private HttpSession session;
 	@Autowired
 	private StudentBindService studentBindService;
+	@Autowired
+	private SubscribeService subscribeService;
 
 	@RequestMapping(value = "/bind", method = RequestMethod.GET)
 	public String loginHtml(@RequestParam(value = "openid", required = false) String openid) {
@@ -36,7 +41,7 @@ public class UserBindingController {
 
 	@RequestMapping(value = "/bind/wechat", method = RequestMethod.POST, produces="application/json;charset=UTF-8")
 	@ResponseBody
-	public WebResponse loginHtmlPost(@RequestParam("account") String account, @RequestParam("password") String password) {
+	public WebResponse loginHtmlPost(@RequestParam("account") String account, @RequestParam("password") String password, HttpServletRequest request) {
 		String openid = (String) session.getAttribute("openid");
 
 		try {
@@ -45,6 +50,9 @@ public class UserBindingController {
 			}
 			else {
 				studentBindService.studentBind(openid,account,password);
+			}
+			if(subscribeService.isSubscribe(openid)){
+				subscribeService.insertOneSubOpenid(openid, (String) request.getAttribute("scene"));
 			}
 			session.setAttribute("account", account);
 		} catch (PasswordUncorrectException e) {

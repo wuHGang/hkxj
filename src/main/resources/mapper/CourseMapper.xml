@@ -118,9 +118,12 @@
   <select id="getCourseIdsByClassId" parameterType="Integer" resultType="Integer">
     select course_id from class_course where class_id = #{classId}
   </select>
-  <select id="getAllCourses" parameterType="String" resultType="cn.hkxj.platform.pojo.Course">
+  <select id="getAllCourses" parameterType="java.util.List" resultType="cn.hkxj.platform.pojo.Course">
     select
     <include refid="Base_Column_List"/>
-    from course where id IN ${value}
+    from course where id IN
+    <foreach collection="ids" item="id" open="(" close=")" separator=",">
+      #{id, jdbcType=INTEGER}
+    </foreach>
   </select>
 </mapper>

@@ -1,10 +1,10 @@
-package cn.hkxj.platform.service.wechat.common.grade.impl;
+package cn.hkxj.platform.service.grade.impl;
 
 import cn.hkxj.platform.pojo.Grade;
 import cn.hkxj.platform.pojo.GradeDTO;
 import cn.hkxj.platform.pojo.Wechatuser;
-import cn.hkxj.platform.service.wechat.common.base.BaseService;
-import cn.hkxj.platform.service.wechat.common.grade.GradeService;
+import cn.hkxj.platform.service.base.BaseService;
+import cn.hkxj.platform.service.grade.GradeService;
 import com.google.gson.internal.LinkedTreeMap;
 import org.springframework.stereotype.Service;
 

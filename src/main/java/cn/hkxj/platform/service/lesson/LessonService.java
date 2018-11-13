@@ -1,4 +1,4 @@
-package cn.hkxj.platform.service.wechat.common.lesson;
+package cn.hkxj.platform.service.lesson;
 
 import cn.hkxj.platform.pojo.Lesson;
 import cn.hkxj.platform.pojo.Wechatuser;

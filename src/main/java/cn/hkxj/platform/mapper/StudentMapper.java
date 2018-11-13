@@ -3,7 +3,10 @@ package cn.hkxj.platform.mapper;
 
 import cn.hkxj.platform.pojo.Student;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 /**
  * @author junrong.chen
@@ -23,4 +26,6 @@ public interface StudentMapper {
 	int insertByStudent(Student student);
 
 	int updateByStudent(Student student);
+
+	List<Student> getStudentsByClassnames(@Param("classnames") List<String> classnames);
 }

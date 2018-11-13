@@ -5,7 +5,7 @@ import cn.hkxj.platform.builder.TextBuilder;
 import cn.hkxj.platform.mapper.WechatOpenIdMapper;
 import cn.hkxj.platform.pojo.GradeDTO;
 import cn.hkxj.platform.pojo.Wechatuser;
-import cn.hkxj.platform.service.wechat.common.grade.impl.GradeServiceImpl;
+import cn.hkxj.platform.service.grade.impl.GradeServiceImpl;
 import cn.hkxj.platform.service.wechat.handler.AbstractHandler;
 import me.chanjar.weixin.common.exception.WxErrorException;
 import me.chanjar.weixin.common.session.WxSessionManager;

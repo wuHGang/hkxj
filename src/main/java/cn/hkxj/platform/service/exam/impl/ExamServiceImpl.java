@@ -1,10 +1,10 @@
-package cn.hkxj.platform.service.wechat.common.exam.impl;
+package cn.hkxj.platform.service.exam.impl;
 
 import cn.hkxj.platform.mapper.WechatExamMapper;
 import cn.hkxj.platform.pojo.Exam;
 import cn.hkxj.platform.pojo.Wechatuser;
-import cn.hkxj.platform.service.wechat.common.base.BaseService;
-import cn.hkxj.platform.service.wechat.common.exam.ExamService;
+import cn.hkxj.platform.service.base.BaseService;
+import cn.hkxj.platform.service.exam.ExamService;
 import com.google.gson.internal.LinkedTreeMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

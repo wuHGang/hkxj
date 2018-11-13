@@ -147,4 +147,12 @@
       where
         account = #{account}
     </update>
+    <select id="getStudentsByClassnames" parameterType="java.util.List" resultType="cn.hkxj.platform.pojo.Student">
+        select account, classname from student
+        where classname IN
+        <foreach collection="classnames" item="classname" open="(" close=")" separator=",">
+            #{classname}
+        </foreach>
+        order by classname
+    </select>
 </mapper>

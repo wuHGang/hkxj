@@ -1,5 +1,6 @@
 package cn.hkxj.platform.mapper;
 
+import cn.hkxj.platform.pojo.ClassTimeTable;
 import cn.hkxj.platform.pojo.Classes;
 import cn.hkxj.platform.pojo.ClassesExample;
 import org.apache.ibatis.annotations.Mapper;
@@ -37,5 +38,9 @@ public interface ClassesMapper {
     int updateByPrimaryKeySelective(Classes record);
 
     int updateByPrimaryKey(Classes record);
+
+    List<ClassTimeTable> getClassesByTimetableIds(@Param("ids") List<Integer> ids);
+
+    List<Classes> getClassesByIds(@Param("ids") List<Integer> ids);
 
 }

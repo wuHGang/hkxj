@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="cn.hkxj.platform.mapper.ClassesMapper" >
+    <resultMap id="ClassTimetableMap" type="cn.hkxj.platform.pojo.ClassTimeTable">
+        <result column="class_id" property="classId" javaType="INTEGER"/>
+        <result column="time_table_id" property="timetableId" javaType="INTEGER"/>
+    </resultMap>
     <resultMap id="BaseResultMap" type="cn.hkxj.platform.pojo.Classes" >
         <id column="id" property="id" jdbcType="INTEGER" />
         <result column="name" property="name" jdbcType="VARCHAR" />
@@ -223,4 +227,19 @@
         num = #{num,jdbcType=INTEGER}
         where id = #{id,jdbcType=INTEGER}
     </update>
+    <select id="getClassesByTimetableIds" parameterType="java.util.List" resultMap="ClassTimetableMap">
+      select class_id, time_table_id from class_timetable ct where ct.time_table_id IN
+      <foreach collection="ids" item="id" open="(" close=")" separator=",">
+          #{id}
+      </foreach>
+    </select>
+    <select id="getClassesByIds" parameterType="java.util.List" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from classes
+        where id IN 
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
 </mapper>
