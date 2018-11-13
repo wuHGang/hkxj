@@ -3,7 +3,7 @@
 <mapper namespace="cn.hkxj.platform.mapper.WechatOpenIdMapper">
 
     <select id="getStudentByOpenId" parameterType="java.lang.String" resultType="cn.hkxj.platform.pojo.Wechatuser">
-        SELECT  account,academy,classname,passwd FROM student WHERE account =(SELECT account FROM openid WHERE openId = #{openId} )
+        SELECT  account,academy,classname,password FROM student WHERE account =(SELECT account FROM openid WHERE openId = #{openId} )
     </select>
 
 

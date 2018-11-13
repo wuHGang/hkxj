@@ -12,6 +12,9 @@
   <sql id="Base_Column_List">
     id, uid, name, credit, type, gmt_create
   </sql>
+  <select id="ifExistCourse" resultType="boolean">
+    select ifnull ((select count(1)  from course where uid=#{uid,jdbcType=VARCHAR}), 0)
+  </select>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
