@@ -2,17 +2,17 @@ package cn.hkxj.platform.service;
 
 import cn.hkxj.platform.mapper.RoomMapper;
 import cn.hkxj.platform.pojo.Building;
+import cn.hkxj.platform.pojo.BuildingTimetable;
 import cn.hkxj.platform.pojo.CourseTimeTable;
 import cn.hkxj.platform.pojo.Room;
 import cn.hkxj.platform.pojo.RoomExample;
-import cn.hkxj.platform.pojo.RoomTimeTable;
+import cn.hkxj.platform.utils.SchoolTimeUtil;
 import com.google.common.collect.HashMultimap;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -25,6 +25,13 @@ import java.util.Map;
 public class RoomService {
 	@Resource
 	private RoomMapper roomMapper;
+	@Resource
+	private TimeTableService timeTableService;
+
+	private static HashMultimap<Room, CourseTimeTable> todayRoomTimeTableMap;
+	private static Map<String, Room> roomMap = new HashMap<>();
+
+	private static int dayOfWeek;
 
 	public List<Room> getRoomByBuilding(Building building) {
 		RoomExample roomExample = new RoomExample();
@@ -40,16 +47,35 @@ public class RoomService {
 		return roomMapper.selectByExample(roomExample);
 	}
 
-	public Room getRoomByName(String name){
+	private Room getRoomByNameFromDB (String name){
 		RoomExample roomExample = new RoomExample();
 		roomExample.createCriteria()
 				.andNameEqualTo(name);
 		List<Room> roomList = roomMapper.selectByExample(roomExample);
 		if(roomList.size() != 1){
 			log.error("getRoomByName exception name{} list{}", name, roomList );
-			throw new RuntimeException("room name is invalid");
+			throw new IllegalArgumentException("illegal room name: "+ name);
 		}
 		return roomList.get(0);
 	}
 
+
+	/**
+	 * 通过教室名取到教室实体，如果缓存有从缓存读取
+	 * 缓存没有从数据库读取后再存入缓存
+	 *
+	 * @param position 教室名
+	 */
+	public Room getRoomByName(String position){
+		Room room;
+		if (!roomMap.containsKey(position) ){
+			room = getRoomByNameFromDB(position);
+			roomMap.put(position, room);
+		}
+		else {
+			room = roomMap.get(position);
+		}
+
+		return room;
+	}
 }

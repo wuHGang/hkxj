@@ -1,5 +1,6 @@
 package cn.hkxj.platform.utils;
 
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
 import org.joda.time.Period;
@@ -46,7 +47,6 @@ public class SchoolTimeUtil {
 	}
 
 	public static void main(String[] args) {
-		System.out.println(getSchoolWeek());
-		System.out.println(getWeekDistinct());
+		System.out.println(StringUtils.upperCase("科s108"));
 	}
 }

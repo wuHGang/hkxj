@@ -1,8 +1,11 @@
 package cn.hkxj.platform.pojo;
 
 import com.google.common.base.MoreObjects;
+import com.google.common.collect.Sets;
+import lombok.NonNull;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -17,6 +20,8 @@ public class RoomTimeTable {
 
 	private List<CourseTimeTable> courseTimeTable;
 
+	private static final HashSet<Integer> set = Sets.newHashSet(1,3,5,7,9);
+
 	public Room getRoom() {
 		return room;
 	}
@@ -29,19 +34,18 @@ public class RoomTimeTable {
 		return courseTimeTable;
 	}
 
-	public void setCourseTimeTable(List<CourseTimeTable> courseTimeTable) {
-		if (Objects.isNull(this.courseTimeTable)) {
-			this.courseTimeTable = courseTimeTable;
-		} else {
-			this.courseTimeTable.addAll(courseTimeTable);
-		}
+	public void setCourseTimeTable(@NonNull List<CourseTimeTable> courseTimeTable) {
+		this.courseTimeTable = courseTimeTable;
+
 	}
 
-	public void setCourseTimeTable(CourseTimeTable courseTimeTable) {
-		if (Objects.isNull(this.courseTimeTable)) {
-			this.courseTimeTable = new ArrayList<>();
+
+	public void getEmptyOrder(){
+		HashSet<Integer> orderSet = new HashSet<>();
+		for (CourseTimeTable timeTable : courseTimeTable) {
+
 		}
-			this.courseTimeTable.add(courseTimeTable);
+
 	}
 
 
