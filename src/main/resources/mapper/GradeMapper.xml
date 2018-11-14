@@ -14,12 +14,27 @@
   <sql id="Base_Column_List">
     id, account, course_id, year, term, score, point, gmt_create
   </sql>
+  <select id="ifExistGrade" resultType="java.lang.Integer">
+    select ifnull ((select id  from grade where account = #{account,jdbcType=INTEGER} and course_id= #{courseId,jdbcType=VARCHAR}), 0)
+  </select>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from grade
     where id = #{id,jdbcType=INTEGER}
   </select>
+  <select id="selectByAccount" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from grade
+    where account = #{account,jdbcType=INTEGER}
+  </select>
+  <!--<select id="existGrade" parameterType="cn.hkxj.platform.pojo.Grade">-->
+    <!--select count(*)-->
+    <!--from grade-->
+    <!--where account=#{account,jdbcType=INTEGER},course_id=#{courseId,jdbcType=VARCHAR},-->
+    <!--year=#{year,jdbcType=INTEGER},term=#{term,jdbcType=TINYINT},point=#{point,jdbcType=INTEGER}-->
+  <!--</select>-->
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from grade
     where id = #{id,jdbcType=INTEGER}
@@ -32,7 +47,7 @@
       term, score, point, 
       gmt_create)
     values (#{account,jdbcType=INTEGER}, #{courseId,jdbcType=VARCHAR}, #{year,jdbcType=INTEGER}, 
-      #{term,jdbcType=TINYINT}, #{score,jdbcType=INTEGER}, #{point,jdbcType=INTEGER}, 
+      #{term,jdbcType=TINYINT}, #{score,jdbcType=INTEGER}, #{point,jdbcType=INTEGER},
       #{gmtCreate,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="cn.hkxj.platform.pojo.Grade">

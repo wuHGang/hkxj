@@ -29,5 +29,5 @@ public interface GradeMapper {
 
     List<Grade> selectByAccount(int account);
 
-    boolean ifExistGrade(@Param(value = "account") int account , @Param(value = "courseId") String courseId);
+    int ifExistGrade(@Param(value = "account") int account , @Param(value = "courseId") String courseId);
 }
