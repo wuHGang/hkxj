@@ -351,7 +351,7 @@ public class CourseServiceImpl implements CourseService{
     }
 
     public String toText(List<CourseTimeTable> courseTimeTables){
-        if(courseTimeTables == null || courseTimeTables.size() == 0) return "课表空空如也";
+        if(courseTimeTables == null || courseTimeTables.size() == 0) return "今日课表\n课表空空如也";
         StringBuffer buffer = new StringBuffer();
         buffer.append("今日课表").append("\n");
         CourseTimeTable[] ctts = new CourseTimeTable[4];
@@ -360,6 +360,7 @@ public class CourseServiceImpl implements CourseService{
             ctts[courseTimeTable.getOrder()/2] = courseTimeTable;
         });
         for(int i = 0; i < 4; i++){
+            if(ctts[i] == null) continue;
             buffer.append("第").append(ctts[i].getOrder()).append("节").append("\n")
                     .append(ctts[i].getCourseObject().getName()).append("  ")
                     .append(ctts[i].getPosition()).append("\n");
