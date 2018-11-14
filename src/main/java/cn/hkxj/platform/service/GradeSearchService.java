@@ -13,8 +13,8 @@ import javax.annotation.Resource;
 import java.util.List;
 
 /**
- * @author junrong.chen
- * @date 2018/9/16
+ * @author xie
+ * @date 2018/11/10
  */
 @Slf4j
 @Service("gradeSearchService")
@@ -39,12 +39,16 @@ public class GradeSearchService {
 		appSpider.getToken();
 		AllGradeAndCourse gradeAndCourse = appSpider.getGradeAndCourse();
 		for (AllGradeAndCourse.GradeAndCourse andCourse : gradeAndCourse.getCurrentTermGrade()) {
-//			gradeMapper.insert(andCourse.getGrade());
-//			saveCourse(account, andCourse.getCourse());
 			if (!courseMapper.ifExistCourse(andCourse.getCourse().getUid()))
 				saveCourse(account,andCourse.getCourse());
-			if(!gradeMapper.ifExistGrade(andCourse.getGrade().getAccount(),andCourse.getGrade().getCourseId()))
+            int gradeId=0;
+			gradeId=gradeMapper.ifExistGrade(andCourse.getGrade().getAccount(),andCourse.getGrade().getCourseId());
+			if (gradeId==0)
 				saveGrade(account,andCourse.getGrade());
+			else
+			    updateGrade(gradeId,andCourse.getGrade());
+
+
 		}
 	}
 
@@ -62,6 +66,39 @@ public class GradeSearchService {
 	private void saveGrade(int account,Grade grade){
 		gradeMapper.insert(grade);
 	}
+
+	private void updateGrade(int gradeId,Grade grade){
+	    grade.setId(gradeId);
+	    gradeMapper.updateByPrimaryKey(grade);
+    }
+
+//    private int academyNumber(Course course){
+//        int aca=0;
+//        switch (course.getName()){
+//            case "环境与化工学院":aca=1;break;
+//            case "安全工程学院":aca=2;break;
+//            case "电气与控制工程学院":aca=3;break;
+//            case "电子与信息工程学院":aca=4;break;
+//            case "机械工程学院":aca=5;break;
+//            case "经济学院":aca=6;break;
+//            case "管理学院":aca=7;break;
+//            case "建筑工程学院":aca=8;break;
+//            case "人文社会科学学院":aca=9;break;
+//            case "马克思主义学院":aca=10;break;
+//            case "计算机与信息工程学院":aca=11;break;
+//            case "材料科学与工程学院":aca=12;break;
+//            case "理学院":aca=13;break;
+//            case "外国语学院":aca=14;break;
+//            case "国际教育学院":aca=15;break;
+//            case "矿业工程学院":aca=16;break;
+//            case "招生与就业工作处":aca=17;break;
+//            case "工程训练与基础实验中心":aca=18;break;
+//            case "学生处":aca=19;break;
+//            case "机关":aca=20;break;
+//        }
+//        return aca;
+//    }
+
 
 	public String toText(List<Grade> studentGrades){
 		StringBuffer buffer = new StringBuffer();
