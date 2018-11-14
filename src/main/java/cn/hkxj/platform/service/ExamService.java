@@ -1,4 +1,4 @@
-package cn.hkxj.platform.service.exam;
+package cn.hkxj.platform.service;
 
 import cn.hkxj.platform.pojo.Exam;
 import cn.hkxj.platform.pojo.Wechatuser;

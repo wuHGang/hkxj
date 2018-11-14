@@ -1,4 +1,4 @@
-package cn.hkxj.platform.service.openid;
+package cn.hkxj.platform.service.impl;
 
 import cn.hkxj.platform.mapper.WechatOpenIdMapper;
 import cn.hkxj.platform.pojo.Openid;

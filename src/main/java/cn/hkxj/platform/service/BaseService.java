@@ -1,4 +1,4 @@
-package cn.hkxj.platform.service.base;
+package cn.hkxj.platform.service;
 
 import cn.hkxj.platform.pojo.Wechatuser;
 import cn.hkxj.platform.spider.AppSpider;

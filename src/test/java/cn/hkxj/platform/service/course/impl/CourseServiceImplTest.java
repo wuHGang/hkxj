@@ -2,6 +2,7 @@ package cn.hkxj.platform.service.course.impl;
 
 import cn.hkxj.platform.PlatformApplication;
 import cn.hkxj.platform.pojo.CourseGroupMsg;
+import cn.hkxj.platform.service.impl.CourseServiceImpl;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

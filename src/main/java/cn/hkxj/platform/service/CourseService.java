@@ -1,4 +1,4 @@
-package cn.hkxj.platform.service.course;
+package cn.hkxj.platform.service;
 
 import cn.hkxj.platform.pojo.CourseGroupMsg;
 import cn.hkxj.platform.pojo.Course;
@@ -27,4 +27,5 @@ public interface CourseService {
 
     String toText(List<CourseTimeTable> courseTimeTables);
 
+    Course getCourseById(Integer course);
 }

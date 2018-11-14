@@ -1,4 +1,4 @@
-package cn.hkxj.platform.service.grade;
+package cn.hkxj.platform.service;
 
 import cn.hkxj.platform.pojo.GradeDTO;
 import cn.hkxj.platform.pojo.Wechatuser;

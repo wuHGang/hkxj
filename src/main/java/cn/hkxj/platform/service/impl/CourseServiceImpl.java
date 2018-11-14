@@ -1,8 +1,8 @@
-package cn.hkxj.platform.service.course.impl;
+package cn.hkxj.platform.service.impl;
 
 import cn.hkxj.platform.mapper.*;
 import cn.hkxj.platform.pojo.*;
-import cn.hkxj.platform.service.course.CourseService;
+import cn.hkxj.platform.service.CourseService;
 import cn.hkxj.platform.utils.DateUtils;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
@@ -29,6 +29,11 @@ public class CourseServiceImpl implements CourseService{
     private ClassTimeTableMapper classTimeTableMapper;
     private OpenidMapper openidMapper;
     private SubscribeOpenidMapper subscribeOpenidMapper;
+
+    @Override
+    public Course getCourseById(Integer id) {
+        return courseMapper.selectByPrimaryKey(id);
+    }
 
     @Override
     public List<CourseTimeTable> getCoursesCurrentDay(Integer account) {
