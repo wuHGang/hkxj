@@ -1,5 +1,6 @@
 package cn.hkxj.platform.spider;
 
+import cn.hkxj.platform.exceptions.PasswordUncorrectException;
 import cn.hkxj.platform.pojo.AllGradeAndCourse;
 import cn.hkxj.platform.pojo.Course;
 import cn.hkxj.platform.pojo.CourseType;
@@ -85,12 +86,12 @@ public class AppSpider {
 		return false;
 	}
 
-	private void checkPassword() {
+	private void checkPassword() throws PasswordUncorrectException {
 		RequestBody loginRequestBody = getLoginRequestBody();
 		Map result = postData(LOGIN, loginRequestBody);
 	}
 
-	public String getToken() {
+	public String getToken() throws PasswordUncorrectException {
 		if (token != null) {
 			return token;
 		}
@@ -198,15 +199,19 @@ public class AppSpider {
 		return RequestBody.create(JSON, json);
 	}
 
-	private Map getData(String url) {
+	private Map getData(String url)  {
 		Request request = new Request.Builder()
 				.url(url)
 				.headers(HEADERS)
 				.build();
-		return execute(request);
+		try {
+			return execute(request);
+		} catch (PasswordUncorrectException e) {
+			throw new RuntimeException("app spider password not correct account:"+account);
+		}
 	}
 
-	private Map postData(String url, RequestBody requestBody) {
+	private Map postData(String url, RequestBody requestBody) throws PasswordUncorrectException {
 		Request request = new Request.Builder()
 				.url(url)
 				.headers(HEADERS)
@@ -216,7 +221,7 @@ public class AppSpider {
 
 	}
 
-	private Map execute(Request request) {
+	private Map execute(Request request) throws PasswordUncorrectException {
 		Response response;
 		String data;
 		try {
@@ -230,6 +235,10 @@ public class AppSpider {
 		Map resultMap = GSON.fromJson(data, Map.class);
 
 		int state = ((Double) resultMap.get("state")).intValue();
+
+		if (state == 2002) {
+			throw new PasswordUncorrectException();
+		}
 
 		if (state != 200) {
 			String msg = (String) resultMap.get("message");
