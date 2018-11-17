@@ -1,11 +1,9 @@
 package cn.hkxj.platform.pojo;
 
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-import org.checkerframework.checker.units.qual.C;
 
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * @author Yuki

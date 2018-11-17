@@ -9,6 +9,4 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractHandler implements WxMpMessageHandler {
 	protected Logger logger = LoggerFactory.getLogger(getClass());
-
-
 }

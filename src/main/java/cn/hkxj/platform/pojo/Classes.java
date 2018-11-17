@@ -1,6 +1,5 @@
 package cn.hkxj.platform.pojo;
 
-import com.google.common.base.MoreObjects;
 import lombok.Data;
 
 import java.util.List;

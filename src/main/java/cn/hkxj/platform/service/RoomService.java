@@ -2,19 +2,13 @@ package cn.hkxj.platform.service;
 
 import cn.hkxj.platform.mapper.RoomMapper;
 import cn.hkxj.platform.pojo.Building;
-import cn.hkxj.platform.pojo.CourseTimeTable;
 import cn.hkxj.platform.pojo.Room;
 import cn.hkxj.platform.pojo.RoomExample;
-import cn.hkxj.platform.pojo.RoomTimeTable;
-import com.google.common.collect.HashMultimap;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author junrong.chen

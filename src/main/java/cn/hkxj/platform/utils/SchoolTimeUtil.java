@@ -2,8 +2,6 @@ package cn.hkxj.platform.utils;
 
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
-import org.joda.time.Period;
-import org.joda.time.PeriodType;
 
 /**
  * @author junrong.chen

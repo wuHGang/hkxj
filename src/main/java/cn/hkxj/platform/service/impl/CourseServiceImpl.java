@@ -1,7 +1,21 @@
 package cn.hkxj.platform.service.impl;
 
-import cn.hkxj.platform.mapper.*;
-import cn.hkxj.platform.pojo.*;
+import cn.hkxj.platform.mapper.ClassTimeTableMapper;
+import cn.hkxj.platform.mapper.ClassesMapper;
+import cn.hkxj.platform.mapper.CourseMapper;
+import cn.hkxj.platform.mapper.CourseTimeTableMapper;
+import cn.hkxj.platform.mapper.OpenidMapper;
+import cn.hkxj.platform.mapper.StudentMapper;
+import cn.hkxj.platform.mapper.SubscribeOpenidMapper;
+import cn.hkxj.platform.pojo.Academy;
+import cn.hkxj.platform.pojo.ClassTimeTable;
+import cn.hkxj.platform.pojo.Classes;
+import cn.hkxj.platform.pojo.ClassesExample;
+import cn.hkxj.platform.pojo.Course;
+import cn.hkxj.platform.pojo.CourseGroupMsg;
+import cn.hkxj.platform.pojo.CourseTimeTable;
+import cn.hkxj.platform.pojo.Openid;
+import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.service.CourseService;
 import cn.hkxj.platform.utils.DateUtils;
 import lombok.AllArgsConstructor;
@@ -9,7 +23,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**

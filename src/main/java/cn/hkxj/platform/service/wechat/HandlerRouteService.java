@@ -1,9 +1,10 @@
 package cn.hkxj.platform.service.wechat;
 
 import cn.hkxj.platform.interceptor.WechatOpenIdInterceptor;
-import cn.hkxj.platform.service.wechat.handler.messageHandler.*;
-import me.chanjar.weixin.mp.api.WxMpMessageRouter;
-import org.springframework.beans.factory.annotation.Autowired;
+import cn.hkxj.platform.service.wechat.handler.messageHandler.CourseMessageHandler;
+import cn.hkxj.platform.service.wechat.handler.messageHandler.EmptyRoomHandler;
+import cn.hkxj.platform.service.wechat.handler.messageHandler.GradeMessageHandler;
+import cn.hkxj.platform.service.wechat.handler.messageHandler.OpenIdHandler;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -16,7 +17,7 @@ import javax.annotation.Resource;
 @Service
 public class HandlerRouteService {
 	@Resource
-	private WxMpMessageRouter router;
+	private WxMessageRouter router;
 
 	@Resource
     CourseMessageHandler courseMessageHandler;
@@ -38,40 +39,21 @@ public class HandlerRouteService {
 		router
 				.rule()
 					.async(false)
-					.interceptor(wechatOpenIdInterceptor)
-					.handler(openIdHandler)
-				.end()
-				.rule()
 					.content("课表")
+					.interceptor(wechatOpenIdInterceptor)
 					.handler(courseMessageHandler)
 				.end()
 				.rule()
+					.async(false)
+					.interceptor(wechatOpenIdInterceptor)
 					.content("成绩")
 					.handler(gradeMessageHandler)
 				.end()
-//			.rule()
-//			.async(false)
-//				.content("课表")
-//				.interceptor(wechatOpenIdInterceptor)
-//				.handler(lessonMessageHandler)
-//			.end()
-				.rule()
-				.async(false)
-				.interceptor(wechatOpenIdInterceptor)
-				.content("成绩")
-				.handler(gradeMessageHandler)
-				.end()
 			.rule()
 				.async(false)
-//				.interceptor(wechatOpenIdInterceptor)
 				.rContent("空教室.*?")
 				.handler(emptyRoomHandler)
 			.end();
-//			.rule()
-//				.async(false)
-//				.interceptor(wechatOpenIdInterceptor)
-//				.handler(openIdHandler)
-//			.end();
 
 	}
 }

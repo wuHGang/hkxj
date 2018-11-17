@@ -1,7 +1,6 @@
 package cn.hkxj.platform.pojo;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Objects;
 
 /**
  * @author junrong.chen

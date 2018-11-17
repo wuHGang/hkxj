@@ -2,7 +2,9 @@ package cn.hkxj.platform.service.wechat.handler.messageHandler;
 
 import cn.hkxj.platform.builder.TextBuilder;
 import cn.hkxj.platform.mapper.OpenidMapper;
-import cn.hkxj.platform.pojo.*;
+import cn.hkxj.platform.pojo.CourseTimeTable;
+import cn.hkxj.platform.pojo.Openid;
+import cn.hkxj.platform.pojo.OpenidExample;
 import cn.hkxj.platform.service.CourseService;
 import cn.hkxj.platform.service.wechat.handler.AbstractHandler;
 import lombok.AllArgsConstructor;
