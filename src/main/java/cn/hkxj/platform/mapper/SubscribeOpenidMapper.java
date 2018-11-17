@@ -1,13 +1,13 @@
 package cn.hkxj.platform.mapper;
 
-import java.util.List;
-
 import cn.hkxj.platform.pojo.Openid;
 import cn.hkxj.platform.pojo.SubscribeOpenid;
 import cn.hkxj.platform.pojo.SubscribeOpenidExample;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Mapper
 @Repository

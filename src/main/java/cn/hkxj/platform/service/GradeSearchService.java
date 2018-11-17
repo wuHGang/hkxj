@@ -1,5 +1,6 @@
 package cn.hkxj.platform.service;
 
+import cn.hkxj.platform.exceptions.PasswordUncorrectException;
 import cn.hkxj.platform.mapper.CourseMapper;
 import cn.hkxj.platform.mapper.GradeMapper;
 import cn.hkxj.platform.pojo.AllGradeAndCourse;
@@ -36,7 +37,11 @@ public class GradeSearchService {
 		//如果没有从App中进行抓取，要先判断这个他的app账号是否正确，不正确从校务网抓
 		//抓到的数据保存到数据并且返回结果（并行执行）在密集查成绩的期间要考虑是否需要存库这个功能
 		AppSpider appSpider = new AppSpider(account);
-		appSpider.getToken();
+		try {
+			appSpider.getToken();
+		} catch (PasswordUncorrectException e) {
+			e.printStackTrace();
+		}
 		AllGradeAndCourse gradeAndCourse = appSpider.getGradeAndCourse();
 		for (AllGradeAndCourse.GradeAndCourse andCourse : gradeAndCourse.getCurrentTermGrade()) {
 			if (!courseMapper.ifExistCourse(andCourse.getCourse().getUid()))

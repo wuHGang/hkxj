@@ -1,12 +1,10 @@
 package cn.hkxj.platform.utils;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.DayOfWeek;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -20,7 +18,7 @@ import java.util.Locale;
 @Slf4j
 public class DateUtils {
 
-    private static String term_start;
+    private final static String term_start = "2018-08-27";
 
     public static Integer getCurrentYear(){
         Calendar calendar = Calendar.getInstance();
@@ -63,8 +61,4 @@ public class DateUtils {
         return new Integer[]{getCurrentYear(), getCurrentWeek(), getCurrentDay()};
     }
 
-    @Value("${term_start}")
-    private void setTerm_start(String term_start){
-        this.term_start = term_start;
-    }
 }

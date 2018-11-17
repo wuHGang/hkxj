@@ -6,7 +6,6 @@ import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.pojo.WebResponse;
 import cn.hkxj.platform.service.wechat.StudentBindService;
 import lombok.extern.slf4j.Slf4j;
-import me.chanjar.weixin.mp.api.WxMpService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

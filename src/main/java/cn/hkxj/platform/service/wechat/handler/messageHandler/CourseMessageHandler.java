@@ -2,10 +2,10 @@ package cn.hkxj.platform.service.wechat.handler.messageHandler;
 
 import cn.hkxj.platform.builder.TextBuilder;
 import cn.hkxj.platform.mapper.OpenidMapper;
-import cn.hkxj.platform.mapper.WechatOpenIdMapper;
-import cn.hkxj.platform.pojo.*;
-import cn.hkxj.platform.service.course.CourseService;
-import cn.hkxj.platform.service.lesson.impl.LessonServiceImpl;
+import cn.hkxj.platform.pojo.CourseTimeTable;
+import cn.hkxj.platform.pojo.Openid;
+import cn.hkxj.platform.pojo.OpenidExample;
+import cn.hkxj.platform.service.CourseService;
 import cn.hkxj.platform.service.wechat.handler.AbstractHandler;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,10 +14,8 @@ import me.chanjar.weixin.common.session.WxSessionManager;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 

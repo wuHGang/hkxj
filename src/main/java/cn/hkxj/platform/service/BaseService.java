@@ -1,5 +1,6 @@
-package cn.hkxj.platform.service.base;
+package cn.hkxj.platform.service;
 
+import cn.hkxj.platform.exceptions.PasswordUncorrectException;
 import cn.hkxj.platform.pojo.Wechatuser;
 import cn.hkxj.platform.spider.AppSpider;
 
@@ -20,7 +21,11 @@ public class BaseService {
 	 */
 	protected AppSpider getAppsSider(Wechatuser wechatuser) throws IOException {
 		AppSpider appSpider = new AppSpider(wechatuser.getAccount());
-		String token = appSpider.getToken();
+		try {
+			String token = appSpider.getToken();
+		} catch (PasswordUncorrectException e) {
+			e.printStackTrace();
+		}
 //		appSpider.setToken(token);
 		return appSpider;
 	}

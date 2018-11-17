@@ -6,8 +6,8 @@ import cn.hkxj.platform.pojo.Course;
 import cn.hkxj.platform.pojo.CourseTimeTable;
 import cn.hkxj.platform.pojo.Room;
 import cn.hkxj.platform.pojo.RoomTimeTable;
+import cn.hkxj.platform.service.CourseService;
 import cn.hkxj.platform.service.EmptyRoomService;
-import cn.hkxj.platform.service.wechat.common.course.CourseService;
 import com.google.common.base.Splitter;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.session.WxSessionManager;
@@ -22,7 +22,6 @@ import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.StreamSupport;
 
 /**

@@ -2,6 +2,7 @@ package cn.hkxj.platform.service.course.impl;
 
 import cn.hkxj.platform.PlatformApplication;
 import cn.hkxj.platform.pojo.CourseGroupMsg;
+import cn.hkxj.platform.service.impl.CourseServiceImpl;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +30,7 @@ public class CourseServiceImplTest {
 
     @Test
     public void test(){
-        System.out.println(courseService.getCoursesCurrentDay(2016024170));
+        System.out.println(courseService.getCoursesCurrentDay(2016025910));
         System.out.println(courseService.toText(courseService.getCoursesCurrentDay(2016024170)));
     }
 

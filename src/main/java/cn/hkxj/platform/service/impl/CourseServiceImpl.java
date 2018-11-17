@@ -1,15 +1,33 @@
-package cn.hkxj.platform.service.course.impl;
+package cn.hkxj.platform.service.impl;
 
-import cn.hkxj.platform.mapper.*;
-import cn.hkxj.platform.pojo.*;
-import cn.hkxj.platform.service.course.CourseService;
+import cn.hkxj.platform.mapper.ClassTimeTableMapper;
+import cn.hkxj.platform.mapper.ClassesMapper;
+import cn.hkxj.platform.mapper.CourseMapper;
+import cn.hkxj.platform.mapper.CourseTimeTableMapper;
+import cn.hkxj.platform.mapper.OpenidMapper;
+import cn.hkxj.platform.mapper.StudentMapper;
+import cn.hkxj.platform.mapper.SubscribeOpenidMapper;
+import cn.hkxj.platform.pojo.Academy;
+import cn.hkxj.platform.pojo.ClassTimeTable;
+import cn.hkxj.platform.pojo.Classes;
+import cn.hkxj.platform.pojo.ClassesExample;
+import cn.hkxj.platform.pojo.Course;
+import cn.hkxj.platform.pojo.CourseGroupMsg;
+import cn.hkxj.platform.pojo.CourseTimeTable;
+import cn.hkxj.platform.pojo.Openid;
+import cn.hkxj.platform.pojo.Student;
+import cn.hkxj.platform.service.CourseService;
 import cn.hkxj.platform.utils.DateUtils;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -29,6 +47,11 @@ public class CourseServiceImpl implements CourseService{
     private ClassTimeTableMapper classTimeTableMapper;
     private OpenidMapper openidMapper;
     private SubscribeOpenidMapper subscribeOpenidMapper;
+
+    @Override
+    public Course getCourseById(Integer id) {
+        return courseMapper.selectByPrimaryKey(id);
+    }
 
     @Override
     public List<CourseTimeTable> getCoursesCurrentDay(Integer account) {
@@ -346,7 +369,7 @@ public class CourseServiceImpl implements CourseService{
     }
 
     public String toText(List<CourseTimeTable> courseTimeTables){
-        if(courseTimeTables == null || courseTimeTables.size() == 0) return "课表空空如也";
+        if(courseTimeTables == null || courseTimeTables.size() == 0) return "今日课表\n课表空空如也";
         StringBuffer buffer = new StringBuffer();
         buffer.append("今日课表").append("\n");
         CourseTimeTable[] ctts = new CourseTimeTable[4];
@@ -355,6 +378,7 @@ public class CourseServiceImpl implements CourseService{
             ctts[courseTimeTable.getOrder()/2] = courseTimeTable;
         });
         for(int i = 0; i < 4; i++){
+            if(ctts[i] == null) continue;
             buffer.append("第").append(ctts[i].getOrder()).append("节").append("\n")
                     .append(ctts[i].getCourseObject().getName()).append("  ")
                     .append(ctts[i].getPosition()).append("\n");

@@ -1,6 +1,5 @@
 package cn.hkxj.platform.utils;
 
-import cn.hkxj.platform.pojo.Student;
 import com.google.gson.Gson;
 import me.chanjar.weixin.mp.util.json.WxMpGsonBuilder;
 
