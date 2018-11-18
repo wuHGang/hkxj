@@ -9,6 +9,7 @@ import cn.hkxj.platform.pojo.Grade;
 import cn.hkxj.platform.spider.AppSpider;
 import cn.hkxj.platform.spider.UrpCourseSpider;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -48,14 +49,14 @@ public class GradeSearchService {
 		}
 		AllGradeAndCourse gradeAndCourse = appSpider.getGradeAndCourse();
 		for (AllGradeAndCourse.GradeAndCourse andCourse : gradeAndCourse.getCurrentTermGrade()) {
-			if (!courseMapper.ifExistCourse(andCourse.getCourse().getUid()))
-			{
+			if (!courseMapper.ifExistCourse(andCourse.getCourse().getUid())) {
 				andCourse.getCourse().setAcademy(urpCourseSpider.getAcademyId(andCourse.getCourse().getUid()));
 				saveCourse(account,andCourse.getCourse());
 			}
 //			int gradeId=gradeMapper.ifExistGrade(andCourse.getGrade().getAccount(),andCourse.getGrade().getCourseId());
-			if (gradeMapper.ifExistGrade(andCourse.getGrade().getAccount(),andCourse.getGrade().getCourseId())==0)
+			if (gradeMapper.ifExistGrade(andCourse.getGrade().getAccount(),andCourse.getGrade().getCourseId())==0){
 				saveGrade(account,andCourse.getGrade());
+			}
 //			else
 //			    updateGrade(gradeId,andCourse.getGrade());
 		}
@@ -93,9 +94,14 @@ public class GradeSearchService {
 			}
 			buffer.append("考试名称："+courseMapper.selectNameByUid(grade.getCourseId())+"\n")
 			.append("成绩："+grade.getScore()/10).append("   学分："+grade.getPoint()/10+"\n\n");
-			System.out.println(buffer);
 		}
 		return buffer.toString();
+	}
+
+	@Scheduled(cron = "0 0 8 ? * MON-FRI")
+	private void autoUpdateGrade(){
+
+
 	}
 
 

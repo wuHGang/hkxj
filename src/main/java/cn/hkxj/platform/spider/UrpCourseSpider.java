@@ -50,8 +50,10 @@ public class UrpCourseSpider {
         Matcher matcher = pattern.matcher(this.getResult(uid));
         while (matcher.find()) {
             String a=StringUtils.substringBetween(matcher.group(),"</td><tdwidth=\"3\"></td><td>","</td>");
-
-            academyId=Academy.getAcademyCodeByName(a);  //AcademyEnum匹配学院名字和id
+            System.out.println(a);
+            if(a.equals("机关")||a.equals("体育部"))
+                academyId=0;
+            else academyId=Academy.getAcademyCodeByName(a);  //AcademyEnum匹配学院名字和id
         }
         return academyId;
     }
@@ -71,6 +73,7 @@ public class UrpCourseSpider {
                 .addHeader("Cookie",cookie)
                 .build();
         String result = client.newCall(request).execute().body().string().replaceAll("\\s*", "");
+        response.body().close();
         return result;
     }
 
