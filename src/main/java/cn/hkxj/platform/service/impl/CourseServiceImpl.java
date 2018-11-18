@@ -55,19 +55,20 @@ public class CourseServiceImpl implements CourseService{
 
     @Override
     public List<CourseTimeTable> getCoursesCurrentDay(Integer account) {
-        Integer[] currentTime = DateUtils.getCurrentTime();
+        int[] currentTime = DateUtils.getCurrentTime();
 
         Student student = studentMapper.selectByAccount(account);
+        if(Objects.equals(student, null)) { return null; }
         String[] strs = getClassnameAndYearAndNum(student.getClassname());
-        logger.info("学号{}, 学院为{}的学生在查询星期{}的课表", account, student.getAcademy(), currentTime[2]);
+        logger.info("account {}, academy {} query week{} course schedule", account, student.getAcademy(), currentTime[2]);
 
         Classes classes = getOppositeClasses(strs, student.getAcademy(), account);
         List<Integer> courseIds = getCourseIdList(classes, account);
         List<Course> courses = courseMapper.getAllCourses(courseIds);
 
         List<Integer> classTimetables = getOppositeClassTimetables(classes, account);
-        logger.info("根据学号{}获取当天courseTimeTable列表时传入参数{},{},{}"
-                ,account, currentTime[0], currentTime[1], currentTime[2]);
+        logger.info("query courseTimetable list parameters {},{},{}"
+                , currentTime[0], currentTime[1], currentTime[2]);
         List<CourseTimeTable> courseTimeTables =
                 courseTimeTableMapper.getTimetablesByIdsForCurrentDay(currentTime[0], currentTime[1], currentTime[2], classTimetables);
         combineCourseAndCouseTimetable(courseTimeTables, courses);
@@ -78,9 +79,9 @@ public class CourseServiceImpl implements CourseService{
     @Override
     public List<CourseGroupMsg> getCoursesSubscribeForCurrentDay() {
         if(!isVaildDay()) { return null; }
-        Integer[] currentTime = DateUtils.getCurrentTime();
+        int[] currentTime = DateUtils.getCurrentTime();
         //和课程相关的数据
-        logger.info("获取获取{}年{}月{}日，星期{}的所有课表",currentTime[0], currentTime[1], currentTime[2], currentTime[2]);
+        logger.info("get all courses of {} year{} month{} day",currentTime[0], currentTime[1], currentTime[2]);
         List<CourseTimeTable> courseTimeTables =
                 courseTimeTableMapper.getTimetablesByTimeCondition(currentTime[0], currentTime[1], currentTime[2]);
         putCourseDataIntoCourseTimetable(courseTimeTables);
@@ -100,8 +101,9 @@ public class CourseServiceImpl implements CourseService{
     @Override
     public List<CourseTimeTable> getCoursesByAccount(Integer account) {
         Student student = studentMapper.selectByAccount(account);
+        if(Objects.equals(student, null)){ return null; }
         String[] strs = getClassnameAndYearAndNum(student.getClassname());
-        logger.info("学号{},学院{}的学生查询当前周的课表", account, student.getAcademy());
+        logger.info("account {},academy {} query this week course schedule", account, student.getAcademy());
 
         Classes classes = getOppositeClasses(strs, student.getAcademy(), account);
         List<Integer> courseIds = getCourseIdList(classes, account);
@@ -183,8 +185,8 @@ public class CourseServiceImpl implements CourseService{
         List<Integer> classTimetables = classTimeTableMapper.getTimeTableIdByClassId(classes.getId());
 
         if(classTimetables.size() == 0){
-            logger.error("学号为{}所在的对应的班级id为{},名称为{}的班级没有对应时间表信息", account, classes.getId(), classes.getName());
-            throw new RuntimeException("学号为" + account + "所在的对应的班级id为" + classes.getId() + ",名称为" + classes.getName() + "的班级没有对应时间表信息");
+            logger.error("account {} classid {},no relevant courseTimetable information", account, classes.getId());
+            throw new RuntimeException("account " + account + "classid" + classes.getId()+ " no relevant courseTimetable information");
         }
         return classTimetables;
     }
@@ -192,8 +194,8 @@ public class CourseServiceImpl implements CourseService{
     private List<Integer> getCourseIdList(Classes classes, Integer account){
         List<Integer> courseIds = getCourseIds(classes);
         if(courseIds.size() == 0){
-            logger.error("学号为{}没有相关课程", account);
-            throw new RuntimeException("学号为" + account + "没有相关的课程");
+            logger.error("account {} no relevant course information.", account);
+            throw new RuntimeException("account " + account + " no relevant course information.");
         }
         return courseIds;
     }
@@ -201,8 +203,8 @@ public class CourseServiceImpl implements CourseService{
     private Classes getOppositeClasses(String[] strs, String academy, Integer account){
         List<Classes> classesList = getStudentClassesList(strs, academy);
         if(classesList.size() == 0){
-            logger.error("学号为{}没有相关的班级信息", account);
-            throw new RuntimeException("学号为" + account + "没有相关的班级信息");
+            logger.error("account {} no relevant class information.", account);
+            throw new RuntimeException("account " + account + " no relevant class information.");
         }
         return classesList.get(0);
     }
