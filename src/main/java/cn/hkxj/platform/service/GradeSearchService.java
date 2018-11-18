@@ -62,11 +62,8 @@ public class GradeSearchService {
 	}
 
 	public List<Grade> getStudentGrades(int account, String password)throws IOException{
-		System.out.println("1");
 		getCurrentGrade(account, password);
-		System.out.println("2");
 		List<Grade> studentGrades=gradeMapper.selectByAccount(account);
-		System.out.println("111"+studentGrades);
 		return studentGrades;
 	}
 

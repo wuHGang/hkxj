@@ -1,5 +1,6 @@
 package cn.hkxj.platform.service;
 
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 import me.chanjar.weixin.common.exception.WxErrorException;
 import me.chanjar.weixin.mp.api.WxMpService;
 import org.junit.Test;
@@ -9,6 +10,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
+
+import java.io.IOException;
 
 import static org.junit.Assert.*;
 
@@ -25,7 +28,7 @@ public class GradeSearchServiceTest {
 	private WxMpService wxMpService;
 
 	@Test
-	public void getCurrentGrade() {
+	public void getCurrentGrade() throws IOException {
 		gradeSearchService.getCurrentGrade(2015025838, "1");
 	}
 
