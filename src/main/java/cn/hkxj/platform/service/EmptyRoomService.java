@@ -32,14 +32,21 @@ public class EmptyRoomService {
 	private static HashMultimap<Room, CourseTimeTable> mainRoomTimeTable = HashMultimap.create();
 	private static int dayOfWeek;
 
-	public ArrayList<RoomTimeTable> getEmptyRoomByBuilding(Building building) {
+
+	/**
+	 * 该方法为获取当天具体教学楼所有教室的课程情况
+	 * @param building 教学楼
+	 * @return
+	 */
+	public ArrayList<RoomTimeTable> getTodayEmptyRoomByBuilding(Building building) {
 		ArrayList<RoomTimeTable> roomTimeTableList = new ArrayList<>();
 		HashMultimap<Room, CourseTimeTable> tableMap = getTodayRoomTimeTableMap(building);
-		for (Room room : tableMap.keys()) {
+		for (Room room : tableMap.keySet()) {
 			RoomTimeTable roomTimeTable = new RoomTimeTable();
 			ArrayList<CourseTimeTable> courseTimeTables = new ArrayList<>(tableMap.get(room));
 			courseTimeTables.sort(Comparator.comparing(CourseTimeTable::getOrder));
 			roomTimeTable.setCourseTimeTable(courseTimeTables);
+			roomTimeTable.setRoom(room);
 			roomTimeTableList.add(roomTimeTable);
 		}
 		roomTimeTableList.sort((o1, o2) -> {
@@ -106,7 +113,7 @@ public class EmptyRoomService {
 
 	/**
 	 * 根据教室名称查询当天教室的上课情况
-	 * @param name
+	 * @param name 教室名
 	 */
 	public RoomTimeTable getTodayTimeTableByRoomName(String name){
 		RoomTimeTable timeTable = new RoomTimeTable();

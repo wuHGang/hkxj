@@ -2,11 +2,9 @@ package cn.hkxj.platform.service;
 
 import cn.hkxj.platform.mapper.RoomMapper;
 import cn.hkxj.platform.pojo.Building;
-import cn.hkxj.platform.pojo.BuildingTimetable;
 import cn.hkxj.platform.pojo.CourseTimeTable;
 import cn.hkxj.platform.pojo.Room;
 import cn.hkxj.platform.pojo.RoomExample;
-import cn.hkxj.platform.utils.SchoolTimeUtil;
 import com.google.common.collect.HashMultimap;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -28,10 +26,8 @@ public class RoomService {
 	@Resource
 	private TimeTableService timeTableService;
 
-	private static HashMultimap<Room, CourseTimeTable> todayRoomTimeTableMap;
 	private static Map<String, Room> roomMap = new HashMap<>();
 
-	private static int dayOfWeek;
 
 	public List<Room> getRoomByBuilding(Building building) {
 		RoomExample roomExample = new RoomExample();

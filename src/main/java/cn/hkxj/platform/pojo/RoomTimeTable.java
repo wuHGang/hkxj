@@ -4,10 +4,10 @@ import com.google.common.base.MoreObjects;
 import com.google.common.collect.Sets;
 import lombok.NonNull;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * @author junrong.chen
@@ -19,7 +19,7 @@ public class RoomTimeTable {
 
 	private List<CourseTimeTable> courseTimeTable;
 
-	private static final HashSet<Integer> set = Sets.newHashSet(1,3,5,7,9);
+	private Set<Integer> emptyOrder;
 
 	public Room getRoom() {
 		return room;
@@ -35,16 +35,26 @@ public class RoomTimeTable {
 
 	public void setCourseTimeTable(@NonNull List<CourseTimeTable> courseTimeTable) {
 		this.courseTimeTable = courseTimeTable;
-
 	}
 
-
-	public void getEmptyOrder(){
-		HashSet<Integer> orderSet = new HashSet<>();
-		for (CourseTimeTable timeTable : courseTimeTable) {
-
+	/**
+	 * 获取该教室当天没课的节次的集合
+	 * @return
+	 */
+	public Set<Integer> getEmptyOrder(){
+		if (!Objects.isNull(emptyOrder)){
+			return emptyOrder;
 		}
+		HashSet<Integer> orderSet = Sets.newHashSet(1,3,5,7,9);
+		for (CourseTimeTable timeTable : courseTimeTable) {
+			orderSet.remove(timeTable.getOrder());
+		}
+		emptyOrder = orderSet;
+		return orderSet;
+	}
 
+	public boolean isEmptyByOrder(int order){
+		return getEmptyOrder().contains(order);
 	}
 
 

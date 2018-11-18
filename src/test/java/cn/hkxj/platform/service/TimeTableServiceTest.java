@@ -1,19 +1,13 @@
 package cn.hkxj.platform.service;
 
-import cn.hkxj.platform.pojo.Building;
 import cn.hkxj.platform.pojo.CourseTimeTable;
-import cn.hkxj.platform.pojo.RoomTimeTable;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
-
 import java.util.HashSet;
-import java.util.List;
-
-import static org.junit.Assert.*;
 
 /**
  * @author junrong.chen
