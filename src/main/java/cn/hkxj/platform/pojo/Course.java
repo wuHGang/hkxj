@@ -14,6 +14,8 @@ public class Course {
 
     private String name;
 
+    private int academy;
+
     private int credit;
 
     private CourseType type;
@@ -42,6 +44,14 @@ public class Course {
 
     public void setName(String name) {
         this.name = name == null ? null : name.trim();
+    }
+
+    public int getAcademy() {
+        return academy;
+    }
+
+    public void setAcademy(Integer academy) {
+        this.academy = academy;
     }
 
     public Integer getCredit() {

@@ -5,6 +5,7 @@
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="uid" jdbcType="VARCHAR" property="uid" />
     <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="course" jdbcType="INTEGER" property="course" />
     <result column="credit" jdbcType="INTEGER" property="credit" />
     <result column="type" jdbcType="TINYINT" property="type" typeHandler="cn.hkxj.platform.handler.CourseTypeHandler" />
     <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
@@ -29,17 +30,10 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert ignore into course (uid, name, credit,
-    type,
-    gmt_create)
-    values (#{uid,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{credit,jdbcType=INTEGER},
+    insert ignore into course (uid, name, academy, credit,type,gmt_create)
+    values (#{uid,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR},#{academy,jdbcType=INTEGER},  #{credit,jdbcType=INTEGER},
     #{type,jdbcType=TINYINT,typeHandler=cn.hkxj.platform.handler.CourseTypeHandler},
     #{gmtCreate,jdbcType=TIMESTAMP})
-      type,
-      gmt_create)
-    values (#{uid,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{credit,jdbcType=INTEGER}, 
-      #{type,jdbcType=TINYINT,typeHandler=cn.hkxj.platform.handler.CourseTypeHandler}, 
-      #{gmtCreate,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="cn.hkxj.platform.pojo.Course">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
@@ -81,6 +75,7 @@
       </if>
     </trim>
   </insert>
+
   <insert id="insertStudentAndCourse">
     insert into student_course (student_id, course_id) values(#{0}, #{1})
   </insert>
