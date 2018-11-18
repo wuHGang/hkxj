@@ -36,18 +36,18 @@ public class ScheduleService {
     public void sendCourseRemindMsg()  {
         List<CourseGroupMsg> courseGroupMsgList = courseService.getCoursesSubscribeForCurrentDay();
         if(courseGroupMsgList.size() == 0){
-            log.error("课表每日推送中获取的CourseGroupMsg列表为空，发生异常");
+            log.error("course daily push get list of CourseGroupMsg size is 0");
             return;
         }
         for(CourseGroupMsg msg : courseGroupMsgList){
             msg.getOpenIds().stream().filter(openid -> !Objects.equals(openid, null)).forEach(openid -> {
                 try {
                     wxMpService.getTemplateMsgService().sendTemplateMsg(getTemplateMessage(openid, msg.getCourseContent()));
-                    log.info("发送课表推送消息给用户{}", openid);
+                    log.info("send course push to user{}", openid);
 
                     subscribeService.updateCourseSubscribeMsgState(openid, SEND_SUCCESS);
                 } catch (WxErrorException e) {
-                    log.error("发送给用户{}的课表推送信息，发送失败, 错误信息{}", openid, e.getMessage());
+                    log.error("send course push to user{}，send failed, error messasge {}", openid, e.getMessage());
                     subscribeService.updateCourseSubscribeMsgState(openid, SEND_FAILED);
                 }
             });

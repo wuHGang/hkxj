@@ -1,5 +1,6 @@
 package cn.hkxj.platform.service.spider;
 
+import cn.hkxj.platform.exceptions.PasswordUncorrectException;
 import cn.hkxj.platform.pojo.AllGradeAndCourse;
 import cn.hkxj.platform.pojo.Course;
 import cn.hkxj.platform.pojo.CourseType;
@@ -33,7 +34,7 @@ public class AppSpiderTest {
 	}
 
 	@Test
-	public void getToken() throws IOException {
+	public void getToken() throws IOException, PasswordUncorrectException {
 		System.out.println(spider.getToken());
 	}
 

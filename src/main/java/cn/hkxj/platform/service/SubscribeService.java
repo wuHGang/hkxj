@@ -34,9 +34,9 @@ public class SubscribeService {
         subscribeOpenid.setGmtCreate(new Date());
         subscribeOpenid.setIsSend((byte) 1);
 
-        log.info("向表subscribe_openid插入一条数据，内容为{}", subscribeOpenid.toString());
+        log.info("insert record into subscribe_openid ，content {}", subscribeOpenid.toString());
         if(subscribeOpenidMapper.insert(subscribeOpenid) == 0){
-            log.error("subscribe_openid插入内容为{}的记录,插入失败", subscribeOpenid.toString());
+            log.error("insert record into subscribe_openid, content{},insert failed", subscribeOpenid.toString());
         }
     }
 

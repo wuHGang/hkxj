@@ -49,7 +49,7 @@ public class UserBindingController {
 			else {
 				studentBindService.studentBind(openid,account,password);
 			}
-			if(subscribeService.isSubscribe(openid)){
+			if(!subscribeService.isSubscribe(openid)){
 				subscribeService.insertOneSubOpenid(openid, (String) request.getAttribute("scene"));
 			}
 			session.setAttribute("account", account);

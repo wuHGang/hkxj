@@ -57,8 +57,8 @@ public class DateUtils {
     }
 
 
-    public static Integer[] getCurrentTime(){
-        return new Integer[]{getCurrentYear(), getCurrentWeek(), getCurrentDay()};
+    public static int[] getCurrentTime(){
+        return new int[]{getCurrentYear(), getCurrentWeek(), getCurrentDay()};
     }
 
 }
