@@ -1,7 +1,10 @@
 package cn.hkxj.platform.utils;
 
+import cn.hkxj.platform.pojo.LessonOrder;
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
+import org.joda.time.LocalTime;
 
 /**
  * @author junrong.chen
@@ -27,11 +30,32 @@ public class SchoolTimeUtil {
 		return new DateTime().getDayOfWeek();
 	}
 
+	public static String getDayOfWeekChinese() {
+		switch (getDayOfWeek()){
+			case 1:
+				return "星期一";
+			case 2:
+				return "星期二";
+			case 3:
+				return "星期三";
+			case 4:
+				return "星期四";
+			case 5:
+				return "星期五";
+			case 6:
+				return "星期六";
+			case 7:
+				return "星期日";
+			default:
+				throw new IllegalArgumentException("never happen");
+		}
+	}
+
 	/**
 	 * 查询现在为第几节课
 	 */
 	public static int getOrderOfLesson(){
-		return 0;
+		return LessonOrder.getLessonOrder(new LocalTime()).getOrder();
 	}
 
 	public static int getWeekDistinct() {
@@ -44,7 +68,6 @@ public class SchoolTimeUtil {
 	}
 
 	public static void main(String[] args) {
-		System.out.println(getSchoolWeek());
-		System.out.println(getWeekDistinct());
+		System.out.println(StringUtils.upperCase("科s108"));
 	}
 }

@@ -3,17 +3,13 @@ package cn.hkxj.platform.mapper;
 import cn.hkxj.platform.exceptions.PasswordUncorrectException;
 import cn.hkxj.platform.exceptions.ReadTimeoutException;
 import cn.hkxj.platform.pojo.Student;
-import cn.hkxj.platform.spider.UrpSpider;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
-
-import static org.junit.Assert.*;
 
 @Slf4j
 @RunWith(SpringRunner.class)

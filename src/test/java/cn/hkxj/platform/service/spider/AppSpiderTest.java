@@ -2,19 +2,13 @@ package cn.hkxj.platform.service.spider;
 
 import cn.hkxj.platform.exceptions.PasswordUncorrectException;
 import cn.hkxj.platform.pojo.AllGradeAndCourse;
-import cn.hkxj.platform.pojo.Course;
-import cn.hkxj.platform.pojo.CourseType;
-import cn.hkxj.platform.pojo.Grade;
 import cn.hkxj.platform.spider.AppSpider;
-import cn.hkxj.platform.utils.TypeUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.http2.ByteUtil;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Map;
 
 /**
@@ -25,7 +19,7 @@ import java.util.Map;
 @Slf4j
 public class AppSpiderTest {
 	private AppSpider spider;
-	private int account = 2015025838;
+	private int account = 2017025838;
 
 	@Before
 	public void setUp() throws Exception {
@@ -34,8 +28,12 @@ public class AppSpiderTest {
 	}
 
 	@Test
-	public void getToken() throws IOException, PasswordUncorrectException {
-		System.out.println(spider.getToken());
+	public void getToken() throws IOException {
+		try {
+			System.out.println(spider.getToken());
+		} catch (PasswordUncorrectException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Test
