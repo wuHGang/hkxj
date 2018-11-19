@@ -233,4 +233,13 @@
       #{account}
     </foreach>
   </select>
+  <select id="getOpenIdsByOpenIds" parameterType="java.util.List" resultType="cn.hkxj.platform.pojo.Openid">
+    select
+    account, openid
+    from openid where openid IN
+    <foreach collection="openids" item="openid" open="(" close=")" separator=",">
+      #{openid}
+    </foreach>
+  </select>
+
 </mapper>

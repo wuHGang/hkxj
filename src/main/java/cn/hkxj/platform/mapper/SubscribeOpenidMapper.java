@@ -35,4 +35,6 @@ public interface SubscribeOpenidMapper {
     int updateByPrimaryKey(SubscribeOpenid record);
 
     List<String> getSubscribeOpenids(@Param("openids") List<Openid> openids);
+
+    List<String> getAllSubscribeOpenids();
 }

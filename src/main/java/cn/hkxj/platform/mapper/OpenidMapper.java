@@ -2,6 +2,7 @@ package cn.hkxj.platform.mapper;
 
 import cn.hkxj.platform.pojo.Openid;
 import cn.hkxj.platform.pojo.OpenidExample;
+import cn.hkxj.platform.pojo.Student;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -37,4 +38,7 @@ public interface OpenidMapper {
     int updateByPrimaryKey(Openid record);
 
     List<Openid> getOpenIdsByAccount(@Param("accounts") List<Integer> accounts);
+
+    List<Openid> getOpenIdsByOpenIds(@Param("openids") List<String> openids);
+
 }
