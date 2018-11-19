@@ -23,9 +23,6 @@ public class HandlerRouteService {
     CourseMessageHandler courseMessageHandler;
 
 	@Resource
-	private OpenIdHandler openIdHandler;
-
-	@Resource
 	private GradeMessageHandler gradeMessageHandler;
 
 	@Resource

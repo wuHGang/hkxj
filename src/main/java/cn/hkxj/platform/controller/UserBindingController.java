@@ -49,9 +49,6 @@ public class UserBindingController {
 			else {
 				studentBindService.studentBind(openid,account,password);
 			}
-			if(!subscribeService.isSubscribe(openid)){
-				subscribeService.insertOneSubOpenid(openid, (String) request.getAttribute("scene"));
-			}
 			session.setAttribute("account", account);
 		} catch (PasswordUncorrectException e) {
 			log.info("student bind fail Password not correct account:{} password:{} openid:{}", account, password, openid);
