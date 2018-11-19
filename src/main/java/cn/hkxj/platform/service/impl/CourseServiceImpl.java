@@ -19,8 +19,7 @@ import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.service.CourseService;
 import cn.hkxj.platform.utils.DateUtils;
 import lombok.AllArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -34,11 +33,10 @@ import java.util.stream.Collectors;
  * @author Yuki
  * @date 2018/10/10 23:35
  */
+@Slf4j
 @Service
 @AllArgsConstructor
 public class CourseServiceImpl implements CourseService{
-
-    private static final Logger logger = LoggerFactory.getLogger(CourseServiceImpl.class);
 
     private StudentMapper studentMapper;
     private ClassesMapper classesMapper;
@@ -55,22 +53,23 @@ public class CourseServiceImpl implements CourseService{
 
     @Override
     public List<CourseTimeTable> getCoursesCurrentDay(Integer account) {
-        int[] currentTime = DateUtils.getCurrentTime();
+        int year = DateUtils.getCurrentYear();
+        int week = DateUtils.getCurrentWeek();
+        int day = DateUtils.getCurrentDay();
 
         Student student = studentMapper.selectByAccount(account);
         if(Objects.equals(student, null)) { return null; }
-        String[] strs = getClassnameAndYearAndNum(student.getClassname());
-        logger.info("account {}, academy {} query week{} course schedule", account, student.getAcademy(), currentTime[2]);
+        log.info("query currentday course schedule --account {}, academy {} day{}", account, student.getAcademy(), day);
 
-        Classes classes = getOppositeClasses(strs, student.getAcademy(), account);
-        List<Integer> courseIds = getCourseIdList(classes, account);
-        List<Course> courses = courseMapper.getAllCourses(courseIds);
+        Classes classes = getOppositeClasses(student);
+        if(classes == null){ return null; }
+        List<Course> courses = getAllCourses(classes, account);
 
         List<Integer> classTimetables = getOppositeClassTimetables(classes, account);
-        logger.info("query courseTimetable list parameters {},{},{}"
-                , currentTime[0], currentTime[1], currentTime[2]);
+        log.info("query courseTimetable list --parameters {},{},{}"
+                , year, week, day);
         List<CourseTimeTable> courseTimeTables =
-                courseTimeTableMapper.getTimetablesByIdsForCurrentDay(currentTime[0], currentTime[1], currentTime[2], classTimetables);
+                courseTimeTableMapper.getTimetablesByIdsForCurrentDay(year, week, day, classTimetables);
         combineCourseAndCouseTimetable(courseTimeTables, courses);
 
         return courseTimeTables;
@@ -79,19 +78,21 @@ public class CourseServiceImpl implements CourseService{
     @Override
     public List<CourseGroupMsg> getCoursesSubscribeForCurrentDay() {
         if(!isVaildDay()) { return null; }
-        int[] currentTime = DateUtils.getCurrentTime();
+        int year = DateUtils.getCurrentYear();
+        int week = DateUtils.getCurrentWeek();
+        int day = DateUtils.getCurrentDay();
         //和课程相关的数据
-        logger.info("get all courses of {} year{} month{} day",currentTime[0], currentTime[1], currentTime[2]);
+        log.info("get all courses of --year{} week{} day{}",year, week, day);
         List<CourseTimeTable> courseTimeTables =
-                courseTimeTableMapper.getTimetablesByTimeCondition(currentTime[0], currentTime[1], currentTime[2]);
+                courseTimeTableMapper.getTimetablesByTimeCondition(year, week, day);
         putCourseDataIntoCourseTimetable(courseTimeTables);
         //获取所有有课班级的信息
         List<Classes> classesList = getClassList(courseTimeTables);
         //装填要群发的消息的班级名称和课程信息
         List<CourseGroupMsg> courseGroupMsgs = getCourseGroupMsgs(courseTimeTables, classesList);
-        List<String> classnames = courseGroupMsgs.stream().map(courseGroupMsg -> courseGroupMsg.getClassname()).collect(Collectors.toList());
+        List<String> classnames = courseGroupMsgs.stream().map(CourseGroupMsg::getClassname).collect(Collectors.toList());
         //和学生还有openId的数据
-        Map<Student, String> openIdMap = getOpenIdMap(classnames);
+        Map<String, Student> openIdMap = getOpenIdMap(classnames);
         //将每一个班级对应的openid放进courseGroupMsgs中
         setIdsIntoCourseGroupMsgs(courseGroupMsgs, openIdMap);
 
@@ -102,32 +103,18 @@ public class CourseServiceImpl implements CourseService{
     public List<CourseTimeTable> getCoursesByAccount(Integer account) {
         Student student = studentMapper.selectByAccount(account);
         if(Objects.equals(student, null)){ return null; }
-        String[] strs = getClassnameAndYearAndNum(student.getClassname());
-        logger.info("account {},academy {} query this week course schedule", account, student.getAcademy());
+        log.info("query this week course schedule --account {},academy {}", account, student.getAcademy());
 
-        Classes classes = getOppositeClasses(strs, student.getAcademy(), account);
-        List<Integer> courseIds = getCourseIdList(classes, account);
-        List<Course> courses = courseMapper.getAllCourses(courseIds);
+        Classes classes = getOppositeClasses(student);
+        if(classes == null){ return null; }
+        List<Course> courses = getAllCourses(classes, account);
+        if(courses == null){ return null; }
 
-        List<Integer> classTimetables = getOppositeClassTimetables(classes, account);
-        List<CourseTimeTable> courseTimeTables = courseTimeTableMapper.getTimeTables(classTimetables);
+        List<CourseTimeTable> courseTimeTables = getCourseTimeTables(classes, account);
+        if(courseTimeTables == null){ return null; }
         combineCourseAndCouseTimetable(courseTimeTables, courses);
 
         return courseTimeTables;
-    }
-
-    private <T extends Object> String getIdsString(List<T> origin){
-        StringBuilder builder = new StringBuilder();
-        if(origin.size() == 1){
-            return builder.append("(" + origin.get(0) +  ")").toString();
-        }
-        builder.append("(" + origin.get(0) + ",");
-        int size = origin.size();
-        for(int i = 1; i < size; i++){
-            builder.append(origin.get(i) + ",");
-        }
-        builder.append(origin.get(size - 1) + ")");
-        return builder.toString();
     }
 
     /**
@@ -172,21 +159,30 @@ public class CourseServiceImpl implements CourseService{
     }
 
     private void combineCourseAndCouseTimetable(List<CourseTimeTable> courseTimeTables, List<Course> courses){
-        courseTimeTables.forEach(courseTimeTable -> {
-            courses.forEach(course -> {
-                if(Objects.equals(course.getId(), courseTimeTable.getCourse())){
-                    courseTimeTable.setCourseObject(course);
-                }
-            });
-        });
+        courseTimeTables.forEach(courseTimeTable ->
+            courses.stream().filter(course -> Objects.equals(course.getId(), courseTimeTable.getCourse()))
+                    .forEach(courseTimeTable::setCourseObject)
+            );
+    }
+
+    private List<CourseTimeTable> getCourseTimeTables(Classes classes, Integer account){
+        List<Integer> classTimetables = getOppositeClassTimetables(classes, account);
+        if(classTimetables == null) return null;
+        return courseTimeTableMapper.getTimeTables(classTimetables);
+    }
+
+    private List<Course> getAllCourses(Classes classes, Integer account){
+        List<Integer> courseIds = getCourseIdList(classes, account);
+        if(courseIds == null) return null;
+        return courseMapper.getAllCourses(courseIds);
     }
 
     private List<Integer> getOppositeClassTimetables(Classes classes, Integer account){
         List<Integer> classTimetables = classTimeTableMapper.getTimeTableIdByClassId(classes.getId());
 
         if(classTimetables.size() == 0){
-            logger.error("account {} classid {},no relevant courseTimetable information", account, classes.getId());
-            throw new RuntimeException("account " + account + "classid" + classes.getId()+ " no relevant courseTimetable information");
+            log.info("no relevant courseTimetable information -- account {} classid {}", account, classes.getId());
+            return null;
         }
         return classTimetables;
     }
@@ -194,17 +190,18 @@ public class CourseServiceImpl implements CourseService{
     private List<Integer> getCourseIdList(Classes classes, Integer account){
         List<Integer> courseIds = getCourseIds(classes);
         if(courseIds.size() == 0){
-            logger.error("account {} no relevant course information.", account);
-            throw new RuntimeException("account " + account + " no relevant course information.");
+            log.info("no relevant course information --account {} ", account);
+            return null;
         }
         return courseIds;
     }
 
-    private Classes getOppositeClasses(String[] strs, String academy, Integer account){
-        List<Classes> classesList = getStudentClassesList(strs, academy);
+    private Classes getOppositeClasses(Student student){
+        String[] strs = getClassnameAndYearAndNum(student.getClassname());
+        List<Classes> classesList = getStudentClassesList(strs, student.getAcademy());
         if(classesList.size() == 0){
-            logger.error("account {} no relevant class information.", account);
-            throw new RuntimeException("account " + account + " no relevant class information.");
+            log.info("account {} no relevant class information.", student.getAccount());
+            return null;
         }
         return classesList.get(0);
     }
@@ -234,24 +231,6 @@ public class CourseServiceImpl implements CourseService{
         return courseMapper.getCourseIdsByClassId(classes.getId());
     }
 
-    /**
-     * 将课程信息及其对应的时间信息，组成一个Map
-     * @param courseTimeTables 时间信息
-     * @return Map<CourseTimeTable, Course>
-     */
-    private Map<CourseTimeTable, Course> getCourseRelateInfoMap(List<CourseTimeTable> courseTimeTables){
-        List<Course> courses = getCoursesList(courseTimeTables);
-        Map<CourseTimeTable, Course> map = new LinkedHashMap<>();
-        courseTimeTables.forEach(courseTimeTable -> {
-            courses.forEach(course -> {
-                if(Objects.equals(course.getId(), courseTimeTable.getCourse())){
-                    map.put(courseTimeTable, course);
-                }
-            });
-        });
-        return map;
-    }
-
     private void putCourseDataIntoCourseTimetable(List<CourseTimeTable> courseTimeTables){
         List<Course> courses = getCoursesList(courseTimeTables);
         combineCourseAndCouseTimetable(courseTimeTables, courses);
@@ -264,7 +243,7 @@ public class CourseServiceImpl implements CourseService{
      */
     private List<ClassTimeTable> getClassTimeTables(List<CourseTimeTable> courseTimeTables){
         List<Integer> courseTimeTableIds =
-                courseTimeTables.stream().map(courseTimeTable -> courseTimeTable.getId()).collect(Collectors.toList());
+                courseTimeTables.stream().map(CourseTimeTable::getId).collect(Collectors.toList());
         //和班级相关的数据
         return classesMapper.getClassesByTimetableIds(courseTimeTableIds);
     }
@@ -277,7 +256,7 @@ public class CourseServiceImpl implements CourseService{
     private List<Classes> getClassList(List<CourseTimeTable> courseTimeTables){
         List<ClassTimeTable> classTimeTables = getClassTimeTables(courseTimeTables);
         List<Classes> classesList =
-                classesMapper.getClassesByIds(classTimeTables.stream().map(classTimeTable -> classTimeTable.getClassId()).collect(Collectors.toList()));
+                classesMapper.getClassesByIds(classTimeTables.stream().map(ClassTimeTable::getClassId).collect(Collectors.toList()));
         classesList.forEach(classes -> {
             List<Integer> timetableIds = new ArrayList<>(20);
             classTimeTables.forEach(classTimeTable -> {
@@ -301,13 +280,10 @@ public class CourseServiceImpl implements CourseService{
         classesList.forEach(classes -> {
             CourseGroupMsg msg = new CourseGroupMsg();
             List<CourseTimeTable> targetList = new ArrayList<>();
-            classes.getCourseTimeTableIds().forEach(timetableId -> {
-                courseTimeTables.forEach(courseTimeTable -> {
-                    if(Objects.equals(courseTimeTable.getId(), timetableId)){
-                        targetList.add(courseTimeTable);
-                    }
-                });
-            });
+            classes.getCourseTimeTableIds().forEach(timetableId ->
+                courseTimeTables.stream().filter(courseTimeTable -> Objects.equals(courseTimeTable.getId(), timetableId))
+                        .forEach(targetList::add)
+            );
             msg.setClassname(classes.getName() + classes.getYear() + "-" + classes.getNum());
             msg.setCourseTimeTables(targetList);
             courseGroupMsgs.add(msg);
@@ -320,22 +296,19 @@ public class CourseServiceImpl implements CourseService{
      * @param classnames 班级名称
      * @return 学生和所对应openId一一映射的Map
      */
-    private Map<Student, String> getOpenIdMap(List<String> classnames){
+    private Map<String, Student> getOpenIdMap(List<String> classnames){
         List<Student> students = studentMapper.getStudentsByClassnames(classnames);
-        List<Integer> accounts = students.stream().map(student -> student.getAccount()).collect(Collectors.toList());
+        List<Integer> accounts = students.stream().map(Student::getAccount).collect(Collectors.toList());
 
         List<Openid> openIds = openidMapper.getOpenIdsByAccount(accounts);
         List<String> subscribeOpenids = subscribeOpenidMapper.getSubscribeOpenids(openIds);
         List<Openid> openidList = openIds.stream().filter(openid -> subscribeOpenids.contains(openid.getOpenid())).collect(Collectors.toList());
 
-        Map<Student, String> openIdMap = new LinkedHashMap<>();
-        students.forEach(student -> {
-            openidList.forEach(openid -> {
-                if(Objects.equals(student.getAccount(), openid.getAccount())){
-                    openIdMap.put(student, openid.getOpenid());
-                }
-            });
-        });
+        Map<String, Student> openIdMap = new LinkedHashMap<>();
+        students.forEach(student ->
+            openidList.stream().filter(openid -> Objects.equals(student.getAccount(), openid.getAccount()))
+                    .forEach(openid -> openIdMap.put(openid.getOpenid(), student))
+        );
         return openIdMap;
     }
 
@@ -344,10 +317,10 @@ public class CourseServiceImpl implements CourseService{
      * @param courseGroupMsgs 课程提醒
      * @param openIdMap 学生和openId一一对应的Map
      */
-    private void setIdsIntoCourseGroupMsgs(List<CourseGroupMsg> courseGroupMsgs, Map<Student, String> openIdMap){
+    private void setIdsIntoCourseGroupMsgs(List<CourseGroupMsg> courseGroupMsgs, Map<String, Student> openIdMap){
         courseGroupMsgs.forEach(courseGroupMsg -> {
             List<String> openIdList = new ArrayList<>(40);
-            openIdMap.forEach((student, openid) -> {
+            openIdMap.forEach((openid, student) -> {
                 if(Objects.equals(student.getClassname(), courseGroupMsg.getClassname())){
                     openIdList.add(openid);
                 }
@@ -362,7 +335,7 @@ public class CourseServiceImpl implements CourseService{
      * @return 课程信息
      */
     private List<Course> getCoursesList(List<CourseTimeTable> courseTimeTables){
-        List<Integer> courseIds = courseTimeTables.stream().map(courseTimeTable -> courseTimeTable.getCourse()).collect(Collectors.toList());
+        List<Integer> courseIds = courseTimeTables.stream().map(CourseTimeTable::getCourse).collect(Collectors.toList());
         return courseMapper.getAllCourses(courseIds);
     }
 
@@ -372,19 +345,16 @@ public class CourseServiceImpl implements CourseService{
 
     public String toText(List<CourseTimeTable> courseTimeTables){
         if(courseTimeTables == null || courseTimeTables.size() == 0) return "今日课表\n课表空空如也";
-        StringBuffer buffer = new StringBuffer();
-        buffer.append("今日课表").append("\n");
+        StringBuilder builder = new StringBuilder();
+        builder.append("今日课表").append("\n");
         CourseTimeTable[] ctts = new CourseTimeTable[4];
-        courseTimeTables.forEach(courseTimeTable -> {
-            Course course = courseTimeTable.getCourseObject();
-            ctts[courseTimeTable.getOrder()/2] = courseTimeTable;
-        });
+        courseTimeTables.forEach(courseTimeTable -> ctts[courseTimeTable.getOrder()/2] = courseTimeTable );
         for(int i = 0; i < 4; i++){
             if(ctts[i] == null) continue;
-            buffer.append("第").append(ctts[i].getOrder()).append("节").append("\n")
+            builder.append("第").append(ctts[i].getOrder()).append("节").append("\n")
                     .append(ctts[i].getCourseObject().getName()).append("  ")
                     .append(ctts[i].getPosition()).append("\n");
         }
-        return buffer.toString();
+        return builder.toString();
     }
 }

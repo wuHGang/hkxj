@@ -57,17 +57,16 @@ public class ScheduleService {
     }
 
     private WxMpTemplateMessage getTemplateMessage(String openid, String msgContent){
-        WxMpTemplateMessage message = WxMpTemplateMessage.builder()
+        return  WxMpTemplateMessage.builder()
                 .toUser(openid)
                 .templateId(TEMPLATE_ID)
                 .data(getTemplateData(msgContent))
                 .url(URL)
                 .build();
-        return message;
     }
 
     private List<WxMpTemplateData> getTemplateData(String msgContent){
-        List<WxMpTemplateData> datas = new ArrayList<WxMpTemplateData>();
+        List<WxMpTemplateData> datas = new ArrayList<>();
         WxMpTemplateData title = new WxMpTemplateData();
         title.setName("first");
         title.setValue("今日课表");

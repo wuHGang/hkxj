@@ -11,6 +11,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author Yuki
@@ -38,7 +39,8 @@ public class CourseServiceImplTest {
     public void getCoursesForCurrentDay()throws Exception{
         List<CourseGroupMsg> msgList = courseService.getCoursesSubscribeForCurrentDay();
         msgList.forEach(msg -> {
-            msg.getOpenIds().stream().filter(openid -> openid != null).forEach(openid -> {
+//            .stream().filter(openid -> !Objects.equals(openid, null))
+            msg.getOpenIds().forEach(openid -> {
                 System.out.println(openid);
                 System.err.println(msg.getCourseTimeTables());
             });
