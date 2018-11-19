@@ -50,8 +50,9 @@ public class UrpCourseSpider {
         Matcher matcher = pattern.matcher(this.getResult(uid));
         while (matcher.find()) {
             String a=StringUtils.substringBetween(matcher.group(),"</td><tdwidth=\"3\"></td><td>","</td>");
-            System.out.println(a);
-            if(a.equals("机关")||a.equals("体育部"))
+            if(a.equals("机关"))
+                academyId=20;
+            else if (a.equals("体育部"))
                 academyId=0;
             else academyId=Academy.getAcademyCodeByName(a);  //AcademyEnum匹配学院名字和id
         }

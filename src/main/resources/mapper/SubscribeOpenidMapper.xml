@@ -216,4 +216,8 @@
       #{openid.openid}
     </foreach>
   </select>
+  <select id="getAllSubscribeOpenids" resultType="String">
+    select openid
+    from subscribe_openid
+  </select>
 </mapper>

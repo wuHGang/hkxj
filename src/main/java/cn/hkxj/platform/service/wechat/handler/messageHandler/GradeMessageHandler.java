@@ -2,8 +2,12 @@ package cn.hkxj.platform.service.wechat.handler.messageHandler;
 
 import cn.hkxj.platform.builder.TemplateBuilder;
 import cn.hkxj.platform.builder.TextBuilder;
+import cn.hkxj.platform.mapper.OpenidMapper;
+import cn.hkxj.platform.mapper.StudentMapper;
 import cn.hkxj.platform.mapper.WechatOpenIdMapper;
 import cn.hkxj.platform.pojo.Grade;
+import cn.hkxj.platform.pojo.Openid;
+import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.pojo.Wechatuser;
 import cn.hkxj.platform.service.GradeSearchService;
 import cn.hkxj.platform.service.impl.GradeServiceImpl;
@@ -16,6 +20,7 @@ import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -27,7 +32,10 @@ import java.util.Map;
 public class GradeMessageHandler extends AbstractHandler {
 
 	@Autowired
-	private WechatOpenIdMapper openIdMapper;
+	private OpenidMapper openIdMapper;
+
+	@Autowired
+	private StudentMapper studentMapper;
 
 	@Autowired
 	private GradeServiceImpl gradeService;
@@ -43,10 +51,12 @@ public class GradeMessageHandler extends AbstractHandler {
 
 	@Override
 	public WxMpXmlOutMessage handle(WxMpXmlMessage wxMpXmlMessage, Map<String, Object> map, WxMpService wxMpService, WxSessionManager wxSessionManager) throws WxErrorException {
-		String openid = wxMpXmlMessage.getFromUser();
-		Wechatuser wechatuser = openIdMapper.getStudentByOpenId(openid);
+		List<String> wechatUser=new ArrayList();;
+		wechatUser.add(wxMpXmlMessage.getFromUser());
 		try {
-			List<Grade> studentGrades = gradeSearchService.getStudentGrades(wechatuser.getAccount(),wechatuser.getAccount().toString());
+			List<Openid> openId=openIdMapper.getOpenIdsByOpenIds(wechatUser);
+			Student student=studentMapper.selectByAccount(openId.get(0).getAccount());
+			List<Grade> studentGrades = gradeSearchService.getStudentGrades(student);
 			String gradesMsg = gradeSearchService.toText(studentGrades);
 			return textBuilder.build(gradesMsg , wxMpXmlMessage, wxMpService);
 		} catch (Exception e) {

@@ -1,11 +1,8 @@
 package cn.hkxj.platform.service;
 
 import cn.hkxj.platform.exceptions.PasswordUncorrectException;
-import cn.hkxj.platform.mapper.CourseMapper;
-import cn.hkxj.platform.mapper.GradeMapper;
-import cn.hkxj.platform.pojo.AllGradeAndCourse;
-import cn.hkxj.platform.pojo.Course;
-import cn.hkxj.platform.pojo.Grade;
+import cn.hkxj.platform.mapper.*;
+import cn.hkxj.platform.pojo.*;
 import cn.hkxj.platform.spider.AppSpider;
 import cn.hkxj.platform.spider.UrpCourseSpider;
 import lombok.extern.slf4j.Slf4j;
@@ -27,19 +24,28 @@ public class GradeSearchService {
 	private CourseMapper courseMapper;
 	@Resource
 	private GradeMapper gradeMapper;
+	@Resource
+	private OpenidMapper openidMapper;
+	@Resource
+	private SubscribeOpenidMapper subscribeOpenidMapper;
+	@Resource
+	private StudentMapper studentMapper;
 
 	/**
 	 * 只返回本学期的成绩，这个数据暂时不存在数据库
 	 *
-	 * @param account 教务网账号
-	 * @param password 密码
+	 * @param account 学生账户
+	 * @param password 学生密码
+	 *
 	 */
-	public void getCurrentGrade(int account, String password)throws IOException {
+	public void getCurrentGrade(int account,String password)throws IOException {
 		//暂定只要是半学期的都应该直接查询最新的数据
 		//先查询数据库中有没有这个数据，有就返回（如果要查本学期的数据，怎么判断知道数据有没有更新完）
 		//如果没有从App中进行抓取，要先判断这个他的app账号是否正确，不正确从校务网抓
 		//抓到的数据保存到数据并且返回结果（并行执行）在密集查成绩的期间要考虑是否需要存库这个功能
-		UrpCourseSpider urpCourseSpider=new UrpCourseSpider(account,"1");
+//		Student student=studentMapper.selectByAccount(account);
+
+		UrpCourseSpider urpCourseSpider=new UrpCourseSpider(account,password);
 
 		AppSpider appSpider = new AppSpider(account);
 		try {
@@ -51,30 +57,31 @@ public class GradeSearchService {
 		for (AllGradeAndCourse.GradeAndCourse andCourse : gradeAndCourse.getCurrentTermGrade()) {
 			if (!courseMapper.ifExistCourse(andCourse.getCourse().getUid())) {
 				andCourse.getCourse().setAcademy(urpCourseSpider.getAcademyId(andCourse.getCourse().getUid()));
-				saveCourse(account,andCourse.getCourse());
+				saveCourse(andCourse.getCourse());
 			}
 //			int gradeId=gradeMapper.ifExistGrade(andCourse.getGrade().getAccount(),andCourse.getGrade().getCourseId());
 			if (gradeMapper.ifExistGrade(andCourse.getGrade().getAccount(),andCourse.getGrade().getCourseId())==0){
-				saveGrade(account,andCourse.getGrade());
+				saveGrade(account,andCourse.getGrade(),andCourse.getCourse());
 			}
 //			else
 //			    updateGrade(gradeId,andCourse.getGrade());
 		}
 	}
 
-	public List<Grade> getStudentGrades(int account, String password)throws IOException{
-		getCurrentGrade(account, password);
-		List<Grade> studentGrades=gradeMapper.selectByAccount(account);
+	public List<Grade> getStudentGrades(Student student)throws IOException{
+		getCurrentGrade(student.getAccount(),student.getPassword());
+		List<Grade> studentGrades=gradeMapper.selectByAccount(student.getAccount());
 		return studentGrades;
 	}
 
-	private void saveCourse(int account, Course course){
+	private void saveCourse( Course course){
 
 		courseMapper.insert(course);
-		courseMapper.insertStudentAndCourse(account, course.getUid());
+//
 	}
 
-	private void saveGrade(int account,Grade grade){
+	private void saveGrade(int account,Grade grade,Course course){
+		courseMapper.insertStudentAndCourse(account, course.getUid());
 		gradeMapper.insert(grade);
 	}
 
@@ -98,9 +105,14 @@ public class GradeSearchService {
 		return buffer.toString();
 	}
 
-	@Scheduled(cron = "0 0 8 ? * MON-FRI")
-	private void autoUpdateGrade(){
-
+	@Scheduled(cron = "0 0 9 ? * MON-FRI")
+	private void autoUpdateGrade()throws IOException{
+		List<String> openIds = subscribeOpenidMapper.getAllSubscribeOpenids();
+		List<Openid> allOpenIds = openidMapper.getOpenIdsByOpenIds(openIds);
+		for(Openid openid:allOpenIds){
+			Student student=studentMapper.selectByAccount(openid.getAccount());
+			getCurrentGrade(student.getAccount(),student.getPassword());
+		}
 
 	}
 
