@@ -22,16 +22,35 @@ public class EmptyRoomHandlerTest {
 	@Test
 	public void parseContentTwoScience() {
 		String input = "空教室 科厦";
-		log.info("input:{}", input);
 		String content = emptyRoomHandler.parseContent(input);
-		log.info("content:{}", content);
+		log.info("input:{} \ncontent:{}", input, content);
 	}
 
 	@Test
 	public void parseContentTwoMain() {
 		String input = "空教室 主楼";
-		log.info("input:{}", input);
 		String content = emptyRoomHandler.parseContent(input);
-		log.info("content:{}", content);
+		log.info("input:{} \ncontent:{}", input, content);
+	}
+
+	@Test
+	public void parseContentThreeSearchClassRoom(){
+		String input = "空教室 教室 主楼W0321";
+		String content = emptyRoomHandler.parseContent(input);
+		log.info("input:{} \ncontent:{}", input, content);
+	}
+
+	@Test
+	public void errorSearchType(){
+		String input = "空教室 测试 主楼w0321";
+		String content = emptyRoomHandler.parseContent(input);
+		log.info("input:{} \ncontent:{}", input, content);
+	}
+
+	@Test
+	public void roomNameLoweCase(){
+		String input = "空教室 教室 主楼w0321";
+		String content = emptyRoomHandler.parseContent(input);
+		log.info("input:{} \ncontent:{}", input, content);
 	}
 }
