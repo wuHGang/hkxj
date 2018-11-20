@@ -70,7 +70,7 @@ public class CourseServiceImpl implements CourseService{
                 , year, week, day);
         List<CourseTimeTable> courseTimeTables =
                 courseTimeTableMapper.getTimetablesByIdsForCurrentDay(year, week, day, classTimetables);
-        combineCourseAndCouseTimetable(courseTimeTables, courses);
+        combineCourseAndCourseTimetable(courseTimeTables, courses);
 
         return courseTimeTables;
     }
@@ -112,7 +112,7 @@ public class CourseServiceImpl implements CourseService{
 
         List<CourseTimeTable> courseTimeTables = getCourseTimeTables(classes, account);
         if(courseTimeTables == null){ return null; }
-        combineCourseAndCouseTimetable(courseTimeTables, courses);
+        combineCourseAndCourseTimetable(courseTimeTables, courses);
 
         return courseTimeTables;
     }
@@ -151,14 +151,14 @@ public class CourseServiceImpl implements CourseService{
             char c = strs[0].charAt(i);
             if(c >= '0' && c <= '9'){
                 targets[1] = strs[0].substring(i, length);        //year代表第几级 如16级
-                targets[0] = strs[0].substring(0, i);          //此时的strs[0]是专业名,strs[1]是班级在所在的序号
+                targets[0] = strs[0].substring(0, i);          //此时的targets[0]是专业名,targets[1]是班级在所在的序号
                 return targets;
             }
         }
         return targets;
     }
 
-    private void combineCourseAndCouseTimetable(List<CourseTimeTable> courseTimeTables, List<Course> courses){
+    private void combineCourseAndCourseTimetable(List<CourseTimeTable> courseTimeTables, List<Course> courses){
         courseTimeTables.forEach(courseTimeTable ->
             courses.stream().filter(course -> Objects.equals(course.getId(), courseTimeTable.getCourse()))
                     .forEach(courseTimeTable::setCourseObject)
@@ -233,7 +233,7 @@ public class CourseServiceImpl implements CourseService{
 
     private void putCourseDataIntoCourseTimetable(List<CourseTimeTable> courseTimeTables){
         List<Course> courses = getCoursesList(courseTimeTables);
-        combineCourseAndCouseTimetable(courseTimeTables, courses);
+        combineCourseAndCourseTimetable(courseTimeTables, courses);
     }
 
     /**

@@ -6,6 +6,7 @@ import cn.hkxj.platform.pojo.SubscribeOpenidExample;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 
@@ -27,6 +28,7 @@ public class SubscribeService {
         return subscribeOpenidMapper.selectByExample(example).size() == 1;
     }
 
+    @Transactional
     public void insertOneSubOpenid(String openid, String scene){
         SubscribeOpenid subscribeOpenid =  new SubscribeOpenid();
         subscribeOpenid.setOpenid(openid);
@@ -34,12 +36,13 @@ public class SubscribeService {
         subscribeOpenid.setGmtCreate(new Date());
         subscribeOpenid.setIsSend((byte) 1);
 
-        log.info("insert record into subscribe_openid ，content {}", subscribeOpenid.toString());
         if(subscribeOpenidMapper.insert(subscribeOpenid) == 0){
-            log.error("insert record into subscribe_openid, content{},insert failed", subscribeOpenid.toString());
+            log.error("insert record into subscribe_openid, insert failed --content{}", subscribeOpenid.toString());
         }
+        log.info("insert record into subscribe_openid --content {}", subscribeOpenid.toString());
     }
 
+    @Transactional
     public void updateCourseSubscribeMsgState(String openid, Byte sub_type){
         SubscribeOpenid subscribeOpenid = new SubscribeOpenid();
         subscribeOpenid.setIsSend(sub_type);
@@ -47,6 +50,9 @@ public class SubscribeService {
         SubscribeOpenidExample example = new SubscribeOpenidExample();
         example.createCriteria()
                 .andOpenidEqualTo(openid);
-        subscribeOpenidMapper.updateByExampleSelective(subscribeOpenid, example);
+        if(subscribeOpenidMapper.updateByExampleSelective(subscribeOpenid, example) == 0){
+            log.error("update msgState fail --openid {} is_send {}", openid, sub_type);
+        }
+        log.info("update msgType success --openid {} is_send {}", openid, sub_type);
     }
 }

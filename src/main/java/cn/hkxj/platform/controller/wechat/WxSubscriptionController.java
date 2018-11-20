@@ -1,7 +1,7 @@
 package cn.hkxj.platform.controller.wechat;
 
 import cn.hkxj.platform.pojo.Student;
-import cn.hkxj.platform.service.ScheduleService;
+import cn.hkxj.platform.service.SubscribeService;
 import cn.hkxj.platform.service.wechat.StudentBindService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,7 @@ public class WxSubscriptionController {
 	private StudentBindService studentBindService;
 
 	@Resource
-	private ScheduleService scheduleService;
+	private SubscribeService subscribeService;
 
 	@Autowired
 	private HttpSession session;
@@ -61,6 +61,10 @@ public class WxSubscriptionController {
 			String account = student.getAccount().toString();
 			session.setAttribute("account", account);
 			log.info("redirect to timetable account：{}", account);
+			//判断该openId是否已经定阅过，没有插入一条数据
+			if(!subscribeService.isSubscribe(openid)){
+				subscribeService.insertOneSubOpenid(openid, scene);
+			}
 			return "new";
 
 		} else {
