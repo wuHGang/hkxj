@@ -27,8 +27,10 @@ public enum Academy {
 	Building("国际教育学院", "国际学院", 15),
     Mining("矿业工程学院", "矿业学院", 16),
 	recruitment("招就处", "招就处", 17),
-	TrainingCenter("实训中心", "实训中心", 18),
-    StudentsAffairsDivision("学生处", "学生处", 19);
+	TrainingCenter("工程训练与基础实验中心", "实训中心", 18),
+    StudentsAffairsDivision("学生处", "学生处", 19),
+    office("机关","机关",20),
+    sport("体育部","体育部",21);
 
     private String academyName;
 
