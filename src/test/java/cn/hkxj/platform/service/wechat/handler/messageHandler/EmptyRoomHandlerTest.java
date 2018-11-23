@@ -34,6 +34,13 @@ public class EmptyRoomHandlerTest {
 	}
 
 	@Test
+	public void parseContentThreeMain() {
+		String input = "空教室 主楼 3";
+		String content = emptyRoomHandler.parseContent(input);
+		log.info("input:{} \ncontent:{}", input, content);
+	}
+
+	@Test
 	public void parseContentThreeSearchClassRoom(){
 		String input = "空教室 教室 主楼W0321";
 		String content = emptyRoomHandler.parseContent(input);

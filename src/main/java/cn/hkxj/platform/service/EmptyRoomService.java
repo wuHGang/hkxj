@@ -28,8 +28,8 @@ public class EmptyRoomService {
 	/**
 	 * 缓存当天有课教室和课程的映射
 	 */
-	private static HashMultimap<Room, CourseTimeTable> scienceRoomTimeTable = HashMultimap.create();
-	private static HashMultimap<Room, CourseTimeTable> mainRoomTimeTable = HashMultimap.create();
+	private static HashMultimap<Room, CourseTimeTable> scienceRoomTimeTable;
+	private static HashMultimap<Room, CourseTimeTable> mainRoomTimeTable;
 	private static int dayOfWeek;
 
 
@@ -98,13 +98,17 @@ public class EmptyRoomService {
 	}
 
 	private void generateMap(){
+		scienceRoomTimeTable = HashMultimap.create();
+		mainRoomTimeTable = HashMultimap.create();
 		for (CourseTimeTable timeTable : timeTableService.getTimeTableFromDB(SchoolTimeUtil.getSchoolWeek())) {
 			if (checkDistinct(timeTable.getDistinct())){
 				Room room = roomService.getRoomByName(timeTable.getPosition());
 				if (room.getArea() == Building.SCIENCE){
+
 					scienceRoomTimeTable.put(room, timeTable);
 				}
 				if (room.getArea() == Building.MAIN){
+
 					mainRoomTimeTable.put(room, timeTable);
 				}
 			}

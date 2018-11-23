@@ -211,7 +211,7 @@ public class EmptyRoomHandler implements WxMpMessageHandler {
 			if(roomTimeTable.isEmptyByOrder(lessonOrder.getOrder())){
 				if(roomTimeTable.getRoom().getFloor() != floorFlag){
 					floorFlag = roomTimeTable.getRoom().getFloor();
-					stringBuffer.append('\n');
+					stringBuffer.append("\n\n");
 				}
 				stringBuffer.append(roomTimeTable.getRoom().getName()).append(" ");
 			}
