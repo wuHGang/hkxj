@@ -3,6 +3,7 @@ package cn.hkxj.platform.controller.wechat;
 import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.service.SubscribeService;
 import cn.hkxj.platform.service.wechat.StudentBindService;
+import cn.hkxj.platform.utils.OneOffSubcriptionUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -51,6 +52,8 @@ public class WxSubscriptionController {
 			HttpServletResponse response, HttpServletRequest request) throws IOException {
 		log.info("{},{},{},{}", openid, templateId, action, scene);
 
+		session.setAttribute(openid+"_subscribe_scene", scene);
+
 		if (Objects.isNull(openid)) {
 			log.info("redirect to login");
 			return "LoginWeb/Login";
@@ -61,9 +64,12 @@ public class WxSubscriptionController {
 			String account = student.getAccount().toString();
 			session.setAttribute("account", account);
 			log.info("redirect to timetable account：{}", account);
-			//判断该openId是否已经定阅过，没有插入一条数据
+			//判断该openId是否已经订阅过，没有插入一条数据
 			if(!subscribeService.isSubscribe(openid)){
 				subscribeService.insertOneSubOpenid(openid, scene);
+			}
+			if(Objects.equals("1005", scene)){
+				OneOffSubcriptionUtil.sendTemplateMessageToUser(openid, scene);
 			}
 			return "new";
 

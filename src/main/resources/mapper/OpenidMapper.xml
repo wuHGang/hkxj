@@ -241,5 +241,7 @@
       #{openid}
     </foreach>
   </select>
-
+  <select id="isOpenidExist" parameterType="String" resultType="String">
+    select openid from openid where openid = #{value}
+  </select>
 </mapper>

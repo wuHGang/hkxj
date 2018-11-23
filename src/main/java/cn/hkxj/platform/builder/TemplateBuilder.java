@@ -23,4 +23,13 @@ public class TemplateBuilder {
 				.build();
 		return m;
 	}
+
+	public WxMpTemplateMessage buildCourseReply(WxMpXmlMessage wxMessage, List<WxMpTemplateData> list, String url){
+		return WxMpTemplateMessage.builder()
+				.toUser(wxMessage.getFromUser())
+				.templateId("")
+				.data(list)
+				.url(url)
+				.build();
+	}
 }

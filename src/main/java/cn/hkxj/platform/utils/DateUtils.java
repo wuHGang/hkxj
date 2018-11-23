@@ -32,8 +32,8 @@ public class DateUtils {
         try{
             calendar.setTime(format.parse(term_start));
         } catch (ParseException e){
-            log.error("将配置文件中term_start通过SimpleDateFormat转换成Date时发生异常，错误信息{}", e.getMessage());
-            throw new RuntimeException("将配置文件中term_start通过SimpleDateFormat转换成Date时发生异常，错误信息" + e.getMessage());
+            log.error("parse string to date fail，error message{}", e.getMessage());
+            throw new RuntimeException("parse string to date fail，error message" + e.getMessage());
         }
         long start = calendar.getTimeInMillis();
         long end = Calendar.getInstance().getTimeInMillis();
@@ -54,11 +54,6 @@ public class DateUtils {
             currentDay = 0;
         }
         return currentDay;
-    }
-
-
-    public static int[] getCurrentTime(){
-        return new int[]{getCurrentYear(), getCurrentWeek(), getCurrentDay()};
     }
 
 }

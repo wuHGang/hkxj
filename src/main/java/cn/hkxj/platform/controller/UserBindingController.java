@@ -7,6 +7,7 @@ import cn.hkxj.platform.pojo.ErrorCode;
 import cn.hkxj.platform.pojo.WebResponse;
 import cn.hkxj.platform.service.SubscribeService;
 import cn.hkxj.platform.service.wechat.StudentBindService;
+import cn.hkxj.platform.utils.OneOffSubcriptionUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -56,6 +57,13 @@ public class UserBindingController {
 		} catch (OpenidExistException e) {
 			log.info("student bind fail openid is exist account:{} password:{}", account, password);
 			return WebResponse.fail(ErrorCode.OPENID_EXIST.getErrorCode(), "该账号已经绑定");
+		}
+
+		String scene = (String) session.getAttribute(openid + "_subscribe_scene");
+		if(!Objects.isNull(scene)){
+			if(Objects.equals("1005", scene)){
+				OneOffSubcriptionUtil.sendTemplateMessageToUser(openid, "1005");
+			}
 		}
 
 		log.info("student bind success account:{} password:{} openid{}", account, password, openid);

@@ -39,7 +39,7 @@ public class HandlerRouteService {
 		router
 				.rule()
 					.async(false)
-					.content("课表")
+					.rContent("(课表|课程|今日课表)")
 					.interceptor(wechatOpenIdInterceptor)
 					.handler(courseMessageHandler)
 				.end()

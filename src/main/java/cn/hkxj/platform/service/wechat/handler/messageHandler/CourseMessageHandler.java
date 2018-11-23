@@ -7,6 +7,7 @@ import cn.hkxj.platform.pojo.Openid;
 import cn.hkxj.platform.pojo.OpenidExample;
 import cn.hkxj.platform.service.CourseService;
 import cn.hkxj.platform.service.wechat.handler.AbstractHandler;
+import cn.hkxj.platform.utils.OneOffSubcriptionUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.exception.WxErrorException;
@@ -16,6 +17,7 @@ import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
 import org.springframework.stereotype.Component;
 
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Map;
 
@@ -31,15 +33,18 @@ public class CourseMessageHandler extends AbstractHandler {
 	private CourseService courseService;
 	private OpenidMapper openidMapper;
 
+
 	@Override
 	public WxMpXmlOutMessage handle(WxMpXmlMessage wxMpXmlMessage, Map<String, Object> map, WxMpService wxMpService, WxSessionManager wxSessionManager) throws WxErrorException {
-		String openid = wxMpXmlMessage.getFromUser();
-		OpenidExample example = new OpenidExample();
-		example.createCriteria()
-				.andOpenidEqualTo(openid);
-		Openid openidObject = openidMapper.selectByExample(example).get(0);
-		List<CourseTimeTable> courseTimeTables = courseService.getCoursesCurrentDay(openidObject.getAccount());
-		String examMsg = courseService.toText(courseTimeTables);
+//		String openid = wxMpXmlMessage.getFromUser();
+//		OpenidExample example = new OpenidExample();
+//		example.createCriteria()
+//				.andOpenidEqualTo(openid);
+//		Openid openidObject = openidMapper.selectByExample(example).get(0);
+//		List<CourseTimeTable> courseTimeTables = courseService.getCoursesCurrentDay(openidObject.getAccount());
+//		String examMsg = courseService.toText(courseTimeTables);
+		String examMsg = OneOffSubcriptionUtil.getHyperlinks("点击领取今日课表", "1005");
+
 		return new TextBuilder().build(examMsg, wxMpXmlMessage, wxMpService);
 	}
 }

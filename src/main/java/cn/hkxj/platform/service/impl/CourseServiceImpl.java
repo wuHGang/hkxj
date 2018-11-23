@@ -18,10 +18,12 @@ import cn.hkxj.platform.pojo.Openid;
 import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.service.CourseService;
 import cn.hkxj.platform.utils.DateUtils;
+import cn.hkxj.platform.utils.OneOffSubcriptionUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -131,6 +133,27 @@ public class CourseServiceImpl implements CourseService{
             return courseIds.size() != 0;
         }
         return false;
+    }
+
+    public String toText(List<CourseTimeTable> courseTimeTables){
+        if(courseTimeTables == null || courseTimeTables.size() == 0) return "课表空空如也";
+        StringBuilder builder = new StringBuilder();
+        CourseTimeTable[] ctts = new CourseTimeTable[4];
+        courseTimeTables.forEach(courseTimeTable -> ctts[courseTimeTable.getOrder()/2] = courseTimeTable );
+        int count = 0;
+        int length = courseTimeTables.size();
+        for(int i = 0; i < 4; i++){
+            if(ctts[i] == null) continue;
+            count++;
+            builder.append("第").append(ctts[i].getOrder()).append("节").append("\\n")
+                    .append(ctts[i].getCourseObject().getName()).append("  ")
+                    .append(ctts[i].getPosition());
+            if(count != length){
+                builder.append("\\n\\n");
+            }
+        }
+            builder.append("点击查看更多");
+        return builder.toString();
     }
 
     /**
@@ -343,18 +366,4 @@ public class CourseServiceImpl implements CourseService{
         return DateUtils.getCurrentDay() >= 1 && DateUtils.getCurrentDay() <= 5;
     }
 
-    public String toText(List<CourseTimeTable> courseTimeTables){
-        if(courseTimeTables == null || courseTimeTables.size() == 0) return "今日课表\n课表空空如也";
-        StringBuilder builder = new StringBuilder();
-        builder.append("今日课表").append("\n");
-        CourseTimeTable[] ctts = new CourseTimeTable[4];
-        courseTimeTables.forEach(courseTimeTable -> ctts[courseTimeTable.getOrder()/2] = courseTimeTable );
-        for(int i = 0; i < 4; i++){
-            if(ctts[i] == null) continue;
-            builder.append("第").append(ctts[i].getOrder()).append("节").append("\n")
-                    .append(ctts[i].getCourseObject().getName()).append("  ")
-                    .append(ctts[i].getPosition()).append("\n");
-        }
-        return builder.toString();
-    }
 }
