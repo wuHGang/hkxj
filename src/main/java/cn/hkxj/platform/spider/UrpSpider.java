@@ -26,8 +26,8 @@ public class UrpSpider {
 	private String account;
 	private String password;
 	private final static Gson GSON = new Gson();
-	private static final String INFORMATION_URL = "http://119.29.119.49:10086/information";
-	private static final String GRADE_URL = "http://119.29.119.49:10086/grade";
+	private static final String INFORMATION_URL = "http://spider.hackerda.com/information";
+	private static final String GRADE_URL = "http://spider.hackerda.com/grade";
 	private static final String CURRENT_GRADE_URL = GRADE_URL+"/current";
 	private static final String EVER_GRADE_URL = GRADE_URL+"/ever";
 	private static OkHttpClient client = new OkHttpClient.Builder()
@@ -40,7 +40,7 @@ public class UrpSpider {
 	}
 
 	public Student getInformation() throws PasswordUncorrectException, ReadTimeoutException {
-		Map result = null;
+		Map result;
 		try {
 			log.info("urp spider start get student info account{}", this.account);
 			result = getResult(INFORMATION_URL);
@@ -66,8 +66,8 @@ public class UrpSpider {
 		return student;
 	}
 
-	public void getGrade() throws IOException, PasswordUncorrectException {
-		Map result = getResult(GRADE_URL);
+	public Map getGrade() throws IOException, PasswordUncorrectException {
+		return getResult(GRADE_URL);
 	}
 
 	public void getCurrentGrade() throws IOException, PasswordUncorrectException {
@@ -87,6 +87,8 @@ public class UrpSpider {
 		Response response = client.newCall(request).execute();
 
 		String result = response.body().string();
+
+		log.debug(result);
 
 		HashMap resultMap = GSON.fromJson(result, HashMap.class);
 		Double statu = (Double) resultMap.get("statu");
