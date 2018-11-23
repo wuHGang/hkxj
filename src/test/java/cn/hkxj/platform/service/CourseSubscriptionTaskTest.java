@@ -1,6 +1,7 @@
 package cn.hkxj.platform.service;
 
 import cn.hkxj.platform.PlatformApplication;
+import cn.hkxj.platform.task.CourseSubscriptionTask;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,10 +16,10 @@ import org.springframework.test.context.web.WebAppConfiguration;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = PlatformApplication.class)
 @WebAppConfiguration
-public class ScheduleServiceTest {
+public class CourseSubscriptionTaskTest {
 
     @Autowired
-    private ScheduleService scheduleService;
+    private CourseSubscriptionTask courseSubscriptionTask;
 
     @Test
     public void sendCourseRemindMsg() {
