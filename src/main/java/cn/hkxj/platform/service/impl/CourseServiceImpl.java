@@ -42,7 +42,7 @@ public class CourseServiceImpl implements CourseService{
 
     private StudentMapper studentMapper;
     private ClassesMapper classesMapper;
-    private  CourseMapper courseMapper;
+    private CourseMapper courseMapper;
     private CourseTimeTableMapper courseTimeTableMapper;
     private ClassTimeTableMapper classTimeTableMapper;
     private OpenidMapper openidMapper;
@@ -133,6 +133,11 @@ public class CourseServiceImpl implements CourseService{
             return courseIds.size() != 0;
         }
         return false;
+    }
+
+    public List<Course> getCourseByName(String name){
+//        courseMapper
+        return null;
     }
 
     public String toText(List<CourseTimeTable> courseTimeTables){

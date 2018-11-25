@@ -35,4 +35,6 @@ public interface CourseMapper {
 
     boolean ifExistCourse(String uid);
 
+    List<Course> selectCourseByName(String name);
+
 }

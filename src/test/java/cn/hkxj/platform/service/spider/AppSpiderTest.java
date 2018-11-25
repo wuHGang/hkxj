@@ -3,9 +3,16 @@ package cn.hkxj.platform.service.spider;
 import cn.hkxj.platform.exceptions.PasswordUncorrectException;
 import cn.hkxj.platform.pojo.AllGradeAndCourse;
 import cn.hkxj.platform.spider.AppSpider;
+import cn.hkxj.platform.utils.ApplicationUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ApplicationContext;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -17,12 +24,18 @@ import java.util.Map;
  */
 
 @Slf4j
+@RunWith(SpringRunner.class)
+@SpringBootTest
+@ContextConfiguration
 public class AppSpiderTest {
+    @Autowired
+    private ApplicationContext applicationContext;
 	private AppSpider spider;
-	private int account = 2017025838;
+	private int account = 2017023523;
 
 	@Before
 	public void setUp() throws Exception {
+	    ApplicationUtil.setApplicationContext(applicationContext);
 		spider = new AppSpider(account);
 		spider.getToken();
 	}

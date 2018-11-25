@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.hkxj.platform.mapper.ExamTimeTableMapper">
+  <resultMap id="BaseResultMap" type="cn.hkxj.platform.pojo.ExamTimeTable">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="room_id" jdbcType="INTEGER" property="room" typeHandler="cn.hkxj.platform.handler.RoomHandler" />
+    <result column="course_id" jdbcType="INTEGER" property="course" typeHandler="cn.hkxj.platform.handler.CourseHandler" />
+    <result column="year_" jdbcType="INTEGER" property="year" />
+    <result column="term" jdbcType="INTEGER" property="term" />
+    <result column="school_week" jdbcType="INTEGER" property="schoolWeek" />
+    <result column="week" jdbcType="INTEGER" property="week" />
+    <result column="start" jdbcType="TIMESTAMP" property="start" />
+    <result column="end" jdbcType="TIMESTAMP" property="end" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+            <foreach collection="criteria.roomCriteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value,typeHandler=cn.hkxj.platform.handler.RoomHandler}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value,typeHandler=cn.hkxj.platform.handler.RoomHandler} and #{criterion.secondValue,typeHandler=cn.hkxj.platform.handler.RoomHandler}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem,typeHandler=cn.hkxj.platform.handler.RoomHandler}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+            <foreach collection="criteria.courseCriteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value,typeHandler=cn.hkxj.platform.handler.CourseHandler}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value,typeHandler=cn.hkxj.platform.handler.CourseHandler} and #{criterion.secondValue,typeHandler=cn.hkxj.platform.handler.CourseHandler}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem,typeHandler=cn.hkxj.platform.handler.CourseHandler}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, room_id, course_id, year_, term, school_week, week, start, end
+  </sql>
+  <select id="selectByExample" parameterType="cn.hkxj.platform.pojo.ExamTimeTableExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    'false' as QUERYID,
+    <include refid="Base_Column_List" />
+    from exam_timetable
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from exam_timetable
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from exam_timetable
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="cn.hkxj.platform.pojo.ExamTimeTable">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into exam_timetable (room_id, 
+      course_id, 
+      year_, term, school_week, 
+      week, start, end
+      )
+    values (#{room,jdbcType=INTEGER,typeHandler=cn.hkxj.platform.handler.RoomHandler}, 
+      #{course,jdbcType=INTEGER,typeHandler=cn.hkxj.platform.handler.CourseHandler}, 
+      #{year,jdbcType=INTEGER}, #{term,jdbcType=INTEGER}, #{schoolWeek,jdbcType=INTEGER}, 
+      #{week,jdbcType=INTEGER}, #{start,jdbcType=TIMESTAMP}, #{end,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="cn.hkxj.platform.pojo.ExamTimeTable">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into exam_timetable
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="room != null">
+        room_id,
+      </if>
+      <if test="course != null">
+        course_id,
+      </if>
+      <if test="year != null">
+        year_,
+      </if>
+      <if test="term != null">
+        term,
+      </if>
+      <if test="schoolWeek != null">
+        school_week,
+      </if>
+      <if test="week != null">
+        week,
+      </if>
+      <if test="start != null">
+        start,
+      </if>
+      <if test="end != null">
+        end,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="room != null">
+        #{room,jdbcType=INTEGER,typeHandler=cn.hkxj.platform.handler.RoomHandler},
+      </if>
+      <if test="course != null">
+        #{course,jdbcType=INTEGER,typeHandler=cn.hkxj.platform.handler.CourseHandler},
+      </if>
+      <if test="year != null">
+        #{year,jdbcType=INTEGER},
+      </if>
+      <if test="term != null">
+        #{term,jdbcType=INTEGER},
+      </if>
+      <if test="schoolWeek != null">
+        #{schoolWeek,jdbcType=INTEGER},
+      </if>
+      <if test="week != null">
+        #{week,jdbcType=INTEGER},
+      </if>
+      <if test="start != null">
+        #{start,jdbcType=TIMESTAMP},
+      </if>
+      <if test="end != null">
+        #{end,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.hkxj.platform.pojo.ExamTimeTable">
+    update exam_timetable
+    <set>
+      <if test="room != null">
+        room_id = #{room,jdbcType=INTEGER,typeHandler=cn.hkxj.platform.handler.RoomHandler},
+      </if>
+      <if test="course != null">
+        course_id = #{course,jdbcType=INTEGER,typeHandler=cn.hkxj.platform.handler.CourseHandler},
+      </if>
+      <if test="year != null">
+        year_ = #{year,jdbcType=INTEGER},
+      </if>
+      <if test="term != null">
+        term = #{term,jdbcType=INTEGER},
+      </if>
+      <if test="schoolWeek != null">
+        school_week = #{schoolWeek,jdbcType=INTEGER},
+      </if>
+      <if test="week != null">
+        week = #{week,jdbcType=INTEGER},
+      </if>
+      <if test="start != null">
+        start = #{start,jdbcType=TIMESTAMP},
+      </if>
+      <if test="end != null">
+        end = #{end,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.hkxj.platform.pojo.ExamTimeTable">
+    update exam_timetable
+    set room_id = #{room,jdbcType=INTEGER,typeHandler=cn.hkxj.platform.handler.RoomHandler},
+      course_id = #{course,jdbcType=INTEGER,typeHandler=cn.hkxj.platform.handler.CourseHandler},
+      year_ = #{year,jdbcType=INTEGER},
+      term = #{term,jdbcType=INTEGER},
+      school_week = #{schoolWeek,jdbcType=INTEGER},
+      week = #{week,jdbcType=INTEGER},
+      start = #{start,jdbcType=TIMESTAMP},
+      end = #{end,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

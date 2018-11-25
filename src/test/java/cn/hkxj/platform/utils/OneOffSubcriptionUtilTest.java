@@ -31,7 +31,7 @@ public class OneOffSubcriptionUtilTest {
 //        System.out.println(jsonObject.get("touser").getAsString());
 //        System.out.println(jsonObject.get("data").getAsJsonObject().get("content").getAsJsonObject().get("value").getAsString());
 //        System.err.println(OneOffSubcriptionUtil.generateDataJson("o6393wvS20PqldHQzhSngkd9SkHw", "1005"));
-        System.out.println(OneOffSubcriptionUtil.getOneOffSubscriptionUrl("点击获取更多", "1005"));
+//        System.out.println(OneOffSubcriptionUtil.getOneOffSubscriptionUrl("点击获取更多", "1005"));
 
 //        PrintWriter writer = new PrintWriter(new FileOutputStream(new File("C:\\Users\\Yuki\\Desktop\\json.txt")));
 //        writer.write(OneOffSubcriptionUtil.generateDataJson("o6393wvS20PqldHQzhSngkd9SkHw"));

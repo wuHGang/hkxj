@@ -1,15 +1,27 @@
 package cn.hkxj.platform;
 
 
+import cn.hkxj.platform.utils.ApplicationUtil;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
+
+import javax.annotation.Resource;
 
 @EnableScheduling
 @SpringBootApplication
 public class PlatformApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(PlatformApplication.class, args);
-	}
+        ConfigurableApplicationContext applicationContext = SpringApplication.run(PlatformApplication.class, args);
+    }
+
+    @Bean(name = "applicationUtil")
+    public static ApplicationUtil applicationUtil() {
+        return new ApplicationUtil();
+    }
+
 }

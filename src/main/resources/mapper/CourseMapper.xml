@@ -127,4 +127,7 @@
       #{id, jdbcType=INTEGER}
     </foreach>
   </select>
+    <select id="selectCourseByName" resultType="cn.hkxj.platform.pojo.Course">
+          select <include refid="Base_Column_List" /> from course where name=#{name,jdbcType=VARCHAR}
+    </select>
 </mapper>

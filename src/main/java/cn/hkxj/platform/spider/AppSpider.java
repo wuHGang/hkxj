@@ -7,6 +7,7 @@ import cn.hkxj.platform.pojo.CourseType;
 import cn.hkxj.platform.pojo.Grade;
 import cn.hkxj.platform.utils.ReadProperties;
 import cn.hkxj.platform.utils.TypeUtil;
+import com.google.common.base.Splitter;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import lombok.NonNull;
@@ -18,6 +19,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.springframework.beans.factory.annotation.Configurable;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -32,6 +34,7 @@ import java.util.concurrent.TimeUnit;
  */
 
 @Slf4j
+@Configurable("appSpider")
 public class AppSpider {
 	/**
 	 * 从APP接口上获取token，提供获取成绩，考试安排以及课程表三个方法
@@ -61,6 +64,9 @@ public class AppSpider {
 			.add("Accept-Encoding", "gzip")
 			.add("User-Agent", "okhttp/3.3.1")
 			.build();
+
+//	private RoomMapper roomMapper = ApplicationUtil.getBean(RoomMapper.class);
+private static Splitter SPLITTER = Splitter.on('*').trimResults().omitEmptyStrings();
 
 	public AppSpider(int account) {
 		this.account = account;
@@ -129,6 +135,7 @@ public class AppSpider {
 	public ArrayList getExam() {
 		String url = EXAM + "?token=" + token;
 		Map data = getData(url);
+
 		return (ArrayList) data.get("data");
 	}
 
@@ -256,4 +263,18 @@ public class AppSpider {
 	//如果全部错误都在那抛出非检查异常，有的是可以处理的，但是有的不行
 	//单独再提出出来细分
 
+	public static void main(String[] args) throws PasswordUncorrectException {
+
+        AppSpider appSpider = new AppSpider(2017023523);
+        appSpider.getToken();
+        for (Object o : appSpider.getExam()) {
+            Map item = (Map) o;
+            log.info(item.toString());
+            String courseName = (String)item.get("kcmc");
+            String roomName = (String) item.get("ksdd");
+            String year = (String) item.get("xn");
+            String term = (String) item.get("xq");
+            String timeText = (String) item.get("time");
+        }
+    }
 }

@@ -9,9 +9,9 @@
         </commentGenerator>
         <!--数据库连接的信息：驱动类、连接地址、用户名、密码 -->
         <jdbcConnection driverClass="com.mysql.jdbc.Driver"
-                        connectionURL="jdbc:mysql://localhost:3306/hkxj"
+                        connectionURL="jdbc:mysql://39.105.200.182:3306/hkxj"
                         userId="root"
-                        password="">
+                        password="jrchan02">
         </jdbcConnection>
 
         <!-- 默认false，把JDBC DECIMAL 和 NUMERIC 类型解析为 Integer，为 true时把JDBC DECIMAL 和
@@ -42,14 +42,17 @@
             <property name="enableSubPackages" value="false" />
         </javaClientGenerator>
 
-        <table tableName="room" domainObjectName="Room"
+        <table tableName="exam_timetable" domainObjectName="ExamTimeTable"
                enableCountByExample="false" enableUpdateByExample="false"
                enableDeleteByExample="false" enableSelectByExample="true"
                selectByExampleQueryId="false">
             <property name="ignoreQualifiersAtRuntime" value="true"/>
             <generatedKey column="id" sqlStatement="MySql" identity="true"/>
-            <columnOverride column="direction"  javaType="cn.hkxj.platform.pojo.Direction" typeHandler="cn.hkxj.platform.handler.DirectionHandler"/>
-            <columnOverride column="area"  javaType="cn.hkxj.platform.pojo.Building" typeHandler="cn.hkxj.platform.handler.BuildingHandler"/>
+            <columnOverride column="course_id"  property="course" javaType="cn.hkxj.platform.pojo.Course" typeHandler="cn.hkxj.platform.handler.CourseHandler"/>
+            <columnOverride column="room_id"  property="room" javaType="cn.hkxj.platform.pojo.Room" typeHandler="cn.hkxj.platform.handler.RoomHandler"/>
+            <columnOverride column="year_" >
+                <property name="pro" value="year"/>
+            </columnOverride>
         </table>
 
     </context>
