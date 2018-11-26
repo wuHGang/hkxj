@@ -53,7 +53,9 @@ public class GradeSearchService {
 				}
 			}
 		} catch (PasswordUncorrectException e) {
-			e.printStackTrace();
+			log.error("error password");
+		}catch (IllegalArgumentException e){
+			log.error(e.getMessage());
 		}
 	}
 	/**
