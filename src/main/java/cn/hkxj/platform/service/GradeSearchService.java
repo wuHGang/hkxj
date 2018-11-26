@@ -7,11 +7,15 @@ import cn.hkxj.platform.spider.AppSpider;
 import cn.hkxj.platform.spider.UrpCourseSpider;
 import cn.hkxj.platform.spider.UrpSpider;
 import lombok.extern.slf4j.Slf4j;
+import me.chanjar.weixin.mp.api.WxMpService;
+import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
+import me.chanjar.weixin.mp.bean.template.WxMpTemplateMessage;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -26,12 +30,13 @@ public class GradeSearchService {
 	@Resource
 	private GradeMapper gradeMapper;
 
+	private WxMpService wxMpService;
+
 
 	/**
-	 * 只返回本学期的成绩，这个数据暂时不存在数据库
+	 * 只返回本学期的成绩，这个数据存在数据库，用于自动更新
 	 * @param account 学生账户
 	 * @param password 学生密码
-	 *
 	 */
 	public void getCurrentGrade(int account,String password)throws IOException {
 		//暂定只要是半学期的都应该直接查询最新的数据
@@ -44,12 +49,14 @@ public class GradeSearchService {
 			appSpider.getToken();
 			AllGradeAndCourse gradeAndCourse = appSpider.getGradeAndCourse();
 			for (AllGradeAndCourse.GradeAndCourse andCourse : gradeAndCourse.getCurrentTermGrade()) {
-				if (!courseMapper.ifExistCourse(andCourse.getCourse().getUid())) {
-					andCourse.getCourse().setAcademy(urpCourseSpider.getAcademyId(andCourse.getCourse().getUid()));
-					saveCourse(andCourse.getCourse());
-				}
-				if (gradeMapper.ifExistGrade(andCourse.getGrade().getAccount(),andCourse.getGrade().getCourseId())==0){
-					saveGrade(account,andCourse.getGrade(),andCourse.getCourse());
+				if(andCourse.getGrade().getYear()==2018){
+					if (!courseMapper.ifExistCourse(andCourse.getCourse().getUid())) {
+						andCourse.getCourse().setAcademy(urpCourseSpider.getAcademyId(andCourse.getCourse().getUid()));
+						saveCourse(andCourse.getCourse());
+					}
+					if (gradeMapper.ifExistGrade(andCourse.getGrade().getAccount(),andCourse.getGrade().getCourseId())==0){
+						saveGrade(account,andCourse.getGrade(),andCourse.getCourse());
+					}
 				}
 			}
 		} catch (PasswordUncorrectException e) {
@@ -58,12 +65,37 @@ public class GradeSearchService {
 			log.error(e.getMessage());
 		}
 	}
+
+	/**
+	 * 直接返回本学期的成绩，这个数据暂时不存在数据库，便于回复
+	 * @param account 学生账户
+	 * @param password 学生密码
+	 */
+	public List<Grade> returnGrade(int account,String password)throws IOException {
+		List<Grade> studentGrades=new ArrayList<>();
+		AppSpider appSpider = new AppSpider(account);
+		try {
+			appSpider.getToken();
+			AllGradeAndCourse gradeAndCourse = appSpider.getGradeAndCourse();
+			for (AllGradeAndCourse.GradeAndCourse andCourse : gradeAndCourse.getCurrentTermGrade()) {
+				if(andCourse.getGrade().getYear()==2018){
+						studentGrades.add(andCourse.getGrade());
+				}
+			}
+		} catch (PasswordUncorrectException e) {
+			log.error("error password");
+		}catch (IllegalArgumentException e){
+			log.error(e.getMessage());
+		}
+		return studentGrades;
+	}
+
 	/**
 	 * @param student 学生信息
 	 * @return studentGrades 学生成绩
 	 */
 	public List<Grade> getStudentGrades(Student student)throws IOException{
-		getCurrentGrade(student.getAccount(),student.getPassword());
+//		getCurrentGrade(student.getAccount(),student.getPassword());
 		List<Grade> studentGrades=gradeMapper.selectByAccount(student.getAccount());
 		return studentGrades;
 	}
@@ -97,15 +129,21 @@ public class GradeSearchService {
  */
 	public String toText(List<Grade> studentGrades){
 		StringBuffer buffer = new StringBuffer();
-		int i=1;
-		for (Grade grade:studentGrades){
-			if(i==1){
-				buffer.append("- - - - - - - - - - - - - -\n");
-				buffer.append("|"+grade.getYear()+"学年，第"+grade.getTerm()+"学期|\n");i--;
-				buffer.append("- - - - - - - - - - - - - -\n\n");
+		boolean i=true;
+		if(studentGrades.size()==0){
+			buffer.append("尚无本学期成绩");
+		}
+		else {
+			for (Grade grade:studentGrades){
+				if(i){
+					i=false;
+					buffer.append("- - - - - - - - - - - - - -\n");
+					buffer.append("|"+grade.getYear()+"学年，第"+grade.getTerm()+"学期|\n");
+					buffer.append("- - - - - - - - - - - - - -\n\n");
+				}
+				buffer.append("考试名称："+courseMapper.selectNameByUid(grade.getCourseId())+"\n")
+						.append("成绩："+grade.getScore()/10).append("   学分："+grade.getPoint()/10+"\n\n");
 			}
-			buffer.append("考试名称："+courseMapper.selectNameByUid(grade.getCourseId())+"\n")
-			.append("成绩："+grade.getScore()/10).append("   学分："+grade.getPoint()/10+"\n\n");
 		}
 		return buffer.toString();
 	}

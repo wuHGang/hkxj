@@ -32,7 +32,6 @@ public class GradeAutoUpadeTask {
         for(Openid openid:allOpenIds){
             Student student=studentMapper.selectByAccount(openid.getAccount());
             if(student!=null) {
-                System.out.println(student.getName());
                 gradeSearchService.getCurrentGrade(student.getAccount(),student.getPassword());
             }
             else {
