@@ -56,8 +56,7 @@ public class GradeMessageHandler extends AbstractHandler {
 		try {
 			List<Openid> openId=openIdMapper.getOpenIdsByOpenIds(wechatUser);
 			Student student=studentMapper.selectByAccount(openId.get(0).getAccount());
-			List<Grade> studentGrades = gradeSearchService.getStudentGrades(student);
-			String gradesMsg = gradeSearchService.toText(studentGrades);
+			String gradesMsg = gradeSearchService.toText(gradeSearchService.returnGrade(student.getAccount(),student.getPassword()));
 			return textBuilder.build(gradesMsg , wxMpXmlMessage, wxMpService);
 		} catch (Exception e) {
 			this.logger.error("在组装返回信息时出现错误 {}", e.getMessage());
