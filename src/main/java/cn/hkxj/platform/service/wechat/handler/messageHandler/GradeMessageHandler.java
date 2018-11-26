@@ -51,7 +51,7 @@ public class GradeMessageHandler extends AbstractHandler {
 
 	@Override
 	public WxMpXmlOutMessage handle(WxMpXmlMessage wxMpXmlMessage, Map<String, Object> map, WxMpService wxMpService, WxSessionManager wxSessionManager) throws WxErrorException {
-		List<String> wechatUser=new ArrayList();;
+		List<String> wechatUser=new ArrayList<>();
 		wechatUser.add(wxMpXmlMessage.getFromUser());
 		try {
 			List<Openid> openId=openIdMapper.getOpenIdsByOpenIds(wechatUser);

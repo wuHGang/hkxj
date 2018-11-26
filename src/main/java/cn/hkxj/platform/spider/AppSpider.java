@@ -23,10 +23,14 @@ import org.springframework.beans.factory.annotation.Configurable;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.StreamSupport;
 
 /**
  * @author JR Chan
@@ -66,7 +70,8 @@ public class AppSpider {
 			.build();
 
 //	private RoomMapper roomMapper = ApplicationUtil.getBean(RoomMapper.class);
-private static Splitter SPLITTER = Splitter.on('*').trimResults().omitEmptyStrings();
+	private static Splitter SPLITTER = Splitter.on('*').trimResults().omitEmptyStrings();
+	private static Pattern FIND_NUM = Pattern.compile("[^0-9]");
 
 	public AppSpider(int account) {
 		this.account = account;
@@ -272,9 +277,11 @@ private static Splitter SPLITTER = Splitter.on('*').trimResults().omitEmptyStrin
             log.info(item.toString());
             String courseName = (String)item.get("kcmc");
             String roomName = (String) item.get("ksdd");
-            String year = (String) item.get("xn");
-            String term = (String) item.get("xq");
-            String timeText = (String) item.get("time");
+	        String[] times = StreamSupport.stream(SPLITTER.split((String) item.get("time")).spliterator(), false).toArray(String[]::new);
+            Matcher schoolWeekMatcher = FIND_NUM.matcher(times[0]);
+            Matcher weekMatcher = FIND_NUM.matcher(times[1]);
+
+	        System.out.println(times[2]);
         }
     }
 }
