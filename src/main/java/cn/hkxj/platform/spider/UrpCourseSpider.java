@@ -43,23 +43,21 @@ public class UrpCourseSpider {
         this.password = password;
     }
 
-    //AcademyEnum匹配学院名字和id
     public int getAcademyId(String uid) throws IOException{
         int academyId=0;
         Pattern pattern = Pattern.compile(academyRgex);
-        Matcher matcher = pattern.matcher(this.getResult(uid));
+        Matcher matcher = pattern.matcher(getCourseResult(uid));
         while (matcher.find()) {
             String a=StringUtils.substringBetween(matcher.group(),"</td><tdwidth=\"3\"></td><td>","</td>");
-            if(a.equals("机关"))
-                academyId=20;
-            else if (a.equals("体育部"))
-                academyId=0;
-            else academyId=Academy.getAcademyCodeByName(a);  //AcademyEnum匹配学院名字和id
+            academyId=Academy.getAcademyCodeByName(a);
+        }
+        if(academyId==0){
+            log.error("no course information found");
         }
         return academyId;
     }
 
-    private String getResult(String uid) throws IOException{
+    private String getCourseResult(String uid) throws IOException{
         this.uid=uid;
         FormBody formBody = getFormBody(account,password);
         Request request = new Request.Builder()

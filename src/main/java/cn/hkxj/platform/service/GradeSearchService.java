@@ -5,6 +5,7 @@ import cn.hkxj.platform.mapper.*;
 import cn.hkxj.platform.pojo.*;
 import cn.hkxj.platform.spider.AppSpider;
 import cn.hkxj.platform.spider.UrpCourseSpider;
+import cn.hkxj.platform.spider.UrpSpider;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -24,16 +25,10 @@ public class GradeSearchService {
 	private CourseMapper courseMapper;
 	@Resource
 	private GradeMapper gradeMapper;
-	@Resource
-	private OpenidMapper openidMapper;
-	@Resource
-	private SubscribeOpenidMapper subscribeOpenidMapper;
-	@Resource
-	private StudentMapper studentMapper;
+
 
 	/**
 	 * 只返回本学期的成绩，这个数据暂时不存在数据库
-	 *
 	 * @param account 学生账户
 	 * @param password 学生密码
 	 *
@@ -43,43 +38,48 @@ public class GradeSearchService {
 		//先查询数据库中有没有这个数据，有就返回（如果要查本学期的数据，怎么判断知道数据有没有更新完）
 		//如果没有从App中进行抓取，要先判断这个他的app账号是否正确，不正确从校务网抓
 		//抓到的数据保存到数据并且返回结果（并行执行）在密集查成绩的期间要考虑是否需要存库这个功能
-//		Student student=studentMapper.selectByAccount(account);
-
 		UrpCourseSpider urpCourseSpider=new UrpCourseSpider(account,password);
-
 		AppSpider appSpider = new AppSpider(account);
 		try {
 			appSpider.getToken();
+			AllGradeAndCourse gradeAndCourse = appSpider.getGradeAndCourse();
+			for (AllGradeAndCourse.GradeAndCourse andCourse : gradeAndCourse.getCurrentTermGrade()) {
+				if (!courseMapper.ifExistCourse(andCourse.getCourse().getUid())) {
+					andCourse.getCourse().setAcademy(urpCourseSpider.getAcademyId(andCourse.getCourse().getUid()));
+					saveCourse(andCourse.getCourse());
+				}
+				if (gradeMapper.ifExistGrade(andCourse.getGrade().getAccount(),andCourse.getGrade().getCourseId())==0){
+					saveGrade(account,andCourse.getGrade(),andCourse.getCourse());
+				}
+			}
 		} catch (PasswordUncorrectException e) {
 			e.printStackTrace();
 		}
-		AllGradeAndCourse gradeAndCourse = appSpider.getGradeAndCourse();
-		for (AllGradeAndCourse.GradeAndCourse andCourse : gradeAndCourse.getCurrentTermGrade()) {
-			if (!courseMapper.ifExistCourse(andCourse.getCourse().getUid())) {
-				andCourse.getCourse().setAcademy(urpCourseSpider.getAcademyId(andCourse.getCourse().getUid()));
-				saveCourse(andCourse.getCourse());
-			}
-//			int gradeId=gradeMapper.ifExistGrade(andCourse.getGrade().getAccount(),andCourse.getGrade().getCourseId());
-			if (gradeMapper.ifExistGrade(andCourse.getGrade().getAccount(),andCourse.getGrade().getCourseId())==0){
-				saveGrade(account,andCourse.getGrade(),andCourse.getCourse());
-			}
-//			else
-//			    updateGrade(gradeId,andCourse.getGrade());
-		}
 	}
-
+	/**
+	 * @param student 学生信息
+	 * @return studentGrades 学生成绩
+	 */
 	public List<Grade> getStudentGrades(Student student)throws IOException{
 		getCurrentGrade(student.getAccount(),student.getPassword());
 		List<Grade> studentGrades=gradeMapper.selectByAccount(student.getAccount());
 		return studentGrades;
 	}
 
+	/**
+	 * 保存未存储过的课程
+	 * @param course 课程
+	 */
 	private void saveCourse( Course course){
-
 		courseMapper.insert(course);
-//
 	}
 
+	/**
+	 * 保存学生成绩
+	 * @param account 学生账号
+	 * @param grade 学生成绩
+	 * @param course 课程
+	 */
 	private void saveGrade(int account,Grade grade,Course course){
 		courseMapper.insertStudentAndCourse(account, course.getUid());
 		gradeMapper.insert(grade);
@@ -89,7 +89,10 @@ public class GradeSearchService {
 	    grade.setId(gradeId);
 	    gradeMapper.updateByPrimaryKey(grade);
     }
-
+/**
+ * 将学生成绩转化成文本化
+ * @param studentGrades 学生成绩总数
+ */
 	public String toText(List<Grade> studentGrades){
 		StringBuffer buffer = new StringBuffer();
 		int i=1;
@@ -104,17 +107,5 @@ public class GradeSearchService {
 		}
 		return buffer.toString();
 	}
-
-	@Scheduled(cron = "0 0 9 ? * MON-FRI")
-	private void autoUpdateGrade()throws IOException{
-		List<String> openIds = subscribeOpenidMapper.getAllSubscribeOpenids();
-		List<Openid> allOpenIds = openidMapper.getOpenIdsByOpenIds(openIds);
-		for(Openid openid:allOpenIds){
-			Student student=studentMapper.selectByAccount(openid.getAccount());
-			getCurrentGrade(student.getAccount(),student.getPassword());
-		}
-
-	}
-
 
 }
