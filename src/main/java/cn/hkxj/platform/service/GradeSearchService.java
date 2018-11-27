@@ -75,7 +75,7 @@ public class GradeSearchService {
 	 * 同时启用一个新线程进行成绩保存
 	 * @param gradeAndCoourseList 学生的全部成绩与课程
 	 */
-	public List<Grade> returnGrade(int account,String password,AllGradeAndCourse gradeAndCoourseList) {
+	public List<AllGradeAndCourse.GradeAndCourse>  returnGrade(int account,String password,AllGradeAndCourse gradeAndCoourseList) {
 		ExecutorService singleThreadPool = Executors.newSingleThreadExecutor();
 		singleThreadPool.execute(()-> {
 				try {
@@ -84,10 +84,10 @@ public class GradeSearchService {
 					log.error(e.getMessage());
 				}
 		});
-		List<Grade> studentGrades=new ArrayList<>();
+		List<AllGradeAndCourse.GradeAndCourse> studentGrades=new ArrayList<>();
 		for (AllGradeAndCourse.GradeAndCourse gradeAndCourse : gradeAndCoourseList.getCurrentTermGrade()) {
 			if(gradeAndCourse.getGrade().getYear()==2018){
-				studentGrades.add(gradeAndCourse.getGrade());
+				studentGrades.add(gradeAndCourse);
 			}
 		}
 		return studentGrades;
@@ -128,24 +128,26 @@ public class GradeSearchService {
     }
 /**
  * 将学生成绩文本化
- * @param studentGrades 学生成绩总数
+ * @param studentGrades 学生全部成绩
  */
-	public String toText(List<Grade> studentGrades){
+	public String toText(List<AllGradeAndCourse.GradeAndCourse> studentGrades){
 		StringBuffer buffer = new StringBuffer();
 		boolean i=true;
 		if(studentGrades.size()==0){
 			buffer.append("尚无本学期成绩");
 		}
 		else {
-			for (Grade grade:studentGrades){
+			AllGradeAndCourse allGradeAndCourse=new AllGradeAndCourse();
+			allGradeAndCourse.addGradeAndCourse(studentGrades);
+			for (AllGradeAndCourse.GradeAndCourse gradeAndCourse:allGradeAndCourse.getCurrentTermGrade()){
 				if(i){
 					i=false;
 					buffer.append("- - - - - - - - - - - - - -\n");
-					buffer.append("|"+grade.getYear()+"学年，第"+grade.getTerm()+"学期|\n");
+					buffer.append("|"+gradeAndCourse.getGrade().getYear()+"学年，第"+gradeAndCourse.getGrade().getTerm()+"学期|\n");
 					buffer.append("- - - - - - - - - - - - - -\n\n");
 				}
-				buffer.append("考试名称："+courseMapper.selectNameByUid(grade.getCourseId())+"\n")
-						.append("成绩："+grade.getScore()/10).append("   学分："+grade.getPoint()/10+"\n\n");
+				buffer.append("考试名称："+gradeAndCourse.getCourse().getName()+"\n")
+						.append("成绩："+gradeAndCourse.getGrade().getScore()/10).append("   学分："+gradeAndCourse.getGrade().getPoint()/10+"\n\n");
 			}
 		}
 		return buffer.toString();
