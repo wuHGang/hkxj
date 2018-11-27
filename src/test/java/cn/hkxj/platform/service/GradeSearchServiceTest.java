@@ -28,11 +28,6 @@ public class GradeSearchServiceTest {
 	private WxMpService wxMpService;
 
 	@Test
-	public void getCurrentGrade() throws IOException {
-		gradeSearchService.getCurrentGrade(2015025838, "1");
-	}
-
-	@Test
 	public void getAccess_token() throws WxErrorException {
 		String accessToken = wxMpService.getAccessToken();
 		System.out.println(accessToken);

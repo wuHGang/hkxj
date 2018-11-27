@@ -41,16 +41,11 @@ public class GradeMessageHandler extends AbstractHandler {
 	private GradeSearchService gradeSearchService;
 
 	@Override
-<<<<<<< HEAD
 	public WxMpXmlOutMessage handle(WxMpXmlMessage wxMpXmlMessage,
 									Map<String, Object> map,
 									WxMpService wxMpService,
 									WxSessionManager wxSessionManager) throws WxErrorException {
 		List<String> wechatUser=new ArrayList();;
-=======
-	public WxMpXmlOutMessage handle(WxMpXmlMessage wxMpXmlMessage, Map<String, Object> map, WxMpService wxMpService, WxSessionManager wxSessionManager) throws WxErrorException {
-		List<String> wechatUser=new ArrayList<>();
->>>>>>> refs/remotes/origin/dev
 		wechatUser.add(wxMpXmlMessage.getFromUser());
 		try {
 			List<Openid> openId=openIdMapper.getOpenIdsByOpenIds(wechatUser);
