@@ -32,7 +32,9 @@ public class GradeAutoUpadeTask {
         for(Openid openid:allOpenIds){
             Student student=studentMapper.selectByAccount(openid.getAccount());
             if(student!=null) {
-                gradeSearchService.getCurrentGrade(student.getAccount(),student.getPassword());
+                gradeSearchService.saveGradeAndCourse( student.getAccount(),
+                                                    student.getPassword(),
+                                                    gradeSearchService.getGradeList(student.getAccount()));
             }
             else {
                 log.error("student information doesn't exist");
