@@ -5,14 +5,12 @@ import cn.hkxj.platform.mapper.*;
 import cn.hkxj.platform.pojo.*;
 import cn.hkxj.platform.spider.AppSpider;
 import cn.hkxj.platform.spider.UrpCourseSpider;
-import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -60,7 +58,7 @@ public class GradeSearchService {
 		//抓到的数据保存到数据并且返回结果（并行执行）在密集查成绩的期间要考虑是否需要存库这个功能
 		UrpCourseSpider urpCourseSpider=new UrpCourseSpider(account,password);
 		for (AllGradeAndCourse.GradeAndCourse gradeAndCourse : gradeAndCoourseList.getCurrentTermGrade()) {
-			if(gradeAndCourse.getGrade().getYear()!=2018){
+			if(gradeAndCourse.getGrade().getYear()==2018){
 				if (!courseMapper.ifExistCourse(gradeAndCourse.getCourse().getUid())) {
 					gradeAndCourse.getCourse().setAcademy(urpCourseSpider.getAcademyId(gradeAndCourse.getCourse().getUid()));
 					saveCourse(gradeAndCourse.getCourse());
@@ -88,7 +86,7 @@ public class GradeSearchService {
 		});
 		List<Grade> studentGrades=new ArrayList<>();
 		for (AllGradeAndCourse.GradeAndCourse gradeAndCourse : gradeAndCoourseList.getCurrentTermGrade()) {
-			if(gradeAndCourse.getGrade().getYear()!=2018){
+			if(gradeAndCourse.getGrade().getYear()==2018){
 				studentGrades.add(gradeAndCourse.getGrade());
 			}
 		}
