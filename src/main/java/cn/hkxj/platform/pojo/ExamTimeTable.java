@@ -1,5 +1,8 @@
 package cn.hkxj.platform.pojo;
 
+import com.google.common.base.MoreObjects;
+import com.google.common.base.Objects;
+
 import java.util.Date;
 
 public class ExamTimeTable {
@@ -91,5 +94,21 @@ public class ExamTimeTable {
 
     public void setEnd(Date end) {
         this.end = end;
+    }
+
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("id", id)
+                .add("room", room)
+                .add("course", course)
+                .add("year", year)
+                .add("term", term)
+                .add("schoolWeek", schoolWeek)
+                .add("week", week)
+                .add("start", start)
+                .add("end", end)
+                .toString();
     }
 }

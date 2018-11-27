@@ -8,6 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.Map;
 
 @Slf4j
 public class UrpSpiderTest {
@@ -16,7 +17,7 @@ public class UrpSpiderTest {
 
 	@Before
 	public void init() {
-		spider = new UrpSpider("2014025838", "1");
+		spider = new UrpSpider("2015025838", "1");
 	}
 
 	@Test
@@ -33,7 +34,8 @@ public class UrpSpiderTest {
 	public void getGrade() {
 		try {
 			try {
-				spider.getGrade();
+				Map grade = spider.getGrade();
+				System.out.println(grade.toString());
 			} catch (PasswordUncorrectException e) {
 				e.printStackTrace();
 			}

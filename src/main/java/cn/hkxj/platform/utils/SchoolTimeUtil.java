@@ -67,7 +67,19 @@ public class SchoolTimeUtil {
 		 }
 	}
 
+
+    /**
+     * 根据教学周和星期几算出今天是第几天
+     * @param schoolWeek 教学周
+     * @param dayOfWeek 星期几
+     * @return 可操作时间对象
+     */
+	public static DateTime getDateBySchoolTime(int schoolWeek, int dayOfWeek){
+
+        return TERM_START.plusDays((schoolWeek - 1) * 7 + dayOfWeek);
+    }
+
 	public static void main(String[] args) {
-		System.out.println(StringUtils.upperCase("科s108"));
+		System.out.println(getDateBySchoolTime(1, 3));
 	}
 }
