@@ -33,19 +33,23 @@ public class AppSpiderService {
 
 
     public ArrayList<ExamTimeTable> getExamByAccount(int account) throws PasswordUncorrectException {
-	    AppSpider appSpider = new AppSpider(account);
-	    appSpider.getToken();
+        return null;
+    }
+
+    private List<ExamTimeTable> getExamFromSpider(int account) throws PasswordUncorrectException {
+        AppSpider appSpider = new AppSpider(account);
+        appSpider.getToken();
         ArrayList<ExamTimeTable> examTimeTableArrayList = new ArrayList<>();
         for (Object o : appSpider.getExam()) {
             ExamTimeTable examTimeTable = new ExamTimeTable();
-		    Map item = (Map) o;
-		    examTimeTable.setYear(xnToYear((String) item.get("xn")));
-		    examTimeTable.setTerm(Integer.parseInt((String)item.get("xq")));
-		    examTimeTable.setCourse(parseCourseText((String)item.get("kcmc")));
+            Map item = (Map) o;
+            examTimeTable.setYear(xnToYear((String) item.get("xn")));
+            examTimeTable.setTerm(Integer.parseInt((String)item.get("xq")));
+            examTimeTable.setCourse(parseCourseText((String)item.get("kcmc")));
             examTimeTable.setRoom(parseRoomText((String) item.get("ksdd")));
-		    parseExamTime((String) item.get("time"), examTimeTable);
-		    examTimeTableArrayList.add(examTimeTable);
-	    }
+            parseExamTime((String) item.get("time"), examTimeTable);
+            examTimeTableArrayList.add(examTimeTable);
+        }
         return examTimeTableArrayList;
     }
 

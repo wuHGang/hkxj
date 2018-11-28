@@ -124,6 +124,7 @@ public class CourseServiceImpl implements CourseService{
      * @param account 学号
      * @return boolean
      */
+    @Override
     public boolean isHaveCourses(Integer account){
         Student student = studentMapper.selectByAccount(account);
         String[] strs = getClassnameAndYearAndNum(student.getClassname());
@@ -140,6 +141,7 @@ public class CourseServiceImpl implements CourseService{
         return null;
     }
 
+    @Override
     public String toText(List<CourseTimeTable> courseTimeTables){
         if(courseTimeTables == null || courseTimeTables.size() == 0) return "课表空空如也";
         StringBuilder builder = new StringBuilder();
@@ -178,8 +180,10 @@ public class CourseServiceImpl implements CourseService{
         for(int i = 0; i < length; i++){
             char c = strs[0].charAt(i);
             if(c >= '0' && c <= '9'){
-                targets[1] = strs[0].substring(i, length);        //year代表第几级 如16级
-                targets[0] = strs[0].substring(0, i);          //此时的targets[0]是专业名,targets[1]是班级在所在的序号
+                //year代表第几级 如16级
+                targets[1] = strs[0].substring(i, length);
+                //此时的targets[0]是专业名,targets[1]是班级在所在的序号
+                targets[0] = strs[0].substring(0, i);
                 return targets;
             }
         }

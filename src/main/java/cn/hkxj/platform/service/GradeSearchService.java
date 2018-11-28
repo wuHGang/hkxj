@@ -31,7 +31,7 @@ public class GradeSearchService {
 	 * @param account 学生账户
 	 * @return gradeAndCoourseList 学生的全部成绩
 	 */
-	public AllGradeAndCourse getGradeList(int account)throws IOException{
+	public AllGradeAndCourse getGradeList(int account){
 		AppSpider appSpider = new AppSpider(account);
 		AllGradeAndCourse gradeAndCourseList=new AllGradeAndCourse();
 		try {
@@ -40,7 +40,7 @@ public class GradeSearchService {
 		} catch (PasswordUncorrectException e) {
 			log.error("error password");
 		}catch (IllegalArgumentException e){
-			log.error(e.getMessage());
+			log.error(e.getMessage(), e);
 		}
 			return gradeAndCourseList;
 	}

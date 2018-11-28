@@ -23,7 +23,6 @@ import org.springframework.beans.factory.annotation.Configurable;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -69,9 +68,10 @@ public class AppSpider {
 			.add("User-Agent", "okhttp/3.3.1")
 			.build();
 
-//	private RoomMapper roomMapper = ApplicationUtil.getBean(RoomMapper.class);
 	private static Splitter SPLITTER = Splitter.on('*').trimResults().omitEmptyStrings();
 	private static Pattern FIND_NUM = Pattern.compile("[^0-9]");
+	private static int PASSWORD_ERROR = 2002;
+    private static int SUCCESS = 200;
 
 	public AppSpider(int account) {
 		this.account = account;
@@ -248,11 +248,11 @@ public class AppSpider {
 
 		int state = ((Double) resultMap.get("state")).intValue();
 
-		if (state == 2002) {
+		if (state == PASSWORD_ERROR) {
 			throw new PasswordUncorrectException();
 		}
 
-		if (state != 200) {
+		if (state != SUCCESS) {
 			String msg = (String) resultMap.get("message");
 			throw new IllegalArgumentException(String.valueOf(state)+':'+msg);
 		}
@@ -270,7 +270,7 @@ public class AppSpider {
 
 	public static void main(String[] args) throws PasswordUncorrectException {
 
-        AppSpider appSpider = new AppSpider(2017023523);
+        AppSpider appSpider = new AppSpider(2017025971);
         appSpider.getToken();
         for (Object o : appSpider.getExam()) {
             Map item = (Map) o;

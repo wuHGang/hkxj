@@ -23,7 +23,8 @@ public interface WxMessageInterceptor extends WxMpMessageInterceptor {
 	 * @param sessionManager
 	 * @return true代表OK，false代表不OK
 	 */
-	boolean intercept(WxMpXmlMessage wxMessage,
+    @Override
+    boolean intercept(WxMpXmlMessage wxMessage,
 	                  Map<String, Object> context,
 	                  WxMpService wxMpService,
 	                  WxSessionManager sessionManager) throws WxErrorException;
