@@ -19,7 +19,6 @@ public class SubjectService {
     @Resource
     private SubjectMapper subjectMapper;
 
-
     public Subject getSubjectByName(String subjectName){
         SubjectExample subjectExample = new SubjectExample();
         subjectExample.createCriteria().andNameEqualTo(subjectName);

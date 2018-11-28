@@ -7,6 +7,7 @@ import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.MappedJdbcTypes;
 import org.apache.ibatis.type.MappedTypes;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.sql.CallableStatement;
@@ -16,6 +17,7 @@ import java.sql.SQLException;
 
 @MappedJdbcTypes(JdbcType.INTEGER)
 @MappedTypes(Course.class)
+@Component
 public class CourseHandler extends BaseTypeHandler<Course> {
     @Resource
     private CourseMapper courseMapper;

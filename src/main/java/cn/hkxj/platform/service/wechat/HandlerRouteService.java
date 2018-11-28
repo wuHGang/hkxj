@@ -3,6 +3,7 @@ package cn.hkxj.platform.service.wechat;
 import cn.hkxj.platform.interceptor.WechatOpenIdInterceptor;
 import cn.hkxj.platform.service.wechat.handler.messageHandler.CourseMessageHandler;
 import cn.hkxj.platform.service.wechat.handler.messageHandler.EmptyRoomHandler;
+import cn.hkxj.platform.service.wechat.handler.messageHandler.ExamMessageHandler;
 import cn.hkxj.platform.service.wechat.handler.messageHandler.GradeMessageHandler;
 import cn.hkxj.platform.service.wechat.handler.messageHandler.OpenIdHandler;
 import org.springframework.stereotype.Service;
@@ -20,13 +21,16 @@ public class HandlerRouteService {
 	private WxMessageRouter router;
 
 	@Resource
-    CourseMessageHandler courseMessageHandler;
+    private CourseMessageHandler courseMessageHandler;
 
 	@Resource
 	private GradeMessageHandler gradeMessageHandler;
 
 	@Resource
 	private EmptyRoomHandler emptyRoomHandler;
+
+	@Resource
+    private ExamMessageHandler examMessageHandler;
 
 	@Resource
 	private WechatOpenIdInterceptor wechatOpenIdInterceptor;
@@ -46,11 +50,17 @@ public class HandlerRouteService {
 					.content("成绩")
 					.handler(gradeMessageHandler)
 				.end()
-			.rule()
-				.async(false)
-				.rContent("空教室.*?")
-				.handler(emptyRoomHandler)
-			.end();
+                .rule()
+                    .async(false)
+                    .interceptor(wechatOpenIdInterceptor)
+                    .rContent(".*?考试.*?")
+                    .handler(examMessageHandler)
+                .end()
+                .rule()
+                    .async(false)
+                    .rContent("空教室.*?")
+                    .handler(emptyRoomHandler)
+                .end();
 
 	}
 }

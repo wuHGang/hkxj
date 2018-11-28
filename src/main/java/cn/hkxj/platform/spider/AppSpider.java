@@ -254,7 +254,7 @@ public class AppSpider {
 
 		if (state != SUCCESS) {
 			String msg = (String) resultMap.get("message");
-			throw new IllegalArgumentException(String.valueOf(state)+':'+msg);
+			throw new IllegalArgumentException("学号: "+account+ String.valueOf(state)+':'+msg);
 		}
 
 		return resultMap;

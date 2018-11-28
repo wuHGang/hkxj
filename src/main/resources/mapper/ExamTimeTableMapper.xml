@@ -180,7 +180,10 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="cn.hkxj.platform.pojo.ExamTimeTable">
+    <insert id="insertClassAndExamRelation">
+        insert ignore into class_exam_timetable (class_id, exam_timetable_id) VALUES (#{class_id}, #{exam_timetable_id})
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="cn.hkxj.platform.pojo.ExamTimeTable">
     update exam_timetable
     <set>
       <if test="room != null">
@@ -222,4 +225,8 @@
       end = #{end,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+    <select id="selectExamIdIdByClassId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        select exam_timetable_id from class_exam_timetable where class_id = #{id}
+    </select>
 </mapper>

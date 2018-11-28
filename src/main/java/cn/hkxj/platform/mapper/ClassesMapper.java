@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -42,5 +43,7 @@ public interface ClassesMapper {
     List<ClassTimeTable> getClassesByTimetableIds(@Param("ids") List<Integer> ids);
 
     List<Classes> getClassesByIds(@Param("ids") List<Integer> ids);
+
+
 
 }

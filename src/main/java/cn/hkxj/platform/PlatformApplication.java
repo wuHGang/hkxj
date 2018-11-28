@@ -17,11 +17,8 @@ public class PlatformApplication {
 
 	public static void main(String[] args) {
         ConfigurableApplicationContext applicationContext = SpringApplication.run(PlatformApplication.class, args);
+        ApplicationUtil.setApplicationContext(applicationContext);
     }
 
-    @Bean(name = "applicationUtil")
-    public static ApplicationUtil applicationUtil() {
-        return new ApplicationUtil();
-    }
 
 }

@@ -31,25 +31,29 @@ public class SchoolTimeUtil {
 	}
 
 	public static String getDayOfWeekChinese() {
-		switch (getDayOfWeek()){
-			case 1:
-				return "星期一";
-			case 2:
-				return "星期二";
-			case 3:
-				return "星期三";
-			case 4:
-				return "星期四";
-			case 5:
-				return "星期五";
-			case 6:
-				return "星期六";
-			case 7:
-				return "星期日";
-			default:
-				throw new IllegalArgumentException("never happen");
-		}
+		return getDayOfWeekChinese(getDayOfWeek());
 	}
+
+    public static String getDayOfWeekChinese(int day) {
+        switch (day){
+            case 1:
+                return "星期一";
+            case 2:
+                return "星期二";
+            case 3:
+                return "星期三";
+            case 4:
+                return "星期四";
+            case 5:
+                return "星期五";
+            case 6:
+                return "星期六";
+            case 7:
+                return "星期日";
+            default:
+                throw new IllegalArgumentException("never happen");
+        }
+    }
 
 	/**
 	 * 查询现在为第几节课

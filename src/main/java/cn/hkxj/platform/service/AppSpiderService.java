@@ -33,10 +33,6 @@ public class AppSpiderService {
 
 
     public ArrayList<ExamTimeTable> getExamByAccount(int account) throws PasswordUncorrectException {
-        return null;
-    }
-
-    private List<ExamTimeTable> getExamFromSpider(int account) throws PasswordUncorrectException {
         AppSpider appSpider = new AppSpider(account);
         appSpider.getToken();
         ArrayList<ExamTimeTable> examTimeTableArrayList = new ArrayList<>();
@@ -68,7 +64,7 @@ public class AppSpiderService {
         int week = Integer.parseInt(weekMatcher.replaceAll(""));
 
         examTimeTable.setSchoolWeek(schoolWeek);
-        examTimeTable.setSchoolWeek(week);
+        examTimeTable.setWeek(week);
 
         String[] data = StreamSupport.stream(DATA_SPLITTER.split(times[2]).spliterator(), false).toArray(String[]::new);
 
@@ -84,14 +80,15 @@ public class AppSpiderService {
                 .withMinuteOfHour(Integer.parseInt(end[1]));
 
         examTimeTable.setStart(startTime.toDate());
-        examTimeTable.setStart(endTime.toDate());
+        examTimeTable.setEnd(endTime.toDate());
+
 		return examTimeTable;
     }
 
     private Course parseCourseText(String courseText) {
         List<Course> courses = courseMapper.selectCourseByName(courseText);
         if (courses.size() == 0) {
-            return null;
+            throw new IllegalArgumentException(courseText);
         }
         return courses.get(0);
     }

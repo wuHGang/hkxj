@@ -1,13 +1,11 @@
 package cn.hkxj.platform.service.wechat.handler.messageHandler;
 
-import cn.hkxj.platform.builder.TemplateBuilder;
 import cn.hkxj.platform.builder.TextBuilder;
 import cn.hkxj.platform.mapper.OpenidMapper;
 import cn.hkxj.platform.mapper.StudentMapper;
 import cn.hkxj.platform.pojo.Openid;
 import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.service.GradeSearchService;
-import cn.hkxj.platform.service.impl.GradeServiceImpl;
 import cn.hkxj.platform.service.wechat.handler.AbstractHandler;
 import me.chanjar.weixin.common.exception.WxErrorException;
 import me.chanjar.weixin.common.session.WxSessionManager;
@@ -57,6 +55,7 @@ public class GradeMessageHandler extends AbstractHandler {
 		} catch (Exception e) {
 			this.logger.error("在组装返回信息时出现错误 {}", e.getMessage());
 		}
-		return null;
+
+		return textBuilder.build("没有查询到相关成绩，晚点再来查吧~" , wxMpXmlMessage, wxMpService);
 	}
 }
