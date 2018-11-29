@@ -3,7 +3,7 @@
 <mapper namespace="cn.hkxj.platform.mapper.ExamTimeTableMapper">
   <resultMap id="BaseResultMap" type="cn.hkxj.platform.pojo.ExamTimeTable">
     <id column="id" jdbcType="INTEGER" property="id" />
-    <result column="room_id" jdbcType="INTEGER" property="room" typeHandler="cn.hkxj.platform.handler.RoomHandler" />
+    <result column="room_id" jdbcType="INTEGER" property="room" typeHandler="cn.hkxj.platform.handler.RoomWarpperHandler" />
     <result column="course_id" jdbcType="INTEGER" property="course" typeHandler="cn.hkxj.platform.handler.CourseHandler" />
     <result column="year_" jdbcType="INTEGER" property="year" />
     <result column="term" jdbcType="INTEGER" property="term" />
@@ -42,15 +42,15 @@
                   and ${criterion.condition}
                 </when>
                 <when test="criterion.singleValue">
-                  and ${criterion.condition} #{criterion.value,typeHandler=cn.hkxj.platform.handler.RoomHandler}
+                  and ${criterion.condition} #{criterion.value,typeHandler=cn.hkxj.platform.handler.RoomWarpperHandler}
                 </when>
                 <when test="criterion.betweenValue">
-                  and ${criterion.condition} #{criterion.value,typeHandler=cn.hkxj.platform.handler.RoomHandler} and #{criterion.secondValue,typeHandler=cn.hkxj.platform.handler.RoomHandler}
+                  and ${criterion.condition} #{criterion.value,typeHandler=cn.hkxj.platform.handler.RoomWarpperHandlerr} and #{criterion.secondValue,typeHandler=cn.hkxj.platform.handler.RoomWarpperHandler}
                 </when>
                 <when test="criterion.listValue">
                   and ${criterion.condition}
                   <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
-                    #{listItem,typeHandler=cn.hkxj.platform.handler.RoomHandler}
+                    #{listItem,typeHandler=cn.hkxj.platform.handler.RoomWarpperHandler}
                   </foreach>
                 </when>
               </choose>
@@ -116,7 +116,7 @@
       year_, term, school_week, 
       week, start, end
       )
-    values (#{room,jdbcType=INTEGER,typeHandler=cn.hkxj.platform.handler.RoomHandler}, 
+    values (#{room,jdbcType=INTEGER,typeHandler=cn.hkxj.platform.handler.RoomWarpperHandler},
       #{course,jdbcType=INTEGER,typeHandler=cn.hkxj.platform.handler.CourseHandler}, 
       #{year,jdbcType=INTEGER}, #{term,jdbcType=INTEGER}, #{schoolWeek,jdbcType=INTEGER}, 
       #{week,jdbcType=INTEGER}, #{start,jdbcType=TIMESTAMP}, #{end,jdbcType=TIMESTAMP}
@@ -155,7 +155,7 @@
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="room != null">
-        #{room,jdbcType=INTEGER,typeHandler=cn.hkxj.platform.handler.RoomHandler},
+        #{room,jdbcType=INTEGER,typeHandler=cn.hkxj.platform.handler.RoomWarpperHandler},
       </if>
       <if test="course != null">
         #{course,jdbcType=INTEGER,typeHandler=cn.hkxj.platform.handler.CourseHandler},
@@ -187,7 +187,7 @@
     update exam_timetable
     <set>
       <if test="room != null">
-        room_id = #{room,jdbcType=INTEGER,typeHandler=cn.hkxj.platform.handler.RoomHandler},
+        room_id = #{room,jdbcType=INTEGER,typeHandler=cn.hkxj.platform.handler.RoomWarpperHandler},
       </if>
       <if test="course != null">
         course_id = #{course,jdbcType=INTEGER,typeHandler=cn.hkxj.platform.handler.CourseHandler},
@@ -215,7 +215,7 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="cn.hkxj.platform.pojo.ExamTimeTable">
     update exam_timetable
-    set room_id = #{room,jdbcType=INTEGER,typeHandler=cn.hkxj.platform.handler.RoomHandler},
+    set room_id = #{room,jdbcType=INTEGER,typeHandler=cn.hkxj.platform.handler.RoomWarpperHandler},
       course_id = #{course,jdbcType=INTEGER,typeHandler=cn.hkxj.platform.handler.CourseHandler},
       year_ = #{year,jdbcType=INTEGER},
       term = #{term,jdbcType=INTEGER},
