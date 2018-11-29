@@ -60,7 +60,7 @@ public class ExamMessageHandler extends AbstractHandler {
         StringBuffer stringBuffer = new StringBuffer();
         for (ExamTimeTable examTimeTable : examTimeTables) {
             DateTime start = new DateTime(examTimeTable.getStart());
-            DateTime end = new DateTime(examTimeTable.getStart());
+            DateTime end = new DateTime(examTimeTable.getEnd());
 
             stringBuffer.append(examTimeTable.getCourse().getName()).append('\n');
             stringBuffer.append(examTimeTable.getRoom().getName()).append('\n');
