@@ -19,6 +19,4 @@ public class PlatformApplication {
         ConfigurableApplicationContext applicationContext = SpringApplication.run(PlatformApplication.class, args);
         ApplicationUtil.setApplicationContext(applicationContext);
     }
-
-
 }
