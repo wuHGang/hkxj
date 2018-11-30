@@ -4,6 +4,7 @@ import cn.hkxj.platform.pojo.ExamTimeTable;
 import cn.hkxj.platform.pojo.ExamTimeTableExample;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.List;
 public interface ExamTimeTableMapper {
     int deleteByPrimaryKey(Integer id);
 
+    @Transactional
     int insert(ExamTimeTable record);
 
     int insertSelective(ExamTimeTable record);
