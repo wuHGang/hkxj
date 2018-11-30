@@ -1,13 +1,17 @@
 package cn.hkxj.platform.utils;
 
-import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
 
-
+@Component
 public class ApplicationUtil {
     private static ApplicationContext applicationContext;
+
+    @Autowired
+    public ApplicationUtil(ApplicationContext applicationContext) {
+        ApplicationUtil.applicationContext = applicationContext;
+    }
 
     /**
      * 实现ApplicationContextAware接口的context注入函数, 将其存入静态变量.

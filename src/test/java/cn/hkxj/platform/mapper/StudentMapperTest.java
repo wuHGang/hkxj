@@ -3,6 +3,7 @@ package cn.hkxj.platform.mapper;
 import cn.hkxj.platform.exceptions.PasswordUncorrectException;
 import cn.hkxj.platform.exceptions.ReadTimeoutException;
 import cn.hkxj.platform.pojo.Student;
+import cn.hkxj.platform.spider.UrpSpider;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,18 +28,9 @@ public class StudentMapperTest {
 
 	@Test
 	public void insertByStudent() throws PasswordUncorrectException, ReadTimeoutException {
-		Student student = Student.builder()
-				.academy("计算机")
-				.account(2014025839)
-				.classname("物联")
-				.ethnic("回")
-				.isCorrect(true)
-				.major("物联")
-				.name("et")
-				.password("1")
-				.sex("男")
-				.build();
-		studentMapper.insertByStudent(student);
+        UrpSpider urpSpider = new UrpSpider("2017025971", "1");
+
+        studentMapper.insertByStudent(urpSpider.getInformation());
 	}
 
 	@Test

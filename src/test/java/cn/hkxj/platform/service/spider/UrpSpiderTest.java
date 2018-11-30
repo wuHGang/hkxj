@@ -1,6 +1,7 @@
 package cn.hkxj.platform.service.spider;
 
 import cn.hkxj.platform.exceptions.PasswordUncorrectException;
+import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.spider.UrpSpider;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
@@ -17,13 +18,14 @@ public class UrpSpiderTest {
 
 	@Before
 	public void init() {
-		spider = new UrpSpider("2015025838", "1");
+        spider = new UrpSpider("2017025971", "1");
 	}
 
 	@Test
 	public void getInformaton() throws IOException, PasswordUncorrectException {
 
-//		String result = spider.getInformaton();
+        Student student = spider.getInformation();
+
 
 //		log.info(result);
 //		Double stau = (Double) 200.0;
