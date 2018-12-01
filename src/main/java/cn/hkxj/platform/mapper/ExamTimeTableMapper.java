@@ -13,7 +13,6 @@ import java.util.List;
 public interface ExamTimeTableMapper {
     int deleteByPrimaryKey(Integer id);
 
-    @Transactional
     int insert(ExamTimeTable record);
 
     int insertSelective(ExamTimeTable record);

@@ -70,7 +70,8 @@ public class ExamTimeTableService {
         log.info("task run");
         ArrayList<Integer> examIdList = new ArrayList<>();
         for (ExamTimeTable examTimeTable : examTimeTableList) {
-            examIdList.add(examTimeTableMapper.insert(examTimeTable));
+            examTimeTableMapper.insert(examTimeTable);
+            examIdList.add(examTimeTable.getId());
         }
 
         for (Integer examId : examIdList) {
