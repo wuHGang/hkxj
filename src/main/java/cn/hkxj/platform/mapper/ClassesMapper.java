@@ -44,6 +44,6 @@ public interface ClassesMapper {
 
     List<Classes> getClassesByIds(@Param("ids") List<Integer> ids);
 
-
+    List<Integer> getAllCourseTimetableIds(Integer class_id);
 
 }
