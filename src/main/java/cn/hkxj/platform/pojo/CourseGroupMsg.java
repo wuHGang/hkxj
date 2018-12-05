@@ -12,7 +12,7 @@ import java.util.Objects;
 @Data
 public class CourseGroupMsg {
 
-    private String classname;
+    private Classes classes;
 
     private List<CourseTimeTable> courseTimeTables;
 
@@ -28,7 +28,7 @@ public class CourseGroupMsg {
             for(int i = 0; i < 4; i++){
                 if(!Objects.equals(arr[i], null)){
                     buffer.append("第").append(arr[i].getOrder()).append("节")
-                            .append("\n").append(arr[i].getCourseObject().getName()).append("  ").append(arr[i].getPosition())
+                            .append("\n").append(arr[i].getCourseObject().getName()).append("  ").append(arr[i].getRoom().getName())
                             .append("\n").append("\n");
                 }
             }

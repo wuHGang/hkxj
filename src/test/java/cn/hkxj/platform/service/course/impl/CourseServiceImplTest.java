@@ -31,7 +31,7 @@ public class CourseServiceImplTest {
 
     @Test
     public void test(){
-        System.out.println(courseService.getCoursesCurrentDay(2016025910));
+        System.out.println(courseService.getCoursesCurrentDay(2016024279));
         System.out.println(courseService.toText(courseService.getCoursesCurrentDay(2016024170)));
     }
 

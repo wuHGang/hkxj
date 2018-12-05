@@ -21,7 +21,7 @@ public class CourseTimeTable {
 
     private Integer distinct;
 
-    private String position;
+    private Room room;
 
     private Course courseObject;
 
@@ -97,17 +97,21 @@ public class CourseTimeTable {
         this.distinct = distinct;
     }
 
-    public String getPosition() {
-        return position;
+    public Room getRoom() {
+        return room;
     }
 
-    public void setPosition(String position) {
-        this.position = position == null ? null : position.trim();
+    public void setRoom(Room room) {
+        this.room = room;
     }
 
-    public Course getCourseObject() { return courseObject; }
+    public Course getCourseObject() {
+        return courseObject;
+    }
 
-    public void setCourseObject(Course courseObject) { this.courseObject = courseObject; }
+    public void setCourseObject(Course courseObject) {
+        this.courseObject = courseObject;
+    }
 
     @Override
     public String toString() {
@@ -121,7 +125,7 @@ public class CourseTimeTable {
                 .add("week", week)
                 .add("order", order)
                 .add("distinct", distinct)
-                .add("position", position)
+                .add("room", room)
                 .add("courseObject", courseObject)
                 .toString();
     }

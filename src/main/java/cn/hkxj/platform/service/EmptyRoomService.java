@@ -102,7 +102,7 @@ public class EmptyRoomService {
 		mainRoomTimeTable = HashMultimap.create();
 		for (CourseTimeTable timeTable : timeTableService.getTimeTableFromDB(SchoolTimeUtil.getSchoolWeek())) {
 			if (checkDistinct(timeTable.getDistinct())){
-				Room room = roomService.getRoomByName(timeTable.getPosition());
+				Room room = roomService.getRoomByName(timeTable.getRoom().getName());
 				if (room.getArea() == Building.SCIENCE){
 
 					scienceRoomTimeTable.put(room, timeTable);

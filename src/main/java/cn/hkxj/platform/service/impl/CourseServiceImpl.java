@@ -1,29 +1,15 @@
 package cn.hkxj.platform.service.impl;
 
-import cn.hkxj.platform.mapper.ClassTimeTableMapper;
-import cn.hkxj.platform.mapper.ClassesMapper;
-import cn.hkxj.platform.mapper.CourseMapper;
-import cn.hkxj.platform.mapper.CourseTimeTableMapper;
-import cn.hkxj.platform.mapper.OpenidMapper;
-import cn.hkxj.platform.mapper.StudentMapper;
-import cn.hkxj.platform.mapper.SubscribeOpenidMapper;
-import cn.hkxj.platform.pojo.Academy;
-import cn.hkxj.platform.pojo.ClassTimeTable;
-import cn.hkxj.platform.pojo.Classes;
-import cn.hkxj.platform.pojo.ClassesExample;
-import cn.hkxj.platform.pojo.Course;
-import cn.hkxj.platform.pojo.CourseGroupMsg;
-import cn.hkxj.platform.pojo.CourseTimeTable;
-import cn.hkxj.platform.pojo.Openid;
-import cn.hkxj.platform.pojo.Student;
+import cn.hkxj.platform.mapper.*;
+import cn.hkxj.platform.pojo.*;
 import cn.hkxj.platform.service.CourseService;
 import cn.hkxj.platform.utils.DateUtils;
-import cn.hkxj.platform.utils.OneOffSubcriptionUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.UnsupportedEncodingException;
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -37,7 +23,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Service
-@AllArgsConstructor
+
 public class CourseServiceImpl implements CourseService{
 
     private StudentMapper studentMapper;
@@ -48,6 +34,31 @@ public class CourseServiceImpl implements CourseService{
     private OpenidMapper openidMapper;
     private SubscribeOpenidMapper subscribeOpenidMapper;
 
+    private static Integer year;
+    private static Integer week;
+    private static Integer day;
+
+    @Autowired
+    private CourseServiceImpl(StudentMapper studentMapper, ClassesMapper classesMapper, CourseMapper courseMapper,
+                              CourseTimeTableMapper courseTimeTableMapper, ClassTimeTableMapper classTimeTableMapper,
+                                OpenidMapper openidMapper, SubscribeOpenidMapper subscribeOpenidMapper){
+        this.studentMapper = studentMapper;
+        this.classesMapper = classesMapper;
+        this.courseMapper = courseMapper;
+        this.courseTimeTableMapper = courseTimeTableMapper;
+        this.classTimeTableMapper = classTimeTableMapper;
+        this.openidMapper = openidMapper;
+        this.subscribeOpenidMapper = subscribeOpenidMapper;
+
+        init();
+    }
+
+    public void init(){
+        year = DateUtils.getCurrentYear();
+        week = DateUtils.getCurrentWeek();
+        day = DateUtils.getCurrentDay();
+    }
+
     @Override
     public Course getCourseById(Integer id) {
         return courseMapper.selectByPrimaryKey(id);
@@ -55,23 +66,23 @@ public class CourseServiceImpl implements CourseService{
 
     @Override
     public List<CourseTimeTable> getCoursesCurrentDay(Integer account) {
-        int year = DateUtils.getCurrentYear();
-        int week = DateUtils.getCurrentWeek();
-        int day = DateUtils.getCurrentDay();
-
         Student student = studentMapper.selectByAccount(account);
         if(Objects.equals(student, null)) { return null; }
-        log.info("query currentday course schedule --account {}, academy {} day{}", account, student.getAcademy(), day);
+        log.info("query currentday course schedule --account {}, academy {} day{}", account, student.getClasses().getAcademy(), day);
 
         Classes classes = getOppositeClasses(student);
         if(classes == null){ return null; }
         List<Course> courses = getAllCourses(classes, account);
-
         List<Integer> classTimetables = getOppositeClassTimetables(classes, account);
-        log.info("query courseTimetable list --parameters {},{},{}"
-                , year, week, day);
-        List<CourseTimeTable> courseTimeTables =
-                courseTimeTableMapper.getTimetablesByIdsForCurrentDay(year, week, day, classTimetables);
+        log.info("query courseTimetable list --parameters {},{},{}", year, week, day);
+        CourseTimeTableExample example = new CourseTimeTableExample();
+        example.createCriteria()
+                .andYearEqualTo(year)
+                .andEndGreaterThanOrEqualTo(week)
+                .andStartLessThanOrEqualTo(week)
+                .andWeekEqualTo(day)
+                .andIdIn(classTimetables);
+        List<CourseTimeTable> courseTimeTables = courseTimeTableMapper.selectByExample(example);
         combineCourseAndCourseTimetable(courseTimeTables, courses);
 
         return courseTimeTables;
@@ -79,22 +90,24 @@ public class CourseServiceImpl implements CourseService{
 
     @Override
     public List<CourseGroupMsg> getCoursesSubscribeForCurrentDay() {
-        if(!isVaildDay()) { return null; }
-        int year = DateUtils.getCurrentYear();
-        int week = DateUtils.getCurrentWeek();
-        int day = DateUtils.getCurrentDay();
+        if(!isValidDay()) { return null; }
         //和课程相关的数据
         log.info("get all courses of --year{} week{} day{}",year, week, day);
-        List<CourseTimeTable> courseTimeTables =
-                courseTimeTableMapper.getTimetablesByTimeCondition(year, week, day);
+        CourseTimeTableExample example = new CourseTimeTableExample();
+        example.createCriteria()
+                .andYearEqualTo(year)
+                .andStartLessThanOrEqualTo(week)
+                .andEndGreaterThanOrEqualTo(week)
+                .andWeekEqualTo(day);
+        List<CourseTimeTable> courseTimeTables = courseTimeTableMapper.selectByExample(example);
         putCourseDataIntoCourseTimetable(courseTimeTables);
         //获取所有有课班级的信息
         List<Classes> classesList = getClassList(courseTimeTables);
         //装填要群发的消息的班级名称和课程信息
         List<CourseGroupMsg> courseGroupMsgs = getCourseGroupMsgs(courseTimeTables, classesList);
-        List<String> classnames = courseGroupMsgs.stream().map(CourseGroupMsg::getClassname).collect(Collectors.toList());
+        List<Integer> classesIds = courseGroupMsgs.stream().map(courseGroupMsg -> courseGroupMsg.getClasses().getId()).collect(Collectors.toList());
         //和学生还有openId的数据
-        Map<String, Student> openIdMap = getOpenIdMap(classnames);
+        Map<String, Student> openIdMap = getOpenIdMap(classesIds);
         //将每一个班级对应的openid放进courseGroupMsgs中
         setIdsIntoCourseGroupMsgs(courseGroupMsgs, openIdMap);
 
@@ -105,7 +118,7 @@ public class CourseServiceImpl implements CourseService{
     public List<CourseTimeTable> getCoursesByAccount(Integer account) {
         Student student = studentMapper.selectByAccount(account);
         if(Objects.equals(student, null)){ return null; }
-        log.info("query this week course schedule --account {},academy {}", account, student.getAcademy());
+        log.info("query this week course schedule --account {},academy {} week{}", account, student.getClasses().getAcademy(), week);
 
         Classes classes = getOppositeClasses(student);
         if(classes == null){ return null; }
@@ -127,18 +140,13 @@ public class CourseServiceImpl implements CourseService{
     @Override
     public boolean isHaveCourses(Integer account){
         Student student = studentMapper.selectByAccount(account);
-        String[] strs = getClassnameAndYearAndNum(student.getClassname());
-        List<Classes> classesList = getStudentClassesList(strs, student.getAcademy());
+        String[] strs = getClassnameAndYearAndNum(student.getClasses().getName());
+        List<Classes> classesList = getStudentClassesList(student);
         if(classesList.size() != 0){
             List<Integer> courseIds = getCourseIds(classesList.get(0));
             return courseIds.size() != 0;
         }
         return false;
-    }
-
-    public List<Course> getCourseByName(String name){
-//        courseMapper
-        return null;
     }
 
     @Override
@@ -154,7 +162,7 @@ public class CourseServiceImpl implements CourseService{
             count++;
             builder.append("第").append(ctts[i].getOrder()).append("节").append("\\n")
                     .append(ctts[i].getCourseObject().getName()).append("  ")
-                    .append(ctts[i].getPosition());
+                    .append(ctts[i].getRoom().getName());
             if(count != length){
                 builder.append("\\n\\n");
             }
@@ -198,9 +206,15 @@ public class CourseServiceImpl implements CourseService{
     }
 
     private List<CourseTimeTable> getCourseTimeTables(Classes classes, Integer account){
+        CourseTimeTableExample example = new CourseTimeTableExample();
         List<Integer> classTimetables = getOppositeClassTimetables(classes, account);
         if(classTimetables == null) return null;
-        return courseTimeTableMapper.getTimeTables(classTimetables);
+        example.createCriteria()
+                .andIdIn(classTimetables)
+                .andStartLessThanOrEqualTo(week)
+                .andEndGreaterThanOrEqualTo(week);
+//        return courseTimeTableMapper.getTimetablesByIds(classTimetables);
+        return courseTimeTableMapper.selectByExample(example);
     }
 
     private List<Course> getAllCourses(Classes classes, Integer account){
@@ -229,8 +243,8 @@ public class CourseServiceImpl implements CourseService{
     }
 
     private Classes getOppositeClasses(Student student){
-        String[] strs = getClassnameAndYearAndNum(student.getClassname());
-        List<Classes> classesList = getStudentClassesList(strs, student.getAcademy());
+//        String[] strs = getClassnameAndYearAndNum(student.getClasses().getName());
+        List<Classes> classesList = getStudentClassesList(student);
         if(classesList.size() == 0){
             log.info("account {} no relevant class information.", student.getAccount());
             return null;
@@ -240,17 +254,16 @@ public class CourseServiceImpl implements CourseService{
 
     /**
      * 返回一个包含对应学生信息的classes的List
-     * @param strs 包含有专业名，年级，班级序号
-     * @param academy 学院名
+     * @param  student 学生信息
      * @return classesList
      */
-    private List<Classes> getStudentClassesList(String[] strs, String academy){
+    private List<Classes> getStudentClassesList(Student student){
         ClassesExample example = new ClassesExample();
         example.createCriteria()
-            .andNameEqualTo(strs[0])
-            .andYearEqualTo(Integer.parseInt(strs[1]))
-            .andNumEqualTo(Integer.parseInt(strs[2]))
-            .andAcademyEqualTo(Academy.getAcademyCodeByName(academy));
+            .andNameEqualTo(student.getClasses().getName())
+            .andYearEqualTo(student.getClasses().getYear())
+            .andNumEqualTo(student.getClasses().getNum())
+            .andAcademyEqualTo(student.getClasses().getAcademy());
         return classesMapper.selectByExample(example);
     }
 
@@ -316,7 +329,7 @@ public class CourseServiceImpl implements CourseService{
                 courseTimeTables.stream().filter(courseTimeTable -> Objects.equals(courseTimeTable.getId(), timetableId))
                         .forEach(targetList::add)
             );
-            msg.setClassname(classes.getName() + classes.getYear() + "-" + classes.getNum());
+            msg.setClasses(classes);
             msg.setCourseTimeTables(targetList);
             courseGroupMsgs.add(msg);
         });
@@ -325,11 +338,11 @@ public class CourseServiceImpl implements CourseService{
 
     /**
      * 获取一个学生和所对应openId一一映射的Map
-     * @param classnames 班级名称
+     * @param classesIds 班级id集合
      * @return 学生和所对应openId一一映射的Map
      */
-    private Map<String, Student> getOpenIdMap(List<String> classnames){
-        List<Student> students = studentMapper.getStudentsByClassnames(classnames);
+    private Map<String, Student> getOpenIdMap(List<Integer> classesIds){
+        List<Student> students = studentMapper.getAllStudentsByClassesids(classesIds);
         List<Integer> accounts = students.stream().map(Student::getAccount).collect(Collectors.toList());
 
         List<Openid> openIds = openidMapper.getOpenIdsByAccount(accounts);
@@ -353,7 +366,7 @@ public class CourseServiceImpl implements CourseService{
         courseGroupMsgs.forEach(courseGroupMsg -> {
             List<String> openIdList = new ArrayList<>(40);
             openIdMap.forEach((openid, student) -> {
-                if(Objects.equals(student.getClassname(), courseGroupMsg.getClassname())){
+                if(Objects.equals(student.getClasses().getClassname(), courseGroupMsg.getClasses().getClassname())){
                     openIdList.add(openid);
                 }
             });
@@ -371,8 +384,8 @@ public class CourseServiceImpl implements CourseService{
         return courseMapper.getAllCourses(courseIds);
     }
 
-    private boolean isVaildDay(){
-        return DateUtils.getCurrentDay() >= 1 && DateUtils.getCurrentDay() <= 5;
+    private boolean isValidDay(){
+        return day >= 1 && day <= 5;
     }
 
 }

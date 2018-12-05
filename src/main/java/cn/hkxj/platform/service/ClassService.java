@@ -25,16 +25,17 @@ public class ClassService {
     private SubjectService subjectService;
 
     public Classes getClassByStudent(Student student){
-        String[] classNameSplit = student.getClassname().split("-");
+        String[] classNameSplit = student.getClasses().getClassname().split("-");
         int num = getClassNum(classNameSplit[1]);
         int year = getClassYear(classNameSplit[0]);
 
         ClassesExample classExample = new ClassesExample();
+        //.andSubjectEqualTo(getSubjectByName(student.getMajor()).getId());
         classExample.createCriteria()
-                .andAcademyEqualTo(Academy.getAcademyCodeByName(student.getAcademy()))
+                .andAcademyEqualTo(student.getClasses().getAcademy())
                 .andYearEqualTo(year)
                 .andNumEqualTo(num)
-                .andSubjectEqualTo(getSubjectByName(student.getMajor()).getId());
+                .andSubjectEqualTo(getSubjectByName(student.getClasses().getName()).getId());
         List<Classes> classes = classMapper.selectByExample(classExample);
         if (classes.size() != 1){
             log.error("class size error: "+classes.toString());

@@ -1,7 +1,6 @@
 package cn.hkxj.platform.pojo;
 
-import com.google.common.base.MoreObjects;
-
+import cn.hkxj.platform.pojo.Room;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,19 +65,50 @@ public class CourseTimeTableExample {
     }
 
     protected abstract static class GeneratedCriteria {
+        protected List<Criterion> roomCriteria;
+
+        protected List<Criterion> allCriteria;
+
         protected List<Criterion> criteria;
 
         protected GeneratedCriteria() {
             super();
             criteria = new ArrayList<Criterion>();
+            roomCriteria = new ArrayList<Criterion>();
+        }
+
+        public List<Criterion> getRoomCriteria() {
+            return roomCriteria;
+        }
+
+        protected void addRoomCriterion(String condition, Object value, String property) {
+            if (value == null) {
+                throw new RuntimeException("Value for " + property + " cannot be null");
+            }
+            roomCriteria.add(new Criterion(condition, value, "cn.hkxj.platform.handler.RoomWarpperHandler"));
+            allCriteria = null;
+        }
+
+        protected void addRoomCriterion(String condition, Room value1, Room value2, String property) {
+            if (value1 == null || value2 == null) {
+                throw new RuntimeException("Between values for " + property + " cannot be null");
+            }
+            roomCriteria.add(new Criterion(condition, value1, value2, "cn.hkxj.platform.handler.RoomWarpperHandler"));
+            allCriteria = null;
         }
 
         public boolean isValid() {
-            return criteria.size() > 0;
+            return criteria.size() > 0
+                || roomCriteria.size() > 0;
         }
 
         public List<Criterion> getAllCriteria() {
-            return criteria;
+            if (allCriteria == null) {
+                allCriteria = new ArrayList<Criterion>();
+                allCriteria.addAll(criteria);
+                allCriteria.addAll(roomCriteria);
+            }
+            return allCriteria;
         }
 
         public List<Criterion> getCriteria() {
@@ -90,6 +120,7 @@ public class CourseTimeTableExample {
                 throw new RuntimeException("Value for condition cannot be null");
             }
             criteria.add(new Criterion(condition));
+            allCriteria = null;
         }
 
         protected void addCriterion(String condition, Object value, String property) {
@@ -97,6 +128,7 @@ public class CourseTimeTableExample {
                 throw new RuntimeException("Value for " + property + " cannot be null");
             }
             criteria.add(new Criterion(condition, value));
+            allCriteria = null;
         }
 
         protected void addCriterion(String condition, Object value1, Object value2, String property) {
@@ -104,6 +136,7 @@ public class CourseTimeTableExample {
                 throw new RuntimeException("Between values for " + property + " cannot be null");
             }
             criteria.add(new Criterion(condition, value1, value2));
+            allCriteria = null;
         }
 
         public Criteria andIdIsNull() {
@@ -646,73 +679,63 @@ public class CourseTimeTableExample {
             return (Criteria) this;
         }
 
-        public Criteria andPositionIsNull() {
-            addCriterion("position is null");
+        public Criteria andRoomIsNull() {
+            addCriterion("room_id is null");
             return (Criteria) this;
         }
 
-        public Criteria andPositionIsNotNull() {
-            addCriterion("position is not null");
+        public Criteria andRoomIsNotNull() {
+            addCriterion("room_id is not null");
             return (Criteria) this;
         }
 
-        public Criteria andPositionEqualTo(String value) {
-            addCriterion("position =", value, "position");
+        public Criteria andRoomEqualTo(Room value) {
+            addRoomCriterion("room_id =", value, "room");
             return (Criteria) this;
         }
 
-        public Criteria andPositionNotEqualTo(String value) {
-            addCriterion("position <>", value, "position");
+        public Criteria andRoomNotEqualTo(Room value) {
+            addRoomCriterion("room_id <>", value, "room");
             return (Criteria) this;
         }
 
-        public Criteria andPositionGreaterThan(String value) {
-            addCriterion("position >", value, "position");
+        public Criteria andRoomGreaterThan(Room value) {
+            addRoomCriterion("room_id >", value, "room");
             return (Criteria) this;
         }
 
-        public Criteria andPositionGreaterThanOrEqualTo(String value) {
-            addCriterion("position >=", value, "position");
+        public Criteria andRoomGreaterThanOrEqualTo(Room value) {
+            addRoomCriterion("room_id >=", value, "room");
             return (Criteria) this;
         }
 
-        public Criteria andPositionLessThan(String value) {
-            addCriterion("position <", value, "position");
+        public Criteria andRoomLessThan(Room value) {
+            addRoomCriterion("room_id <", value, "room");
             return (Criteria) this;
         }
 
-        public Criteria andPositionLessThanOrEqualTo(String value) {
-            addCriterion("position <=", value, "position");
+        public Criteria andRoomLessThanOrEqualTo(Room value) {
+            addRoomCriterion("room_id <=", value, "room");
             return (Criteria) this;
         }
 
-        public Criteria andPositionLike(String value) {
-            addCriterion("position like", value, "position");
+        public Criteria andRoomIn(List<Room> values) {
+            addRoomCriterion("room_id in", values, "room");
             return (Criteria) this;
         }
 
-        public Criteria andPositionNotLike(String value) {
-            addCriterion("position not like", value, "position");
+        public Criteria andRoomNotIn(List<Room> values) {
+            addRoomCriterion("room_id not in", values, "room");
             return (Criteria) this;
         }
 
-        public Criteria andPositionIn(List<String> values) {
-            addCriterion("position in", values, "position");
+        public Criteria andRoomBetween(Room value1, Room value2) {
+            addRoomCriterion("room_id between", value1, value2, "room");
             return (Criteria) this;
         }
 
-        public Criteria andPositionNotIn(List<String> values) {
-            addCriterion("position not in", values, "position");
-            return (Criteria) this;
-        }
-
-        public Criteria andPositionBetween(String value1, String value2) {
-            addCriterion("position between", value1, value2, "position");
-            return (Criteria) this;
-        }
-
-        public Criteria andPositionNotBetween(String value1, String value2) {
-            addCriterion("position not between", value1, value2, "position");
+        public Criteria andRoomNotBetween(Room value1, Room value2) {
+            addRoomCriterion("room_id not between", value1, value2, "room");
             return (Criteria) this;
         }
     }
@@ -808,14 +831,5 @@ public class CourseTimeTableExample {
         protected Criterion(String condition, Object value, Object secondValue) {
             this(condition, value, secondValue, null);
         }
-    }
-
-    @Override
-    public String toString() {
-        return MoreObjects.toStringHelper(this)
-                .add("orderByClause", orderByClause)
-                .add("distinct", distinct)
-                .add("oredCriteria", oredCriteria)
-                .toString();
     }
 }

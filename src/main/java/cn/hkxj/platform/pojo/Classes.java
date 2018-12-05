@@ -23,6 +23,10 @@ public class Classes {
     private List<Integer> courseTimeTableIds;
 
 
+    public String getClassname(){
+        return this.getName() + this.getYear() + "-" + this.getNum();
+    }
+
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)

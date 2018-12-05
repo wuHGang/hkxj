@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Mapper
+@Repository
 public interface RoomMapper {
     int deleteByPrimaryKey(Integer id);
 

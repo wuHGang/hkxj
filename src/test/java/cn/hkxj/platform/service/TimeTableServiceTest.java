@@ -24,7 +24,7 @@ public class TimeTableServiceTest {
 		HashSet<String> roomSet = new HashSet<>();
 		int count = 0;
 		for (CourseTimeTable table : timeTableService.getTimeTableFromDB(5)) {
-			roomSet.add(table.getPosition());
+			roomSet.add(table.getRoom().getName());
 			count += 1;
 		}
 		System.out.println(roomSet.size());

@@ -72,7 +72,7 @@ public class StudentBindService {
 	}
 
 	public Student studentBind(Student student, String openid){
-		studentMapper.insertByStudent(student);
+		studentMapper.insert(student);
 		saveOpenid(openid, student.getAccount().toString());
 		return student;
 	}
@@ -115,7 +115,7 @@ public class StudentBindService {
     }
 
     private int saveStudent(Student student) {
-        return studentMapper.insertByStudent(student);
+        return studentMapper.insert(student);
     }
 
     private int saveOpenid(String openid, String account) {

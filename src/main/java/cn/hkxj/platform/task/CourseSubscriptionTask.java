@@ -47,7 +47,7 @@ public class CourseSubscriptionTask {
         }
         for (CourseGroupMsg msg : courseGroupMsgList) {
             //获取一个并行流，添加监视messagePeek,设置过滤条件，然后每一个都进行消息发送
-            msg.getOpenIds().stream().parallel().peek(this::messagePeek).filter(openid -> !Objects.equals(openid, null)).forEach(openid -> {
+            msg.getOpenIds().stream().parallel().peek(this::messagePeek).filter(openid -> !Objects.isNull(openid)).forEach(openid -> {
                 //尝试三次，如果成功就跳出循环发送下一个
                 for (int i = 1; i <= 3; i++) {
                     try {

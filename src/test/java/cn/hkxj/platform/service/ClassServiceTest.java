@@ -12,8 +12,6 @@ import org.springframework.test.context.web.WebAppConfiguration;
 
 import javax.annotation.Resource;
 
-import static org.junit.Assert.*;
-
 /**
  * @author junrong.chen
  * @date 2018/11/28

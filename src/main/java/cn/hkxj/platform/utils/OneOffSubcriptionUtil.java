@@ -5,14 +5,10 @@ import cn.hkxj.platform.pojo.CourseTimeTable;
 import cn.hkxj.platform.pojo.Openid;
 import cn.hkxj.platform.pojo.OpenidExample;
 import cn.hkxj.platform.service.CourseService;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.exception.WxErrorException;
 import me.chanjar.weixin.mp.api.WxMpService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -50,8 +46,6 @@ public class OneOffSubcriptionUtil {
     private static final String TEMPLATE_ID = "5TgQ5wk_3q01xfdqAqPDgAJDiT4YfmYOoIP6cnAhOKc";
     private static final String REPLY_URL = "https://api.weixin.qq.com/cgi-bin/message/template/subscribe?access_token=";
 
-    private static String appid;
-
     /**
      * 获取带有一次性订阅链接的超链接
      * @param content 超链接的文字内容
@@ -64,7 +58,7 @@ public class OneOffSubcriptionUtil {
                 .append("'>").append(content).append("</a>").toString();
     }
 
-    public static String getOneOffSubscriptionUrl(String scene) {
+    private static String getOneOffSubscriptionUrl(String scene) {
         StringBuilder builder = new StringBuilder();
         builder.append(BASE_URL).append("&")
                 .append("appid=").append(util.wxMpService.getWxMpConfigStorage().getAppId()).append("&")
@@ -82,9 +76,7 @@ public class OneOffSubcriptionUtil {
     public static void sendTemplateMessageToUser(String openid, String scene) {
         try {
             replyOneOffSubscribeRequest(generateDataJson(openid, scene));
-        } catch (WxErrorException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (WxErrorException | IOException e) {
             e.printStackTrace();
         }
     }
@@ -124,7 +116,7 @@ public class OneOffSubcriptionUtil {
         }
     }
 
-    public static String generateDataJson(String openid, String scene){
+    private static String generateDataJson(String openid, String scene){
         return new StringBuilder().append("{")
                 .append("\"touser\":\"").append(openid).append("\",")
                 .append("\"template_id\":\"").append(TEMPLATE_ID).append("\",")
