@@ -1,11 +1,10 @@
 package cn.hkxj.platform.service.wechat.handler.messageHandler;
 
 import cn.hkxj.platform.builder.TextBuilder;
-import cn.hkxj.platform.mapper.OpenidMapper;
-import cn.hkxj.platform.mapper.StudentMapper;
-import cn.hkxj.platform.pojo.Openid;
+import cn.hkxj.platform.pojo.AllGradeAndCourse;
 import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.service.GradeSearchService;
+import cn.hkxj.platform.service.OpenIdService;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.exception.WxErrorException;
 import me.chanjar.weixin.common.session.WxSessionManager;
@@ -16,7 +15,6 @@ import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -27,34 +25,58 @@ import java.util.Map;
 @Slf4j
 @Component
 public class GradeMessageHandler implements WxMpMessageHandler {
-
-    @Resource
-	private OpenidMapper openIdMapper;
-
-    @Resource
-	private StudentMapper studentMapper;
-
     @Resource
 	private TextBuilder textBuilder;
 
     @Resource
 	private GradeSearchService gradeSearchService;
 
+    @Resource
+    private OpenIdService openIdService;
+
 	public WxMpXmlOutMessage handle(WxMpXmlMessage wxMpXmlMessage,
 									Map<String, Object> map,
 									WxMpService wxMpService,
 									WxSessionManager wxSessionManager) throws WxErrorException {
-        List<String> wechatUser = new ArrayList<>();
-		wechatUser.add(wxMpXmlMessage.getFromUser());
 		try {
-			List<Openid> openId=openIdMapper.getOpenIdsByOpenIds(wechatUser);
-			Student student=studentMapper.selectByAccount(openId.get(0).getAccount());
-            String gradesMsg = gradeSearchService.toText(gradeSearchService.returnGrade(student.getAccount(), student.getPassword(), gradeSearchService.getGradeList(student.getAccount())));
-			return textBuilder.build(gradesMsg , wxMpXmlMessage, wxMpService);
+            Student student = openIdService.getStudentByOpenId(wxMpXmlMessage.getFromUser());
+            List<AllGradeAndCourse.GradeAndCourse> currentTermGrade = gradeSearchService.getCurrentTermGrade(student);
+            String gradesMsg = GradeListToText(currentTermGrade);
+            return textBuilder.build(gradesMsg, wxMpXmlMessage, wxMpService);
 		} catch (Exception e) {
             log.error("在组装返回信息时出现错误 {}", e.getMessage());
 		}
 
 		return textBuilder.build("没有查询到相关成绩，晚点再来查吧~" , wxMpXmlMessage, wxMpService);
 	}
+
+    /**
+     * 将学生成绩文本化
+     *
+     * @param studentGrades 学生全部成绩
+     */
+    public String GradeListToText(List<AllGradeAndCourse.GradeAndCourse> studentGrades) {
+        StringBuffer buffer = new StringBuffer();
+        boolean i = true;
+        if (studentGrades.size() == 0) {
+            buffer.append("尚无本学期成绩");
+        } else {
+            AllGradeAndCourse allGradeAndCourse = new AllGradeAndCourse();
+            allGradeAndCourse.addGradeAndCourse(studentGrades);
+            for (AllGradeAndCourse.GradeAndCourse gradeAndCourse : allGradeAndCourse.getCurrentTermGrade()) {
+                if (i) {
+                    i = false;
+                    buffer.append("- - - - - - - - - - - - - -\n");
+                    buffer.append("|").append(gradeAndCourse.getGrade().getYear()).append("学年，第").append(gradeAndCourse.getGrade().getTerm()).append("学期|\n");
+                    buffer.append("- - - - - - - - - - - - - -\n\n");
+                }
+                buffer.append("考试名称：").append(gradeAndCourse.getCourse().getName()).append("\n")
+                        .append("成绩：").append(gradeAndCourse.getGrade().getScore() / 10).append("   学分：")
+                        .append(gradeAndCourse.getGrade().getPoint() / 10).append("\n\n");
+            }
+        }
+        return buffer.toString();
+    }
+
+
 }

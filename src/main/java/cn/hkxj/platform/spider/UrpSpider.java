@@ -6,11 +6,7 @@ import cn.hkxj.platform.pojo.Student;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
+import okhttp3.*;
 import org.apache.commons.beanutils.BeanUtils;
 
 import java.io.IOException;
@@ -41,15 +37,10 @@ public class UrpSpider {
 
 	public Student getInformation() throws PasswordUncorrectException, ReadTimeoutException {
 		Map result;
-		try {
-			log.info("urp spider start get student info account{}", this.account);
-			result = getResult(INFORMATION_URL);
-		} catch (IOException e) {
-			log.error("read spider server timeout");
-			throw new ReadTimeoutException("本地服务器读取超时", e);
-		}
+        log.info("urp spider start get student info account{}", this.account);
+        result = getResult(INFORMATION_URL);
 
-		Object information = result.get("information");
+        Object information = result.get("information");
 		if (Objects.isNull(information)){
 			log.info("read school server timeout account{}", this.account);
 			throw new ReadTimeoutException("学校服务器读取超时");
@@ -70,23 +61,28 @@ public class UrpSpider {
 		return getResult(GRADE_URL);
 	}
 
-	public void getCurrentGrade() throws IOException, PasswordUncorrectException {
-		Map result = getResult(CURRENT_GRADE_URL);
-	}
+    public Map getCurrentGrade() throws PasswordUncorrectException {
+        return getResult(CURRENT_GRADE_URL);
+    }
 
-	public void getEverGrade() throws IOException, PasswordUncorrectException {
+    public void getEverGrade() throws PasswordUncorrectException {
 		Map result = getResult(EVER_GRADE_URL);
 	}
 
-	private Map getResult(String url) throws IOException, PasswordUncorrectException {
+    private Map getResult(String url) throws PasswordUncorrectException {
 		RequestBody requestBody = getRequestBody();
 		Request request = new Request.Builder()
 				.url(url)
 				.post(requestBody)
 				.build();
-		Response response = client.newCall(request).execute();
-
-		String result = response.body().string();
+        String result;
+        try {
+            Response response = client.newCall(request).execute();
+            result = response.body().string();
+        } catch (IOException e) {
+            log.error("urp spider execute error {}", e.getMessage());
+            throw new RuntimeException(e);
+        }
 
 		log.debug(result);
 

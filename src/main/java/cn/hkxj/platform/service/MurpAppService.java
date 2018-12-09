@@ -9,4 +9,7 @@ import org.springframework.stereotype.Service;
 @Service("murpAppService")
 public class MurpAppService {
 
+
+    public void getCurrentGrade() {
+    }
 }

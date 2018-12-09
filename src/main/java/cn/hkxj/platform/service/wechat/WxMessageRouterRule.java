@@ -6,17 +6,12 @@ import me.chanjar.weixin.common.exception.WxErrorException;
 import me.chanjar.weixin.common.session.WxSessionManager;
 import me.chanjar.weixin.mp.api.WxMpMessageHandler;
 import me.chanjar.weixin.mp.api.WxMpMessageMatcher;
-import me.chanjar.weixin.mp.api.WxMpMessageRouter;
 import me.chanjar.weixin.mp.api.WxMpMessageRouterRule;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author junrong.chen
@@ -24,9 +19,12 @@ import java.util.Map;
  */
 public class WxMessageRouterRule extends WxMpMessageRouterRule {
 	private List<WxMessageInterceptor> interceptors = new ArrayList<>();
+    private final WxMessageRouter routerBuilder;
+    private boolean reEnter = false;
 
-	public WxMessageRouterRule(WxMpMessageRouter routerBuilder) {
-		super(routerBuilder);
+    public WxMessageRouterRule(WxMessageRouter routerBuilder) {
+        super(routerBuilder);
+        this.routerBuilder = routerBuilder;
 	}
 
 
@@ -140,6 +138,22 @@ public class WxMessageRouterRule extends WxMpMessageRouterRule {
 		return this;
 	}
 
+    /**
+     * 规则结束，代表如果一个消息匹配该规则，那么它将不再会进入其他规则
+     */
+    public WxMessageRouter end() {
+        this.routerBuilder.getRules().add(this);
+        return this.routerBuilder;
+    }
+
+    /**
+     * 规则结束，但是消息还会进入其他规则
+     */
+    public WxMessageRouter next() {
+        this.reEnter = true;
+        return end();
+    }
+
 
 	@Override
 	protected WxMpXmlOutMessage service(WxMpXmlMessage wxMessage, Map<String, Object> context, WxMpService wxMpService, WxSessionManager sessionManager, WxErrorExceptionHandler exceptionHandler) {
@@ -170,4 +184,8 @@ public class WxMessageRouterRule extends WxMpMessageRouterRule {
 		}
 		return null;
 	}
+
+    protected boolean test(WxMpXmlMessage wxMessage) {
+        return super.test(wxMessage);
+    }
 }

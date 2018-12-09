@@ -1,7 +1,7 @@
 package cn.hkxj.platform.pojo;
 
-import cn.hkxj.platform.pojo.Classes;
 import com.google.common.base.MoreObjects;
+import com.google.common.base.Objects;
 
 import java.util.Date;
 
@@ -106,6 +106,7 @@ public class Student {
         this.gmtModified = gmtModified;
     }
 
+
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
@@ -120,5 +121,23 @@ public class Student {
                 .add("gmtCreate", gmtCreate)
                 .add("gmtModified", gmtModified)
                 .toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Student that = (Student) o;
+
+        return Objects.equal(this.id, that.id) &&
+                Objects.equal(this.account, that.account) &&
+                Objects.equal(this.password, that.password) &&
+                Objects.equal(this.name, that.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id, account, password, name, sex);
     }
 }

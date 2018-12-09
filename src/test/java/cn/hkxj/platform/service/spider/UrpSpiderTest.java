@@ -22,13 +22,9 @@ public class UrpSpiderTest {
 	}
 
 	@Test
-	public void getInformaton() throws IOException, PasswordUncorrectException {
+    public void getInformaton() throws PasswordUncorrectException {
 
         Student student = spider.getInformation();
-
-
-//		log.info(result);
-//		Double stau = (Double) 200.0;
 
 	}
 
@@ -47,12 +43,13 @@ public class UrpSpiderTest {
 	}
 
 	@Test
-	public void getCurrent() throws IOException, PasswordUncorrectException {
-		spider.getCurrentGrade();
-	}
+    public void getCurrent() throws PasswordUncorrectException {
+        Map grade = spider.getCurrentGrade();
+        log.info(grade.toString());
+    }
 
 	@Test
-	public void getEver() throws IOException, PasswordUncorrectException {
+    public void getEver() throws PasswordUncorrectException {
 		spider.getEverGrade();
 	}
 }
