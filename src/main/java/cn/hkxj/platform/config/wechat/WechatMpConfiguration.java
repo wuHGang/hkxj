@@ -54,9 +54,6 @@ public class WechatMpConfiguration {
 	public WxMessageRouter router(WxMpService wxMpService) {
 		final WxMessageRouter newRouter = new WxMessageRouter(wxMpService);
 
-		// 记录所有事件的日志 （异步执行）
-		newRouter.rule().handler(this.logHandler).next();
-
 		return newRouter;
 	}
 }
