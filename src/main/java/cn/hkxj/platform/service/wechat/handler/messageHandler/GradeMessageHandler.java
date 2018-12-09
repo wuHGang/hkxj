@@ -6,15 +6,16 @@ import cn.hkxj.platform.mapper.StudentMapper;
 import cn.hkxj.platform.pojo.Openid;
 import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.service.GradeSearchService;
-import cn.hkxj.platform.service.wechat.handler.AbstractHandler;
+import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.exception.WxErrorException;
 import me.chanjar.weixin.common.session.WxSessionManager;
+import me.chanjar.weixin.mp.api.WxMpMessageHandler;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -23,37 +24,35 @@ import java.util.Map;
  * @author Yuki
  * @date 2018/7/15 15:31
  */
+@Slf4j
 @Component
-public class GradeMessageHandler extends AbstractHandler {
+public class GradeMessageHandler implements WxMpMessageHandler {
 
-	@Autowired
+    @Resource
 	private OpenidMapper openIdMapper;
 
-	@Autowired
+    @Resource
 	private StudentMapper studentMapper;
 
-	@Autowired
+    @Resource
 	private TextBuilder textBuilder;
 
-	@Autowired
+    @Resource
 	private GradeSearchService gradeSearchService;
 
-	@Override
 	public WxMpXmlOutMessage handle(WxMpXmlMessage wxMpXmlMessage,
 									Map<String, Object> map,
 									WxMpService wxMpService,
 									WxSessionManager wxSessionManager) throws WxErrorException {
-		List<String> wechatUser=new ArrayList();;
+        List<String> wechatUser = new ArrayList<>();
 		wechatUser.add(wxMpXmlMessage.getFromUser());
 		try {
 			List<Openid> openId=openIdMapper.getOpenIdsByOpenIds(wechatUser);
 			Student student=studentMapper.selectByAccount(openId.get(0).getAccount());
-			String gradesMsg = gradeSearchService.toText(gradeSearchService.returnGrade(student.getAccount(),
-																						student.getPassword(),
-																						gradeSearchService.getGradeList(student.getAccount())));
+            String gradesMsg = gradeSearchService.toText(gradeSearchService.returnGrade(student.getAccount(), student.getPassword(), gradeSearchService.getGradeList(student.getAccount())));
 			return textBuilder.build(gradesMsg , wxMpXmlMessage, wxMpService);
 		} catch (Exception e) {
-			this.logger.error("在组装返回信息时出现错误 {}", e.getMessage());
+            log.error("在组装返回信息时出现错误 {}", e.getMessage());
 		}
 
 		return textBuilder.build("没有查询到相关成绩，晚点再来查吧~" , wxMpXmlMessage, wxMpService);

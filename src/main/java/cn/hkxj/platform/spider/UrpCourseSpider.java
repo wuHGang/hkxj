@@ -1,6 +1,5 @@
 package cn.hkxj.platform.spider;
 
-import cn.hkxj.platform.exceptions.PasswordUncorrectException;
 import cn.hkxj.platform.pojo.Academy;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.FormBody;
@@ -43,7 +42,7 @@ public class UrpCourseSpider {
         this.password = password;
     }
 
-    public int getAcademyId(String uid) throws IOException{
+    public int getAcademyId(String uid) {
         int academyId=0;
         Pattern pattern = Pattern.compile(academyRgex);
         Matcher matcher = pattern.matcher(getCourseResult(uid));
@@ -57,21 +56,33 @@ public class UrpCourseSpider {
         return academyId;
     }
 
-    private String getCourseResult(String uid) throws IOException{
+    private String getCourseResult(String uid) {
         this.uid=uid;
         FormBody formBody = getFormBody(account,password);
         Request request = new Request.Builder()
                 .url(loginUrl)
                 .post(formBody)
                 .build();
-        Response response = client.newCall(request).execute();
+        Response response = null;
+        try {
+            response = client.newCall(request).execute();
+        } catch (IOException e) {
+            log.error("get course error, course id {}", uid);
+            throw new RuntimeException(e);
+        }
         String cookie=response.headers().get("Set-Cookie").substring(0, response.headers().get("Set-Cookie").indexOf(";"));
         request = new Request.Builder()
                 .url(courseInformatiomUrl+uid)
                 .post(formBody)
                 .addHeader("Cookie",cookie)
                 .build();
-        String result = client.newCall(request).execute().body().string().replaceAll("\\s*", "");
+        String result = null;
+        try {
+            result = client.newCall(request).execute().body().string().replaceAll("\\s*", "");
+        } catch (IOException e) {
+            log.error("get course error, course id {}", uid);
+            throw new RuntimeException(e);
+        }
         response.body().close();
         return result;
     }

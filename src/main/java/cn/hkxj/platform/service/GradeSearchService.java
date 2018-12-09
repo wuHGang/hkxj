@@ -1,14 +1,18 @@
 package cn.hkxj.platform.service;
 
 import cn.hkxj.platform.exceptions.PasswordUncorrectException;
-import cn.hkxj.platform.mapper.*;
-import cn.hkxj.platform.pojo.*;
+import cn.hkxj.platform.mapper.CourseMapper;
+import cn.hkxj.platform.mapper.GradeMapper;
+import cn.hkxj.platform.pojo.AllGradeAndCourse;
+import cn.hkxj.platform.pojo.Course;
+import cn.hkxj.platform.pojo.Grade;
+import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.spider.AppSpider;
 import cn.hkxj.platform.spider.UrpCourseSpider;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
 import javax.annotation.Resource;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -49,15 +53,15 @@ public class GradeSearchService {
 	 * 将本学期的成绩数据存储于数据库，同时适用于自动更新
 	 * @param account 学生账户
 	 * @param password 学生密码
-	 * @param gradeAndCoourseList 学生的全部成绩
+     * @param gradeAndCourseList 学生的全部成绩
 	 */
-	public void saveGradeAndCourse(int account,String password,AllGradeAndCourse gradeAndCoourseList )throws IOException {
+    public void saveGradeAndCourse(int account, String password, AllGradeAndCourse gradeAndCourseList) {
 		//暂定只要是半学期的都应该直接查询最新的数据
 		//先查询数据库中有没有这个数据，有就返回（如果要查本学期的数据，怎么判断知道数据有没有更新完）
 		//如果没有从App中进行抓取，要先判断这个他的app账号是否正确，不正确从校务网抓
 		//抓到的数据保存到数据并且返回结果（并行执行）在密集查成绩的期间要考虑是否需要存库这个功能
 		UrpCourseSpider urpCourseSpider=new UrpCourseSpider(account,password);
-		for (AllGradeAndCourse.GradeAndCourse gradeAndCourse : gradeAndCoourseList.getCurrentTermGrade()) {
+        for (AllGradeAndCourse.GradeAndCourse gradeAndCourse : gradeAndCourseList.getCurrentTermGrade()) {
 			if(gradeAndCourse.getGrade().getYear()==2018){
 				if (!courseMapper.ifExistCourse(gradeAndCourse.getCourse().getUid())) {
 					gradeAndCourse.getCourse().setAcademy(urpCourseSpider.getAcademyId(gradeAndCourse.getCourse().getUid()));
@@ -78,11 +82,7 @@ public class GradeSearchService {
 	public List<AllGradeAndCourse.GradeAndCourse>  returnGrade(int account,String password,AllGradeAndCourse gradeAndCoourseList) {
 		ExecutorService singleThreadPool = Executors.newSingleThreadExecutor();
 		singleThreadPool.execute(()-> {
-				try {
-					saveGradeAndCourse(account,password,gradeAndCoourseList);
-				}catch (IOException e){
-					log.error(e.getMessage());
-				}
+            saveGradeAndCourse(account, password, gradeAndCoourseList);
 		});
 		List<AllGradeAndCourse.GradeAndCourse> studentGrades=new ArrayList<>();
 		for (AllGradeAndCourse.GradeAndCourse gradeAndCourse : gradeAndCoourseList.getCurrentTermGrade()) {
@@ -97,10 +97,8 @@ public class GradeSearchService {
 	 * @param student 学生信息
 	 * @return studentGrades 学生成绩
 	 */
-	public List<Grade> getStudentGrades(Student student)throws IOException{
-//		getCurrentGrade(student.getAccount(),student.getPassword());
-		List<Grade> studentGrades=gradeMapper.selectByAccount(student.getAccount());
-		return studentGrades;
+    public List<Grade> getStudentGrades(Student student) {
+        return gradeMapper.selectByAccount(student.getAccount());
 	}
 
 	/**
@@ -132,7 +130,7 @@ public class GradeSearchService {
  */
 	public String toText(List<AllGradeAndCourse.GradeAndCourse> studentGrades){
 		StringBuffer buffer = new StringBuffer();
-		boolean i=true;
+        boolean i = true;
 		if(studentGrades.size()==0){
 			buffer.append("尚无本学期成绩");
 		}
@@ -143,11 +141,12 @@ public class GradeSearchService {
 				if(i){
 					i=false;
 					buffer.append("- - - - - - - - - - - - - -\n");
-					buffer.append("|"+gradeAndCourse.getGrade().getYear()+"学年，第"+gradeAndCourse.getGrade().getTerm()+"学期|\n");
+                    buffer.append("|").append(gradeAndCourse.getGrade().getYear()).append("学年，第").append(gradeAndCourse.getGrade().getTerm()).append("学期|\n");
 					buffer.append("- - - - - - - - - - - - - -\n\n");
 				}
-				buffer.append("考试名称："+gradeAndCourse.getCourse().getName()+"\n")
-						.append("成绩："+gradeAndCourse.getGrade().getScore()/10).append("   学分："+gradeAndCourse.getGrade().getPoint()/10+"\n\n");
+                buffer.append("考试名称：").append(gradeAndCourse.getCourse().getName()).append("\n")
+                        .append("成绩：").append(gradeAndCourse.getGrade().getScore() / 10).append("   学分：")
+                        .append(gradeAndCourse.getGrade().getPoint() / 10).append("\n\n");
 			}
 		}
 		return buffer.toString();

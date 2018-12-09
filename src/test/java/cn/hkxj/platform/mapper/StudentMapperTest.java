@@ -22,7 +22,7 @@ public class StudentMapperTest {
 
 	@Test
 	public void selectByAccount() {
-		Student student = studentMapper.selectByAccount(2014025838);
+        Student student = studentMapper.selectByAccount(2017025971);
 		log.info(student.toString());
 	}
 
