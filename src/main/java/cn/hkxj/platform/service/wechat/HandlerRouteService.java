@@ -5,7 +5,6 @@ import cn.hkxj.platform.service.wechat.handler.messageHandler.CourseMessageHandl
 import cn.hkxj.platform.service.wechat.handler.messageHandler.EmptyRoomHandler;
 import cn.hkxj.platform.service.wechat.handler.messageHandler.ExamMessageHandler;
 import cn.hkxj.platform.service.wechat.handler.messageHandler.GradeMessageHandler;
-import cn.hkxj.platform.service.wechat.handler.messageHandler.OpenIdHandler;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -52,8 +51,8 @@ public class HandlerRouteService {
 				.end()
                 .rule()
                     .async(false)
-                    .interceptor(wechatOpenIdInterceptor)
                     .rContent(".*?考试.*?")
+                .interceptor(wechatOpenIdInterceptor)
                     .handler(examMessageHandler)
                 .end()
                 .rule()
