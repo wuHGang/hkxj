@@ -22,15 +22,14 @@ public class CourseMapperTest {
 
 	@Test
 	public void insertStudentAndCourse() {
-
+        courseMapper.selectByPrimaryKey(1259);
 	}
 
 
 	@Test
 	public void selectByName() {
-		for (Course course : courseMapper.selectCourseByName("理论力学")) {
+        for (Course course : courseMapper.selectCourseByName("材料力学")) {
 			log.info(course.toString());
 		}
-		;
 	}
 }

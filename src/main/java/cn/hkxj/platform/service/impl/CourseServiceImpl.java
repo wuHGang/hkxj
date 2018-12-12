@@ -18,12 +18,10 @@ import cn.hkxj.platform.pojo.Openid;
 import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.service.CourseService;
 import cn.hkxj.platform.utils.DateUtils;
-import cn.hkxj.platform.utils.OneOffSubcriptionUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;

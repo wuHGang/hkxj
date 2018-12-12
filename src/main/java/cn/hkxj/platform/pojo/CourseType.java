@@ -13,20 +13,20 @@ public enum CourseType {
 	/**
 	 * 必修
 	 */
-	OBLIGATORY((byte) 1, "必修"),
+    OBLIGATORY(1, "必修"),
 	/**
 	 * 选修
 	 */
-	ELECTIVE((byte) 2, "选修"),
+    ELECTIVE(2, "选修"),
 	/**
 	 * 任选
 	 */
-	OPTIONAL((byte) 3, "任选");
+    OPTIONAL(3, "任选");
 
-	byte code;
+    Integer code;
 	String type;
 
-	CourseType(byte code, String type) {
+    CourseType(Integer code, String type) {
 		this.code = code;
 		this.type = type;
 	}
@@ -45,13 +45,13 @@ public enum CourseType {
 		}
 	}
 
-	public static CourseType getCourseByByte(byte code){
+    public static CourseType getCourseByByte(int code) {
 		switch (code){
-			case (byte) 1:
+            case 1:
 				return OBLIGATORY;
-			case (byte) 2:
+            case 2:
 				return ELECTIVE;
-			case (byte) 3:
+            case 3:
 				return OPTIONAL;
 			default:
 				log.error("getCourseByByte error type:"+code);
@@ -59,7 +59,7 @@ public enum CourseType {
 		}
 	}
 
-	public byte getByte(){
-		return (byte)this.code;
+    public Integer getByte() {
+        return this.code;
 	}
 }

@@ -1,12 +1,18 @@
 package cn.hkxj.platform.service;
 
 import cn.hkxj.platform.exceptions.PasswordUncorrectException;
-import cn.hkxj.platform.mapper.*;
-import cn.hkxj.platform.pojo.*;
+import cn.hkxj.platform.mapper.CourseMapper;
+import cn.hkxj.platform.mapper.GradeMapper;
+import cn.hkxj.platform.pojo.Academy;
+import cn.hkxj.platform.pojo.AllGradeAndCourse;
+import cn.hkxj.platform.pojo.Course;
+import cn.hkxj.platform.pojo.Grade;
+import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.spider.AppSpider;
 import cn.hkxj.platform.spider.UrpCourseSpider;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -60,8 +66,9 @@ public class GradeSearchService {
 		for (AllGradeAndCourse.GradeAndCourse gradeAndCourse : gradeAndCoourseList.getCurrentTermGrade()) {
 			if(gradeAndCourse.getGrade().getYear()==2018){
 				if (!courseMapper.ifExistCourse(gradeAndCourse.getCourse().getUid())) {
-					gradeAndCourse.getCourse().setAcademy(urpCourseSpider.getAcademyId(gradeAndCourse.getCourse().getUid()));
-					saveCourse(gradeAndCourse.getCourse());
+                    int academyId = urpCourseSpider.getAcademyId(gradeAndCourse.getCourse().getUid());
+                    gradeAndCourse.getCourse().setAcademy(Academy.getAcademyByCode(academyId));
+                    saveCourse(gradeAndCourse.getCourse());
 				}
 				if (gradeMapper.ifExistGrade(gradeAndCourse.getGrade().getAccount(),gradeAndCourse.getGrade().getCourseId())==0){
 					saveGrade(account,gradeAndCourse.getGrade(),gradeAndCourse.getCourse());
