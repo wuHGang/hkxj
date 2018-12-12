@@ -1,5 +1,7 @@
 package cn.hkxj.platform.spider;
 
+import cn.hkxj.platform.exceptions.DataNotFoundException;
+import cn.hkxj.platform.exceptions.FormNotFillException;
 import cn.hkxj.platform.exceptions.PasswordUncorrectException;
 import cn.hkxj.platform.pojo.AllGradeAndCourse;
 import cn.hkxj.platform.pojo.Course;
@@ -70,8 +72,11 @@ public class AppSpider {
 
 	private static Splitter SPLITTER = Splitter.on('*').trimResults().omitEmptyStrings();
 	private static Pattern FIND_NUM = Pattern.compile("[^0-9]");
+
 	private static int PASSWORD_ERROR = 2002;
     private static int SUCCESS = 200;
+    private static int FORM_NOT_FILL = 4001;
+    private static int NO_DATA = 204;
 
 	public AppSpider(int account) {
 		this.account = account;
@@ -251,6 +256,14 @@ public class AppSpider {
 		if (state == PASSWORD_ERROR) {
 			throw new PasswordUncorrectException();
 		}
+
+        if (state == FORM_NOT_FILL) {
+            throw new FormNotFillException(account);
+        }
+
+        if (state == NO_DATA) {
+            throw new DataNotFoundException(account);
+        }
 
 		if (state != SUCCESS) {
 			String msg = (String) resultMap.get("message");
