@@ -1,8 +1,8 @@
 package cn.hkxj.platform.handler;
 
 import cn.hkxj.platform.pojo.Academy;
-import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
+import org.apache.ibatis.type.TypeHandler;
 
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
@@ -13,39 +13,40 @@ import java.sql.SQLException;
  * @author junrong.chen
  * @date 2018/11/28
  */
-public class AcademyHandler extends BaseTypeHandler<Academy> {
+public class AcademyHandler implements TypeHandler<Academy> {
+
     @Override
-    public void setNonNullParameter(PreparedStatement preparedStatement, int i, Academy academy, JdbcType jdbcType) throws SQLException {
+    public void setParameter(PreparedStatement preparedStatement, int i, Academy academy, JdbcType jdbcType) throws SQLException {
         preparedStatement.setInt(i, academy.getAcademyCode());
     }
 
     @Override
-    public Academy getNullableResult(ResultSet resultSet, String s) throws SQLException {
+    public Academy getResult(ResultSet resultSet, String columnName) throws SQLException {
         if (resultSet.wasNull()) {
             return null;
         } else {
             // 根据数据库中的code值
-            return Academy.getAcademyByCode(resultSet.getInt(s));
+            return Academy.getAcademyByCode(resultSet.getInt(columnName));
         }
     }
 
     @Override
-    public Academy getNullableResult(ResultSet resultSet, int i) throws SQLException {
+    public Academy getResult(ResultSet resultSet, int columnIndex) throws SQLException {
         if (resultSet.wasNull()) {
             return null;
         } else {
             // 根据数据库中的code值
-            return Academy.getAcademyByCode(resultSet.getInt(i));
+            return Academy.getAcademyByCode(resultSet.getInt(columnIndex));
         }
     }
 
     @Override
-    public Academy getNullableResult(CallableStatement callableStatement, int i) throws SQLException {
+    public Academy getResult(CallableStatement callableStatement, int columnIndex) throws SQLException {
         if (callableStatement.wasNull()) {
             return null;
         } else {
             // 根据数据库中的code值
-            return Academy.getAcademyByCode(callableStatement.getInt(i));
+            return Academy.getAcademyByCode(callableStatement.getInt(columnIndex));
         }
     }
 }

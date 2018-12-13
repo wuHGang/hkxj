@@ -4,25 +4,22 @@ import com.google.common.base.MoreObjects;
 
 import java.util.Date;
 
-/**
- * @author junrong.chen
- */
 public class Course {
-    private int id;
+    private Integer id;
 
     private String uid;
 
     private String name;
 
-    private int academy;
+    private Academy academy;
 
-    private int credit;
+    private Integer credit;
 
     private CourseType type;
 
     private Date gmtCreate;
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
@@ -46,11 +43,11 @@ public class Course {
         this.name = name == null ? null : name.trim();
     }
 
-    public int getAcademy() {
+    public Academy getAcademy() {
         return academy;
     }
 
-    public void setAcademy(Integer academy) {
+    public void setAcademy(Academy academy) {
         this.academy = academy;
     }
 
@@ -84,10 +81,10 @@ public class Course {
                 .add("id", id)
                 .add("uid", uid)
                 .add("name", name)
+                .add("academy", academy)
                 .add("credit", credit)
                 .add("type", type)
                 .add("gmtCreate", gmtCreate)
                 .toString();
     }
-
 }

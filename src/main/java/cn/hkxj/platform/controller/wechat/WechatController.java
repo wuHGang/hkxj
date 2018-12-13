@@ -108,7 +108,7 @@ public class WechatController {
 
 			out = outMessage.toEncryptedXml(this.wxService.getWxMpConfigStorage());
 		}
-		log.debug(out);
+        log.info("wechat message out {}", out);
 
 		return out;
 	}

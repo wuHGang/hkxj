@@ -9,7 +9,6 @@ import cn.hkxj.platform.spider.AppSpider;
 import cn.hkxj.platform.utils.SchoolTimeUtil;
 import com.google.common.base.Splitter;
 import org.joda.time.DateTime;
-import org.joda.time.LocalTime;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

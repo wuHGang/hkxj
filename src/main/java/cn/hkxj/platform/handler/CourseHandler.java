@@ -2,17 +2,10 @@ package cn.hkxj.platform.handler;
 
 import cn.hkxj.platform.mapper.CourseMapper;
 import cn.hkxj.platform.pojo.Course;
-import cn.hkxj.platform.pojo.CourseType;
-import cn.hkxj.platform.pojo.Room;
 import cn.hkxj.platform.utils.ApplicationUtil;
-import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
-import org.apache.ibatis.type.MappedJdbcTypes;
-import org.apache.ibatis.type.MappedTypes;
 import org.apache.ibatis.type.TypeHandler;
-import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
