@@ -28,9 +28,9 @@ public class StudentMapperTest {
 
 	@Test
 	public void insertByStudent() throws PasswordUncorrectException, ReadTimeoutException {
-        UrpSpider urpSpider = new UrpSpider("2017025971", "1");
+        UrpSpider urpSpider = new UrpSpider(2017025971, "1");
 
-        studentMapper.insert(urpSpider.getInformation());
+//        studentMapper.insert(urpSpider.getInformation());
 	}
 
 	@Test

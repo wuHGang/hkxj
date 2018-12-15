@@ -8,7 +8,7 @@ import cn.hkxj.platform.mapper.StudentMapper;
 import cn.hkxj.platform.pojo.Openid;
 import cn.hkxj.platform.pojo.OpenidExample;
 import cn.hkxj.platform.pojo.Student;
-import cn.hkxj.platform.spider.UrpSpider;
+import cn.hkxj.platform.service.UrpSpiderService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +27,8 @@ public class StudentBindService {
     private StudentMapper studentMapper;
     @Resource
     private OpenidMapper openidMapper;
+    @Resource
+    private UrpSpiderService urpSpiderService;
 
 	/**
 	 * 学号与微信公众平台openID关联
@@ -88,9 +90,8 @@ public class StudentBindService {
 
     private Student getStudentBySpider(String account, String password) throws PasswordUncorrectException, ReadTimeoutException {
 		log.info("urpSpider start");
-        UrpSpider urpSpider = new UrpSpider(account, password);
 
-        return urpSpider.getInformation();
+        return urpSpiderService.getInformation(Integer.parseInt(account), password);
     }
 
     private Student getStudentByDB(int account) {

@@ -92,6 +92,15 @@ public enum Academy {
         throw new IllegalArgumentException("illegal academy simple name: "+simpleName);
     }
 
+    public static Academy getAcademyByName(String academyName) {
+        for (Academy academy : Academy.values()) {
+            if (Objects.equals(academy.getAcademyName(), academyName)) {
+                return academy;
+            }
+        }
+        throw new IllegalArgumentException("illegal academy name: " + academyName);
+    }
+
     public String getAcademyName() {
         return academyName;
     }
