@@ -71,8 +71,9 @@ public class GradeMessageHandler implements WxMpMessageHandler {
                     buffer.append("|").append(gradeAndCourse.getGrade().getYear()).append("学年，第").append(gradeAndCourse.getGrade().getTerm()).append("学期|\n");
                     buffer.append("- - - - - - - - - - - - - -\n\n");
                 }
+                int grade = gradeAndCourse.getGrade().getScore();
                 buffer.append("考试名称：").append(gradeAndCourse.getCourse().getName()).append("\n")
-                        .append("成绩：").append(gradeAndCourse.getGrade().getScore() / 10).append("   学分：")
+                        .append("成绩：").append(grade == -1 ? "" : grade / 10).append("   学分：")
                         .append(gradeAndCourse.getGrade().getPoint() / 10).append("\n\n");
             }
         }

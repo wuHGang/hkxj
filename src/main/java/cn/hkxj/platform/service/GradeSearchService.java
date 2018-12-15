@@ -63,6 +63,9 @@ public class GradeSearchService {
                 course.setAcademy(urpCourseSpider.getAcademyId(uid));
                 courseMapper.insert(course);
             }
+            if (grade.getScore() == -1) {
+                continue;
+            }
             if (gradeMapper.ifExistGrade(student.getAccount(), grade.getCourseId()) == 0) {
                 courseMapper.insertStudentAndCourse(student.getAccount(), uid);
                 gradeMapper.insert(grade);
