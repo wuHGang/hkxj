@@ -45,8 +45,8 @@ public class GradeAutoUpdateTask {
         Student student = ACCOUNT_QUEUE.poll();
         while (Objects.nonNull(student)) {
             try {
-                AllGradeAndCourse gradeAndCourse = appSpiderService.getGradeAndCourseByAccount(student.getAccount());
-                gradeSearchService.saveGradeAndCourse(student, gradeAndCourse);
+                AllGradeAndCourse gradeAndCourset = appSpiderService.getGradeAndCourseByAccount(student.getAccount());
+                gradeSearchService.saveGradeAndCourse(student, gradeAndCourset.getCurrentTermGrade());
             } catch (PasswordUncorrectException e) {
                 log.error("account{} app spider password error", student.getAccount());
             } catch (Exception e) {

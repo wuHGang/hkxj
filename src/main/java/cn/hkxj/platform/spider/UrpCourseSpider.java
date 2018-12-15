@@ -42,18 +42,15 @@ public class UrpCourseSpider {
         this.password = password;
     }
 
-    public int getAcademyId(String uid) {
-        int academyId=0;
+    public Academy getAcademyId(String uid) {
         Pattern pattern = Pattern.compile(academyRgex);
         Matcher matcher = pattern.matcher(getCourseResult(uid));
-        while (matcher.find()) {
+        if (matcher.find()) {
             String a=StringUtils.substringBetween(matcher.group(),"</td><tdwidth=\"3\"></td><td>","</td>");
-            academyId=Academy.getAcademyCodeByName(a);
+            return Academy.getAcademyByName(a);
         }
-        if(academyId==0){
-            log.error("no course information found");
-        }
-        return academyId;
+        log.error("course uid:{} can`t find academy", uid);
+        throw new IllegalArgumentException("can`t find academy uid: " + uid);
     }
 
     private String getCourseResult(String uid) {

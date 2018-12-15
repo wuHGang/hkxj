@@ -1,7 +1,9 @@
 package cn.hkxj.platform.service;
 
 import cn.hkxj.platform.exceptions.PasswordUncorrectException;
+import cn.hkxj.platform.pojo.GradeAndCourse;
 import cn.hkxj.platform.pojo.Student;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,6 +16,7 @@ import javax.annotation.Resource;
  * @author JR Chan
  * @date 2018/12/15
  */
+@Slf4j
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class UrpSpiderServiceTest {
@@ -38,6 +41,9 @@ public class UrpSpiderServiceTest {
     @Test
     public void getCurrentGrade() throws PasswordUncorrectException {
 
-        urpSpiderService.getCurrentGrade(student);
+        for (GradeAndCourse gradeAndCourse : urpSpiderService.getCurrentGrade(student)) {
+            log.info(gradeAndCourse.toString());
+        }
+        ;
     }
 }

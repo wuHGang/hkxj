@@ -2,6 +2,7 @@ package cn.hkxj.platform.service.wechat.handler.messageHandler;
 
 import cn.hkxj.platform.builder.TextBuilder;
 import cn.hkxj.platform.pojo.AllGradeAndCourse;
+import cn.hkxj.platform.pojo.GradeAndCourse;
 import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.service.GradeSearchService;
 import cn.hkxj.platform.service.OpenIdService;
@@ -40,7 +41,7 @@ public class GradeMessageHandler implements WxMpMessageHandler {
 									WxSessionManager wxSessionManager) throws WxErrorException {
 		try {
             Student student = openIdService.getStudentByOpenId(wxMpXmlMessage.getFromUser());
-            List<AllGradeAndCourse.GradeAndCourse> currentTermGrade = gradeSearchService.getCurrentTermGrade(student);
+            List<GradeAndCourse> currentTermGrade = gradeSearchService.getCurrentTermGrade(student);
             String gradesMsg = GradeListToText(currentTermGrade);
             return textBuilder.build(gradesMsg, wxMpXmlMessage, wxMpService);
 		} catch (Exception e) {
@@ -55,7 +56,7 @@ public class GradeMessageHandler implements WxMpMessageHandler {
      *
      * @param studentGrades 学生全部成绩
      */
-    public String GradeListToText(List<AllGradeAndCourse.GradeAndCourse> studentGrades) {
+    public String GradeListToText(List<GradeAndCourse> studentGrades) {
         StringBuffer buffer = new StringBuffer();
         boolean i = true;
         if (studentGrades.size() == 0) {
@@ -63,7 +64,7 @@ public class GradeMessageHandler implements WxMpMessageHandler {
         } else {
             AllGradeAndCourse allGradeAndCourse = new AllGradeAndCourse();
             allGradeAndCourse.addGradeAndCourse(studentGrades);
-            for (AllGradeAndCourse.GradeAndCourse gradeAndCourse : allGradeAndCourse.getCurrentTermGrade()) {
+            for (GradeAndCourse gradeAndCourse : allGradeAndCourse.getCurrentTermGrade()) {
                 if (i) {
                     i = false;
                     buffer.append("- - - - - - - - - - - - - -\n");

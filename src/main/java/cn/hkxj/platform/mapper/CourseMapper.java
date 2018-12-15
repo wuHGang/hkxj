@@ -30,7 +30,7 @@ public interface CourseMapper {
 
     List<Course> getAllCourses(@Param("ids") List<Integer> ids);
 
-    String selectNameByUid(String uid);
+    List<Course> selectNameByUid(String uid);
 
     boolean ifExistCourse(String uid);
 

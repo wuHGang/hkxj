@@ -1,12 +1,12 @@
 package cn.hkxj.platform.service;
 
 import cn.hkxj.platform.exceptions.PasswordUncorrectException;
+import cn.hkxj.platform.exceptions.SpiderException;
 import cn.hkxj.platform.mapper.CourseMapper;
 import cn.hkxj.platform.mapper.GradeMapper;
-import cn.hkxj.platform.pojo.Academy;
-import cn.hkxj.platform.pojo.AllGradeAndCourse;
 import cn.hkxj.platform.pojo.Course;
 import cn.hkxj.platform.pojo.Grade;
+import cn.hkxj.platform.pojo.GradeAndCourse;
 import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.spider.AppSpider;
 import cn.hkxj.platform.spider.UrpCourseSpider;
@@ -30,6 +30,8 @@ public class GradeSearchService {
 	private CourseMapper courseMapper;
 	@Resource
 	private GradeMapper gradeMapper;
+    @Resource
+    private UrpSpiderService urpSpiderService;
 
 
 	/**
@@ -37,13 +39,13 @@ public class GradeSearchService {
      * @param student 学生账户
 	 * @return gradeAndCoourseList 学生的全部成绩
 	 */
-    public AllGradeAndCourse getAllGradeList(Student student) {
+    public List<GradeAndCourse> getAllGradeList(Student student) {
         // 先查这个学生有美誉成绩 有的话返回  没有的话走爬虫;
 
-        AllGradeAndCourse gradeAndCourseList = getGradeFromSpider(student);
+        List<GradeAndCourse> gradeFromSpider = getGradeFromSpider(student);
         ExecutorService singleThreadPool = Executors.newSingleThreadExecutor();
-        singleThreadPool.execute(() -> saveGradeAndCourse(student, gradeAndCourseList));
-        return gradeAndCourseList;
+        singleThreadPool.execute(() -> saveGradeAndCourse(student, gradeFromSpider));
+        return gradeFromSpider;
 	}
 
 	/**
@@ -51,14 +53,14 @@ public class GradeSearchService {
      * @param student 学生账户
      * @param gradeAndCourseList 学生的全部成绩
 	 */
-    public void saveGradeAndCourse(Student student, AllGradeAndCourse gradeAndCourseList) {
+    public void saveGradeAndCourse(Student student, List<GradeAndCourse> gradeAndCourseList) {
         UrpCourseSpider urpCourseSpider = new UrpCourseSpider(student.getAccount(), student.getPassword());
-        for (AllGradeAndCourse.GradeAndCourse gradeAndCourse : gradeAndCourseList.getCurrentTermGrade()) {
+        for (GradeAndCourse gradeAndCourse : gradeAndCourseList) {
             Course course = gradeAndCourse.getCourse();
             Grade grade = gradeAndCourse.getGrade();
             String uid = course.getUid();
             if (!courseMapper.ifExistCourse(uid)) {
-                course.setAcademy(Academy.getAcademyByCode(urpCourseSpider.getAcademyId(uid)));
+                course.setAcademy(urpCourseSpider.getAcademyId(uid));
                 courseMapper.insert(course);
             }
             if (gradeMapper.ifExistGrade(student.getAccount(), grade.getCourseId()) == 0) {
@@ -73,10 +75,10 @@ public class GradeSearchService {
 	 * 同时启用一个新线程进行成绩保存
      * @param student 学生的全部成绩与课程
 	 */
-    public List<AllGradeAndCourse.GradeAndCourse> getCurrentTermGrade(Student student) {
-        AllGradeAndCourse allGradeList = getAllGradeList(student);
-		List<AllGradeAndCourse.GradeAndCourse> studentGrades=new ArrayList<>();
-        for (AllGradeAndCourse.GradeAndCourse gradeAndCourse : allGradeList.getCurrentTermGrade()) {
+    public List<GradeAndCourse> getCurrentTermGrade(Student student) {
+        List<GradeAndCourse> allGradeList = getAllGradeList(student);
+        List<GradeAndCourse> studentGrades = new ArrayList<>();
+        for (GradeAndCourse gradeAndCourse : allGradeList) {
 			if(gradeAndCourse.getGrade().getYear()==2018){
 				studentGrades.add(gradeAndCourse);
 			}
@@ -84,17 +86,18 @@ public class GradeSearchService {
 		return studentGrades;
 	}
 
-    private AllGradeAndCourse getGradeFromSpider(Student student) {
+    private List<GradeAndCourse> getGradeFromSpider(Student student) {
         AppSpider appSpider = new AppSpider(student.getAccount());
         try {
             appSpider.getToken();
-            return appSpider.getGradeAndCourse();
-        } catch (PasswordUncorrectException e) {
-            log.error("error password");
+            return appSpider.getGradeAndCourse().getCurrentTermGrade();
+        } catch (PasswordUncorrectException | SpiderException e) {
+            log.error("account {} app spider error {}", student.getAccount(), e.getMessage());
+            return urpSpiderService.getCurrentGrade(student);
         } catch (IllegalArgumentException e) {
             log.error(e.getMessage(), e);
         }
-        return new AllGradeAndCourse();
+        return new ArrayList<>();
     }
 
 }
