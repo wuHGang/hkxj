@@ -3,6 +3,7 @@ package cn.hkxj.platform.service;
 import cn.hkxj.platform.exceptions.PasswordUncorrectException;
 import cn.hkxj.platform.mapper.CourseMapper;
 import cn.hkxj.platform.mapper.GradeMapper;
+import cn.hkxj.platform.pojo.Academy;
 import cn.hkxj.platform.pojo.AllGradeAndCourse;
 import cn.hkxj.platform.pojo.Course;
 import cn.hkxj.platform.pojo.Grade;
@@ -57,7 +58,7 @@ public class GradeSearchService {
             Grade grade = gradeAndCourse.getGrade();
             String uid = course.getUid();
             if (!courseMapper.ifExistCourse(uid)) {
-                course.setAcademy(urpCourseSpider.getAcademyId(uid));
+                course.setAcademy(Academy.getAcademyByCode(urpCourseSpider.getAcademyId(uid)));
                 courseMapper.insert(course);
             }
             if (gradeMapper.ifExistGrade(student.getAccount(), grade.getCourseId()) == 0) {
