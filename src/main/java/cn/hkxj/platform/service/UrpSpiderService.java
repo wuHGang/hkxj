@@ -115,8 +115,7 @@ public class UrpSpiderService {
         Object scoreObject = gradeMap.get("grade");
         if (Objects.nonNull(scoreObject)) {
             grade.setScore(TypeUtil.gradeToInt(scoreObject.toString()));
-        }
-        {
+        } else {
             grade.setScore(-1);
         }
         grade.setTerm((byte) 1);
