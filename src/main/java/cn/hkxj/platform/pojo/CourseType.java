@@ -55,6 +55,8 @@ public enum CourseType {
 
     public static CourseType getCourseByByte(int code) {
 		switch (code){
+            case 0:
+                return UNKNOWN;
             case 1:
 				return OBLIGATORY;
             case 2:

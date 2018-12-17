@@ -1,6 +1,7 @@
 package cn.hkxj.platform.pojo;
 
 import com.google.common.base.MoreObjects;
+import com.google.common.base.Objects;
 
 import java.util.Date;
 
@@ -99,4 +100,25 @@ public class Grade {
 				.add("gmtCreate", gmtCreate)
 				.toString();
 	}
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Grade that = (Grade) o;
+
+        return Objects.equal(this.account, that.account) &&
+                Objects.equal(this.year, that.year) &&
+                Objects.equal(this.courseId, that.courseId) &&
+                Objects.equal(this.term, that.term) &&
+                Objects.equal(this.score, that.score) &&
+                Objects.equal(this.point, that.point);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(account, year, term, score,
+                point, courseId);
+    }
 }

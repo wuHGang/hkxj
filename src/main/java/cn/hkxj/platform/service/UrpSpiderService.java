@@ -16,6 +16,7 @@ import cn.hkxj.platform.spider.UrpSpider;
 import cn.hkxj.platform.utils.TypeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -23,7 +24,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * @author JR Chan
@@ -66,6 +66,9 @@ public class UrpSpiderService {
             log.error("account {} urp password error", student.getAccount());
             student.setIsCorrect(false);
             studentMapper.updateByPrimaryKey(student);
+            return new ArrayList<>();
+        } catch (Exception e) {
+            log.error("account {} urp error {}", student.getAccount(), e);
             return new ArrayList<>();
         }
         Map gradeResultMap = (Map) resultMap.get("garde");
@@ -112,9 +115,9 @@ public class UrpSpiderService {
         // TODO  爬虫还需要爬去相关的成绩的学期和学年  现在直接写死在程序里面
         Grade grade = new Grade();
         grade.setPoint(TypeUtil.pointToInt(Double.parseDouble(gradeMap.get("credit").toString())));
-        Object scoreObject = gradeMap.get("grade");
-        if (Objects.nonNull(scoreObject)) {
-            grade.setScore(TypeUtil.gradeToInt(scoreObject.toString()));
+        String scoreObject = (String) gradeMap.get("grade");
+        if (StringUtils.isNotEmpty(scoreObject)) {
+            grade.setScore(TypeUtil.gradeToInt(scoreObject));
         } else {
             grade.setScore(-1);
         }
