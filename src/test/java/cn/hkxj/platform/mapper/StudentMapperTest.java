@@ -22,15 +22,15 @@ public class StudentMapperTest {
 
 	@Test
 	public void selectByAccount() {
-		Student student = studentMapper.selectByAccount(2014025838);
+        Student student = studentMapper.selectByAccount(2017025971);
 		log.info(student.toString());
 	}
 
 	@Test
 	public void insertByStudent() throws PasswordUncorrectException, ReadTimeoutException {
-        UrpSpider urpSpider = new UrpSpider("2017025971", "1");
+        UrpSpider urpSpider = new UrpSpider(2017025971, "1");
 
-        studentMapper.insert(urpSpider.getInformation());
+//        studentMapper.insert(urpSpider.getInformation());
 	}
 
 	@Test

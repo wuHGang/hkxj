@@ -48,7 +48,7 @@ public class ExamMessageHandler extends AbstractHandler {
                 content = examListToText(examTimeTables);
             }
         } catch (Exception e){
-            log.error(e.getMessage(), e);
+            log.error("account:{}  get exam message error", e);
             content = DATA_NOT_FOUND;
         }
 

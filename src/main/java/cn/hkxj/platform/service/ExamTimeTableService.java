@@ -12,6 +12,8 @@ import org.springframework.util.CollectionUtils;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * @author junrong.chen
@@ -22,14 +24,13 @@ import java.util.List;
 public class ExamTimeTableService {
     @Resource
     private AppSpiderService appSpiderService;
-
     @Resource
     private ExamTimeTableMapper examTimeTableMapper;
 
 
     public List<ExamTimeTable> getExamTimeTableByStudent(Student student) {
-        Integer classId = student.getClasses().getId();
-        List<Integer> timeTableIdList = examTimeTableMapper.selectExamIdIdByClassId(classId);
+        int id = student.getClasses().getId();
+        List<Integer> timeTableIdList = examTimeTableMapper.selectExamIdIdByClassId(id);
         if(timeTableIdList.size() == 0){
             ArrayList<ExamTimeTable> examList;
             try {
@@ -41,7 +42,9 @@ public class ExamTimeTableService {
                 return examList;
             }
 
-            saveExamTimeTask(classId, examList);
+            ExecutorService executorService = Executors.newSingleThreadExecutor();
+            ArrayList<ExamTimeTable> finalExamList = examList;
+            executorService.execute(() -> saveExamTimeTask(id, finalExamList));
             return examList;
         }
         else {
@@ -57,9 +60,8 @@ public class ExamTimeTableService {
      * @param classId
      * @param examTimeTableList
      */
-
     private void saveExamTimeTask(int classId, List<ExamTimeTable> examTimeTableList){
-        log.info("task run");
+        log.info("save exam timetable task run， class id{}", classId);
         ArrayList<Integer> examIdList = new ArrayList<>();
         for (ExamTimeTable examTimeTable : examTimeTableList) {
             examTimeTableMapper.insert(examTimeTable);

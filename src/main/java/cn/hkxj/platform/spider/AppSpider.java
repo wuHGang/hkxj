@@ -7,6 +7,7 @@ import cn.hkxj.platform.pojo.AllGradeAndCourse;
 import cn.hkxj.platform.pojo.Course;
 import cn.hkxj.platform.pojo.CourseType;
 import cn.hkxj.platform.pojo.Grade;
+import cn.hkxj.platform.pojo.GradeAndCourse;
 import cn.hkxj.platform.utils.ReadProperties;
 import cn.hkxj.platform.utils.TypeUtil;
 import com.google.common.base.Splitter;
@@ -125,8 +126,6 @@ public class AppSpider {
 		String url = GRADE + "?token=" + token;
 		Map data = getData(url);
 
-		new AppGradeResult((ArrayList) data.get("data"));
-
 		return (ArrayList) data.get("data");
 	}
 
@@ -156,7 +155,7 @@ public class AppSpider {
 			ArrayList<Map> items = (ArrayList) itemMap.get("items");
 			String xn = itemMap.get("xn").toString();
 			String xq = itemMap.get("xq").toString();
-			ArrayList<AllGradeAndCourse.GradeAndCourse> gradeAndCourseList = new ArrayList<>();
+            ArrayList<GradeAndCourse> gradeAndCourseList = new ArrayList<>();
 			for (Map detail : items) {
 
 				String uid = detail.get("kcdm").toString();
@@ -167,7 +166,7 @@ public class AppSpider {
 
 				Grade grade = getGrade(uid, cj, xf, xq, xn);
 				Course course = getCourse(uid, name, type, xf);
-				AllGradeAndCourse.GradeAndCourse gradeAndCourse = new AllGradeAndCourse.GradeAndCourse();
+                GradeAndCourse gradeAndCourse = new GradeAndCourse();
 				gradeAndCourse.setCourse(course);
 				gradeAndCourse.setGrade(grade);
 				gradeAndCourseList.add(gradeAndCourse);

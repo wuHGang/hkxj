@@ -2,6 +2,7 @@ package cn.hkxj.platform.pojo;
 
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * 课程类型
@@ -10,6 +11,10 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public enum CourseType {
+    /**
+     * 未知  可以手动维护
+     */
+    UNKNOWN(0, "未知"),
 	/**
 	 * 必修
 	 */
@@ -32,6 +37,9 @@ public enum CourseType {
 	}
 
 	public static CourseType getCourseByType(String type){
+        if (StringUtils.isEmpty(type)) {
+            return CourseType.UNKNOWN;
+        }
 		switch (type){
 			case "必修":
 				return OBLIGATORY;

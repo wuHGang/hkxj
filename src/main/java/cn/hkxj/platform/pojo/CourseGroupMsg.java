@@ -2,6 +2,7 @@ package cn.hkxj.platform.pojo;
 
 import lombok.Data;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
@@ -21,14 +22,15 @@ public class CourseGroupMsg {
     public String getCourseContent(){
         if(!Objects.equals(courseTimeTables, null)){
             StringBuffer buffer = new StringBuffer();
-            CourseTimeTable arr[] = new CourseTimeTable[10];
-            courseTimeTables.forEach(courseTimeTable -> {
-                arr[courseTimeTable.getOrder() / 2] = courseTimeTable;
-            });
-            for(int i = 0; i < 4; i++){
-                if(!Objects.equals(arr[i], null)){
-                    buffer.append("第").append(arr[i].getOrder()).append("节")
-                            .append("\n").append(arr[i].getCourseObject().getName()).append("  ").append(arr[i].getRoom().getName())
+//            CourseTimeTable arr[] = new CourseTimeTable[10];
+//            courseTimeTables.forEach(courseTimeTable -> {
+//                arr[courseTimeTable.getOrder() / 2] = courseTimeTable;
+//            });
+            courseTimeTables.sort(Comparator.comparing(CourseTimeTable::getOrder));
+            for(CourseTimeTable courseTimeTable : courseTimeTables){
+                if(!Objects.equals(courseTimeTable, null)){
+                    buffer.append("第").append(courseTimeTable.getOrder()).append("节")
+                            .append("\n").append(courseTimeTable.getCourse().getName()).append("  ").append(courseTimeTable.getRoom().getName())
                             .append("\n").append("\n");
                 }
             }

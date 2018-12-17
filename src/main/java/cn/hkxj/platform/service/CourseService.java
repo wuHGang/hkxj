@@ -1,7 +1,6 @@
 package cn.hkxj.platform.service;
 
 import cn.hkxj.platform.pojo.Course;
-import cn.hkxj.platform.pojo.CourseGroupMsg;
 import cn.hkxj.platform.pojo.CourseTimeTable;
 
 import java.util.List;
@@ -20,8 +19,6 @@ public interface CourseService {
     List<CourseTimeTable> getCoursesByAccount(Integer account);
 
     boolean isHaveCourses(Integer account);
-
-    List<CourseGroupMsg> getCoursesSubscribeForCurrentDay();
 
     List<CourseTimeTable> getCoursesCurrentDay(Integer account);
 

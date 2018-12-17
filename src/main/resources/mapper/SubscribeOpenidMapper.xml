@@ -216,6 +216,10 @@
       #{openid.openid}
     </foreach>
   </select>
+  <select id="getOnlySubcribeOpenids" resultType="String">
+    select openid
+    from subscribe_openid
+  </select>
   <select id="getAllSubscribeOpenids" resultType="String">
     select openid
     from subscribe_openid

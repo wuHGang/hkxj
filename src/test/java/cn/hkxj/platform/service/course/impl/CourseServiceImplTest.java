@@ -2,6 +2,8 @@ package cn.hkxj.platform.service.course.impl;
 
 import cn.hkxj.platform.PlatformApplication;
 import cn.hkxj.platform.pojo.CourseGroupMsg;
+import cn.hkxj.platform.service.CourseService;
+import cn.hkxj.platform.service.CourseSubscribeService;
 import cn.hkxj.platform.service.impl.CourseServiceImpl;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,7 +24,9 @@ import java.util.Objects;
 @WebAppConfiguration
 public class CourseServiceImplTest {
     @Autowired
-    private CourseServiceImpl courseService;
+    private CourseSubscribeService courseSubscribeService;
+    @Autowired
+    private CourseService courseService;
 
     @Test
     public void getCoursesByAccount() {
@@ -31,13 +35,17 @@ public class CourseServiceImplTest {
 
     @Test
     public void test(){
-        System.out.println(courseService.getCoursesCurrentDay(2016024279));
+        System.out.println(courseService.getCoursesCurrentDay(2016024170));
         System.out.println(courseService.toText(courseService.getCoursesCurrentDay(2016024170)));
     }
 
     @Test
-    public void getCoursesForCurrentDay()throws Exception{
-        List<CourseGroupMsg> msgList = courseService.getCoursesSubscribeForCurrentDay();
+    public void getCoursesForCurrentDay(){
+        List<CourseGroupMsg> msgList = courseSubscribeService.getCoursesSubscribeForCurrentDay();
+        if(Objects.isNull(msgList)){
+            System.out.println("good!");
+            return;
+        }
         msgList.forEach(msg -> {
 //            .stream().filter(openid -> !Objects.equals(openid, null))
             msg.getOpenIds().forEach(openid -> {

@@ -2,6 +2,7 @@ package cn.hkxj.platform.task;
 
 import cn.hkxj.platform.pojo.CourseGroupMsg;
 import cn.hkxj.platform.service.CourseService;
+import cn.hkxj.platform.service.CourseSubscribeService;
 import cn.hkxj.platform.service.SubscribeService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +26,7 @@ import java.util.Objects;
 @AllArgsConstructor
 public class CourseSubscriptionTask {
 
-    private CourseService courseService;
+    private CourseSubscribeService courseSubscribeService;
     private WxMpService wxMpService;
     private SubscribeService subscribeService;
 
@@ -36,7 +37,7 @@ public class CourseSubscriptionTask {
 
     @Scheduled(cron = "0 0 8 ? * MON-FRI")      //这个cron表达式的意思是星期一到星期五的早上8点执行一次
     public void sendCourseRemindMsg() {
-        List<CourseGroupMsg> courseGroupMsgList = courseService.getCoursesSubscribeForCurrentDay();
+        List<CourseGroupMsg> courseGroupMsgList = courseSubscribeService.getCoursesSubscribeForCurrentDay();
         if (courseGroupMsgList == null) {
             log.error("course daily push get list of CourseGroupMsg size is null");
             return;

@@ -36,4 +36,5 @@ public interface StudentMapper {
     Student selectByAccount(Integer account);
 
     List<Student> getAllStudentsByClassesids(@Param("classesIds") List<Integer> classesIds);
+
 }

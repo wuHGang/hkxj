@@ -2,6 +2,7 @@ package cn.hkxj.platform.service;
 
 import cn.hkxj.platform.exceptions.PasswordUncorrectException;
 import cn.hkxj.platform.mapper.CourseMapper;
+import cn.hkxj.platform.pojo.AllGradeAndCourse;
 import cn.hkxj.platform.pojo.Course;
 import cn.hkxj.platform.pojo.ExamTimeTable;
 import cn.hkxj.platform.pojo.Room;
@@ -46,6 +47,12 @@ public class AppSpiderService {
             examTimeTableArrayList.add(examTimeTable);
         }
         return examTimeTableArrayList;
+    }
+
+    public AllGradeAndCourse getGradeAndCourseByAccount(int account) throws PasswordUncorrectException {
+        AppSpider appSpider = new AppSpider(account);
+        appSpider.getToken();
+        return appSpider.getGradeAndCourse();
     }
 
 
@@ -113,8 +120,4 @@ public class AppSpiderService {
 		return Integer.parseInt(split[0]);
 	}
 
-
-    public static void main(String[] args) {
-//        String[] data = StreamSupport.stream(DATA_SPLITTER.split(times[2]).spliterator(), false).toArray(String[]::new);
-    }
 }

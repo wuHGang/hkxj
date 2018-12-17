@@ -1,12 +1,7 @@
 package cn.hkxj.platform.service.wechat.handler.messageHandler;
 
 import cn.hkxj.platform.builder.TextBuilder;
-import cn.hkxj.platform.pojo.Building;
-import cn.hkxj.platform.pojo.Course;
-import cn.hkxj.platform.pojo.CourseTimeTable;
-import cn.hkxj.platform.pojo.LessonOrder;
-import cn.hkxj.platform.pojo.Room;
-import cn.hkxj.platform.pojo.RoomTimeTable;
+import cn.hkxj.platform.pojo.*;
 import cn.hkxj.platform.service.CourseService;
 import cn.hkxj.platform.service.EmptyRoomService;
 import cn.hkxj.platform.utils.SchoolTimeUtil;
@@ -178,7 +173,7 @@ public class EmptyRoomHandler implements WxMpMessageHandler {
 		}
 		for (CourseTimeTable courseTimeTable : timeTable) {
 
-			Course course = courseService.getCourseById(courseTimeTable.getCourse());
+			Course course = courseService.getCourseById(courseTimeTable.getCourse().getId());
 			if(Objects.isNull(course)){
 				continue;
 			}
