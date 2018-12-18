@@ -35,7 +35,8 @@ public class CourseSubscriptionTask {
     private static final Byte SEND_FAILED = 1;
     private static final String URL = "";
 
-    @Scheduled(cron = "0 0 8 ? * MON-FRI")      //这个cron表达式的意思是星期一到星期五的早上8点执行一次
+//    @Scheduled(cron = "0 0 8 ? * MON-FRI")      //这个cron表达式的意思是星期一到星期五的早上8点执行一次
+    @Scheduled(cron = "0/30 * * * * ?")
     public void sendCourseRemindMsg() {
         List<CourseGroupMsg> courseGroupMsgList = courseSubscribeService.getCoursesSubscribeForCurrentDay();
         if (courseGroupMsgList == null) {

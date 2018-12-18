@@ -2,12 +2,14 @@ package cn.hkxj.platform.utils;
 
 import cn.hkxj.platform.mapper.OpenidMapper;
 import cn.hkxj.platform.pojo.CourseTimeTable;
+import cn.hkxj.platform.pojo.OneOffSubscription;
 import cn.hkxj.platform.pojo.Openid;
 import cn.hkxj.platform.pojo.OpenidExample;
 import cn.hkxj.platform.service.CourseService;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.exception.WxErrorException;
 import me.chanjar.weixin.mp.api.WxMpService;
+import okhttp3.*;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -15,6 +17,7 @@ import javax.annotation.Resource;
 import java.io.*;
 import java.net.*;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Yuki
@@ -82,6 +85,34 @@ public class OneOffSubcriptionUtil {
     }
 
     private static void replyOneOffSubscribeRequest(String sendContent) throws WxErrorException, IOException {
+        OkHttpClient okHttpClient = new OkHttpClient().newBuilder()
+                .connectTimeout(10, TimeUnit.SECONDS)
+                .writeTimeout(10, TimeUnit.SECONDS)
+                .readTimeout(20, TimeUnit.SECONDS)
+                .build();
+
+        OneOffSubscription oneOffSubscription = new OneOffSubscription.Builder("123123", "1005", "今日课表")
+                .data("今日课表")
+                .build();
+
+        RequestBody requestBody = FormBody.create(MediaType.parse("appliaction/json;charset=UTF-8"), JsonUtils.wxToJson(oneOffSubscription));
+
+        Request request = new Request.Builder()
+                .url(getReplyUrl())
+                .post(requestBody)
+                .build();
+        Call call = okHttpClient.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                log.error("while send post message some error has been happened");
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                System.out.println(response.body().string());
+            }
+        });
         //建立链接
         URL url = new URL(getReplyUrl());
         HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
