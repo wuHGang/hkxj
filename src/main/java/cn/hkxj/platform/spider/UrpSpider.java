@@ -2,7 +2,6 @@ package cn.hkxj.platform.spider;
 
 import cn.hkxj.platform.exceptions.PasswordUncorrectException;
 import cn.hkxj.platform.exceptions.ReadTimeoutException;
-import cn.hkxj.platform.pojo.Student;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
@@ -11,10 +10,8 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import org.apache.commons.beanutils.BeanUtils;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -23,7 +20,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class UrpSpider {
 	private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-	private String account;
+    private int account;
 	private String password;
 	private final static Gson GSON = new Gson();
 	private static final String INFORMATION_URL = "http://spider.hackerda.com/information";
@@ -34,59 +31,51 @@ public class UrpSpider {
 			.connectTimeout(15, TimeUnit.SECONDS)
 			.build();
 
-	public UrpSpider(String account, String password) {
+    public UrpSpider(int account, String password) {
 		this.account = account;
 		this.password = password;
 	}
 
-	public Student getInformation() throws PasswordUncorrectException, ReadTimeoutException {
+    public Map getInformation() throws PasswordUncorrectException, ReadTimeoutException {
 		Map result;
-		try {
-			log.info("urp spider start get student info account{}", this.account);
-			result = getResult(INFORMATION_URL);
-		} catch (IOException e) {
-			log.error("read spider server timeout");
-			throw new ReadTimeoutException("本地服务器读取超时", e);
-		}
+        log.info("urp spider start get student info account{}", this.account);
+        result = getResult(INFORMATION_URL);
 
-		Object information = result.get("information");
+        Object information = result.get("information");
 		if (Objects.isNull(information)){
 			log.info("read school server timeout account{}", this.account);
 			throw new ReadTimeoutException("学校服务器读取超时");
 		}
 
-		Student student = new Student();
-		try {
-			BeanUtils.populate(student, (Map)information);
-		} catch (IllegalAccessException | InvocationTargetException e) {
-			log.error(e.getMessage());
-			throw new RuntimeException("个人信息json解析出错", e);
-		}
+        return (Map) information;
+    }
 
-		return student;
-	}
-
-	public Map getGrade() throws IOException, PasswordUncorrectException {
+    public Map getGrade() throws PasswordUncorrectException {
 		return getResult(GRADE_URL);
 	}
 
-	public void getCurrentGrade() throws IOException, PasswordUncorrectException {
-		Map result = getResult(CURRENT_GRADE_URL);
-	}
+    public Map getCurrentGrade() throws PasswordUncorrectException {
+        return getResult(CURRENT_GRADE_URL);
+    }
 
-	public void getEverGrade() throws IOException, PasswordUncorrectException {
+    public void getEverGrade() throws PasswordUncorrectException {
 		Map result = getResult(EVER_GRADE_URL);
 	}
 
-	private Map getResult(String url) throws IOException, PasswordUncorrectException {
+    private Map getResult(String url) throws PasswordUncorrectException {
 		RequestBody requestBody = getRequestBody();
 		Request request = new Request.Builder()
 				.url(url)
 				.post(requestBody)
 				.build();
-		Response response = client.newCall(request).execute();
-
-		String result = response.body().string();
+        String result;
+        try {
+            Response response = client.newCall(request).execute();
+            result = response.body().string();
+        } catch (IOException e) {
+            log.error("urp spider execute error {}", e.getMessage());
+            throw new RuntimeException(e);
+        }
 
 		log.debug(result);
 
@@ -105,7 +94,7 @@ public class UrpSpider {
 
 	private RequestBody getRequestBody() {
 		HashMap<String, String> postData = Maps.newHashMapWithExpectedSize(2);
-		postData.put("account", account);
+        postData.put("account", String.valueOf(account));
 		postData.put("password", password);
 		String json = GSON.toJson(postData);
 

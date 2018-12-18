@@ -1,15 +1,12 @@
 package cn.hkxj.platform.mapper;
 
 import cn.hkxj.platform.pojo.Course;
+import cn.hkxj.platform.pojo.CourseExample;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-
-/**
- * @author junrong.chen
- */
 @Mapper
 @Repository
 public interface CourseMapper {
@@ -18,6 +15,8 @@ public interface CourseMapper {
     int insert(Course record);
 
     int insertSelective(Course record);
+
+    List<Course> selectByExample(CourseExample example);
 
     Course selectByPrimaryKey(Integer id);
 
@@ -31,7 +30,7 @@ public interface CourseMapper {
 
     List<Course> getAllCourses(@Param("ids") List<Integer> ids);
 
-    String selectNameByUid(String uid);
+    List<Course> selectNameByUid(String uid);
 
     boolean ifExistCourse(String uid);
 

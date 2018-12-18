@@ -2,6 +2,7 @@ package cn.hkxj.platform.pojo;
 
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * 课程类型
@@ -10,28 +11,35 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public enum CourseType {
+    /**
+     * 未知  可以手动维护
+     */
+    UNKNOWN(0, "未知"),
 	/**
 	 * 必修
 	 */
-	OBLIGATORY((byte) 1, "必修"),
+    OBLIGATORY(1, "必修"),
 	/**
 	 * 选修
 	 */
-	ELECTIVE((byte) 2, "选修"),
+    ELECTIVE(2, "选修"),
 	/**
 	 * 任选
 	 */
-	OPTIONAL((byte) 3, "任选");
+    OPTIONAL(3, "任选");
 
-	byte code;
+    Integer code;
 	String type;
 
-	CourseType(byte code, String type) {
+    CourseType(Integer code, String type) {
 		this.code = code;
 		this.type = type;
 	}
 
 	public static CourseType getCourseByType(String type){
+        if (StringUtils.isEmpty(type)) {
+            return CourseType.UNKNOWN;
+        }
 		switch (type){
 			case "必修":
 				return OBLIGATORY;
@@ -45,13 +53,13 @@ public enum CourseType {
 		}
 	}
 
-	public static CourseType getCourseByByte(byte code){
+    public static CourseType getCourseByByte(int code) {
 		switch (code){
-			case (byte) 1:
+            case 1:
 				return OBLIGATORY;
-			case (byte) 2:
+            case 2:
 				return ELECTIVE;
-			case (byte) 3:
+            case 3:
 				return OPTIONAL;
 			default:
 				log.error("getCourseByByte error type:"+code);
@@ -59,7 +67,7 @@ public enum CourseType {
 		}
 	}
 
-	public byte getByte(){
-		return (byte)this.code;
+    public Integer getByte() {
+        return this.code;
 	}
 }

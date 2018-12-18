@@ -1,10 +1,13 @@
 package cn.hkxj.platform.spider;
 
+import cn.hkxj.platform.exceptions.DataNotFoundException;
+import cn.hkxj.platform.exceptions.FormNotFillException;
 import cn.hkxj.platform.exceptions.PasswordUncorrectException;
 import cn.hkxj.platform.pojo.AllGradeAndCourse;
 import cn.hkxj.platform.pojo.Course;
 import cn.hkxj.platform.pojo.CourseType;
 import cn.hkxj.platform.pojo.Grade;
+import cn.hkxj.platform.pojo.GradeAndCourse;
 import cn.hkxj.platform.utils.ReadProperties;
 import cn.hkxj.platform.utils.TypeUtil;
 import com.google.common.base.Splitter;
@@ -70,8 +73,11 @@ public class AppSpider {
 
 	private static Splitter SPLITTER = Splitter.on('*').trimResults().omitEmptyStrings();
 	private static Pattern FIND_NUM = Pattern.compile("[^0-9]");
+
 	private static int PASSWORD_ERROR = 2002;
     private static int SUCCESS = 200;
+    private static int FORM_NOT_FILL = 4001;
+    private static int NO_DATA = 204;
 
 	public AppSpider(int account) {
 		this.account = account;
@@ -120,8 +126,6 @@ public class AppSpider {
 		String url = GRADE + "?token=" + token;
 		Map data = getData(url);
 
-		new AppGradeResult((ArrayList) data.get("data"));
-
 		return (ArrayList) data.get("data");
 	}
 
@@ -151,7 +155,7 @@ public class AppSpider {
 			ArrayList<Map> items = (ArrayList) itemMap.get("items");
 			String xn = itemMap.get("xn").toString();
 			String xq = itemMap.get("xq").toString();
-			ArrayList<AllGradeAndCourse.GradeAndCourse> gradeAndCourseList = new ArrayList<>();
+            ArrayList<GradeAndCourse> gradeAndCourseList = new ArrayList<>();
 			for (Map detail : items) {
 
 				String uid = detail.get("kcdm").toString();
@@ -162,7 +166,7 @@ public class AppSpider {
 
 				Grade grade = getGrade(uid, cj, xf, xq, xn);
 				Course course = getCourse(uid, name, type, xf);
-				AllGradeAndCourse.GradeAndCourse gradeAndCourse = new AllGradeAndCourse.GradeAndCourse();
+                GradeAndCourse gradeAndCourse = new GradeAndCourse();
 				gradeAndCourse.setCourse(course);
 				gradeAndCourse.setGrade(grade);
 				gradeAndCourseList.add(gradeAndCourse);
@@ -251,6 +255,14 @@ public class AppSpider {
 		if (state == PASSWORD_ERROR) {
 			throw new PasswordUncorrectException();
 		}
+
+        if (state == FORM_NOT_FILL) {
+            throw new FormNotFillException(account);
+        }
+
+        if (state == NO_DATA) {
+            throw new DataNotFoundException(account);
+        }
 
 		if (state != SUCCESS) {
 			String msg = (String) resultMap.get("message");

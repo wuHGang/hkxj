@@ -83,13 +83,13 @@ public enum Academy {
         throw new IllegalArgumentException("illegal academy name: "+name);
     }
 
-    public static Integer getCodeBySimpleName(String simpleName){
-        for(Academy aca : Academy.values()){
-            if(Objects.equals(aca.getAcademySimpleName(), simpleName)){
-                return aca.getAcademyCode();
+    public static Academy getAcademyByName(String academyName) {
+        for (Academy academy : Academy.values()) {
+            if (Objects.equals(academy.getAcademyName(), academyName)) {
+                return academy;
             }
         }
-        throw new IllegalArgumentException("illegal academy simple name: "+simpleName);
+        throw new IllegalArgumentException("illegal academy name: " + academyName);
     }
 
     public String getAcademyName() {
@@ -112,5 +112,6 @@ public enum Academy {
                 .add("academyCode", academyCode)
                 .toString();
     }
+
 
 }

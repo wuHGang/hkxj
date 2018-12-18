@@ -1,8 +1,6 @@
 package cn.hkxj.platform.mapper;
 
-import cn.hkxj.platform.pojo.Course;
 import cn.hkxj.platform.pojo.ExamTimeTable;
-import cn.hkxj.platform.pojo.Room;
 import cn.hkxj.platform.utils.ApplicationUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Before;
@@ -13,8 +11,6 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
-
-import static org.junit.Assert.*;
 
 /**
  * @author junrong.chen
