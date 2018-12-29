@@ -31,10 +31,8 @@ public class CourseSubscriptionTask {
     private WxMpService wxMpService;
     private SubscribeService subscribeService;
 
-    private static final String TEMPLATE_ID = "5TgQ5wk_3q01xfdqAqPDgAJDiT4YfmYOoIP6cnAhOKc";
     private static final Byte SEND_SUCCESS = 1;
     private static final Byte SEND_FAILED = 0;
-    private static final String URL = "";
 
     @Scheduled(cron = "0 0 8 ? * MON-FRI")      //这个cron表达式的意思是星期一到星期五的早上8点执行一次
     public void sendCourseRemindMsg() {
@@ -76,6 +74,7 @@ public class CourseSubscriptionTask {
         wxMpKefuMessage.setMsgType("text");
         return wxMpKefuMessage;
     }
+
 
     /**
      * 给并行流添加一个监视

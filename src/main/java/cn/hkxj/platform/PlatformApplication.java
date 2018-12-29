@@ -14,7 +14,6 @@ import javax.annotation.Resource;
 
 @EnableScheduling
 @SpringBootApplication
-@PropertySource(value = "application-prod.properties")
 public class PlatformApplication {
 
 	public static void main(String[] args) {
