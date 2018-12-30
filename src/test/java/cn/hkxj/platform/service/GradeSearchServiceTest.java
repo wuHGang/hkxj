@@ -35,8 +35,8 @@ public class GradeSearchServiceTest {
     @Test
     public void getCurrentTermGrade() {
         Student student = new Student();
-        student.setAccount(2017025971);
-        student.setPassword("1");
+        student.setAccount(2015020863);
+        student.setPassword("sb");
         for (GradeAndCourse gradeAndCourse : gradeSearchService.getCurrentTermGrade(student)) {
             log.info(gradeAndCourse.toString());
         }

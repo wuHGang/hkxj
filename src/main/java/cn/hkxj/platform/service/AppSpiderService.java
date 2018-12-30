@@ -105,6 +105,7 @@ public class AppSpiderService {
      * @return
      */
     private Room parseRoomText(String roomText) {
+        // TODO  有些教室是在实验楼 现在还无法将其解析为对应对象
         String roomName = StreamSupport.stream(SPLITTER.split(roomText).spliterator(), false).toArray(String[]::new)[1];
         if (roomName.startsWith("科")) {
             return roomService.getRoomByName(roomName);
