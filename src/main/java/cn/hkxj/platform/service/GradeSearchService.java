@@ -4,12 +4,13 @@ import cn.hkxj.platform.exceptions.PasswordUncorrectException;
 import cn.hkxj.platform.exceptions.SpiderException;
 import cn.hkxj.platform.mapper.CourseMapper;
 import cn.hkxj.platform.mapper.GradeMapper;
+import cn.hkxj.platform.pojo.AllGradeAndCourse;
 import cn.hkxj.platform.pojo.Course;
 import cn.hkxj.platform.pojo.Grade;
 import cn.hkxj.platform.pojo.GradeAndCourse;
 import cn.hkxj.platform.pojo.Student;
-import cn.hkxj.platform.spider.AppSpider;
 import cn.hkxj.platform.spider.UrpCourseSpider;
+import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +33,8 @@ public class GradeSearchService {
 	private GradeMapper gradeMapper;
     @Resource
     private UrpSpiderService urpSpiderService;
+    @Resource
+    private AppSpiderService appSpiderService;
 
 
 	/**
@@ -90,17 +93,32 @@ public class GradeSearchService {
 	}
 
     private List<GradeAndCourse> getGradeFromSpider(Student student) {
-        AppSpider appSpider = new AppSpider(student.getAccount());
+        List<GradeAndCourse> currentFromApp = new ArrayList<>();
         try {
-            appSpider.getToken();
-            return appSpider.getGradeAndCourse().getCurrentTermGrade();
+            AllGradeAndCourse gradeAndCourseByAccount = appSpiderService.getGradeAndCourseByAccount(student.getAccount());
+            currentFromApp = gradeAndCourseByAccount.getCurrentTermGrade();
         } catch (PasswordUncorrectException | SpiderException e) {
             log.error("account {} app spider error {}", student.getAccount(), e.getMessage());
-            return urpSpiderService.getCurrentGrade(student);
-        } catch (IllegalArgumentException e) {
+
+        } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
-        return new ArrayList<>();
+        //将app和教务网数据整合到一起
+
+        ArrayList<GradeAndCourse> currentFromUrp = urpSpiderService.getCurrentGrade(student);
+
+        ArrayList<GradeAndCourse> result = Lists.newArrayList();
+        for (GradeAndCourse fromApp : currentFromApp) {
+            for (GradeAndCourse fromUrp : currentFromUrp) {
+                if (fromApp.equals(fromUrp)) {
+                    result.add(fromUrp.getGrade().getScore() == -1 ? fromApp : fromUrp);
+                }
+            }
+
+        }
+
+
+        return result;
     }
 
 }

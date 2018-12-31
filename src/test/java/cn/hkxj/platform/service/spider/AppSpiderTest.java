@@ -2,6 +2,7 @@ package cn.hkxj.platform.service.spider;
 
 import cn.hkxj.platform.exceptions.PasswordUncorrectException;
 import cn.hkxj.platform.pojo.AllGradeAndCourse;
+import cn.hkxj.platform.pojo.GradeAndCourse;
 import cn.hkxj.platform.spider.AppSpider;
 import cn.hkxj.platform.utils.ApplicationUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +32,7 @@ public class AppSpiderTest {
     @Autowired
     private ApplicationContext applicationContext;
 	private AppSpider spider;
-	private int account = 2017023523;
+    private int account = 2017023207;
 
 	@Before
 	public void setUp() throws Exception {
@@ -52,7 +53,11 @@ public class AppSpiderTest {
 	@Test
 	public void getGrade() throws IOException {
 		AllGradeAndCourse gradeAndCourse = spider.getGradeAndCourse();
-		log.info(gradeAndCourse.toString());
+        for (GradeAndCourse andCourse : gradeAndCourse.getCurrentTermGrade()) {
+
+            log.info(andCourse.toString());
+        }
+
 	}
 
 	@Test

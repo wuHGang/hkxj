@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.hkxj.platform.mapper.TaskMapper">
+    <resultMap id="BaseResultMap" type="cn.hkxj.platform.pojo.Task">
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="openid" property="openid" jdbcType="VARCHAR" />
+        <result column="update_type" property="updateType" jdbcType="INTEGER" />
+        <result column="count" property="count" jdbcType="INTEGER" />
+        <result column="gmt_modified" property="gmtModified" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+    <select id="isTaskBinding" resultType="java.lang.String">
+      select openid from task_count where openid = #{openid} and update_type=#{updateType}
+    </select>
+
+    <insert id="taskBinding" parameterType="cn.hkxj.platform.pojo.Task">
+      insert into task_count
+      <trim prefix="("  suffix=")"  suffixOverrides=",">
+        <if test="id != null">
+            id,
+        </if>
+        <if test="openid !=null">
+            openid,
+        </if>
+        <if test="updateType != null">
+            update_type,
+        </if>
+        <if test="count != null">
+            count,
+        </if>
+        <if test="gmtModified != null">
+            gmt_modified,
+        </if>
+      </trim>
+      <trim prefix="values (" suffix=")" suffixOverrides=",">
+          <if test="id != null">
+                  #{id,jdbcType=INTEGER},
+          </if>
+          <if test="openid != null">
+              #{openid,jdbcType=VARCHAR},
+          </if>
+          <if test="updateType != null">
+              #{updateType,jdbcType=INTEGER},
+          </if>
+          <if test="count != null">
+              #{count,jdbcType=INTEGER},
+          </if>
+          <if test="gmtModified != null">
+              #{gmtModified,jdbcType=TIMESTAMP},
+          </if>
+      </trim>
+    </insert>
+
+</mapper>

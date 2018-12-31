@@ -1,15 +1,16 @@
 package cn.hkxj.platform.task;
 
 import cn.hkxj.platform.pojo.CourseGroupMsg;
-import cn.hkxj.platform.service.CourseService;
 import cn.hkxj.platform.service.CourseSubscribeService;
 import cn.hkxj.platform.service.SubscribeService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.exception.WxErrorException;
 import me.chanjar.weixin.mp.api.WxMpService;
+import me.chanjar.weixin.mp.bean.kefu.WxMpKefuMessage;
+import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
 import me.chanjar.weixin.mp.bean.template.WxMpTemplateData;
-import me.chanjar.weixin.mp.bean.template.WxMpTemplateMessage;
+import me.chanjar.weixin.mp.builder.outxml.TextBuilder;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -30,10 +31,8 @@ public class CourseSubscriptionTask {
     private WxMpService wxMpService;
     private SubscribeService subscribeService;
 
-    private static final String TEMPLATE_ID = "5TgQ5wk_3q01xfdqAqPDgAJDiT4YfmYOoIP6cnAhOKc";
-    private static final Byte SEND_SUCCESS = 0;
-    private static final Byte SEND_FAILED = 1;
-    private static final String URL = "";
+    private static final Byte SEND_SUCCESS = 1;
+    private static final Byte SEND_FAILED = 0;
 
 //    @Scheduled(cron = "0 0 8 ? * MON-FRI")      //这个cron表达式的意思是星期一到星期五的早上8点执行一次
     @Scheduled(cron = "0/30 * * * * ?")
@@ -53,7 +52,7 @@ public class CourseSubscriptionTask {
                 //尝试三次，如果成功就跳出循环发送下一个
                 for (int i = 1; i <= 3; i++) {
                     try {
-                        wxMpService.getTemplateMsgService().sendTemplateMsg(getTemplateMessage(openid, msg.getCourseContent()));
+                        wxMpService.getKefuService().sendKefuMessage(getKufuMessage(openid, msg.getCourseContent()));
                         log.info("{} time send course push to user {} success", i, openid);
                         subscribeService.updateCourseSubscribeMsgState(openid, SEND_SUCCESS);
                         break;
@@ -69,27 +68,14 @@ public class CourseSubscriptionTask {
 
     }
 
-    private WxMpTemplateMessage getTemplateMessage(String openid, String msgContent) {
-        return WxMpTemplateMessage.builder()
-                .toUser(openid)
-                .templateId(TEMPLATE_ID)
-                .data(getTemplateData(msgContent))
-                .url(URL)
-                .build();
+    private WxMpKefuMessage getKufuMessage(String openid, String msgContent) {
+        WxMpKefuMessage wxMpKefuMessage = new WxMpKefuMessage();
+        wxMpKefuMessage.setContent("今日课表\n" + msgContent);
+        wxMpKefuMessage.setToUser(openid);
+        wxMpKefuMessage.setMsgType("text");
+        return wxMpKefuMessage;
     }
 
-    private List<WxMpTemplateData> getTemplateData(String msgContent) {
-        List<WxMpTemplateData> datas = new ArrayList<>();
-        WxMpTemplateData title = new WxMpTemplateData();
-        title.setName("first");
-        title.setValue("今日课表");
-        WxMpTemplateData content = new WxMpTemplateData();
-        content.setName("second");
-        content.setValue("\n" + msgContent);
-        datas.add(title);
-        datas.add(content);
-        return datas;
-    }
 
     /**
      * 给并行流添加一个监视

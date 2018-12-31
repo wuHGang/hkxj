@@ -27,7 +27,8 @@ public class ClazzService {
     private static Classes parseText(String classname) {
         String[] clazzSplitter = classname.split("-");
         if (clazzSplitter.length < 2) {
-            return null;
+            log.error("class name can`t parse {}", classname);
+            throw new IllegalArgumentException("can`t parse class name: " + classname);
         }
 
         Classes classes = new Classes();
@@ -43,7 +44,6 @@ public class ClazzService {
             if (c >= '0' && c <= '9') {
                 String year = clazzSplitter[0].substring(i, length);
                 classes.setYear(Integer.parseInt(year));
-
                 classes.setName(clazzSplitter[0].substring(0, i));
                 //此时的targets[0]是专业名,targets[1]是班级在所在的序号
                 return classes;
@@ -52,15 +52,39 @@ public class ClazzService {
         return classes;
     }
 
-    public static void main(String[] args) {
-        ClazzService clazzService = new ClazzService();
-        Classes classes = clazzService.parseText("汉语言18-2班");
-        System.out.println(classes.toString());
+    private static int getYearFromAccount(Integer account) {
+        String s = account.toString();
+        String year = s.substring(2, 4);
+        return Integer.parseInt(year);
     }
 
+    /**
+     * 将爬回来的学生班级信息解析为对应的班级对象
+     * 特殊班级名 财会S2018  采矿卓越班 会计ACA实验班
+     *
+     * @param studentWrapper 学生信息
+     * @return 班级对象
+     */
     Classes parseSpiderResult(StudentWrapper studentWrapper) {
+        Classes classes = new Classes();
+        // 所有班级的年级都从学号里面取
+        // 班级序号先前置为1 如果是别的序号会被覆盖
+        classes.setYear(getYearFromAccount(studentWrapper.getAccount()));
+        classes.setNum(1);
 
-        List<Classes> classesList = selectFromDB(studentWrapper);
+        String classname = studentWrapper.getClassname();
+        if (classname.startsWith("财会S")) {
+            classes.setName(classname);
+        } else if (classname.startsWith("采矿卓越")) {
+            classes.setName("采矿卓越");
+        } else if (classname.startsWith("会计ACA实验")) {
+            classes.setName(classname);
+        } else {
+            classes = parseText(classname);
+        }
+
+
+        List<Classes> classesList = selectFromDB(classes);
 
         if (classesList.size() == 1) {
             return classesList.get(0);
@@ -71,16 +95,6 @@ public class ClazzService {
             log.error("account {} class more than 1 {}", studentWrapper.getAccount(), classesList.toString());
         }
         return buildClazzByStudent(studentWrapper);
-    }
-
-    private List<Classes> selectFromDB(StudentWrapper studentWrapper) {
-        Classes classes = parseText(studentWrapper.getClassname());
-        ClassesExample classesExample = new ClassesExample();
-        classesExample.createCriteria()
-                .andNameEqualTo(classes.getName())
-                .andNumEqualTo(classes.getNum())
-                .andYearEqualTo(classes.getYear());
-        return classesMapper.selectByExample(classesExample);
     }
 
     private Classes buildClazzByStudent(StudentWrapper studentWrapper) {
@@ -94,4 +108,15 @@ public class ClazzService {
 
         return classes;
     }
+
+    private List<Classes> selectFromDB(Classes classes) {
+        ClassesExample classesExample = new ClassesExample();
+        classesExample.createCriteria()
+                .andNameEqualTo(classes.getName())
+                .andNumEqualTo(classes.getNum())
+                .andYearEqualTo(classes.getYear());
+        return classesMapper.selectByExample(classesExample);
+    }
+
+
 }

@@ -21,8 +21,6 @@ import java.util.Map;
 public class RoomService {
 	@Resource
 	private RoomMapper roomMapper;
-	@Resource
-	private TimeTableService timeTableService;
 
 	private static Map<String, Room> roomMap = new HashMap<>();
 
@@ -47,8 +45,11 @@ public class RoomService {
 				.andNameEqualTo(name);
 		List<Room> roomList = roomMapper.selectByExample(roomExample);
 		if(roomList.size() != 1){
-			log.error("getRoomByName exception name{} list{}", name, roomList );
-			throw new IllegalArgumentException("illegal room name: "+ name);
+            log.error("getRoomByName exception name{}  list{}", name, roomList);
+            Room room = new Room();
+            room.setName(name);
+            return room;
+//			throw new IllegalArgumentException("illegal room name: "+ name);
 		}
 		return roomList.get(0);
 	}

@@ -9,7 +9,12 @@ import cn.hkxj.platform.service.CourseService;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.exception.WxErrorException;
 import me.chanjar.weixin.mp.api.WxMpService;
+<<<<<<< HEAD
 import okhttp3.*;
+=======
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+>>>>>>> refs/remotes/forkOrigin/dev
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -34,6 +39,8 @@ public class OneOffSubcriptionUtil {
     @Resource
     private OpenidMapper openidMapper;
 
+    private static String domain;
+
     private static OneOffSubcriptionUtil util;
 
     @PostConstruct
@@ -42,10 +49,11 @@ public class OneOffSubcriptionUtil {
         util.wxMpService = this.wxMpService;
         util.courseService = this.courseService;
         util.openidMapper = this.openidMapper;
+        REDIRECT_URL = domain + "/wechat/sub/test";
     }
 
+    private static String REDIRECT_URL;
     private static final String BASE_URL = "https://mp.weixin.qq.com/mp/subscribemsg?action=get_confirm";
-    private static final String REDIRECT_URL = "http://test.mrbeen.cn/wechat/sub/test";
     private static final String TEMPLATE_ID = "5TgQ5wk_3q01xfdqAqPDgAJDiT4YfmYOoIP6cnAhOKc";
     private static final String REPLY_URL = "https://api.weixin.qq.com/cgi-bin/message/template/subscribe?access_token=";
 
@@ -172,6 +180,11 @@ public class OneOffSubcriptionUtil {
 
     private static String getReplyUrl() throws WxErrorException {
         return REPLY_URL + util.wxMpService.getAccessToken();
+    }
+
+    @Value("${domain}")
+    public void setDomain(String target) {
+        OneOffSubcriptionUtil.domain = target;
     }
 
 }

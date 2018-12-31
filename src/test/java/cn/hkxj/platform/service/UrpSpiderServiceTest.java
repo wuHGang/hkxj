@@ -34,7 +34,7 @@ public class UrpSpiderServiceTest {
 
     @Test
     public void getInformation() throws PasswordUncorrectException {
-        Student information = urpSpiderService.getInformation(2017025971, "1");
+        Student information = urpSpiderService.getInformation(2017023207, "1");
         System.out.println(information.toString());
     }
 
@@ -44,6 +44,5 @@ public class UrpSpiderServiceTest {
         for (GradeAndCourse gradeAndCourse : urpSpiderService.getCurrentGrade(student)) {
             log.info(gradeAndCourse.toString());
         }
-        ;
     }
 }
