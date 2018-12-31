@@ -11,4 +11,6 @@ public interface TaskMapper {
     String isTaskBinding(@Param("openid") String openid,@Param("updateType") int updateType);
 
     int taskBinding(Task task);
+
+    int taskCountUpdate(String openid);
 }

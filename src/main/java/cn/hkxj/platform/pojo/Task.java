@@ -25,24 +25,27 @@ public class Task {
         return openid;
     }
 
-    public void setOpenid(String openid) {
+    public Task setOpenid(String openid) {
         this.openid = openid;
+        return this;
     }
 
     public Integer getUpdateType() {
         return updateType;
     }
 
-    public void setUpdateType(Integer updateType) {
+    public Task setUpdateType(Integer updateType) {
         this.updateType = updateType;
+        return this;
     }
 
     public Integer getCount() {
         return count;
     }
 
-    public void setCount(Integer count) {
+    public Task setCount(Integer count) {
         this.count = count;
+        return this;
     }
 
     public Date getGmtModified() {

@@ -50,5 +50,8 @@
           </if>
       </trim>
     </insert>
+    <update id="taskCountUpdate">
+        update task_count set count = count+1 where openid=#{value}
+    </update>
 
 </mapper>
