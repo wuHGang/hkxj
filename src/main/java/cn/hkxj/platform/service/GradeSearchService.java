@@ -11,11 +11,13 @@ import cn.hkxj.platform.pojo.GradeAndCourse;
 import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.spider.UrpCourseSpider;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -107,18 +109,19 @@ public class GradeSearchService {
 
         ArrayList<GradeAndCourse> currentFromUrp = urpSpiderService.getCurrentGrade(student);
 
-        ArrayList<GradeAndCourse> result = Lists.newArrayList();
+        HashSet<GradeAndCourse> resulSet = Sets.newHashSet(currentFromApp);
+        resulSet.addAll(currentFromUrp);
         for (GradeAndCourse fromApp : currentFromApp) {
             for (GradeAndCourse fromUrp : currentFromUrp) {
                 if (fromApp.equals(fromUrp)) {
-                    result.add(fromUrp.getGrade().getScore() == -1 ? fromApp : fromUrp);
+                    resulSet.remove(fromUrp);
+                    resulSet.add(fromUrp.getGrade().getScore() == -1 ? fromApp : fromUrp);
                 }
             }
-
         }
 
 
-        return result;
+        return Lists.newArrayList(resulSet);
     }
 
 }
