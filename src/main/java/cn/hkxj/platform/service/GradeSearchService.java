@@ -52,11 +52,13 @@ public class GradeSearchService {
 	}
 
 	/**
-	 * 将本学期的成绩数据存储于数据库，同时适用于自动更新
+	 * 将本学期的成绩数据存储于数据库，同时适用于自动更新，返回最新爬取更新的成绩集合用于自动更新的回复功能
      * @param student 学生账户
      * @param gradeAndCourseList 学生的全部成绩
+     * @return 返回最新爬取更新的成绩集合
 	 */
-    public void saveGradeAndCourse(Student student, List<GradeAndCourse> gradeAndCourseList) {
+    public List<GradeAndCourse> saveGradeAndCourse(Student student, List<GradeAndCourse> gradeAndCourseList) {
+        List<GradeAndCourse> studentGrades=new ArrayList<>();
         UrpCourseSpider urpCourseSpider = new UrpCourseSpider(student.getAccount(), student.getPassword());
         for (GradeAndCourse gradeAndCourse : gradeAndCourseList) {
             Course course = gradeAndCourse.getCourse();
@@ -72,8 +74,10 @@ public class GradeSearchService {
             if (gradeMapper.ifExistGrade(student.getAccount(), grade.getCourseId()) == 0) {
                 courseMapper.insertStudentAndCourse(student.getAccount(), uid);
                 gradeMapper.insert(grade);
+                studentGrades.add(gradeAndCourse);
             }
 		}
+		return studentGrades;
 	}
 
 	/**
@@ -120,5 +124,6 @@ public class GradeSearchService {
 
         return result;
     }
+
 
 }
