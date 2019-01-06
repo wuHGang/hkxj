@@ -28,7 +28,9 @@ public class UrpSpider {
 	private static final String CURRENT_GRADE_URL = GRADE_URL+"/current";
 	private static final String EVER_GRADE_URL = GRADE_URL+"/ever";
 	private static OkHttpClient client = new OkHttpClient.Builder()
-			.connectTimeout(15, TimeUnit.SECONDS)
+            .readTimeout(4, TimeUnit.SECONDS)
+            .writeTimeout(4, TimeUnit.SECONDS)
+            .connectTimeout(4, TimeUnit.SECONDS)
 			.build();
 
     public UrpSpider(int account, String password) {

@@ -18,6 +18,10 @@ import org.springframework.util.CollectionUtils;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CompletionService;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -36,7 +40,7 @@ public class GradeSearchService {
     private UrpSpiderService urpSpiderService;
     @Resource
     private AppSpiderService appSpiderService;
-
+    private static ExecutorService executorService = Executors.newFixedThreadPool(10);
 
 	/**
 	 * 通过appspider返回学生本学期的全部成绩
@@ -46,7 +50,7 @@ public class GradeSearchService {
     public List<GradeAndCourse> getAllGradeList(Student student) {
         // 先查这个学生有美誉成绩 有的话返回  没有的话走爬虫;
 
-        List<GradeAndCourse> gradeFromSpider = getGradeFromSpider(student);
+        List<GradeAndCourse> gradeFromSpider = getGradeFromSpiderAsync(student);
         ExecutorService singleThreadPool = Executors.newSingleThreadExecutor();
         singleThreadPool.execute(() -> saveGradeAndCourse(student, gradeFromSpider));
         return gradeFromSpider;
@@ -86,7 +90,7 @@ public class GradeSearchService {
 	 * 同时启用一个新线程进行成绩保存
      * @param student 学生的全部成绩与课程
 	 */
-    public List<GradeAndCourse> getCurrentTermGrade(Student student) {
+    public List<GradeAndCourse> getCurrentTermGradeAsync(Student student) {
         List<GradeAndCourse> allGradeList = getAllGradeList(student);
         List<GradeAndCourse> studentGrades = new ArrayList<>();
         for (GradeAndCourse gradeAndCourse : allGradeList) {
@@ -97,7 +101,52 @@ public class GradeSearchService {
 		return studentGrades;
 	}
 
-    public List<GradeAndCourse> getGradeFromSpider(Student student) {
+    public List<GradeAndCourse> getCurrentTermGradeSync(Student student) {
+        List<GradeAndCourse> allGradeList = getGradeFromSpiderSync(student);
+        List<GradeAndCourse> studentGrades = new ArrayList<>();
+        for (GradeAndCourse gradeAndCourse : allGradeList) {
+            if (gradeAndCourse.getGrade().getYear() == 2018) {
+                studentGrades.add(gradeAndCourse);
+            }
+        }
+        return studentGrades;
+    }
+
+    public List<GradeAndCourse> getGradeFromSpiderAsync(Student student) {
+
+        CompletionService<List<GradeAndCourse>> spiderExecutorService = new ExecutorCompletionService<>(executorService);
+
+        spiderExecutorService.submit(appSpiderTask(student));
+        spiderExecutorService.submit(urpSpiderTask(student));
+
+        ArrayList<GradeAndCourse> result = Lists.newArrayList();
+        try {
+            for (int x = 0; x < 2; x++) {
+                List<GradeAndCourse> gradeAndCourses = spiderExecutorService.take().get();
+                if (CollectionUtils.isEmpty(gradeAndCourses)) {
+                    result.addAll(gradeAndCourses);
+                } else {
+                    for (GradeAndCourse fromApp : result) {
+                        for (GradeAndCourse fromUrp : gradeAndCourses) {
+                            if (fromApp.equals(fromUrp)) {
+                                result.add(fromUrp.getGrade().getScore() == -1 ? fromApp : fromUrp);
+                            }
+                        }
+
+                    }
+                }
+            }
+
+
+        } catch (InterruptedException | ExecutionException e) {
+            log.error("app spider execute error", e);
+        }
+
+        return result;
+    }
+
+
+    public List<GradeAndCourse> getGradeFromSpiderSync(Student student) {
         List<GradeAndCourse> currentFromApp = new ArrayList<>();
         try {
             AllGradeAndCourse gradeAndCourseByAccount = appSpiderService.getGradeAndCourseByAccount(student.getAccount());
@@ -132,6 +181,26 @@ public class GradeSearchService {
 
 
         return result;
+    }
+
+
+    private Callable<List<GradeAndCourse>> appSpiderTask(Student student) {
+        return () -> {
+            try {
+                AllGradeAndCourse gradeAndCourseByAccount = appSpiderService.getGradeAndCourseByAccount(student.getAccount());
+                return gradeAndCourseByAccount.getCurrentTermGrade();
+            } catch (PasswordUncorrectException | SpiderException e) {
+                log.error("account {} app spider error {}", student.getAccount(), e.getMessage());
+
+            } catch (Exception e) {
+                log.error(e.getMessage(), e);
+            }
+            return Lists.newArrayList();
+        };
+    }
+
+    private Callable<List<GradeAndCourse>> urpSpiderTask(Student student) {
+        return () -> urpSpiderService.getCurrentGrade(student);
     }
 
 

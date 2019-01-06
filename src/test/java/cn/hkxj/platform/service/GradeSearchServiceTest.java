@@ -10,8 +10,10 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * @author junrong.chen
@@ -35,9 +37,15 @@ public class GradeSearchServiceTest {
     @Test
     public void getCurrentTermGrade() {
         Student student = new Student();
-        student.setAccount(2015020863);
-        student.setPassword("sb");
-        for (GradeAndCourse gradeAndCourse : gradeSearchService.getCurrentTermGrade(student)) {
+        student.setAccount(2016023726);
+        student.setPassword("1");
+        long start = System.currentTimeMillis();
+        List<GradeAndCourse> currentTermGrade = gradeSearchService.getGradeFromSpiderAsync(student);
+        long end = System.currentTimeMillis();
+        long costtime = end - start;
+        System.out.println(CollectionUtils.isEmpty(currentTermGrade));
+        for (GradeAndCourse gradeAndCourse : currentTermGrade) {
+
             log.info(gradeAndCourse.toString());
         }
 
