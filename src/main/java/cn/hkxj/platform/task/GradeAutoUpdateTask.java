@@ -1,21 +1,29 @@
 package cn.hkxj.platform.task;
 
-import cn.hkxj.platform.exceptions.PasswordUncorrectException;
 import cn.hkxj.platform.mapper.OpenidMapper;
 import cn.hkxj.platform.mapper.StudentMapper;
 import cn.hkxj.platform.mapper.SubscribeGradeUpdateMapper;
-import cn.hkxj.platform.pojo.*;
-import cn.hkxj.platform.service.AppSpiderService;
+import cn.hkxj.platform.pojo.AllGradeAndCourse;
+import cn.hkxj.platform.pojo.GradeAndCourse;
+import cn.hkxj.platform.pojo.Openid;
+import cn.hkxj.platform.pojo.Student;
+import cn.hkxj.platform.pojo.SubscribeGradeUpdate;
 import cn.hkxj.platform.service.GradeSearchService;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.kefu.WxMpKefuMessage;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Queue;
 
 @Slf4j
 @Service
@@ -33,8 +41,6 @@ public class GradeAutoUpdateTask {
     @Resource
     private GradeSearchService gradeSearchService;
     @Resource
-    private AppSpiderService appSpiderService;
-    @Resource
     private SubscribeGradeUpdateMapper subscribeGradeUpdateMapper;
     @Resource
     private OpenidMapper openidMapper;
@@ -51,7 +57,7 @@ public class GradeAutoUpdateTask {
         ACCOUNT_QUEUE.offer(student);
     }
 
-    @Scheduled(cron = "0 0 9 * * ?")
+    @Scheduled(cron = "0 0/20 * * * ?")
     private void autoUpdateGrade() {
         getStudentQueue();
         Student student = ACCOUNT_QUEUE.poll();
@@ -59,8 +65,10 @@ public class GradeAutoUpdateTask {
             try {
                 List<GradeAndCourse> gradeFromSpider=gradeSearchService.getGradeFromSpider(student);
                 List<GradeAndCourse> studentGrades=gradeSearchService.saveGradeAndCourse(student, gradeFromSpider);
-                if(studentGrades!=null){
-                    wxMpService.getKefuService().sendKefuMessage(getKefuMessage(openidMap.get(student.getAccount()), gradeListToText(studentGrades)));
+                if (!CollectionUtils.isEmpty(studentGrades)) {
+                    wxMpService.getKefuService().sendKefuMessage(getKefuMessage(student, gradeListToText(studentGrades)));
+                } else {
+                    log.info("student {} grade not");
                 }
             } catch (Exception e) {
                 log.error("grade update task error", e);
@@ -89,15 +97,19 @@ public class GradeAutoUpdateTask {
 
     /**
      * 获取回复文本
-     * @param openid
+     * @param student
      * @param content
      * @return
      */
-    private WxMpKefuMessage getKefuMessage(String openid,String content) {
+    private WxMpKefuMessage getKefuMessage(Student student, String content) {
+
         WxMpKefuMessage wxMpKefuMessage = new WxMpKefuMessage();
         wxMpKefuMessage.setContent("成绩更新\n"+content );
-        wxMpKefuMessage.setToUser(openid);
+        wxMpKefuMessage.setToUser(openidMap.get(student.getAccount()));
         wxMpKefuMessage.setMsgType("text");
+
+        log.info("student account {} grade update {}", student.getAccount(), content);
+
         return wxMpKefuMessage;
     }
 
