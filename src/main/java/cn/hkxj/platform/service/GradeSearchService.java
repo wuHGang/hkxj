@@ -11,13 +11,12 @@ import cn.hkxj.platform.pojo.GradeAndCourse;
 import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.spider.UrpCourseSpider;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -54,11 +53,13 @@ public class GradeSearchService {
 	}
 
 	/**
-	 * 将本学期的成绩数据存储于数据库，同时适用于自动更新
+	 * 将本学期的成绩数据存储于数据库，同时适用于自动更新，返回最新爬取更新的成绩集合用于自动更新的回复功能
      * @param student 学生账户
      * @param gradeAndCourseList 学生的全部成绩
+     * @return 返回最新爬取更新的成绩集合
 	 */
-    public void saveGradeAndCourse(Student student, List<GradeAndCourse> gradeAndCourseList) {
+    public List<GradeAndCourse> saveGradeAndCourse(Student student, List<GradeAndCourse> gradeAndCourseList) {
+        List<GradeAndCourse> studentGrades=new ArrayList<>();
         UrpCourseSpider urpCourseSpider = new UrpCourseSpider(student.getAccount(), student.getPassword());
         for (GradeAndCourse gradeAndCourse : gradeAndCourseList) {
             Course course = gradeAndCourse.getCourse();
@@ -74,8 +75,10 @@ public class GradeSearchService {
             if (gradeMapper.ifExistGrade(student.getAccount(), grade.getCourseId()) == 0) {
                 courseMapper.insertStudentAndCourse(student.getAccount(), uid);
                 gradeMapper.insert(grade);
+                studentGrades.add(gradeAndCourse);
             }
 		}
+		return studentGrades;
 	}
 
 	/**
@@ -94,7 +97,7 @@ public class GradeSearchService {
 		return studentGrades;
 	}
 
-    private List<GradeAndCourse> getGradeFromSpider(Student student) {
+    public List<GradeAndCourse> getGradeFromSpider(Student student) {
         List<GradeAndCourse> currentFromApp = new ArrayList<>();
         try {
             AllGradeAndCourse gradeAndCourseByAccount = appSpiderService.getGradeAndCourseByAccount(student.getAccount());
@@ -109,19 +112,27 @@ public class GradeSearchService {
 
         ArrayList<GradeAndCourse> currentFromUrp = urpSpiderService.getCurrentGrade(student);
 
-        HashSet<GradeAndCourse> resulSet = Sets.newHashSet(currentFromApp);
-        resulSet.addAll(currentFromUrp);
+        ArrayList<GradeAndCourse> result = Lists.newArrayList();
+        if (CollectionUtils.isEmpty(currentFromApp)) {
+            return currentFromUrp;
+        }
+
+        if (CollectionUtils.isEmpty(currentFromUrp)) {
+            return currentFromApp;
+        }
+
         for (GradeAndCourse fromApp : currentFromApp) {
             for (GradeAndCourse fromUrp : currentFromUrp) {
                 if (fromApp.equals(fromUrp)) {
-                    resulSet.remove(fromUrp);
-                    resulSet.add(fromUrp.getGrade().getScore() == -1 ? fromApp : fromUrp);
+                    result.add(fromUrp.getGrade().getScore() == -1 ? fromApp : fromUrp);
                 }
             }
+
         }
 
 
-        return Lists.newArrayList(resulSet);
+        return result;
     }
+
 
 }

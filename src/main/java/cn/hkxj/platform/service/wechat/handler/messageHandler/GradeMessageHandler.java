@@ -1,7 +1,6 @@
 package cn.hkxj.platform.service.wechat.handler.messageHandler;
 
 import cn.hkxj.platform.builder.TextBuilder;
-import cn.hkxj.platform.mapper.TaskMapper;
 import cn.hkxj.platform.pojo.AllGradeAndCourse;
 import cn.hkxj.platform.pojo.GradeAndCourse;
 import cn.hkxj.platform.pojo.Student;
@@ -15,7 +14,6 @@ import me.chanjar.weixin.mp.api.WxMpMessageHandler;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -54,7 +52,7 @@ public class GradeMessageHandler implements WxMpMessageHandler {
 
             ExecutorService singleThreadPool = Executors.newSingleThreadExecutor();
             singleThreadPool.execute(()->{
-                taskBindingService.isTaskBinding(wxMpXmlMessage.getFromUser(),"成绩");
+                taskBindingService.subscribeGradeUpdateBinding(wxMpXmlMessage.getFromUser());
             });
 
             return textBuilder.build(gradesMsg, wxMpXmlMessage, wxMpService);
