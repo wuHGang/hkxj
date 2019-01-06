@@ -29,7 +29,7 @@ public class GradeAutoUpdateTask {
      */
     private static HashSet<Student> ACCOUNT_SET = new HashSet<>();
 
-    private static  HashMap<Integer,String> openidMap;
+    private HashMap<Integer,String> openidMap;
     @Resource
     private GradeSearchService gradeSearchService;
     @Resource
@@ -59,7 +59,9 @@ public class GradeAutoUpdateTask {
             try {
                 AllGradeAndCourse gradeAndCourse = appSpiderService.getGradeAndCourseByAccount(student.getAccount());
                 List<GradeAndCourse> studentGrades=gradeSearchService.saveGradeAndCourse(student, gradeAndCourse.getCurrentTermGrade());
-                wxMpService.getKefuService().sendKefuMessage(getKefuMessage(openidMap.get(student.getAccount()), gradeListToText(studentGrades)));
+                if(studentGrades!=null){
+                    wxMpService.getKefuService().sendKefuMessage(getKefuMessage(openidMap.get(student.getAccount()), gradeListToText(studentGrades)));
+                }
             } catch (PasswordUncorrectException e) {
                 log.error("account{} app spider password error", student.getAccount());
             } catch (Exception e) {
