@@ -52,22 +52,22 @@ public class GradeMessageHandler implements WxMpMessageHandler {
 
             ExecutorService singleThreadPool = Executors.newSingleThreadExecutor();
             singleThreadPool.execute(() -> taskBindingService.subscribeGradeUpdateBinding(wxMpXmlMessage.getFromUser()));
-            singleThreadPool.execute(() -> {
-                List<GradeAndCourse> gradeFromSpiderSync = gradeSearchService.getCurrentTermGradeSync(student);
-                String gradeListToText = gradeListToText(gradeFromSpiderSync);
-                WxMpKefuMessage wxMpKefuMessage = new WxMpKefuMessage();
-                wxMpKefuMessage.setContent(gradeListToText);
-                wxMpKefuMessage.setMsgType("text");
-                wxMpKefuMessage.setToUser(wxMpXmlMessage.getFromUser());
-                log.info("send student {} grade kefu message {}", student.getAccount(), gradeListToText);
-                try {
-                    wxMpService.getKefuService().sendKefuMessage(wxMpKefuMessage);
-                } catch (WxErrorException e) {
-                    log.error("send grade customer message error", e);
-                }
-            });
             List<GradeAndCourse> currentTermGrade = gradeSearchService.getCurrentTermGradeAsync(student);
             if (CollectionUtils.isEmpty(currentTermGrade)) {
+                singleThreadPool.execute(() -> {
+                    List<GradeAndCourse> gradeFromSpiderSync = gradeSearchService.getCurrentTermGradeSync(student);
+                    String gradeListToText = gradeListToText(gradeFromSpiderSync);
+                    WxMpKefuMessage wxMpKefuMessage = new WxMpKefuMessage();
+                    wxMpKefuMessage.setContent(gradeListToText);
+                    wxMpKefuMessage.setMsgType("text");
+                    wxMpKefuMessage.setToUser(wxMpXmlMessage.getFromUser());
+                    log.info("send student {} grade kefu message {}", student.getAccount(), gradeListToText);
+                    try {
+                        wxMpService.getKefuService().sendKefuMessage(wxMpKefuMessage);
+                    } catch (WxErrorException e) {
+                        log.error("send grade customer message error", e);
+                    }
+                });
                 return textBuilder.build("服务器正在努力查询中", wxMpXmlMessage, wxMpService);
             }
             String gradesMsg = gradeListToText(currentTermGrade);

@@ -123,7 +123,7 @@ public class GradeSearchService {
         try {
             for (int x = 0; x < 2; x++) {
                 List<GradeAndCourse> gradeAndCourses = spiderExecutorService.take().get();
-                if (CollectionUtils.isEmpty(gradeAndCourses)) {
+                if (!CollectionUtils.isEmpty(gradeAndCourses)) {
                     result.addAll(gradeAndCourses);
                 } else {
                     for (GradeAndCourse fromApp : result) {
@@ -132,7 +132,6 @@ public class GradeSearchService {
                                 result.add(fromUrp.getGrade().getScore() == -1 ? fromApp : fromUrp);
                             }
                         }
-
                     }
                 }
             }
