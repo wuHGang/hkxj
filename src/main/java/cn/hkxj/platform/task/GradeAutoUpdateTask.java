@@ -29,7 +29,7 @@ public class GradeAutoUpdateTask {
      */
     private static HashSet<Student> ACCOUNT_SET = new HashSet<>();
 
-    private HashMap<Integer,String> openidMap;
+    private HashMap<Integer,String> openidMap=new HashMap<>();
     @Resource
     private GradeSearchService gradeSearchService;
     @Resource
@@ -57,13 +57,11 @@ public class GradeAutoUpdateTask {
         Student student = ACCOUNT_QUEUE.poll();
         while (Objects.nonNull(student)) {
             try {
-                AllGradeAndCourse gradeAndCourse = appSpiderService.getGradeAndCourseByAccount(student.getAccount());
-                List<GradeAndCourse> studentGrades=gradeSearchService.saveGradeAndCourse(student, gradeAndCourse.getCurrentTermGrade());
+                List<GradeAndCourse> gradeFromSpider=gradeSearchService.getGradeFromSpider(student);
+                List<GradeAndCourse> studentGrades=gradeSearchService.saveGradeAndCourse(student, gradeFromSpider);
                 if(studentGrades!=null){
                     wxMpService.getKefuService().sendKefuMessage(getKefuMessage(openidMap.get(student.getAccount()), gradeListToText(studentGrades)));
                 }
-            } catch (PasswordUncorrectException e) {
-                log.error("account{} app spider password error", student.getAccount());
             } catch (Exception e) {
                 log.error("grade update task error", e);
             }
@@ -82,7 +80,7 @@ public class GradeAutoUpdateTask {
             openidStringList.add(o.getOpenid());
         }
         List<Openid> openidList=openidMapper.getOpenIdsByOpenIds(openidStringList);
-        openidMap=new HashMap<>();
+        openidMap.clear();
         for(Openid openid:openidList){
             openidMap.put(openid.getAccount(),openid.getOpenid());
             addStudentToQueue(studentMapper.selectByAccount(openid.getAccount()));

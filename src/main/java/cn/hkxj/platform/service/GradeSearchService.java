@@ -97,7 +97,7 @@ public class GradeSearchService {
 		return studentGrades;
 	}
 
-    private List<GradeAndCourse> getGradeFromSpider(Student student) {
+    public List<GradeAndCourse> getGradeFromSpider(Student student) {
         List<GradeAndCourse> currentFromApp = new ArrayList<>();
         try {
             AllGradeAndCourse gradeAndCourseByAccount = appSpiderService.getGradeAndCourseByAccount(student.getAccount());
