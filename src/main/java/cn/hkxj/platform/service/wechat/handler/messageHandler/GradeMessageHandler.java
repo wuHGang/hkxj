@@ -66,7 +66,7 @@ public class GradeMessageHandler implements WxMpMessageHandler {
             });
             List<GradeAndCourse> currentTermGrade = gradeSearchService.getCurrentTermGradeAsync(student);
             if (CollectionUtils.isEmpty(currentTermGrade)) {
-                return textBuilder.build("我们正在服务查询中", wxMpXmlMessage, wxMpService);
+                return textBuilder.build("服务器正在努力查询中", wxMpXmlMessage, wxMpService);
             }
             String gradesMsg = gradeListToText(currentTermGrade);
 
