@@ -13,6 +13,7 @@ import cn.hkxj.platform.spider.UrpCourseSpider;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -112,6 +113,14 @@ public class GradeSearchService {
         ArrayList<GradeAndCourse> currentFromUrp = urpSpiderService.getCurrentGrade(student);
 
         ArrayList<GradeAndCourse> result = Lists.newArrayList();
+        if (CollectionUtils.isEmpty(currentFromApp)) {
+            return currentFromUrp;
+        }
+
+        if (CollectionUtils.isEmpty(currentFromUrp)) {
+            return currentFromApp;
+        }
+
         for (GradeAndCourse fromApp : currentFromApp) {
             for (GradeAndCourse fromUrp : currentFromUrp) {
                 if (fromApp.equals(fromUrp)) {

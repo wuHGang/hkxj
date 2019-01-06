@@ -1,21 +1,28 @@
 package cn.hkxj.platform.task;
 
-import cn.hkxj.platform.exceptions.PasswordUncorrectException;
 import cn.hkxj.platform.mapper.OpenidMapper;
 import cn.hkxj.platform.mapper.StudentMapper;
 import cn.hkxj.platform.mapper.SubscribeGradeUpdateMapper;
-import cn.hkxj.platform.pojo.*;
-import cn.hkxj.platform.service.AppSpiderService;
+import cn.hkxj.platform.pojo.AllGradeAndCourse;
+import cn.hkxj.platform.pojo.GradeAndCourse;
+import cn.hkxj.platform.pojo.Openid;
+import cn.hkxj.platform.pojo.Student;
+import cn.hkxj.platform.pojo.SubscribeGradeUpdate;
 import cn.hkxj.platform.service.GradeSearchService;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.kefu.WxMpKefuMessage;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.annotation.Resource;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Queue;
 
 @Slf4j
 @Service
@@ -32,8 +39,6 @@ public class GradeAutoUpdateTask {
     private static  HashMap<Integer,String> openidMap;
     @Resource
     private GradeSearchService gradeSearchService;
-    @Resource
-    private AppSpiderService appSpiderService;
     @Resource
     private SubscribeGradeUpdateMapper subscribeGradeUpdateMapper;
     @Resource
@@ -57,11 +62,9 @@ public class GradeAutoUpdateTask {
         Student student = ACCOUNT_QUEUE.poll();
         while (Objects.nonNull(student)) {
             try {
-                AllGradeAndCourse gradeAndCourse = appSpiderService.getGradeAndCourseByAccount(student.getAccount());
-                List<GradeAndCourse> studentGrades=gradeSearchService.saveGradeAndCourse(student, gradeAndCourse.getCurrentTermGrade());
+                List<GradeAndCourse> currentTermGrade = gradeSearchService.getCurrentTermGrade(student);
+                List<GradeAndCourse> studentGrades = gradeSearchService.saveGradeAndCourse(student, currentTermGrade);
                 wxMpService.getKefuService().sendKefuMessage(getKefuMessage(openidMap.get(student.getAccount()), gradeListToText(studentGrades)));
-            } catch (PasswordUncorrectException e) {
-                log.error("account{} app spider password error", student.getAccount());
             } catch (Exception e) {
                 log.error("grade update task error", e);
             }

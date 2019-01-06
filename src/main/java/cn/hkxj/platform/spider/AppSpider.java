@@ -3,6 +3,7 @@ package cn.hkxj.platform.spider;
 import cn.hkxj.platform.exceptions.DataNotFoundException;
 import cn.hkxj.platform.exceptions.FormNotFillException;
 import cn.hkxj.platform.exceptions.PasswordUncorrectException;
+import cn.hkxj.platform.exceptions.ReadTimeoutException;
 import cn.hkxj.platform.pojo.AllGradeAndCourse;
 import cn.hkxj.platform.pojo.Course;
 import cn.hkxj.platform.pojo.CourseType;
@@ -26,6 +27,7 @@ import org.springframework.beans.factory.annotation.Configurable;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -61,7 +63,7 @@ public class AppSpider {
 	private final static String SCHEDULE = URL_ROOT + "//university-facade/Schedule/ScheduleList";
 	private final static String EXAM = URL_ROOT + "//university-facade/MyUniversity/Exam";
 	private final static OkHttpClient CLIENT = new OkHttpClient.Builder()
-			.connectTimeout(5, TimeUnit.SECONDS)
+            .connectTimeout(3, TimeUnit.SECONDS)
 			.build();
 
 	private final static Headers HEADERS = new Headers.Builder()
@@ -206,7 +208,8 @@ public class AppSpider {
 		try {
 			postData.put("u", String.valueOf(account));
 			postData.put("p", DigestUtils.md5Hex(password.getBytes("UTF-8")));
-		} catch (UnsupportedEncodingException e) {
+
+        } catch (UnsupportedEncodingException e) {
 			log.error(e.getMessage(), e);
 			throw new RuntimeException("UnsupportedEncoding in password", e);
 		}
@@ -243,7 +246,9 @@ public class AppSpider {
 		try {
 			response = CLIENT.newCall(request).execute();
 			data = response.body().string();
-		} catch (IOException e) {
+        } catch (SocketTimeoutException e) {
+            throw new ReadTimeoutException("app spider read time out", e);
+        } catch (IOException e) {
 			throw new RuntimeException("AppSpider fail in execute request", e);
 		}
 
