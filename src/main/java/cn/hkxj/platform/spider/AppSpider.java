@@ -156,7 +156,7 @@ public class AppSpider {
 		AllGradeAndCourse allGradeAndCourse = new AllGradeAndCourse();
 		for (Object item : getGrade()) {
             Map<String, ArrayList<Map<String, String>>> itemMap = (Map) item;
-            ArrayList<Map<String, String>> items = (ArrayList) itemMap.get("items");
+            ArrayList<Map<String, String>> items = itemMap.get("items");
 			String xn = itemMap.get("xn").toString();
 			String xq = itemMap.get("xq").toString();
             ArrayList<GradeAndCourse> gradeAndCourseList = new ArrayList<>();
