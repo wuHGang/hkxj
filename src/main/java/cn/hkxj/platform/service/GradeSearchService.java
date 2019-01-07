@@ -40,7 +40,7 @@ public class GradeSearchService {
     private UrpSpiderService urpSpiderService;
     @Resource
     private AppSpiderService appSpiderService;
-//    private static ExecutorService executorService = Executors.newFixedThreadPool(10);
+    private static ExecutorService executorService = Executors.newFixedThreadPool(10);
 
 	/**
 	 * 通过appspider返回学生本学期的全部成绩
@@ -113,7 +113,6 @@ public class GradeSearchService {
     }
 
     public List<GradeAndCourse> getGradeFromSpiderAsync(Student student) {
-        ExecutorService executorService = Executors.newFixedThreadPool(10);
         CompletionService<List<GradeAndCourse>> spiderExecutorService = new ExecutorCompletionService<>(executorService);
 
         spiderExecutorService.submit(appSpiderTask(student));
@@ -124,10 +123,12 @@ public class GradeSearchService {
             for (int x = 0; x < 2; x++) {
                 // 结果不为空的时候  如果result已经记录全部插入到
                 List<GradeAndCourse> gradeAndCourses = spiderExecutorService.take().get();
+                ArrayList<GradeAndCourse> prepare = Lists.newArrayList();
                 if (!CollectionUtils.isEmpty(gradeAndCourses) && CollectionUtils.isEmpty(result)) {
                     result.addAll(gradeAndCourses);
+                    prepare.addAll(gradeAndCourses);
                 } else {
-                    for (GradeAndCourse fromApp : result) {
+                    for (GradeAndCourse fromApp : prepare) {
                         for (GradeAndCourse fromUrp : gradeAndCourses) {
                             if (fromApp.equals(fromUrp)) {
                                 result.add(fromUrp.getGrade().getScore() == -1 ? fromApp : fromUrp);
@@ -140,10 +141,7 @@ public class GradeSearchService {
 
         } catch (InterruptedException | ExecutionException e) {
             log.error("app spider execute error", e);
-        } finally {
-            executorService.shutdown();
         }
-
         return result;
     }
 
