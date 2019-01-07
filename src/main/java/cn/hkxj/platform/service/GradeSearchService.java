@@ -130,6 +130,9 @@ public class GradeSearchService {
                 }
             }
             for (GradeAndCourse gradeAndCourse : prepare) {
+                gradeAndCourse.getGrade().setPoint(0);
+                gradeAndCourse.getCourse().setCredit(0);
+                gradeAndCourse.getCourse().setAcademy(null);
                 if (resultSet.contains(gradeAndCourse)) {
                     if (gradeAndCourse.getGrade().getScore() != -1) {
                         //这里排除app有成绩但是教务网没成绩  app成绩被顶掉的情况

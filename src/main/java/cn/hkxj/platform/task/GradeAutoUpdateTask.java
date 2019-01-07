@@ -63,7 +63,7 @@ public class GradeAutoUpdateTask {
         Student student = ACCOUNT_QUEUE.poll();
         while (Objects.nonNull(student)) {
             try {
-                List<GradeAndCourse> gradeFromSpider = gradeSearchService.getGradeFromSpiderSync(student);
+                List<GradeAndCourse> gradeFromSpider = gradeSearchService.getGradeFromSpiderAsync(student);
                 List<GradeAndCourse> studentGrades=gradeSearchService.saveGradeAndCourse(student, gradeFromSpider);
                 if (!CollectionUtils.isEmpty(studentGrades)) {
                     wxMpService.getKefuService().sendKefuMessage(getKefuMessage(student, gradeListToText(studentGrades)));
