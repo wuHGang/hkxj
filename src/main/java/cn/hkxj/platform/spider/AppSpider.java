@@ -31,6 +31,7 @@ import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -160,12 +161,13 @@ public class AppSpider {
 			String xn = itemMap.get("xn").toString();
 			String xq = itemMap.get("xq").toString();
             ArrayList<GradeAndCourse> gradeAndCourseList = new ArrayList<>();
-            for (Map<String, String> detail : items) {
-                String uid = detail.get("kcdm");
-                String type = detail.get("kcxz");
-                String name = detail.get("kcmc");
-                String cj = detail.get("cj");
-                String xf = detail.get("xf");
+            for (Map detail : items) {
+                String uid = detail.get("kcdm").toString();
+                Object kcxz = detail.get("kcxz");
+                String type = (Objects.isNull(kcxz) ? "" : kcxz.toString());
+                String name = detail.get("kcmc").toString();
+                String cj = detail.get("cj").toString();
+                String xf = detail.get("xf").toString();
 
 				Grade grade = getGrade(uid, cj, xf, xq, xn);
 				Course course = getCourse(uid, name, type, xf);
