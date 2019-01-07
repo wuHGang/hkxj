@@ -26,7 +26,11 @@ public enum CourseType {
 	/**
 	 * 任选
 	 */
-    OPTIONAL(3, "任选");
+    OPTIONAL(3, "任选"),
+    /**
+     * 辅修
+     */
+    AUXILIARY(4, "辅修");
 
     Integer code;
 	String type;

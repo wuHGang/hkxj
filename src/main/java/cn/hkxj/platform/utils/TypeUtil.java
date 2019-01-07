@@ -18,6 +18,18 @@ public class TypeUtil {
 	}
 
 	public static int gradeToInt(String value){
+        if (value.startsWith("优")) {
+            return 90;
+        }
+        if (value.startsWith("良")) {
+            return 80;
+        }
+        if (value.startsWith("中")) {
+            return 70;
+        }
+        if (value.startsWith("及格")) {
+            return 60;
+        }
 		if(value.contains(POINT)){
 			int index = value.indexOf(POINT);
 			value = value.substring(0, index) + value.substring(index +1, index+2);
