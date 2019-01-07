@@ -51,6 +51,8 @@ public enum CourseType {
 				return ELECTIVE;
 			case "任选":
 				return OPTIONAL;
+            case "辅修":
+                return AUXILIARY;
 			default:
 				log.error("getCourseByType error type:"+type);
 				throw new IllegalArgumentException("Invalid type:"+type);

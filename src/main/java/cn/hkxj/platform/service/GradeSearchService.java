@@ -11,12 +11,14 @@ import cn.hkxj.platform.pojo.GradeAndCourse;
 import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.spider.UrpCourseSpider;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletionService;
@@ -117,24 +119,25 @@ public class GradeSearchService {
 
         spiderExecutorService.submit(appSpiderTask(student));
         spiderExecutorService.submit(urpSpiderTask(student));
-
-        ArrayList<GradeAndCourse> result = Lists.newArrayList();
+        HashSet<GradeAndCourse> resultSet = Sets.newHashSet();
+        ArrayList<GradeAndCourse> prepare = Lists.newArrayList();
         try {
             for (int x = 0; x < 2; x++) {
                 // 结果不为空的时候  如果result已经记录全部插入到
                 List<GradeAndCourse> gradeAndCourses = spiderExecutorService.take().get();
-                ArrayList<GradeAndCourse> prepare = Lists.newArrayList();
-                if (!CollectionUtils.isEmpty(gradeAndCourses) && CollectionUtils.isEmpty(result)) {
-                    result.addAll(gradeAndCourses);
+                if (!CollectionUtils.isEmpty(gradeAndCourses)) {
                     prepare.addAll(gradeAndCourses);
-                } else {
-                    for (GradeAndCourse fromApp : prepare) {
-                        for (GradeAndCourse fromUrp : gradeAndCourses) {
-                            if (fromApp.equals(fromUrp)) {
-                                result.add(fromUrp.getGrade().getScore() == -1 ? fromApp : fromUrp);
-                            }
-                        }
+                }
+            }
+            for (GradeAndCourse gradeAndCourse : prepare) {
+                if (resultSet.contains(gradeAndCourse)) {
+                    if (gradeAndCourse.getGrade().getScore() != -1) {
+                        //这里排除app有成绩但是教务网没成绩  app成绩被顶掉的情况
+                        resultSet.remove(gradeAndCourse);
+                        resultSet.add(gradeAndCourse);
                     }
+                } else {
+                    resultSet.add(gradeAndCourse);
                 }
             }
 
@@ -142,7 +145,7 @@ public class GradeSearchService {
         } catch (InterruptedException | ExecutionException e) {
             log.error("app spider execute error", e);
         }
-        return result;
+        return Lists.newArrayList(resultSet);
     }
 
 
