@@ -1,5 +1,7 @@
 package cn.hkxj.platform.utils;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * @author junrong.chen
  * @date 2018/9/15
@@ -7,8 +9,10 @@ package cn.hkxj.platform.utils;
 public class TypeUtil {
 	private static final String POINT = ".";
 
-	public static int pointToInt(double point){
-		String value = String.valueOf(point);
+    public static int pointToInt(String value) {
+        if (StringUtils.isEmpty(value)) {
+            return 0;
+        }
 		if(value.contains(POINT)){
 			int index = value.indexOf(POINT);
 			value = value.substring(0, index) + value.substring(index +1);

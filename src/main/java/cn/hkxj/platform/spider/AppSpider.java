@@ -155,18 +155,17 @@ public class AppSpider {
 	public AllGradeAndCourse getGradeAndCourse() {
 		AllGradeAndCourse allGradeAndCourse = new AllGradeAndCourse();
 		for (Object item : getGrade()) {
-			Map itemMap = (Map) item;
-			ArrayList<Map> items = (ArrayList) itemMap.get("items");
+            Map<String, ArrayList<Map<String, String>>> itemMap = (Map) item;
+            ArrayList<Map<String, String>> items = (ArrayList) itemMap.get("items");
 			String xn = itemMap.get("xn").toString();
 			String xq = itemMap.get("xq").toString();
             ArrayList<GradeAndCourse> gradeAndCourseList = new ArrayList<>();
-			for (Map detail : items) {
-
-				String uid = detail.get("kcdm").toString();
-				String type = detail.get("kcxz").toString();
-				String name = detail.get("kcmc").toString();
-				String cj = detail.get("cj").toString();
-				Double xf = (Double) detail.get("xf");
+            for (Map<String, String> detail : items) {
+                String uid = detail.get("kcdm");
+                String type = detail.get("kcxz");
+                String name = detail.get("kcmc");
+                String cj = detail.get("cj");
+                String xf = detail.get("xf");
 
 				Grade grade = getGrade(uid, cj, xf, xq, xn);
 				Course course = getCourse(uid, name, type, xf);
@@ -181,7 +180,7 @@ public class AppSpider {
 		return allGradeAndCourse;
 	}
 
-	private Course getCourse(String uid, String name, String type, double xf) {
+    private Course getCourse(String uid, String name, String type, String xf) {
 		Course course = new Course();
 		course.setUid(uid);
 		course.setName(name);
@@ -191,7 +190,7 @@ public class AppSpider {
 		return course;
 	}
 
-	private Grade getGrade(String uid, String cj, double xf, String xq, String xn) {
+    private Grade getGrade(String uid, String cj, String xf, String xq, String xn) {
 		Grade grade = new Grade();
 		grade.setAccount(account);
 		grade.setCourseId(uid);
