@@ -122,8 +122,9 @@ public class GradeSearchService {
         ArrayList<GradeAndCourse> result = Lists.newArrayList();
         try {
             for (int x = 0; x < 2; x++) {
+                // 结果不为空的时候  如果result已经记录全部插入到
                 List<GradeAndCourse> gradeAndCourses = spiderExecutorService.take().get();
-                if (!CollectionUtils.isEmpty(gradeAndCourses)) {
+                if (!CollectionUtils.isEmpty(gradeAndCourses) && CollectionUtils.isEmpty(result)) {
                     result.addAll(gradeAndCourses);
                 } else {
                     for (GradeAndCourse fromApp : result) {
