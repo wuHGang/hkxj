@@ -40,7 +40,7 @@ public class GradeSearchService {
     private UrpSpiderService urpSpiderService;
     @Resource
     private AppSpiderService appSpiderService;
-    private static ExecutorService executorService = Executors.newFixedThreadPool(10);
+//    private static ExecutorService executorService = Executors.newFixedThreadPool(10);
 
 	/**
 	 * 通过appspider返回学生本学期的全部成绩
@@ -113,7 +113,7 @@ public class GradeSearchService {
     }
 
     public List<GradeAndCourse> getGradeFromSpiderAsync(Student student) {
-
+        ExecutorService executorService = Executors.newFixedThreadPool(10);
         CompletionService<List<GradeAndCourse>> spiderExecutorService = new ExecutorCompletionService<>(executorService);
 
         spiderExecutorService.submit(appSpiderTask(student));
@@ -140,6 +140,8 @@ public class GradeSearchService {
 
         } catch (InterruptedException | ExecutionException e) {
             log.error("app spider execute error", e);
+        } finally {
+            executorService.shutdown();
         }
 
         return result;
