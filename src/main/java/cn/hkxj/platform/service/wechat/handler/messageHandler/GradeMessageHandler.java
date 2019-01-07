@@ -75,7 +75,7 @@ public class GradeMessageHandler implements WxMpMessageHandler {
 
             return textBuilder.build(gradesMsg, wxMpXmlMessage, wxMpService);
 		} catch (Exception e) {
-            log.error("在组装返回信息时出现错误 {}", e.getMessage());
+            log.error("在组装返回信息时出现错误", e);
 		}
 
 		return textBuilder.build("没有查询到相关成绩，晚点再来查吧~" , wxMpXmlMessage, wxMpService);
