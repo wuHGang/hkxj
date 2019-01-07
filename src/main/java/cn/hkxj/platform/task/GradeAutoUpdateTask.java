@@ -47,7 +47,7 @@ public class GradeAutoUpdateTask {
     @Resource
     private StudentMapper studentMapper;
     @Resource
-    WxMpService wxMpService;
+    private WxMpService wxMpService;
 
     public static void addStudentToQueue(Student student) {
         if (ACCOUNT_SET.contains(student)) {
@@ -67,8 +67,6 @@ public class GradeAutoUpdateTask {
                 List<GradeAndCourse> studentGrades=gradeSearchService.saveGradeAndCourse(student, gradeFromSpider);
                 if (!CollectionUtils.isEmpty(studentGrades)) {
                     wxMpService.getKefuService().sendKefuMessage(getKefuMessage(student, gradeListToText(studentGrades)));
-                } else {
-                    log.info("student {} grade not");
                 }
             } catch (Exception e) {
                 log.error("grade update task error", e);
