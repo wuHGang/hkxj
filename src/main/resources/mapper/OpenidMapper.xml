@@ -244,4 +244,7 @@
   <select id="isOpenidExist" parameterType="String" resultType="String">
     select openid from openid where openid = #{value}
   </select>
+  <update id="openidUnbind" parameterType="String">
+    update openid set is_bind = false where openid=#{openid}
+  </update>
 </mapper>
