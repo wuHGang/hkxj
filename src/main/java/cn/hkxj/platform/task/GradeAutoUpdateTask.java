@@ -3,11 +3,8 @@ package cn.hkxj.platform.task;
 import cn.hkxj.platform.mapper.OpenidMapper;
 import cn.hkxj.platform.mapper.StudentMapper;
 import cn.hkxj.platform.mapper.SubscribeGradeUpdateMapper;
-import cn.hkxj.platform.pojo.AllGradeAndCourse;
-import cn.hkxj.platform.pojo.GradeAndCourse;
-import cn.hkxj.platform.pojo.Openid;
-import cn.hkxj.platform.pojo.Student;
-import cn.hkxj.platform.pojo.SubscribeGradeUpdate;
+import cn.hkxj.platform.mapper.TaskMapper;
+import cn.hkxj.platform.pojo.*;
 import cn.hkxj.platform.service.GradeSearchService;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.mp.api.WxMpService;
@@ -48,6 +45,8 @@ public class GradeAutoUpdateTask {
     private StudentMapper studentMapper;
     @Resource
     private WxMpService wxMpService;
+    @Resource
+    TaskMapper taskMapper;
 
     public static void addStudentToQueue(Student student) {
         if (ACCOUNT_SET.contains(student)) {
@@ -57,12 +56,13 @@ public class GradeAutoUpdateTask {
         ACCOUNT_QUEUE.offer(student);
     }
 
-    @Scheduled(cron = "0 0/20 * * * ?")
+    @Scheduled(cron = "0 0/1 * * * ?")
     private void autoUpdateGrade() {
         getStudentQueue();
         Student student = ACCOUNT_QUEUE.poll();
         while (Objects.nonNull(student)) {
             try {
+                taskMapper.taskCountUpdate(openidMap.get(student.getAccount()),1);
                 List<GradeAndCourse> gradeFromSpider = gradeSearchService.getGradeFromSpiderAsync(student);
                 List<GradeAndCourse> studentGrades=gradeSearchService.saveGradeAndCourse(student, gradeFromSpider);
                 if (!CollectionUtils.isEmpty(studentGrades)) {
