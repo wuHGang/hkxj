@@ -56,7 +56,7 @@ public class GradeAutoUpdateTask {
         ACCOUNT_QUEUE.offer(student);
     }
 
-    @Scheduled(cron = "0 0/1 * * * ?")
+    @Scheduled(cron = "0 0/20 * * * ?")
     private void autoUpdateGrade() {
         getStudentQueue();
         Student student = ACCOUNT_QUEUE.poll();
