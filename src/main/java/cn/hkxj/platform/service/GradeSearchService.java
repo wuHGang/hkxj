@@ -130,8 +130,6 @@ public class GradeSearchService {
                 }
             }
             for (GradeAndCourse gradeAndCourse : prepare) {
-                gradeAndCourse.getGrade().setPoint(0);
-                gradeAndCourse.getCourse().setCredit(0);
                 gradeAndCourse.getCourse().setAcademy(null);
                 if (resultSet.contains(gradeAndCourse)) {
                     if (gradeAndCourse.getGrade().getScore() != -1) {

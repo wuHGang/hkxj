@@ -56,7 +56,7 @@ public class GradeAutoUpdateTask {
         ACCOUNT_QUEUE.offer(student);
     }
 
-    @Scheduled(cron = "0 0/20 * * * ?")
+    @Scheduled(cron = "0 0/1 * * * ?")
     private void autoUpdateGrade() {
         getStudentQueue();
         Student student = ACCOUNT_QUEUE.poll();
@@ -134,7 +134,7 @@ public class GradeAutoUpdateTask {
                 int grade = gradeAndCourse.getGrade().getScore();
                 buffer.append("考试名称：").append(gradeAndCourse.getCourse().getName()).append("\n")
                         .append("成绩：").append(grade == -1 ? "" : grade / 10).append("   学分：")
-                        .append(gradeAndCourse.getGrade().getPoint() / 10).append("\n\n");
+                        .append(((float)gradeAndCourse.getGrade().getPoint()) / 10).append("\n\n");
             }
         }
         return buffer.toString();

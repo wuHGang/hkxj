@@ -114,7 +114,7 @@ public class UrpSpiderService {
     private Grade getGrade(Map gradeMap) {
         // TODO  爬虫还需要爬去相关的成绩的学期和学年  现在直接写死在程序里面
         Grade grade = new Grade();
-        grade.setPoint(TypeUtil.pointToInt(gradeMap.get("credit").toString()));
+        grade.setPoint((int)(Float.parseFloat((String)(gradeMap.get("credit")))*10));
         String scoreObject = (String) gradeMap.get("grade");
         if (StringUtils.isNotEmpty(scoreObject)) {
             grade.setScore(TypeUtil.gradeToInt(scoreObject));
