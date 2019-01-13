@@ -1,10 +1,12 @@
-package cn.hkxj.platform.pojo;
+package cn.hkxj.platform.spider.model;
+
+import com.google.common.base.MoreObjects;
 
 /**
  * @author JR Chan
  * @date 2018/12/15
  */
-public class StudentWrapper {
+public class UrpStudentInfo {
     public String academy;
     private Integer account;
     private String password;
@@ -13,6 +15,7 @@ public class StudentWrapper {
     private String ethnic;
     private String major;
     private String classname;
+
 
     public String getClassname() {
         return classname;
@@ -80,4 +83,17 @@ public class StudentWrapper {
     }
 
 
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("academy", academy)
+                .add("account", account)
+                .add("password", password)
+                .add("name", name)
+                .add("sex", sex)
+                .add("ethnic", ethnic)
+                .add("major", major)
+                .add("classname", classname)
+                .toString();
+    }
 }
