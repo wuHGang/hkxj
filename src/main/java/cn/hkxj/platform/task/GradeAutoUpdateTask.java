@@ -4,9 +4,14 @@ import cn.hkxj.platform.mapper.OpenidMapper;
 import cn.hkxj.platform.mapper.StudentMapper;
 import cn.hkxj.platform.mapper.SubscribeGradeUpdateMapper;
 import cn.hkxj.platform.mapper.TaskMapper;
-import cn.hkxj.platform.pojo.*;
+import cn.hkxj.platform.pojo.AllGradeAndCourse;
+import cn.hkxj.platform.pojo.GradeAndCourse;
+import cn.hkxj.platform.pojo.Openid;
+import cn.hkxj.platform.pojo.Student;
+import cn.hkxj.platform.pojo.SubscribeGradeUpdate;
 import cn.hkxj.platform.service.GradeSearchService;
 import lombok.extern.slf4j.Slf4j;
+import me.chanjar.weixin.common.exception.WxErrorException;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.kefu.WxMpKefuMessage;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -68,6 +73,9 @@ public class GradeAutoUpdateTask {
                 if (!CollectionUtils.isEmpty(studentGrades)) {
                     wxMpService.getKefuService().sendKefuMessage(getKefuMessage(student, gradeListToText(studentGrades)));
                 }
+
+            } catch (WxErrorException e) {
+                log.warn("account {} send grade update message error {}", e.getMessage());
             } catch (Exception e) {
                 log.error("grade update task error", e);
             }

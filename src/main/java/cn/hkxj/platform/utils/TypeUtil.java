@@ -34,6 +34,9 @@ public class TypeUtil {
         if (value.startsWith("及格")) {
             return 60;
         }
+        if (value.startsWith("不及格")) {
+            return 50;
+        }
 		if(value.contains(POINT)){
 			int index = value.indexOf(POINT);
 			value = value.substring(0, index) + value.substring(index +1, index+2);
