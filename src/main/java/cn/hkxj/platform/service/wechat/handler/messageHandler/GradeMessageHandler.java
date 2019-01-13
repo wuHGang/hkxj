@@ -1,7 +1,6 @@
 package cn.hkxj.platform.service.wechat.handler.messageHandler;
 
 import cn.hkxj.platform.builder.TextBuilder;
-import cn.hkxj.platform.pojo.AllGradeAndCourse;
 import cn.hkxj.platform.pojo.GradeAndCourse;
 import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.service.GradeSearchService;
@@ -44,9 +43,9 @@ public class GradeMessageHandler implements WxMpMessageHandler {
     TaskBindingService taskBindingService;
 
 	public WxMpXmlOutMessage handle(WxMpXmlMessage wxMpXmlMessage,
-									Map<String, Object> map,
-									WxMpService wxMpService,
-									WxSessionManager wxSessionManager) throws WxErrorException {
+                                    Map<String, Object> map,
+                                    WxMpService wxMpService,
+                                    WxSessionManager wxSessionManager) {
 		try {
             Student student = openIdService.getStudentByOpenId(wxMpXmlMessage.getFromUser());
 
@@ -56,7 +55,7 @@ public class GradeMessageHandler implements WxMpMessageHandler {
             if (CollectionUtils.isEmpty(currentTermGrade)) {
                 singleThreadPool.execute(() -> {
                     List<GradeAndCourse> gradeFromSpiderSync = gradeSearchService.getCurrentTermGradeSync(student);
-                    String gradeListToText = gradeListToText(gradeFromSpiderSync);
+                    String gradeListToText = gradeSearchService.gradeListToText(gradeFromSpiderSync);
                     WxMpKefuMessage wxMpKefuMessage = new WxMpKefuMessage();
                     wxMpKefuMessage.setContent(gradeListToText);
                     wxMpKefuMessage.setMsgType("text");
@@ -70,7 +69,7 @@ public class GradeMessageHandler implements WxMpMessageHandler {
                 });
                 return textBuilder.build("服务器正在努力查询中", wxMpXmlMessage, wxMpService);
             }
-            String gradesMsg = gradeListToText(currentTermGrade);
+            String gradesMsg = gradeSearchService.gradeListToText(currentTermGrade);
 
 
             return textBuilder.build(gradesMsg, wxMpXmlMessage, wxMpService);
@@ -81,34 +80,6 @@ public class GradeMessageHandler implements WxMpMessageHandler {
 		return textBuilder.build("没有查询到相关成绩，晚点再来查吧~" , wxMpXmlMessage, wxMpService);
 	}
 
-    /**
-     * 将学生成绩文本化
-     *
-     * @param studentGrades 学生全部成绩
-     */
-    public String gradeListToText(List<GradeAndCourse> studentGrades) {
-        StringBuffer buffer = new StringBuffer();
-        boolean i = true;
-        if (studentGrades.size() == 0) {
-            buffer.append("尚无本学期成绩");
-        } else {
-            AllGradeAndCourse allGradeAndCourse = new AllGradeAndCourse();
-            allGradeAndCourse.addGradeAndCourse(studentGrades);
-            for (GradeAndCourse gradeAndCourse : allGradeAndCourse.getCurrentTermGrade()) {
-                if (i) {
-                    i = false;
-                    buffer.append("- - - - - - - - - - - - - -\n");
-                    buffer.append("|").append(gradeAndCourse.getGrade().getYear()).append("学年，第").append(gradeAndCourse.getGrade().getTerm()).append("学期|\n");
-                    buffer.append("- - - - - - - - - - - - - -\n\n");
-                }
-                int grade = gradeAndCourse.getGrade().getScore();
-                buffer.append("考试名称：").append(gradeAndCourse.getCourse().getName()).append("\n")
-                        .append("成绩：").append(grade == -1 ? "" : grade / 10).append("   学分：")
-                        .append(gradeAndCourse.getGrade().getPoint() / 10).append("\n\n");
-            }
-        }
-        return buffer.toString();
-    }
 
 
 }
