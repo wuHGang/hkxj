@@ -112,7 +112,7 @@ public class UrpSpiderService {
     private Grade getGrade(UrpGrade urpGrade) {
         // TODO  爬虫还需要爬去相关的成绩的学期和学年  现在直接写死在程序里面
         Grade grade = new Grade();
-        grade.setPoint(TypeUtil.pointToInt(urpGrade.getCredit()) * 10);
+        grade.setPoint((int)(Float.parseFloat(urpGrade.getCredit())*10) );
         if (StringUtils.isNotEmpty(urpGrade.getGrade())) {
             grade.setScore(TypeUtil.gradeToInt(urpGrade.getGrade()));
         } else {
