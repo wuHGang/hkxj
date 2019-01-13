@@ -156,7 +156,7 @@ public class GradeSearchService {
             AllGradeAndCourse gradeAndCourseByAccount = appSpiderService.getGradeAndCourseByAccount(student.getAccount());
             currentFromApp = gradeAndCourseByAccount.getCurrentTermGrade();
         } catch (PasswordUncorrectException | SpiderException e) {
-            log.error("account {} app spider error {}", student.getAccount(), e.getMessage());
+            log.warn("account {} app spider error {}", student.getAccount(), e.getMessage());
 
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -194,7 +194,7 @@ public class GradeSearchService {
                 AllGradeAndCourse gradeAndCourseByAccount = appSpiderService.getGradeAndCourseByAccount(student.getAccount());
                 return gradeAndCourseByAccount.getCurrentTermGrade();
             } catch (PasswordUncorrectException | SpiderException e) {
-                log.error("account {} app spider error {}", student.getAccount(), e.getMessage());
+                log.warn("account {} app spider error {}", student.getAccount(), e.getMessage());
 
             } catch (Exception e) {
                 log.error(e.getMessage(), e);
