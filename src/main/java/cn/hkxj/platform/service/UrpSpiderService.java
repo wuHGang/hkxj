@@ -52,11 +52,11 @@ public class UrpSpiderService {
 
     public ArrayList<GradeAndCourse> getCurrentGrade(Student student) {
         UrpSpider urpSpider = new UrpSpider(student.getAccount(), student.getPassword());
-        UrpResult<CurrentGrade> currentGrade = null;
+        UrpResult<CurrentGrade> currentGrade;
         try {
             currentGrade = urpSpider.getCurrentGrade();
-            log.error("account {} urp password error", student.getAccount());
             if (currentGrade.getStatus() == 400) {
+                log.error("account {} urp password error", student.getAccount());
                 student.setIsCorrect(false);
                 studentMapper.updateByPrimaryKey(student);
             }
