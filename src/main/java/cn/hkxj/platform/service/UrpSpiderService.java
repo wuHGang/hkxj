@@ -1,5 +1,7 @@
 package cn.hkxj.platform.service;
 
+import cn.hkxj.platform.exceptions.PasswordUncorrectException;
+import cn.hkxj.platform.exceptions.ReadTimeoutException;
 import cn.hkxj.platform.mapper.CourseMapper;
 import cn.hkxj.platform.mapper.StudentMapper;
 import cn.hkxj.platform.pojo.Academy;
@@ -39,11 +41,22 @@ public class UrpSpiderService {
     @Resource
     private StudentMapper studentMapper;
 
-    public Student getInformation(int account, String password) {
+    public Student getInformation(int account, String password) throws PasswordUncorrectException {
         UrpSpider urpSpider = new UrpSpider(account, password);
         UrpResult<Information> information = urpSpider.getInformation();
+        if(information.getStatus() == 400){
+            throw new PasswordUncorrectException();
+        }
+        if(information.getStatus() == 500){
+            throw new ReadTimeoutException("urp spider read time out");
+        }
 
+        if(information.getStatus() == 502){
+            log.error("python spider service error");
+            throw new ReadTimeoutException("urp spider read time out");
+        }
         UrpStudentInfo urpStudentInfo = information.getData().getUrpStudentInfo();
+
         Classes classes = clazzService.parseSpiderResult(urpStudentInfo);
         Student student = wrapperToStudent(urpStudentInfo);
         student.setClasses(classes);
