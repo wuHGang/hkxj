@@ -7,8 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Map;
-
 @Slf4j
 public class UrpSpiderTest {
 	private UrpSpider spider;
@@ -22,25 +20,25 @@ public class UrpSpiderTest {
 	@Test
     public void getInformation() throws PasswordUncorrectException {
 
-        Map information = spider.getInformation();
-        log.info(information.toString());
+//        Map information = spider.getInformation();
+//        log.info(information.toString());
 
 	}
 
 	@Test
 	public void getGrade() {
-			try {
-				Map grade = spider.getGrade();
-				System.out.println(grade.toString());
-			} catch (PasswordUncorrectException e) {
-				e.printStackTrace();
-			}
+//			try {
+//				Map grade = spider.getGrade();
+//				System.out.println(grade.toString());
+//			} catch (PasswordUncorrectException e) {
+//				e.printStackTrace();
+//			}
 	}
 
 	@Test
     public void getCurrent() throws PasswordUncorrectException {
-        Map grade = spider.getCurrentGrade();
-        log.info(grade.toString());
+//        Map grade = spider.getCurrentGrade();
+//        log.info(grade.toString());
     }
 
 	@Test

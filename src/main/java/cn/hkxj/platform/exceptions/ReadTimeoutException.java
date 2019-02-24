@@ -2,7 +2,7 @@ package cn.hkxj.platform.exceptions;
 
 import java.io.IOException;
 
-public class ReadTimeoutException extends RuntimeException {
+public class ReadTimeoutException extends SpiderException {
 	public ReadTimeoutException(String description) {
 		super(description);
 	}

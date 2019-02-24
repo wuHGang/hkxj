@@ -1,7 +1,6 @@
 package cn.hkxj.platform.service.wechat.handler.messageHandler;
 
 import cn.hkxj.platform.builder.TextBuilder;
-import cn.hkxj.platform.mapper.TaskMapper;
 import cn.hkxj.platform.pojo.AllGradeAndCourse;
 import cn.hkxj.platform.pojo.GradeAndCourse;
 import cn.hkxj.platform.pojo.Student;
@@ -13,10 +12,11 @@ import me.chanjar.weixin.common.exception.WxErrorException;
 import me.chanjar.weixin.common.session.WxSessionManager;
 import me.chanjar.weixin.mp.api.WxMpMessageHandler;
 import me.chanjar.weixin.mp.api.WxMpService;
+import me.chanjar.weixin.mp.bean.kefu.WxMpKefuMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -49,17 +49,33 @@ public class GradeMessageHandler implements WxMpMessageHandler {
 									WxSessionManager wxSessionManager) throws WxErrorException {
 		try {
             Student student = openIdService.getStudentByOpenId(wxMpXmlMessage.getFromUser());
-            List<GradeAndCourse> currentTermGrade = gradeSearchService.getCurrentTermGrade(student);
-            String gradesMsg = GradeListToText(currentTermGrade);
 
             ExecutorService singleThreadPool = Executors.newSingleThreadExecutor();
-            singleThreadPool.execute(()->{
-                taskBindingService.isTaskBinding(wxMpXmlMessage.getFromUser(),"成绩");
-            });
+            singleThreadPool.execute(() -> taskBindingService.subscribeGradeUpdateBinding(wxMpXmlMessage.getFromUser()));
+            List<GradeAndCourse> currentTermGrade = gradeSearchService.getCurrentTermGradeAsync(student);
+            if (CollectionUtils.isEmpty(currentTermGrade)) {
+                singleThreadPool.execute(() -> {
+                    List<GradeAndCourse> gradeFromSpiderSync = gradeSearchService.getCurrentTermGradeSync(student);
+                    String gradeListToText = gradeListToText(gradeFromSpiderSync);
+                    WxMpKefuMessage wxMpKefuMessage = new WxMpKefuMessage();
+                    wxMpKefuMessage.setContent(gradeListToText);
+                    wxMpKefuMessage.setMsgType("text");
+                    wxMpKefuMessage.setToUser(wxMpXmlMessage.getFromUser());
+                    log.info("send student {} grade kefu message {}", student.getAccount(), gradeListToText);
+                    try {
+                        wxMpService.getKefuService().sendKefuMessage(wxMpKefuMessage);
+                    } catch (WxErrorException e) {
+                        log.error("send grade customer message error", e);
+                    }
+                });
+                return textBuilder.build("服务器正在努力查询中", wxMpXmlMessage, wxMpService);
+            }
+            String gradesMsg = gradeListToText(currentTermGrade);
+
 
             return textBuilder.build(gradesMsg, wxMpXmlMessage, wxMpService);
 		} catch (Exception e) {
-            log.error("在组装返回信息时出现错误 {}", e.getMessage());
+            log.error("在组装返回信息时出现错误", e);
 		}
 
 		return textBuilder.build("没有查询到相关成绩，晚点再来查吧~" , wxMpXmlMessage, wxMpService);
@@ -70,7 +86,7 @@ public class GradeMessageHandler implements WxMpMessageHandler {
      *
      * @param studentGrades 学生全部成绩
      */
-    public String GradeListToText(List<GradeAndCourse> studentGrades) {
+    public String gradeListToText(List<GradeAndCourse> studentGrades) {
         StringBuffer buffer = new StringBuffer();
         boolean i = true;
         if (studentGrades.size() == 0) {

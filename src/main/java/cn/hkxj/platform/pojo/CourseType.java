@@ -26,7 +26,11 @@ public enum CourseType {
 	/**
 	 * 任选
 	 */
-    OPTIONAL(3, "任选");
+    OPTIONAL(3, "任选"),
+    /**
+     * 辅修
+     */
+    AUXILIARY(4, "辅修");
 
     Integer code;
 	String type;
@@ -47,6 +51,8 @@ public enum CourseType {
 				return ELECTIVE;
 			case "任选":
 				return OPTIONAL;
+            case "辅修":
+                return AUXILIARY;
 			default:
 				log.error("getCourseByType error type:"+type);
 				throw new IllegalArgumentException("Invalid type:"+type);

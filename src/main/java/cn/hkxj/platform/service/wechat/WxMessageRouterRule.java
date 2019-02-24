@@ -11,7 +11,11 @@ import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author junrong.chen
@@ -141,6 +145,7 @@ public class WxMessageRouterRule extends WxMpMessageRouterRule {
     /**
      * 规则结束，代表如果一个消息匹配该规则，那么它将不再会进入其他规则
      */
+    @Override
     public WxMessageRouter end() {
         this.routerBuilder.getRules().add(this);
         return this.routerBuilder;
@@ -149,6 +154,7 @@ public class WxMessageRouterRule extends WxMpMessageRouterRule {
     /**
      * 规则结束，但是消息还会进入其他规则
      */
+    @Override
     public WxMessageRouter next() {
         this.reEnter = true;
         return end();
@@ -185,6 +191,7 @@ public class WxMessageRouterRule extends WxMpMessageRouterRule {
 		return null;
 	}
 
+    @Override
     protected boolean test(WxMpXmlMessage wxMessage) {
         return super.test(wxMessage);
     }

@@ -4,8 +4,8 @@ import cn.hkxj.platform.mapper.ClassesMapper;
 import cn.hkxj.platform.pojo.Academy;
 import cn.hkxj.platform.pojo.Classes;
 import cn.hkxj.platform.pojo.ClassesExample;
-import cn.hkxj.platform.pojo.StudentWrapper;
 import cn.hkxj.platform.pojo.Subject;
+import cn.hkxj.platform.spider.model.UrpStudentInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -65,7 +65,7 @@ public class ClazzService {
      * @param studentWrapper 学生信息
      * @return 班级对象
      */
-    Classes parseSpiderResult(StudentWrapper studentWrapper) {
+    Classes parseSpiderResult(UrpStudentInfo studentWrapper) {
         Classes classes = new Classes();
         // 所有班级的年级都从学号里面取
         // 班级序号先前置为1 如果是别的序号会被覆盖
@@ -97,7 +97,7 @@ public class ClazzService {
         return buildClazzByStudent(studentWrapper);
     }
 
-    private Classes buildClazzByStudent(StudentWrapper studentWrapper) {
+    private Classes buildClazzByStudent(UrpStudentInfo studentWrapper) {
         Classes classes = parseText(studentWrapper.getClassname());
         classes.setAcademy(Academy.getAcademyCodeByName(studentWrapper.getAcademy()));
 

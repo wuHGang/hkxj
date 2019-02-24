@@ -1,10 +1,7 @@
 package cn.hkxj.platform.service.wechat;
 
 import cn.hkxj.platform.interceptor.WechatOpenIdInterceptor;
-import cn.hkxj.platform.service.wechat.handler.messageHandler.CourseMessageHandler;
-import cn.hkxj.platform.service.wechat.handler.messageHandler.EmptyRoomHandler;
-import cn.hkxj.platform.service.wechat.handler.messageHandler.ExamMessageHandler;
-import cn.hkxj.platform.service.wechat.handler.messageHandler.GradeMessageHandler;
+import cn.hkxj.platform.service.wechat.handler.messageHandler.*;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -24,6 +21,12 @@ public class HandlerRouteService {
 
 	@Resource
 	private GradeMessageHandler gradeMessageHandler;
+
+	@Resource
+	private OpenidMessageHandler openidMessageHandler;
+
+	@Resource
+	private UnbindMessageHandler unbindMessageHandler;
 
 	@Resource
 	private EmptyRoomHandler emptyRoomHandler;
@@ -46,8 +49,20 @@ public class HandlerRouteService {
 				.rule()
 					.async(false)
 					.interceptor(wechatOpenIdInterceptor)
-					.content("成绩")
+					.rContent(".*?成绩.*?")
 					.handler(gradeMessageHandler)
+				.end()
+				.rule()
+					.async(false)
+					.interceptor(wechatOpenIdInterceptor)
+					.content("openid")
+					.handler(openidMessageHandler)
+				.end()
+				.rule()
+					.async(false)
+					.interceptor(wechatOpenIdInterceptor)
+					.content("解绑")
+					.handler(unbindMessageHandler)
 				.end()
                 .rule()
                     .async(false)

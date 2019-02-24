@@ -42,4 +42,6 @@ public interface OpenidMapper {
     List<Openid> getOpenIdsByOpenIds(@Param("openids") List<String> openids);
 
     String isOpenidExist(String openid);
+
+    int openidUnbind(String openid);
 }
