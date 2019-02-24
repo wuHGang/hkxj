@@ -9,12 +9,9 @@ import cn.hkxj.platform.service.CourseService;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.exception.WxErrorException;
 import me.chanjar.weixin.mp.api.WxMpService;
-<<<<<<< HEAD
 import okhttp3.*;
-=======
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
->>>>>>> refs/remotes/forkOrigin/dev
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;

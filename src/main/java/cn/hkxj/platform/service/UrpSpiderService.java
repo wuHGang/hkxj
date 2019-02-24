@@ -1,5 +1,6 @@
 package cn.hkxj.platform.service;
 
+import cn.hkxj.platform.exceptions.SpiderException;
 import cn.hkxj.platform.mapper.CourseMapper;
 import cn.hkxj.platform.mapper.StudentMapper;
 import cn.hkxj.platform.pojo.Academy;
@@ -24,6 +25,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author JR Chan
@@ -42,7 +44,9 @@ public class UrpSpiderService {
     public Student getInformation(int account, String password) {
         UrpSpider urpSpider = new UrpSpider(account, password);
         UrpResult<Information> information = urpSpider.getInformation();
-
+        if(Objects.isNull(information.getData())){
+            throw new SpiderException(information.getMessage());
+        }
         UrpStudentInfo urpStudentInfo = information.getData().getUrpStudentInfo();
         Classes classes = clazzService.parseSpiderResult(urpStudentInfo);
         Student student = wrapperToStudent(urpStudentInfo);
