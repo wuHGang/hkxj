@@ -37,6 +37,8 @@ public class HandlerRouteService {
 	@Resource
 	private WechatOpenIdInterceptor wechatOpenIdInterceptor;
 
+	@Resource
+	private CETSearchHandler cetSearchHandler;
 
 	public void handlerRegister() {
 		router
@@ -51,6 +53,12 @@ public class HandlerRouteService {
 					.interceptor(wechatOpenIdInterceptor)
 					.rContent(".*?成绩.*?")
 					.handler(gradeMessageHandler)
+				.end()
+				.rule()
+				.async(false)
+				.interceptor(wechatOpenIdInterceptor)
+				.rContent("准考证号")
+				.handler(cetSearchHandler)
 				.end()
 				.rule()
 					.async(false)
