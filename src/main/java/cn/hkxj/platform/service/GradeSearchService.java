@@ -156,7 +156,7 @@ public class GradeSearchService {
             AllGradeAndCourse gradeAndCourseByAccount = appSpiderService.getGradeAndCourseByAccount(student.getAccount());
             currentFromApp = gradeAndCourseByAccount.getCurrentTermGrade();
         } catch (PasswordUncorrectException | SpiderException e) {
-            log.error("account {} app spider error {}", student.getAccount(), e.getMessage());
+            log.warn("account {} app spider error {}", student.getAccount(), e.getMessage());
 
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -194,7 +194,7 @@ public class GradeSearchService {
                 AllGradeAndCourse gradeAndCourseByAccount = appSpiderService.getGradeAndCourseByAccount(student.getAccount());
                 return gradeAndCourseByAccount.getCurrentTermGrade();
             } catch (PasswordUncorrectException | SpiderException e) {
-                log.error("account {} app spider error {}", student.getAccount(), e.getMessage());
+                log.warn("account {} app spider error {}", student.getAccount(), e.getMessage());
 
             } catch (Exception e) {
                 log.error(e.getMessage(), e);
@@ -207,5 +207,28 @@ public class GradeSearchService {
         return () -> urpSpiderService.getCurrentGrade(student);
     }
 
+    public String gradeListToText(List<GradeAndCourse> studentGrades) {
+        StringBuffer buffer = new StringBuffer();
+        boolean i = true;
+        if (studentGrades.size() == 0) {
+            buffer.append("尚无本学期成绩");
+        } else {
+            AllGradeAndCourse allGradeAndCourse = new AllGradeAndCourse();
+            allGradeAndCourse.addGradeAndCourse(studentGrades);
+            for (GradeAndCourse gradeAndCourse : allGradeAndCourse.getCurrentTermGrade()) {
+                if (i) {
+                    i = false;
+                    buffer.append("- - - - - - - - - - - - - -\n");
+                    buffer.append("|").append(gradeAndCourse.getGrade().getYear()).append("学年，第").append(gradeAndCourse.getGrade().getTerm()).append("学期|\n");
+                    buffer.append("- - - - - - - - - - - - - -\n\n");
+                }
+                int grade = gradeAndCourse.getGrade().getScore();
+                buffer.append("考试名称：").append(gradeAndCourse.getCourse().getName()).append("\n")
+                        .append("成绩：").append(grade == -1 ? "" : grade / 10).append("   学分：")
+                        .append(((float) gradeAndCourse.getGrade().getPoint()) / 10).append("\n\n");
+            }
+        }
+        return buffer.toString();
+    }
 
 }

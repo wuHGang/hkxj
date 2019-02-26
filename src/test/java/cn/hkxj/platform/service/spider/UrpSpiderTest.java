@@ -2,6 +2,8 @@ package cn.hkxj.platform.service.spider;
 
 import cn.hkxj.platform.exceptions.PasswordUncorrectException;
 import cn.hkxj.platform.spider.UrpSpider;
+import cn.hkxj.platform.spider.model.Information;
+import cn.hkxj.platform.spider.model.UrpResult;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Before;
@@ -10,20 +12,18 @@ import org.junit.Test;
 @Slf4j
 public class UrpSpiderTest {
 	private UrpSpider spider;
-	private final static Gson gson = new Gson();
 
 	@Before
 	public void init() {
-        spider = new UrpSpider(2018025730, "1");
+        spider = new UrpSpider(2018026461, "zzt20000303");
 	}
 
 	@Test
-    public void getInformation() throws PasswordUncorrectException {
+    public void getInformation() {
+        UrpResult<Information> information = spider.getInformation();
+        log.info(information.toString());
 
-//        Map information = spider.getInformation();
-//        log.info(information.toString());
-
-	}
+    }
 
 	@Test
 	public void getGrade() {

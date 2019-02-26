@@ -4,9 +4,13 @@ import cn.hkxj.platform.mapper.OpenidMapper;
 import cn.hkxj.platform.mapper.StudentMapper;
 import cn.hkxj.platform.mapper.SubscribeGradeUpdateMapper;
 import cn.hkxj.platform.mapper.TaskMapper;
-import cn.hkxj.platform.pojo.*;
+import cn.hkxj.platform.pojo.GradeAndCourse;
+import cn.hkxj.platform.pojo.Openid;
+import cn.hkxj.platform.pojo.Student;
+import cn.hkxj.platform.pojo.SubscribeGradeUpdate;
 import cn.hkxj.platform.service.GradeSearchService;
 import lombok.extern.slf4j.Slf4j;
+import me.chanjar.weixin.common.exception.WxErrorException;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.kefu.WxMpKefuMessage;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -66,8 +70,13 @@ public class GradeAutoUpdateTask {
                 List<GradeAndCourse> gradeFromSpider = gradeSearchService.getGradeFromSpiderAsync(student);
                 List<GradeAndCourse> studentGrades=gradeSearchService.saveGradeAndCourse(student, gradeFromSpider);
                 if (!CollectionUtils.isEmpty(studentGrades)) {
-                    wxMpService.getKefuService().sendKefuMessage(getKefuMessage(student, gradeListToText(studentGrades)));
+                    String result = gradeSearchService.gradeListToText(studentGrades);
+                    WxMpKefuMessage kefuMessage = getKefuMessage(student, result);
+                    wxMpService.getKefuService().sendKefuMessage(kefuMessage);
                 }
+
+            } catch (WxErrorException e) {
+                log.warn("account {} send grade update message error {}", e.getMessage());
             } catch (Exception e) {
                 log.error("grade update task error", e);
             }
@@ -111,33 +120,5 @@ public class GradeAutoUpdateTask {
         return wxMpKefuMessage;
     }
 
-    /**
-     * 将学生成绩文本化
-     *
-     * @param studentGrades 学生全部成绩
-     */
-    public String gradeListToText(List<GradeAndCourse> studentGrades) {
-        StringBuffer buffer = new StringBuffer();
-        boolean i = true;
-        if (studentGrades.size() == 0) {
-            buffer.append("尚无本学期成绩");
-        } else {
-            AllGradeAndCourse allGradeAndCourse = new AllGradeAndCourse();
-            allGradeAndCourse.addGradeAndCourse(studentGrades);
-            for (GradeAndCourse gradeAndCourse : allGradeAndCourse.getCurrentTermGrade()) {
-                if (i) {
-                    i = false;
-                    buffer.append("- - - - - - - - - - - - - -\n");
-                    buffer.append("|").append(gradeAndCourse.getGrade().getYear()).append("学年，第").append(gradeAndCourse.getGrade().getTerm()).append("学期|\n");
-                    buffer.append("- - - - - - - - - - - - - -\n\n");
-                }
-                int grade = gradeAndCourse.getGrade().getScore();
-                buffer.append("考试名称：").append(gradeAndCourse.getCourse().getName()).append("\n")
-                        .append("成绩：").append(grade == -1 ? "" : grade / 10).append("   学分：")
-                        .append(((float)gradeAndCourse.getGrade().getPoint()) / 10).append("\n\n");
-            }
-        }
-        return buffer.toString();
-    }
 
 }
