@@ -1,6 +1,7 @@
 package cn.hkxj.platform.controller;
 
 import cn.hkxj.platform.exceptions.PasswordUncorrectException;
+import cn.hkxj.platform.exceptions.SpiderException;
 import cn.hkxj.platform.pojo.ErrorCode;
 import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.pojo.WebResponse;
@@ -40,7 +41,12 @@ public class LoginController {
 			log.info("student login fail--invalid account:{}", account, password);
 			return WebResponse.fail(ErrorCode.ACCOUNT_OR_PASSWORD_INVALID.getErrorCode(), "账号无效");
 		}
-		Student student = studentBindService.studentLogin(account, password);
+        Student student = null;
+		try{
+		    student = studentBindService.studentLogin(account, password);
+        } catch (SpiderException e){
+		    return WebResponse.fail(ErrorCode.ACCOUNT_OR_PASSWORD_INVALID.getErrorCode(), "账号无效");
+        }
 		session.setAttribute("student", student);
 		log.info("student login success--account:{} password:{}", account, password);
 

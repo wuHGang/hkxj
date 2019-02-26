@@ -12,6 +12,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 import javax.annotation.Resource;
 
+@PropertySource(value = "classpath:application-local.properties", ignoreResourceNotFound = true)
 @EnableScheduling
 @SpringBootApplication
 public class PlatformApplication {
