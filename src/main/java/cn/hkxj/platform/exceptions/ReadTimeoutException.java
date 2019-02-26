@@ -7,6 +7,7 @@ public class ReadTimeoutException extends SpiderException {
 		super(description);
 	}
 
+
 	public ReadTimeoutException(String description, IOException e) {
 		super(description, e);
 	}
