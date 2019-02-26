@@ -7,10 +7,12 @@ import cn.hkxj.platform.pojo.ClassesExample;
 import cn.hkxj.platform.pojo.Subject;
 import cn.hkxj.platform.spider.model.UrpStudentInfo;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author JR Chan
@@ -32,12 +34,7 @@ public class ClazzService {
         }
 
         Classes classes = new Classes();
-        if (clazzSplitter[1].length() > 1) {
-            String num = clazzSplitter[1].substring(0, 1);
-            classes.setNum(Integer.parseInt(num));
-        } else {
-            classes.setNum(Integer.parseInt(clazzSplitter[1]));
-        }
+        classes.setNum(Integer.parseInt(clazzSplitter[1]));
         int length = clazzSplitter[0].length();
         for (int i = 0; i < length; i++) {
             char c = clazzSplitter[0].charAt(i);
@@ -73,12 +70,15 @@ public class ClazzService {
         classes.setNum(1);
 
         String classname = studentWrapper.getClassname();
+        if(Objects.equals("班", classname.substring(classname.length() - 1, classname.length()))){
+            classname = classname.substring(0, classname.length() - 1);
+        }
         if (classname.startsWith("财会S")) {
-            classes.setName(classname);
+           classes.setName(classname);
         } else if (classname.startsWith("采矿卓越")) {
             classes.setName("采矿卓越");
         } else if (classname.startsWith("会计ACA实验")) {
-            classes.setName(classname);
+            classes.setName("会计ACA实验");
         } else {
             classes = parseText(classname);
         }
