@@ -88,7 +88,7 @@ public class StudentBindService {
         return student!=null;
     }
 
-    private Student getStudentBySpider(String account, String password) throws PasswordUncorrectException, ReadTimeoutException {
+    private Student getStudentBySpider(String account, String password) throws ReadTimeoutException {
 		log.info("urpSpider start");
 
         return urpSpiderService.getInformation(Integer.parseInt(account), password);
