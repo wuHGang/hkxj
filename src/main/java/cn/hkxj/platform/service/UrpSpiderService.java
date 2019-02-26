@@ -1,5 +1,6 @@
 package cn.hkxj.platform.service;
 
+import cn.hkxj.platform.exceptions.PasswordUncorrectException;
 import cn.hkxj.platform.exceptions.SpiderException;
 import cn.hkxj.platform.mapper.CourseMapper;
 import cn.hkxj.platform.mapper.StudentMapper;
@@ -44,6 +45,10 @@ public class UrpSpiderService {
     public Student getInformation(int account, String password) {
         UrpSpider urpSpider = new UrpSpider(account, password);
         UrpResult<Information> information = urpSpider.getInformation();
+        if(information.getStatus() == 400){
+            throw new PasswordUncorrectException();
+        }
+
         if(Objects.isNull(information.getData())){
             throw new SpiderException(information.getMessage());
         }

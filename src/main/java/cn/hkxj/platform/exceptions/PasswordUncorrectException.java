@@ -1,6 +1,6 @@
 package cn.hkxj.platform.exceptions;
 
-public class PasswordUncorrectException extends Exception {
+public class PasswordUncorrectException extends RuntimeException {
 	public PasswordUncorrectException() {
 		super();
 	}
