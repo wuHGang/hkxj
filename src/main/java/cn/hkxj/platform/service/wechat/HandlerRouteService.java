@@ -57,7 +57,7 @@ public class HandlerRouteService {
 				.rule()
 				.async(false)
 				.interceptor(wechatOpenIdInterceptor)
-				.rContent("准考证号")
+				.rContent("准考证号|四级|六级|准考证|四六级")
 				.handler(cetSearchHandler)
 				.end()
 				.rule()

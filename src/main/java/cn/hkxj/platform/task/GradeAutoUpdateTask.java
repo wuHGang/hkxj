@@ -13,6 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.exception.WxErrorException;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.kefu.WxMpKefuMessage;
+import org.apache.commons.lang3.BooleanUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -50,7 +52,9 @@ public class GradeAutoUpdateTask {
     @Resource
     private WxMpService wxMpService;
     @Resource
-    TaskMapper taskMapper;
+    private TaskMapper taskMapper;
+    @Value("scheduled.gradeUpdate")
+    private String updateSwitch;
 
     public static void addStudentToQueue(Student student) {
         if (ACCOUNT_SET.contains(student)) {
@@ -62,6 +66,9 @@ public class GradeAutoUpdateTask {
 
     @Scheduled(cron = "0 0/20 * * * ?")
     private void autoUpdateGrade() {
+        if(!BooleanUtils.toBoolean(updateSwitch)){
+            return;
+        }
         getStudentQueue();
         Student student = ACCOUNT_QUEUE.poll();
         while (Objects.nonNull(student)) {

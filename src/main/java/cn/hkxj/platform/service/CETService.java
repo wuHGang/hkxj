@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 
 
 import java.io.FileInputStream;
-
+import java.util.Objects;
 
 
 @Service
@@ -50,6 +50,9 @@ public class CETService {
 
     public String getCETExaminee(Student student){
         CETStudent cetStudent=cetMapper.getCETStudentByAccount(student.getAccount());
+        if(Objects.isNull(cetStudent)){
+            return "";
+        }
         return cetStudent.getExaminee();
     }
 
