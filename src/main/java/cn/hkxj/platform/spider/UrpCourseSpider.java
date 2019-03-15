@@ -1,6 +1,7 @@
 package cn.hkxj.platform.spider;
 
 import cn.hkxj.platform.pojo.Academy;
+import cn.hkxj.platform.pojo.Course;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
@@ -33,6 +34,7 @@ public class UrpCourseSpider {
     private String courseInformatiomUrl="http://60.219.165.24/kcxxAction.do?oper=kcxx_if&kch=";
     private static String creditRgex = "学分:</td><tdwidth=\"3\"height=\"18\"></td><tdcolspan=\"5\">.*?</td>";
     private static String academyRgex ="开课院系:</td><tdwidth=\"3\"></td><td>.*?</td>";
+    private static String courseNameRgex="课程名:</td><td width=\"3\" height=\"18\">&nbsp;</td><td colspan=\"5\">.*?</td>";
     private static OkHttpClient client = new OkHttpClient.Builder()
             .connectTimeout(15, TimeUnit.SECONDS)
             .build();
@@ -42,6 +44,7 @@ public class UrpCourseSpider {
         this.password = password;
     }
 
+    //获取课程的学院信息
     public Academy getAcademyId(String uid) {
         Pattern pattern = Pattern.compile(academyRgex);
         Matcher matcher = pattern.matcher(getCourseResult(uid));
@@ -53,6 +56,18 @@ public class UrpCourseSpider {
         throw new IllegalArgumentException("can`t find academy uid: " + uid);
     }
 
+    //获取学院的名称信息
+    public String getCourseName(String uid){
+        Pattern pattern=Pattern.compile(courseNameRgex);
+        Matcher matcher=pattern.matcher(getCourseResult(uid));
+        if(matcher.find()){
+            String courseName=StringUtils.substringBetween(matcher.group(),"课程名:</td><td width=\"3\" height=\"18\">&nbsp;</td><td colspan=\"5\">","</td>");
+            return courseName;
+        }
+        log.error("course uid:{} can`t find courseName", uid);
+        throw new IllegalArgumentException("can`t find courseName uid: " + uid);
+    }
+
     private String getCourseResult(String uid) {
         this.uid=uid;
         FormBody formBody = getFormBody(account,password);
@@ -60,7 +75,7 @@ public class UrpCourseSpider {
                 .url(loginUrl)
                 .post(formBody)
                 .build();
-        Response response = null;
+        Response response ;
         try {
             response = client.newCall(request).execute();
         } catch (IOException e) {
@@ -73,7 +88,7 @@ public class UrpCourseSpider {
                 .post(formBody)
                 .addHeader("Cookie",cookie)
                 .build();
-        String result = null;
+        String result ;
         try {
             result = client.newCall(request).execute().body().string().replaceAll("\\s*", "");
         } catch (IOException e) {

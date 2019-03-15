@@ -12,6 +12,7 @@ public enum Academy {
     /**
      * 学院枚举与数据库相关code的映射
      */
+    Mining("矿业工程学院", "矿业学院", 0),
     Environmental("环境与化工学院", "环化学院", 1),
 	Safe("安全工程学院", "安全学院", 2),
 	electrical("电气与控制工程学院", "电气学院", 3),
@@ -27,13 +28,13 @@ public enum Academy {
     Science("理学院", "理学院", 13),
 	ForeignLanguage("外国语学院", "外国语学院", 14),
 	Building("国际教育学院", "国际学院", 15),
-    Mining("矿业工程学院", "矿业学院", 0),
 	recruitment("招就处", "招就处", 17),
 	TrainingCenter("工程训练与基础实验中心", "实训中心", 18),
     StudentsAffairsDivision("学生处", "学生处", 19),
     office("机关","机关",20),
     sport("体育部", "体育部", 21),
-    Guard("保卫处", "保卫处", 22);
+    Guard("保卫处", "保卫处", 22),
+    Enrollment("招生与就业工作处","招生与就业工作处",23);
 
     private String academyName;
 

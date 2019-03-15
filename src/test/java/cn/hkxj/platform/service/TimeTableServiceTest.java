@@ -1,13 +1,22 @@
 package cn.hkxj.platform.service;
 
+import cn.hkxj.platform.pojo.CETStudent;
 import cn.hkxj.platform.pojo.CourseTimeTable;
+import cn.hkxj.platform.pojo.Student;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
+import java.io.FileInputStream;
 import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author junrong.chen
@@ -15,27 +24,80 @@ import java.util.HashSet;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
+@Slf4j
 public class TimeTableServiceTest {
 	@Resource(name = "timeTableService")
 	private TimeTableService timeTableService;
+	@Resource
+	private AppSpiderService appSpiderService;
 
 	@Test
-	public void getTodayTimeTable() {
-		HashSet<String> roomSet = new HashSet<>();
-		int count = 0;
-		for (CourseTimeTable table : timeTableService.getTimeTableFromDB(5)) {
-			roomSet.add(table.getRoom().getName());
-			count += 1;
+	public void getLessonFromApp(){
+
+
+		FileInputStream fis;
+		Workbook wb;
+		try {
+			fis=new FileInputStream("G:\\2016.xls");
+			wb=new HSSFWorkbook(fis);
+			Sheet sheet=wb.getSheetAt(0);
+			int rowNum=sheet.getLastRowNum();
+			Student student=new Student();
+			Set<String> classSet=new HashSet<>();
+			Set<String> errorClassSet=new HashSet<>();
+			for(int i =1;i<=rowNum;i++){
+				log.info("start:"+i);
+				Row row=sheet.getRow(i);
+				String className=String.valueOf(row.getCell(6));
+				if(!classSet.contains(className)){
+					student.setAccount(Integer.parseInt(String.valueOf(row.getCell(1))));
+					student.setPassword("1");
+					try {
+						appSpiderService.getLessonFromApp(student);
+						classSet.add(className);
+					} catch (Exception e){
+						classSet.remove(className);
+						errorClassSet.add(className);
+						log.error(e+e.getMessage()+className+";"+student.getAccount());
+					}
+				}
+				else continue;
+			}
+			System.out.println(errorClassSet);
+		}catch (Exception e){
+			log.error(e+e.getMessage());
 		}
-		System.out.println(roomSet.size());
-		System.out.println(count);
-	}
 
-	@Test
-	public void getRoomTimeTableByBuildingAndFloor() {
-//		for (RoomTimeTable table : timeTableService.getRoomTimeTableByBuildingAndFloor(Building.SCIENCE, 4)) {
-//			System.out.println(table.toText()+'\n');
-//		}
+
+
+
 
 	}
+//
+//	@Test
+//	public void temporary(){
+//		Student student=new Student();
+//		student.setAccount(2016025910);
+//		appSpiderService.getScheduleFromApp(student);
+//	}
+
+//	@Test
+//	public void getTodayTimeTable() {
+////		HashSet<String> roomSet = new HashSet<>();
+////		int count = 0;
+////		for (CourseTimeTable table : timeTableService.getTimeTableFromDB(5)) {
+////			roomSet.add(table.getRoom().getName());
+////			count += 1;
+////		}
+////		System.out.println(roomSet.size());
+////		System.out.println(count);
+//	}
+
+//	@Test
+//	public void getRoomTimeTableByBuildingAndFloor() {
+////		for (RoomTimeTable table : timeTableService.getRoomTimeTableByBuildingAndFloor(Building.SCIENCE, 4)) {
+////			System.out.println(table.toText()+'\n');
+////		}
+//
+//	}
 }

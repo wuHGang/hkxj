@@ -33,5 +33,6 @@ public interface CourseTimeTableMapper {
 
     int updateByPrimaryKey(CourseTimeTable record);
 
+    Integer isCourseTimeTableExist(CourseTimeTable courseTimeTable);
 
 }

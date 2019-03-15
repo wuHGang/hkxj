@@ -184,7 +184,7 @@
     <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into course_time_table (course_id, 
+    insert into course_time_table (course_id,
       year_, term_, start_, 
       end_, week_, order_, distinct_, 
       room_id
@@ -365,4 +365,16 @@
       room_id = #{room,jdbcType=INTEGER,typeHandler=cn.hkxj.platform.handler.RoomWarpperHandler}
     where id = #{id,jdbcType=INTEGER}
   </update>
+  <select id="isCourseTimeTableExist" parameterType="cn.hkxj.platform.pojo.CourseTimeTable" resultType="java.lang.Integer">
+    select id from course_time_table
+    where course_id = #{course,jdbcType=INTEGER,typeHandler=cn.hkxj.platform.handler.CourseHandler} and
+      year_ = #{year,jdbcType=INTEGER} and
+      term_ = #{term,jdbcType=INTEGER} and
+      start_ = #{start,jdbcType=INTEGER} and
+      end_ = #{end,jdbcType=INTEGER} and
+      week_ = #{week,jdbcType=INTEGER} and
+      order_ = #{order,jdbcType=INTEGER} and
+      distinct_ = #{distinct,jdbcType=INTEGER} and
+      room_id = #{room,jdbcType=INTEGER,typeHandler=cn.hkxj.platform.handler.RoomWarpperHandler}
+  </select>
 </mapper>

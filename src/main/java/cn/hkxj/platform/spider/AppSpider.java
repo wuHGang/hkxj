@@ -146,6 +146,12 @@ public class AppSpider {
 		return (Map) data.get("data");
 	}
 
+	public Map getSchedule(String week) {
+		String url = SCHEDULE + "?token=" + token + "&week=" + week;
+		Map data = getData(url);
+		return (Map) data.get("data");
+	}
+
 	public ArrayList getExam() {
 		String url = EXAM + "?token=" + token;
 		Map data = getData(url);
