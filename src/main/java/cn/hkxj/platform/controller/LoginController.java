@@ -44,7 +44,7 @@ public class LoginController {
         Student student = null;
 		try{
 		    student = studentBindService.studentLogin(account, password);
-
+		    
         }catch (PasswordUncorrectException e) {
             log.info("student bind fail Password not correct account:{} password:{}", account, password);
             return WebResponse.fail(ErrorCode.ACCOUNT_OR_PASSWORD_INVALID.getErrorCode(), "账号或者密码错误");
