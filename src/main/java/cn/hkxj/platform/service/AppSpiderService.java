@@ -217,7 +217,11 @@ public class AppSpiderService {
 
             //获取课程的教室信息
             String roomName = (String) lessonMap.get("jxdd");
-            Room room = roomMapper.selectByFuzzy("%" + roomName);
+            Room room;
+            if(roomName.equals("操场1")){
+                room = roomMapper.selectByFuzzy(roomName);
+            }
+            else room = roomMapper.selectByFuzzy("%" + roomName);
             if(room!=null){
                 CourseTimeTable courseTimeTable = new CourseTimeTable();
                 courseTimeTable.setCourse(course);

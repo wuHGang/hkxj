@@ -1,6 +1,7 @@
 package cn.hkxj.platform.pojo;
 
 import com.google.common.base.MoreObjects;
+import org.apache.tomcat.jni.Library;
 
 import java.util.Objects;
 
@@ -34,7 +35,8 @@ public enum Academy {
     office("机关","机关",20),
     sport("体育部", "体育部", 21),
     Guard("保卫处", "保卫处", 22),
-    Enrollment("招生与就业工作处","招生与就业工作处",23);
+    Enrollment("招生与就业工作处","招生与就业工作处",23),
+    Library("图书馆","图书馆",24);
 
     private String academyName;
 

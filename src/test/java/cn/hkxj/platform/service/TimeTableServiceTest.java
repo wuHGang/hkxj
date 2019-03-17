@@ -4,7 +4,9 @@ import cn.hkxj.platform.pojo.CETStudent;
 import cn.hkxj.platform.pojo.CourseTimeTable;
 import cn.hkxj.platform.pojo.Student;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -38,23 +40,27 @@ public class TimeTableServiceTest {
 		FileInputStream fis;
 		Workbook wb;
 		try {
-			fis=new FileInputStream("G:\\2016.xls");
+			fis=new FileInputStream("G:\\2016+2017.xls");
 			wb=new HSSFWorkbook(fis);
 			Sheet sheet=wb.getSheetAt(0);
 			int rowNum=sheet.getLastRowNum();
 			Student student=new Student();
 			Set<String> classSet=new HashSet<>();
 			Set<String> errorClassSet=new HashSet<>();
-			for(int i =1;i<=rowNum;i++){
+			for(int i =234;i<=234;i++){
 				log.info("start:"+i);
 				Row row=sheet.getRow(i);
 				String className=String.valueOf(row.getCell(6));
 				if(!classSet.contains(className)){
-					student.setAccount(Integer.parseInt(String.valueOf(row.getCell(1))));
+					Cell cell = row.getCell(1);
+					cell.setCellType(Cell.CELL_TYPE_STRING);
+					student.setAccount(Integer.parseInt(String.valueOf(cell)));
+//					student.setAccount(2017024556);
 					student.setPassword("1");
 					try {
 						appSpiderService.getLessonFromApp(student);
 						classSet.add(className);
+						sheet.removeRow(row);
 					} catch (Exception e){
 						classSet.remove(className);
 						errorClassSet.add(className);
@@ -63,7 +69,9 @@ public class TimeTableServiceTest {
 				}
 				else continue;
 			}
-			System.out.println(errorClassSet);
+			for (String str : errorClassSet) {
+				System.out.println(str);
+			}
 		}catch (Exception e){
 			log.error(e+e.getMessage());
 		}
