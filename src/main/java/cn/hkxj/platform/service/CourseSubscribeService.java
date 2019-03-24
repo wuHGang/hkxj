@@ -161,7 +161,7 @@ public class CourseSubscribeService {
         return studentMapper.selectByExample(studentExample);
     }
 
-    private List<CourseTimeTable> getCourseTimeTables(){
+    public List<CourseTimeTable> getCourseTimeTables(){
         int year = DateUtils.getCurrentYear();
         int week = DateUtils.getCurrentWeek();
         int day = DateUtils.getCurrentDay();
@@ -171,6 +171,7 @@ public class CourseSubscribeService {
                 .andYearEqualTo(year)
                 .andStartLessThanOrEqualTo(week)
                 .andEndGreaterThanOrEqualTo(week)
+                .andTermEqualTo(2)
                 .andWeekEqualTo(day);
         return courseTimeTableMapper.selectByExample(example);
     }

@@ -4,4 +4,7 @@
     <select id="getTimeTableIdByClassId" parameterType="int" resultType="int">
         select time_table_id from class_timetable where class_id = #{classId}
     </select>
+    <insert id="insert" parameterType="int">
+        insert into class_timetable(class_id, time_table_id) VALUES(#{class_id}, #{time_table_id})
+    </insert>
 </mapper>

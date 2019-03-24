@@ -14,7 +14,7 @@ public class SchoolTimeUtil {
 	/**
 	 * 开学日期
 	 */
-	private static final DateTime TERM_START = new DateTime(2018, 8, 24, 0, 0);
+	private static final DateTime TERM_START = new DateTime(2019, 3, 4, 0, 0);
 
 	/**
 	 * 教学周

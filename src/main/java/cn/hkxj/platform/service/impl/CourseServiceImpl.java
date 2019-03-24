@@ -60,18 +60,19 @@ public class CourseServiceImpl implements CourseService{
                 .andEndGreaterThanOrEqualTo(week)
                 .andStartLessThanOrEqualTo(week)
                 .andWeekEqualTo(day)
+                .andTermEqualTo(2)
                 .andIdIn(courseTimetableIds);
         return courseTimeTableMapper.selectByExample(example);
     }
 
     @Override
     public List<CourseTimeTable> getCoursesByAccount(Integer account) {
+        int year = DateUtils.getCurrentYear();
         int week = DateUtils.getCurrentWeek();
-
         Student student = studentMapper.selectByAccount(account);
         if(checkStudentIsNull(student)){ return null; }
         log.info("query this week course schedule --account {},academy {} week{}", account, student.getClasses().getAcademy(), week);
-        List<CourseTimeTable> courseTimeTables = getCourseTimeTables(student.getClasses(), week);
+        List<CourseTimeTable> courseTimeTables = getCourseTimeTables(student.getClasses(), year, week);
         if(courseTimeTables == null){ return null; }
 
         return courseTimeTables;
@@ -113,14 +114,16 @@ public class CourseServiceImpl implements CourseService{
         return builder.toString();
     }
 
-    private List<CourseTimeTable> getCourseTimeTables(Classes classes, Integer week){
+    private List<CourseTimeTable> getCourseTimeTables(Classes classes, Integer year, Integer week){
         CourseTimeTableExample example = new CourseTimeTableExample();
         List<Integer> courseTimetableIds = classesMapper.getAllCourseTimetableIds(classes.getId());
         if(courseTimetableIds == null || courseTimetableIds.size() == 0) return null;
         example.createCriteria()
                 .andIdIn(courseTimetableIds)
                 .andStartLessThanOrEqualTo(week)
-                .andEndGreaterThanOrEqualTo(week);
+                .andEndGreaterThanOrEqualTo(week)
+                .andTermEqualTo(2)
+                .andYearEqualTo(year);
         return courseTimeTableMapper.selectByExample(example);
     }
 

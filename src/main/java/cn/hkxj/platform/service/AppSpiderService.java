@@ -2,11 +2,11 @@ package cn.hkxj.platform.service;
 
 import cn.hkxj.platform.exceptions.PasswordUncorrectException;
 import cn.hkxj.platform.mapper.CourseMapper;
-import cn.hkxj.platform.pojo.AllGradeAndCourse;
-import cn.hkxj.platform.pojo.Course;
-import cn.hkxj.platform.pojo.ExamTimeTable;
-import cn.hkxj.platform.pojo.Room;
+import cn.hkxj.platform.mapper.CourseTimeTableMapper;
+import cn.hkxj.platform.mapper.RoomMapper;
+import cn.hkxj.platform.pojo.*;
 import cn.hkxj.platform.spider.AppSpider;
+import cn.hkxj.platform.spider.UrpCourseSpider;
 import cn.hkxj.platform.utils.SchoolTimeUtil;
 import com.google.common.base.Splitter;
 import org.joda.time.DateTime;
@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -26,6 +27,10 @@ public class AppSpiderService {
 	private RoomService roomService;
 	@Resource
 	private CourseMapper courseMapper;
+    @Resource
+    private RoomMapper roomMapper;
+    @Resource
+    private CourseTimeTableMapper courseTimeTableMapper;
 	private static Splitter SPLITTER = Splitter.on('*').trimResults().omitEmptyStrings();
     private static Splitter DATA_SPLITTER = Splitter.on('-').trimResults().omitEmptyStrings();
     private static Splitter TIME_SPLITTER = Splitter.on(':').trimResults().omitEmptyStrings();
@@ -121,4 +126,118 @@ public class AppSpiderService {
 		return Integer.parseInt(split[0]);
 	}
 
-}
+    /**
+     * 从m黑科技上获取学生的课表信息，转换成courseTimeTable形式并存入数据库
+     * @param student
+     * @return
+     */
+    public void getLessonFromApp(Student student) {
+        AppSpider appSpider = new AppSpider(student.getAccount());
+        appSpider.getToken();
+        List lesson = appSpider.getLesson();
+        //lesson包含了该学生本学期的所有课程
+        for (Object o : lesson) {
+            Map lessonMap=(Map)o;
+
+            String startToEnd = (String) lessonMap.get("qsz");
+
+            //获取课程上课时间
+            char orderChar = startToEnd.charAt(startToEnd.indexOf("{") + 1);
+
+            //获取课程星期
+            char[] cnArr = new char[]{'一', '二', '三', '四', '五', '六', '七', '八', '九'};
+            char weekChar = startToEnd.charAt(startToEnd.indexOf("期") + 1);
+            int week = 0;
+            for (int j = 0; j < cnArr.length; j++) {
+                if (weekChar == cnArr[j]) {
+                    week = j + 1;
+                    break;
+                }
+            }
+
+            //获取课程起始周和结束周，并判断单双周情况
+            //课程存在情况：
+            //a-b 连续上课
+            //a-b,c 连续上课，隔若干周有加课
+            //a-b,c-d 分段连续上课
+            //a,b,c 单双周上课
+            startToEnd = startToEnd.substring(0, startToEnd.indexOf("周"));
+            int start ;
+            int end ;
+            int distinct = 0;
+            if (startToEnd.indexOf("-")!=-1) {
+                String[] startAndEnd ;
+                if (startToEnd.indexOf(",")!=-1){
+                    startAndEnd = startToEnd.split("[, -]");
+                    start = Integer.valueOf(startAndEnd[0]);
+                    end = Integer.valueOf(startAndEnd[startAndEnd.length-1]);
+                }else {
+                    startAndEnd = startToEnd.split("-");
+                    start = Integer.valueOf(startAndEnd[0]);
+                    end = Integer.valueOf(startAndEnd[1]);
+                }
+            } else {
+                String[] startAndEnd = startToEnd.split(",");
+                start = Integer.valueOf(startAndEnd[0]);
+                end = Integer.valueOf(startAndEnd[startAndEnd.length - 1]);
+                if (start % 2 == 0) {
+                    distinct = 2;
+                } else {
+                    distinct = 1;
+                }
+            }
+            //获取课程信息
+            Course course = new Course();
+            String bid=(String) lessonMap.get("bid");
+            Map sc=appSpider.getSchedule(String.valueOf(end));
+            List slist=(List) sc.get("wlist");
+            for(Object objSlist : slist){
+                Map courseMap=(Map)objSlist;
+                String compareBid=(String)courseMap.get("bid");
+                if (bid.equals(compareBid)){
+                    course.setUid((String)((Map) objSlist).get("kcdm"));
+                    course.setName((String)courseMap.get("kcmc"));
+                    CourseType courseType=CourseType.getCourseByByte(0);
+                    course.setType(courseType);
+                    course.setCredit(0);
+                }
+            }
+
+            if (!courseMapper.ifExistCourse(course.getUid())) {
+                UrpCourseSpider urpCourseSpider = new UrpCourseSpider(student.getAccount(), student.getPassword());
+                course.setAcademy(urpCourseSpider.getAcademyId(course.getUid()));
+                if(course.getName()==null){
+                    course.setName(urpCourseSpider.getCourseName(course.getUid()));
+                }
+                System.out.println(course);
+                courseMapper.insert(course);
+            }
+
+            course=courseMapper.selectNameByUid(course.getUid()).get(0);
+
+            //获取课程的教室信息
+            String roomName = (String) lessonMap.get("jxdd");
+            Room room;
+            if(roomName.equals("操场1")){
+                room = roomMapper.selectByFuzzy(roomName);
+            }
+            else room = roomMapper.selectByFuzzy("%" + roomName);
+            if(room!=null){
+                CourseTimeTable courseTimeTable = new CourseTimeTable();
+                courseTimeTable.setCourse(course);
+                courseTimeTable.setYear(2019);
+                courseTimeTable.setTerm(2);
+                courseTimeTable.setStart(start);
+                courseTimeTable.setEnd(end);
+                courseTimeTable.setWeek(week);
+                courseTimeTable.setOrder(Integer.parseInt("" + orderChar));
+                courseTimeTable.setDistinct(distinct);
+                courseTimeTable.setRoom(room);
+                if(courseTimeTableMapper.isCourseTimeTableExist(courseTimeTable) == null){
+                    courseTimeTableMapper.insert(courseTimeTable);
+                }
+            }
+        }
+    }
+
+    }

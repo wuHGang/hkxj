@@ -2,6 +2,7 @@ package cn.hkxj.platform.service.course.impl;
 
 import cn.hkxj.platform.PlatformApplication;
 import cn.hkxj.platform.pojo.CourseGroupMsg;
+import cn.hkxj.platform.pojo.CourseTimeTable;
 import cn.hkxj.platform.pojo.OneOffSubscription;
 import cn.hkxj.platform.service.CourseService;
 import cn.hkxj.platform.service.CourseSubscribeService;
@@ -35,29 +36,31 @@ public class CourseServiceImplTest {
 
     @Test
     public void getCoursesByAccount() {
+        List<CourseTimeTable> courseTimeTables = courseService.getCoursesByAccount(2016024255);
         System.out.println(courseService.getCoursesByAccount(2016024170));
     }
 
     @Test
     public void test(){
         System.out.println(courseService.getCoursesCurrentDay(2016024170));
-        System.out.println(courseService.toText(courseService.getCoursesCurrentDay(2016024170)));
+//        System.out.println(courseService.toText(courseService.getCoursesCurrentDay(2016024170)));
     }
 
     @Test
     public void getCoursesForCurrentDay(){
-        List<CourseGroupMsg> msgList = courseSubscribeService.getCoursesSubscribeForCurrentDay();
-        if(Objects.isNull(msgList)){
-            System.out.println("good!");
-            return;
-        }
-        msgList.forEach(msg -> {
-//            .stream().filter(openid -> !Objects.equals(openid, null))
-            msg.getOpenIds().forEach(openid -> {
-                System.out.println(openid);
-                System.err.println(msg.getCourseTimeTables());
-            });
-        });
+        List<CourseTimeTable> msgList = courseSubscribeService.getCourseTimeTables();
+        System.out.println(msgList);
+//        if(Objects.isNull(msgList)){
+//            System.out.println("good!");
+//            return;
+//        }
+//        msgList.forEach(msg -> {
+////            .stream().filter(openid -> !Objects.equals(openid, null))
+//            msg.getOpenIds().forEach(openid -> {
+//                System.out.println(openid);
+//                System.err.println(msg.getCourseTimeTables());
+//            });
+//        });
     }
 
     @Test

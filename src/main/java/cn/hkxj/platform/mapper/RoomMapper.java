@@ -25,4 +25,6 @@ public interface RoomMapper {
     int updateByPrimaryKey(Room record);
 
     List<Integer> selectCourseTimeTableID(int roomId);
+
+    Room selectByFuzzy(String name);
 }
