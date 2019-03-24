@@ -18,7 +18,7 @@ import java.util.Locale;
 @Slf4j
 public class DateUtils {
 
-    private final static String term_start = "2018-08-27";
+    private final static String term_start = "2019-03-04";
 
     public static Integer getCurrentYear(){
         Calendar calendar = Calendar.getInstance();

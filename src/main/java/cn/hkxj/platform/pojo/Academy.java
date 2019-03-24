@@ -69,6 +69,15 @@ public enum Academy {
         return null;
     }
 
+    public static Integer getAcademyCodeBySimpleName(String simpleName){
+        for(Academy aca : Academy.values()){
+            if(Objects.equals(aca.getAcademySimpleName(), simpleName)){
+                return aca.getAcademyCode();
+            }
+        }
+        return null;
+    }
+
     public static Academy getAcademyByCode(int code){
         for(Academy aca : Academy.values()){
             if(Objects.equals(aca.getAcademyCode(), code)){
@@ -94,6 +103,15 @@ public enum Academy {
             }
         }
         throw new IllegalArgumentException("illegal academy name: " + academyName);
+    }
+
+    public static Academy getAcademyBySimpleName(String academySimpleName) {
+        for (Academy academy : Academy.values()) {
+            if (Objects.equals(academy.getAcademySimpleName(), academySimpleName)) {
+                return academy;
+            }
+        }
+        throw new IllegalArgumentException("illegal academy name: " + academySimpleName);
     }
 
     public String getAcademyName() {
