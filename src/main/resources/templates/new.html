@@ -248,13 +248,13 @@
         $.ajax({
 
             type:"get",
-            url:"/course/timetable",
+            url:"/platform/course/timetable",
             timeout:10000,
             success:function (json) {
                 if (json.status != 200){
                     alert(json.message);
                     if (json.status == 401){
-                        window.location="/bind";
+                        window.location="/platform/bind";
                     }
                 }
                 $("td").not($("td:nth-of-type(1)")).text('').css({"background-color":"white"});
