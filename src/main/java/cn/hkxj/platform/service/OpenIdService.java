@@ -26,6 +26,10 @@ public class OpenIdService {
 		return getOpenid(openid).size() == 1;
 	}
 
+	public boolean openidIsBind(String openid) {
+		return openidMapper.isOpenidBind(openid)==1;
+	}
+
 	public List<Openid> getOpenid(String openid) {
 		OpenidExample openidExample = new OpenidExample();
 		openidExample
