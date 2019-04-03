@@ -30,6 +30,8 @@ public class TimeTableService {
 		CourseTimeTableExample courseTimeTableExample = new CourseTimeTableExample();
 		courseTimeTableExample.createCriteria()
 				.andWeekEqualTo(SchoolTimeUtil.getDayOfWeek())
+				.andYearEqualTo(2019)
+				.andTermEqualTo(2)
 				.andStartLessThanOrEqualTo(schoolWeek)
 				.andEndGreaterThanOrEqualTo(schoolWeek);
 		return courseTimeTableMapper.selectByExample(courseTimeTableExample);
