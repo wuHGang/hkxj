@@ -44,4 +44,6 @@ public interface OpenidMapper {
     String isOpenidExist(String openid);
 
     int openidUnbind(String openid);
+
+    int isOpenidBind(String openid);
 }

@@ -30,7 +30,10 @@ public class WechatOpenIdInterceptor implements WxMessageInterceptor {
 
 	@Override
 	public boolean intercept(WxMpXmlMessage wxMessage, Map<String, Object> context, WxMpService wxMpService, WxSessionManager sessionManager) {
-		return openIdService.openidIsExist(wxMessage.getFromUser());
+//		return openIdService.openidIsExist(wxMessage.getFromUser());
+		return openIdService.openidIsExist(wxMessage.getFromUser())==true?openIdService.openidIsBind(wxMessage.getFromUser()):false;
+
+//		return openIdService.openidIsBind(wxMessage.getFromUser());
 	}
 
 	@Override
