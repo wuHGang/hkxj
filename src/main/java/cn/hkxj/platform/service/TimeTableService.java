@@ -32,6 +32,7 @@ public class TimeTableService {
 				.andWeekEqualTo(SchoolTimeUtil.getDayOfWeek())
 				.andYearEqualTo(2019)
 				.andTermEqualTo(2)
+				.andDistinctIn(Arrays.asList(0, SchoolTimeUtil.getWeekDistinct()))
 				.andStartLessThanOrEqualTo(schoolWeek)
 				.andEndGreaterThanOrEqualTo(schoolWeek);
 		return courseTimeTableMapper.selectByExample(courseTimeTableExample);

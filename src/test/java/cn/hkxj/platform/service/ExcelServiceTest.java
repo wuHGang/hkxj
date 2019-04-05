@@ -11,6 +11,7 @@ import javax.annotation.Resource;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import static org.junit.Assert.*;
 
@@ -26,10 +27,18 @@ public class ExcelServiceTest {
     @Resource
     private ExcelService excelService;
 
+
+    @Test
+    public void isDistinct(){
+        System.out.println(excelService.lastIndexOfNum("14-16单周上"));;
+    }
+
     @Test
     public void readExcel() {
-//        System.out.println(excelService.parseBuilding("科401（高层"));
-//        System.out.println(excelService.getStartAndStopTime("12,14-16单周上"));;
-        excelService.readExcel();
+        System.out.println(excelService.parseBuilding("科401（高层）"));
+        System.out.println(excelService.parseBuilding("科N302"));
+        System.out.println(excelService.parseBuilding("图书馆S4004"));
+        System.out.println(excelService.parseBuilding("N10播放室"));
+//        excelService.readExcel();
     }
 }
