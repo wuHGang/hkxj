@@ -2,6 +2,8 @@ package cn.hkxj.platform.spider;
 
 import cn.hkxj.platform.pojo.Academy;
 import cn.hkxj.platform.pojo.Course;
+import com.alibaba.fastjson.JSON;
+import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
@@ -34,6 +36,7 @@ public class UrpCourseSpider {
     //http://60.219.165.24/kcxxAction.do?oper=kcxx_if&kch=课程号
     //这个接口来获取完整课程的学院信息
     //后期会整合进urpSpider中
+    private final static Gson GSON = new Gson();
     private String account;
     private String password;
     private String uid;
@@ -88,6 +91,17 @@ public class UrpCourseSpider {
         return result;
     }
 
+    //小程序获取openid
+    public Map getAppJson(String js_code)throws IOException{
+        String app="https://api.weixin.qq.com/sns/jscode2session?appid=wx05f7264e83fa40e9&secret=a6053643e57616937b876d69bb080fa7&js_code="+js_code+"&grant_type=authorization_code";
+        Request request=new Request.Builder()
+                .url(app)
+                .get()
+                .build();
+            Response response=client.newCall(request).execute();
+            Map result=GSON.fromJson(response.body().string(),Map.class);
+        return result;
+    }
 
     //jsoup解析页面
     private Map getResultMap(){
