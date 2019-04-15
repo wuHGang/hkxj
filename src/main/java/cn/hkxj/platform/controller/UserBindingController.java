@@ -27,7 +27,6 @@ import java.util.Objects;
 
 @Slf4j
 @Controller
-@RequestMapping(value = "/platform")
 public class UserBindingController {
 	private final static Gson GSON = new Gson();
 	@Autowired
