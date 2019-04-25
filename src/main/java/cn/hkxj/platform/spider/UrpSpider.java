@@ -73,8 +73,12 @@ public class UrpSpider {
 		for (Object l:(List)((Map) resultMap.get("data")).get("evertGrade")){
 		    for (Object values:((LinkedTreeMap) l).values()){
 		        for (Object grade:(List)values){
-//                    System.out.println(grade);
-                    valueList.add(grade);
+                    if(grade.getClass().getName()==ArrayList.class.getName()){
+                        for (Object more:(List)grade){
+                            valueList.add(more);
+                        }
+                    }
+                    else valueList.add(grade);
                 }
             }
         }
