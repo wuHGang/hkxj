@@ -5,7 +5,6 @@ import cn.hkxj.platform.pojo.GradeAndCourse;
 import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.service.GradeSearchService;
 import cn.hkxj.platform.service.OpenIdService;
-import cn.hkxj.platform.service.TaskBindingService;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.exception.WxErrorException;
 import me.chanjar.weixin.common.session.WxSessionManager;
@@ -35,38 +34,32 @@ public class ElectiveCourseMessageHandler implements WxMpMessageHandler {
     @Resource
     private OpenIdService openIdService;
 
-    @Resource
-    TaskBindingService taskBindingService;
-
     public WxMpXmlOutMessage handle(WxMpXmlMessage wxMpXmlMessage,
                                     Map<String, Object> map,
                                     WxMpService wxMpService,
                                     WxSessionManager wxSessionManager) {
+        ExecutorService singleThreadPool = Executors.newSingleThreadExecutor();
+        try {
+            singleThreadPool.execute(()->asynKefuMessage(wxMpXmlMessage,wxMpService));
+            return textBuilder.build("正在查询成绩", wxMpXmlMessage, wxMpService);
+        } catch (Exception e) {
+            log.error("在组装返回信息时出现错误", e);
+        }
+        return textBuilder.build("没有查询到相关成绩，晚点再来查吧~" , wxMpXmlMessage, wxMpService);
+    }
+
+    private void asynKefuMessage(WxMpXmlMessage wxMpXmlMessage,WxMpService wxMpService){
+        String gradesMsg;
         try {
             Student student = openIdService.getStudentByOpenId(wxMpXmlMessage.getFromUser());
-
-            ExecutorService singleThreadPool = Executors.newSingleThreadExecutor();
-
             List<GradeAndCourse> electiveCourseAsyncGrade = gradeSearchService.getElectiveCourseGradeAsync(student);
             if (CollectionUtils.isEmpty(electiveCourseAsyncGrade)) {
-                singleThreadPool.execute(() -> {
-                    List<GradeAndCourse> electiveCourseSyncGrade = gradeSearchService.getElectiveCourseGradeSync(student);
-                    String gradeListToText = gradeSearchService.getElectiveCourseText(electiveCourseSyncGrade);
-                    WxMpKefuMessage wxMpKefuMessage = new WxMpKefuMessage();
-                    wxMpKefuMessage.setContent(gradeListToText);
-                    wxMpKefuMessage.setMsgType("text");
-                    wxMpKefuMessage.setToUser(wxMpXmlMessage.getFromUser());
-                    log.info("send student {} grade kefu message {}", student.getAccount(), gradeListToText);
-                    try {
-                        wxMpService.getKefuService().sendKefuMessage(wxMpKefuMessage);
-                    } catch (WxErrorException e) {
-                        log.error("send grade customer message error", e);
-                    }
-                });
-                return textBuilder.build("服务器正在努力查询中", wxMpXmlMessage, wxMpService);
+                List<GradeAndCourse> electiveCourseSyncGrade = gradeSearchService.getElectiveCourseGradeSync(student);
+                gradesMsg = gradeSearchService.getElectiveCourseText(electiveCourseSyncGrade);
             }
-            String gradesMsg = gradeSearchService.getElectiveCourseText(electiveCourseAsyncGrade);
-
+            else {
+                gradesMsg = gradeSearchService.getElectiveCourseText(electiveCourseAsyncGrade);
+            }
             WxMpKefuMessage wxMpKefuMessage = new WxMpKefuMessage();
             wxMpKefuMessage.setContent(gradesMsg);
             wxMpKefuMessage.setMsgType("text");
@@ -77,12 +70,8 @@ public class ElectiveCourseMessageHandler implements WxMpMessageHandler {
             } catch (WxErrorException e) {
                 log.error("send grade customer message error", e);
             }
-
-            return textBuilder.build("", wxMpXmlMessage, wxMpService);
         } catch (Exception e) {
-            log.error("在组装返回信息时出现错误", e);
+            throw e;
         }
-
-        return textBuilder.build("没有查询到相关成绩，晚点再来查吧~" , wxMpXmlMessage, wxMpService);
     }
 }
