@@ -40,6 +40,9 @@ public class HandlerRouteService {
 	@Resource
 	private CETSearchHandler cetSearchHandler;
 
+	@Resource
+	private ElectiveCourseMessageHandler electiveCourseMessageHandler;
+
 	public void handlerRegister() {
 		router
 				.rule()
@@ -78,6 +81,12 @@ public class HandlerRouteService {
                 .interceptor(wechatOpenIdInterceptor)
                     .handler(examMessageHandler)
                 .end()
+				.rule()
+				.async(false)
+				.rContent(".*?选修.*?")
+				.interceptor(wechatOpenIdInterceptor)
+				.handler(electiveCourseMessageHandler)
+				.end()
                 .rule()
                     .async(false)
                     .rContent("空教室.*?")

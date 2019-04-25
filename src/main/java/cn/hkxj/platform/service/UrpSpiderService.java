@@ -13,11 +13,7 @@ import cn.hkxj.platform.pojo.GradeAndCourse;
 import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.spider.UrpCourseSpider;
 import cn.hkxj.platform.spider.UrpSpider;
-import cn.hkxj.platform.spider.model.CurrentGrade;
-import cn.hkxj.platform.spider.model.Information;
-import cn.hkxj.platform.spider.model.UrpGrade;
-import cn.hkxj.platform.spider.model.UrpResult;
-import cn.hkxj.platform.spider.model.UrpStudentInfo;
+import cn.hkxj.platform.spider.model.*;
 import cn.hkxj.platform.utils.TypeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -59,21 +55,34 @@ public class UrpSpiderService {
         return student;
     }
 
-    public ArrayList<GradeAndCourse> getCurrentGrade(Student student) {
+    //0 获取本学期成绩
+    //1 获取往期成绩
+    public ArrayList<GradeAndCourse> getCurrentGrade(Student student ,int i ) {
         UrpSpider urpSpider = new UrpSpider(student.getAccount(), student.getPassword());
         UrpResult<CurrentGrade> currentGrade = null;
         try {
-            currentGrade = urpSpider.getCurrentGrade();
-            log.error("account {} urp password error", student.getAccount());
-            if (currentGrade.getStatus() == 400) {
-                student.setIsCorrect(false);
-                studentMapper.updateByPrimaryKey(student);
+            if(i==0){
+                currentGrade = urpSpider.getCurrentGrade();
+                log.error("account {} urp password error", student.getAccount());
+                if (currentGrade.getStatus() == 400) {
+                    student.setIsCorrect(false);
+                    studentMapper.updateByPrimaryKey(student);
+                }
             }
+            else if (i==1){
+                currentGrade = urpSpider.getEverGrade();
+
+                log.error("account {} urp password error", student.getAccount());
+                if (currentGrade.getStatus() == 400) {
+                    student.setIsCorrect(false);
+                    studentMapper.updateByPrimaryKey(student);
+                }
+            }
+
         } catch (Exception e) {
             log.error("account {} urp error {}", student.getAccount(), e);
             return new ArrayList<>();
         }
-
 
         if (currentGrade.getStatus() != 200) {
             log.warn("account {} urp error {}", student.getAccount(), currentGrade.getMessage());
@@ -81,19 +90,20 @@ public class UrpSpiderService {
         }
 
         ArrayList<GradeAndCourse> gradeAndCourses = new ArrayList<>();
-        for (UrpGrade urpGrade : currentGrade.getData().getUrpGradeList()) {
-            GradeAndCourse gradeAndCourse = new GradeAndCourse();
+            for (UrpGrade urpGrade : currentGrade.getData().getUrpGradeList()) {
+                GradeAndCourse gradeAndCourse = new GradeAndCourse();
 
-            Grade grade = getGrade(urpGrade);
-            grade.setAccount(student.getAccount());
-            gradeAndCourse.setGrade(grade);
 
-            Course course = getCourse(urpGrade, student);
-            course.setCredit(grade.getPoint());
-            gradeAndCourse.setCourse(course);
+                Grade grade = getGrade(urpGrade);
+                grade.setAccount(student.getAccount());
+                gradeAndCourse.setGrade(grade);
 
-            gradeAndCourses.add(gradeAndCourse);
-        }
+                Course course = getCourse(urpGrade, student);
+                course.setCredit(grade.getPoint());
+                gradeAndCourse.setCourse(course);
+
+                gradeAndCourses.add(gradeAndCourse);
+            }
         return gradeAndCourses;
     }
 
@@ -113,8 +123,15 @@ public class UrpSpiderService {
         course.setType(CourseType.getCourseByType(type));
         String uid = urpGrade.getUid();
         course.setUid(uid);
-        Academy academy = getAcademyByUid(student.getAccount(), student.getPassword(), uid);
-        course.setAcademy(academy);
+        char c=urpGrade.getUid().charAt(0);
+        if (c>='a'&&c<='z'||c>='A'&&c<='Z') {
+            course.setAcademy(Academy.getAcademyByCode(25));
+        }
+        else{
+            Academy academy = getAcademyByUid(student.getAccount(), student.getPassword(), uid);
+            course.setAcademy(academy);
+        }
+
         return course;
     }
 

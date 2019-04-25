@@ -3,16 +3,10 @@ package cn.hkxj.platform.controller;
 
 import cn.hkxj.platform.exceptions.OpenidExistException;
 import cn.hkxj.platform.exceptions.PasswordUncorrectException;
-import cn.hkxj.platform.pojo.Academy;
 import cn.hkxj.platform.pojo.ErrorCode;
-import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.pojo.WebResponse;
-import cn.hkxj.platform.service.SubjectService;
-import cn.hkxj.platform.service.SubscribeService;
 import cn.hkxj.platform.service.wechat.StudentBindService;
-import cn.hkxj.platform.spider.UrpCourseSpider;
 import cn.hkxj.platform.utils.OneOffSubcriptionUtil;
-import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -20,23 +14,15 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 @Slf4j
 @Controller
 public class UserBindingController {
-	private final static Gson GSON = new Gson();
 	@Autowired
 	private HttpSession session;
 	@Autowired
 	private StudentBindService studentBindService;
-	@Autowired
-	private SubscribeService subscribeService;
-	@Autowired
-	private SubjectService subjectService;
 
 	@RequestMapping(value = "/bind", method = RequestMethod.GET)
 	public String loginHtml(@RequestParam(value = "openid", required = false) String openid) {
@@ -78,47 +64,5 @@ public class UserBindingController {
 		return WebResponse.success();
 	}
 
-	@RequestMapping(value = "/app/bind", method = RequestMethod.POST, produces="application/json;charset=UTF-8")
-	@ResponseBody
-	public Map appLoginHtmlPost(@RequestBody Map loginInfo) throws IOException {
-
-		Map json=new HashMap();
-
-		String account=(String) loginInfo.get("account");
-		String password=(String)loginInfo.get("password") ;
-		String logincode=(String)loginInfo.get("logincode") ;
-		try {
-			Student student=studentBindService.studentLogin(account,password);
-
-			Map studentMap=GSON.fromJson(GSON.toJson(student,student.getClass()),Map.class);
-
-			Map appLoginInfo=new  UrpCourseSpider(student.getAccount(),student.getPassword()).getAppJson(logincode);
-
-
-			Map classes=(Map) studentMap.get("classes");
-			int class_year=(int)(double)classes.get("year");
-			int class_num=(int)(double)classes.get("num");
-			int subject_num=(int)(double)classes.get("subject");
-			String subject_name=subjectService.getSubjectById(subject_num).getName();
-
-			loginInfo.put("className",(String)classes.get("name")+class_year+"-"+class_num);
-			loginInfo.put("num",appLoginInfo.get("openid"));
-			loginInfo.put("name",studentMap.get("name"));
-			loginInfo.put("major",subject_name);
-
-
-			json.put("stuinfo",loginInfo);
-			json.put("userinfo",loginInfo);
-			json.put("status" ,200);
-			return json;
-		} catch (PasswordUncorrectException e) {
-			log.info("student bind fail Password not correct account:{} password:{} openid:{}", account, password);
-			json.put("status" ,400);
-			return json;
-		}
-
-
-
-	}
 
 }

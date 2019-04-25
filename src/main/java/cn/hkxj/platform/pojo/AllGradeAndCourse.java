@@ -30,4 +30,12 @@ public class AllGradeAndCourse {
 		return list.get(list.size() -1);
 	}
 
+	public List<GradeAndCourse> getEverTermGrade(){
+		List<GradeAndCourse> everList=new ArrayList<>();
+		for (List<GradeAndCourse> o:list){
+			everList.addAll(o);
+		}
+		return everList;
+	}
+
 }

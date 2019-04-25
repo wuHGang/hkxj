@@ -36,7 +36,8 @@ public enum Academy {
     sport("体育部", "体育部", 21),
     Guard("保卫处", "保卫处", 22),
     Enrollment("招生与就业工作处","招生与就业工作处",23),
-    Library("图书馆","图书馆",24);
+    Library("图书馆","图书馆",24),
+    Web("网课","网课",25);
 
     private String academyName;
 

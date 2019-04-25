@@ -104,10 +104,34 @@ public class GradeSearchService {
 	}
 
     public List<GradeAndCourse> getCurrentTermGradeSync(Student student) {
-        List<GradeAndCourse> allGradeList = getGradeFromSpiderSync(student);
+        List<GradeAndCourse> allGradeList = getGradeFromSpiderSync(student,0);
         List<GradeAndCourse> studentGrades = new ArrayList<>();
         for (GradeAndCourse gradeAndCourse : allGradeList) {
             if (gradeAndCourse.getGrade().getYear() == 2018) {
+                studentGrades.add(gradeAndCourse);
+            }
+        }
+        return studentGrades;
+    }
+
+    public List<GradeAndCourse> getElectiveCourseGradeSync(Student student) {
+        List<GradeAndCourse> allGradeList = getGradeFromSpiderSync(student,1);
+        List<GradeAndCourse> studentGrades = new ArrayList<>();
+        for (GradeAndCourse gradeAndCourse : allGradeList) {
+            char c=gradeAndCourse.getGrade().getCourseId().charAt(0);
+            if (c>='a'&&c<='z'||c>='A'&&c<='Z') {
+                studentGrades.add(gradeAndCourse);
+            }
+        }
+        return studentGrades;
+    }
+
+    public List<GradeAndCourse> getElectiveCourseGradeAsync(Student student) {
+        List<GradeAndCourse> allGradeList = getGradeFromSpiderSync(student,1);
+        List<GradeAndCourse> studentGrades = new ArrayList<>();
+        for (GradeAndCourse gradeAndCourse : allGradeList) {
+            char c=gradeAndCourse.getGrade().getCourseId().charAt(0);
+            if (c>='a'&&c<='z'||c>='A'&&c<='Z') {
                 studentGrades.add(gradeAndCourse);
             }
         }
@@ -150,11 +174,16 @@ public class GradeSearchService {
     }
 
 
-    public List<GradeAndCourse> getGradeFromSpiderSync(Student student) {
+    public List<GradeAndCourse> getGradeFromSpiderSync(Student student ,int type) {
         List<GradeAndCourse> currentFromApp = new ArrayList<>();
         try {
             AllGradeAndCourse gradeAndCourseByAccount = appSpiderService.getGradeAndCourseByAccount(student.getAccount());
-            currentFromApp = gradeAndCourseByAccount.getCurrentTermGrade();
+            if (type==0){
+                currentFromApp = gradeAndCourseByAccount.getCurrentTermGrade();
+            }
+            else if(type==1){
+                currentFromApp=gradeAndCourseByAccount.getEverTermGrade();
+            }
         } catch (PasswordUncorrectException | SpiderException e) {
             log.warn("account {} app spider error {}", student.getAccount(), e.getMessage());
 
@@ -163,7 +192,7 @@ public class GradeSearchService {
         }
         //将app和教务网数据整合到一起
 
-        ArrayList<GradeAndCourse> currentFromUrp = urpSpiderService.getCurrentGrade(student);
+        ArrayList<GradeAndCourse> currentFromUrp = urpSpiderService.getCurrentGrade(student,type);
 
         ArrayList<GradeAndCourse> result = Lists.newArrayList();
         if (CollectionUtils.isEmpty(currentFromApp)) {
@@ -204,7 +233,7 @@ public class GradeSearchService {
     }
 
     private Callable<List<GradeAndCourse>> urpSpiderTask(Student student) {
-        return () -> urpSpiderService.getCurrentGrade(student);
+        return () -> urpSpiderService.getCurrentGrade(student,0);
     }
 
     public String gradeListToText(List<GradeAndCourse> studentGrades) {
@@ -231,4 +260,27 @@ public class GradeSearchService {
         return buffer.toString();
     }
 
+    public String getElectiveCourseText(List<GradeAndCourse> studentGrades) {
+        StringBuffer buffer = new StringBuffer();
+        if (studentGrades.size() == 0) {
+            buffer.append("尚无选修课成绩");
+        } else {
+            int allPoint=0;
+            for (GradeAndCourse gradeAndCourse : studentGrades) {
+                allPoint+=gradeAndCourse.getCourse().getCredit();
+                float grade = gradeAndCourse.getGrade().getScore();
+                buffer.append("考试名称：").append(gradeAndCourse.getCourse().getName()).append("\n")
+                        .append("成绩：").append(grade == -1 ? "" : grade / 100).append("   学分：")
+                        .append(((float) gradeAndCourse.getGrade().getPoint()) / 10).append("\n\n");
+            }
+            allPoint/=10;
+            buffer.insert(0,"- - - - - - - - - - - - - - - \n");
+            int num=0;
+            if(allPoint<7)num=7-allPoint;
+            buffer.insert(0,"你选修的公共选修课共"+allPoint+"学分\n还差"+num+"学分\n");
+            buffer.insert(0,"- - - - - - - - - - - - - - - \n");
+        }
+        buffer.append("\n 查询仅供参考，以教务网为准，如有疑问微信联系：吴彦祖【hkdhd666】\n（有同学反映，大学英语提高班也是选修课）");
+        return buffer.toString();
+    }
 }

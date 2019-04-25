@@ -41,7 +41,7 @@ public class UrpSpiderServiceTest {
     @Test
     public void getCurrentGrade() throws PasswordUncorrectException {
 
-        for (GradeAndCourse gradeAndCourse : urpSpiderService.getCurrentGrade(student)) {
+        for (GradeAndCourse gradeAndCourse : urpSpiderService.getCurrentGrade(student,0)) {
             log.info(gradeAndCourse.toString());
         }
     }
