@@ -91,18 +91,23 @@ public class UrpSpiderService {
 
         ArrayList<GradeAndCourse> gradeAndCourses = new ArrayList<>();
             for (UrpGrade urpGrade : currentGrade.getData().getUrpGradeList()) {
-                GradeAndCourse gradeAndCourse = new GradeAndCourse();
+                try {
+                    GradeAndCourse gradeAndCourse = new GradeAndCourse();
 
 
-                Grade grade = getGrade(urpGrade);
-                grade.setAccount(student.getAccount());
-                gradeAndCourse.setGrade(grade);
+                    Grade grade = getGrade(urpGrade);
+                    grade.setAccount(student.getAccount());
+                    gradeAndCourse.setGrade(grade);
 
-                Course course = getCourse(urpGrade, student);
-                course.setCredit(grade.getPoint());
-                gradeAndCourse.setCourse(course);
+                    Course course = getCourse(urpGrade, student);
+                    course.setCredit(grade.getPoint());
+                    gradeAndCourse.setCourse(course);
 
-                gradeAndCourses.add(gradeAndCourse);
+                    gradeAndCourses.add(gradeAndCourse);
+                }catch (IllegalArgumentException e){
+                    continue;
+                }
+
             }
         return gradeAndCourses;
     }
