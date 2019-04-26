@@ -41,7 +41,7 @@ public class LoginController {
 			log.info("student login fail--invalid account:{}", account, password);
 			return WebResponse.fail(ErrorCode.ACCOUNT_OR_PASSWORD_INVALID.getErrorCode(), "账号无效");
 		}
-        Student student = null;
+        Student student;
 		try{
 		    student = studentBindService.studentLogin(account, password);
 		    
@@ -59,9 +59,7 @@ public class LoginController {
 	}
 
 	private boolean isAccountValid(String account){
-		if(Objects.isNull(account) || account.length() != ACCOUNT_LENGTH || !account.startsWith(ACCOUNT_PREFIX))
-			return false;
-		return true;
-	}
+        return !Objects.isNull(account) && account.length() == ACCOUNT_LENGTH && account.startsWith(ACCOUNT_PREFIX);
+    }
 
 }

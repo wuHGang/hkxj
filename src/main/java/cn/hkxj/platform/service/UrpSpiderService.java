@@ -70,7 +70,7 @@ public class UrpSpiderService {
                 }
             }
             else if (i==1){
-                currentGrade = urpSpider.getEverGrade();
+                urpSpider.getEverGrade();
 
                 log.error("account {} urp password error", student.getAccount());
                 if (currentGrade.getStatus() == 400) {
