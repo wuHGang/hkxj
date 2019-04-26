@@ -1,6 +1,5 @@
-package cn.hkxj.platform.pojo;
+package cn.hkxj.platform.pojo.constant;
 
-import org.joda.time.DateTime;
 import org.joda.time.LocalTime;
 
 /**

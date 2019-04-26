@@ -1,4 +1,4 @@
-package cn.hkxj.platform.pojo;
+package cn.hkxj.platform.pojo.constant;
 
 
 import lombok.extern.slf4j.Slf4j;

@@ -1,8 +1,7 @@
 package cn.hkxj.platform.mapper;
 
-import cn.hkxj.platform.pojo.Openid;
-import cn.hkxj.platform.pojo.OpenidExample;
-import cn.hkxj.platform.pojo.Student;
+import cn.hkxj.platform.pojo.wechat.Openid;
+import cn.hkxj.platform.pojo.example.OpenidExample;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;

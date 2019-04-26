@@ -1,7 +1,7 @@
 package cn.hkxj.platform.service;
 
 import cn.hkxj.platform.pojo.Course;
-import cn.hkxj.platform.pojo.CourseTimeTable;
+import cn.hkxj.platform.pojo.timetable.CourseTimeTable;
 
 import java.util.List;
 

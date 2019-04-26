@@ -2,19 +2,16 @@ package cn.hkxj.platform.service;
 
 import cn.hkxj.platform.mapper.SubscribeGradeUpdateMapper;
 import cn.hkxj.platform.mapper.TaskMapper;
-import cn.hkxj.platform.pojo.SubscribeGradeUpdate;
-import cn.hkxj.platform.pojo.Task;
+import cn.hkxj.platform.pojo.wechat.SubscribeGradeUpdate;
+import cn.hkxj.platform.pojo.wechat.Task;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.exception.WxErrorException;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.kefu.WxMpKefuMessage;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.List;
 
 
 @Slf4j

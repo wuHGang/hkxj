@@ -1,4 +1,4 @@
-package cn.hkxj.platform.pojo;
+package cn.hkxj.platform.pojo.example;
 
 import cn.hkxj.platform.pojo.Classes;
 import java.util.ArrayList;

@@ -1,7 +1,7 @@
 package cn.hkxj.platform.mapper;
 
-import cn.hkxj.platform.pojo.Openid;
-import cn.hkxj.platform.pojo.OpenidExample;
+import cn.hkxj.platform.pojo.wechat.Openid;
+import cn.hkxj.platform.pojo.example.OpenidExample;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;

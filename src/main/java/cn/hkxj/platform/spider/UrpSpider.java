@@ -2,24 +2,23 @@ package cn.hkxj.platform.spider;
 
 import cn.hkxj.platform.spider.model.CurrentGrade;
 import cn.hkxj.platform.spider.model.EverGrade;
-import cn.hkxj.platform.spider.model.EverGradeResult;
 import cn.hkxj.platform.spider.model.Information;
 import cn.hkxj.platform.spider.model.UrpResult;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
-import com.google.gson.Gson;
-import com.google.gson.internal.LinkedTreeMap;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
+
+/**
+ * 教务网爬虫  由flask提供服务
+ * @author JR Chan
+ */
+
 
 @Slf4j
 public class UrpSpider {
@@ -30,7 +29,6 @@ public class UrpSpider {
 	private static final String CURRENT_GRADE_URL = GRADE_URL+"/current";
 	private static final String EVER_GRADE_URL = GRADE_URL+"/ever";
     private static final String TEMP_EVER_GRADE_URL = GRADE_URL+"/ever/temp";
-	private static final Gson gson=new Gson();
     private static final TypeReference<UrpResult<Information>> informationTypeReference
             = new TypeReference<UrpResult<Information>>() {
     };

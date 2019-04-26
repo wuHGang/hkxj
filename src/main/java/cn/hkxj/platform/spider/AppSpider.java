@@ -6,7 +6,7 @@ import cn.hkxj.platform.exceptions.PasswordUncorrectException;
 import cn.hkxj.platform.exceptions.ReadTimeoutException;
 import cn.hkxj.platform.pojo.AllGradeAndCourse;
 import cn.hkxj.platform.pojo.Course;
-import cn.hkxj.platform.pojo.CourseType;
+import cn.hkxj.platform.pojo.constant.CourseType;
 import cn.hkxj.platform.pojo.Grade;
 import cn.hkxj.platform.pojo.GradeAndCourse;
 import cn.hkxj.platform.utils.ReadProperties;

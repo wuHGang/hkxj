@@ -80,7 +80,7 @@
   <sql id="Base_Column_List">
     id, area, direction, floor, number, name, is_allow
   </sql>
-  <select id="selectByExample" parameterType="cn.hkxj.platform.pojo.RoomExample" resultMap="BaseResultMap">
+  <select id="selectByExample" parameterType="cn.hkxj.platform.pojo.example.RoomExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct

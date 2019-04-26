@@ -1,9 +1,9 @@
 package cn.hkxj.platform.service;
 
-import cn.hkxj.platform.pojo.Building;
-import cn.hkxj.platform.pojo.CourseTimeTable;
+import cn.hkxj.platform.pojo.constant.Building;
+import cn.hkxj.platform.pojo.timetable.CourseTimeTable;
 import cn.hkxj.platform.pojo.Room;
-import cn.hkxj.platform.pojo.RoomTimeTable;
+import cn.hkxj.platform.pojo.timetable.RoomTimeTable;
 import cn.hkxj.platform.utils.SchoolTimeUtil;
 import com.google.common.collect.HashMultimap;
 import lombok.extern.slf4j.Slf4j;

@@ -2,9 +2,7 @@ package cn.hkxj.platform.service.wechat.handler.messageHandler;
 
 import cn.hkxj.platform.builder.TextBuilder;
 import cn.hkxj.platform.mapper.OpenidMapper;
-import cn.hkxj.platform.pojo.Openid;
 import cn.hkxj.platform.service.OpenIdService;
-import jdk.internal.dynalink.linker.LinkerServices;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.exception.WxErrorException;
 import me.chanjar.weixin.common.session.WxSessionManager;
@@ -15,8 +13,6 @@ import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 @Slf4j

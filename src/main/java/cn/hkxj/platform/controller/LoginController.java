@@ -2,7 +2,7 @@ package cn.hkxj.platform.controller;
 
 import cn.hkxj.platform.exceptions.PasswordUncorrectException;
 import cn.hkxj.platform.exceptions.SpiderException;
-import cn.hkxj.platform.pojo.ErrorCode;
+import cn.hkxj.platform.pojo.constant.ErrorCode;
 import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.pojo.WebResponse;
 import cn.hkxj.platform.service.wechat.StudentBindService;

@@ -1,7 +1,7 @@
 package cn.hkxj.platform.service.wechat.handler.messageHandler;
 
 import cn.hkxj.platform.builder.TextBuilder;
-import cn.hkxj.platform.pojo.ExamTimeTable;
+import cn.hkxj.platform.pojo.timetable.ExamTimeTable;
 import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.service.ExamTimeTableService;
 import cn.hkxj.platform.service.OpenIdService;

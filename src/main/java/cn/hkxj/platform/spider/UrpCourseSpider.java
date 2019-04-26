@@ -1,15 +1,12 @@
 package cn.hkxj.platform.spider;
 
-import cn.hkxj.platform.pojo.Academy;
-import cn.hkxj.platform.pojo.Course;
-import com.alibaba.fastjson.JSON;
+import cn.hkxj.platform.pojo.constant.Academy;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -20,8 +17,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 
 /**

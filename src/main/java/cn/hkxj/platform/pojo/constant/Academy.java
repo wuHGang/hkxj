@@ -1,7 +1,6 @@
-package cn.hkxj.platform.pojo;
+package cn.hkxj.platform.pojo.constant;
 
 import com.google.common.base.MoreObjects;
-import org.apache.tomcat.jni.Library;
 
 import java.util.Objects;
 

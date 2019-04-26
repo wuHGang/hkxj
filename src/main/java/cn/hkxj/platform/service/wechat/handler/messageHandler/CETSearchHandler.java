@@ -1,13 +1,10 @@
 package cn.hkxj.platform.service.wechat.handler.messageHandler;
 
 import cn.hkxj.platform.builder.TextBuilder;
-import cn.hkxj.platform.mapper.OpenidMapper;
-import cn.hkxj.platform.pojo.Openid;
 import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.service.CETService;
 import cn.hkxj.platform.service.OpenIdService;
 import lombok.extern.slf4j.Slf4j;
-import me.chanjar.weixin.common.exception.WxErrorException;
 import me.chanjar.weixin.common.session.WxSessionManager;
 import me.chanjar.weixin.mp.api.WxMpMessageHandler;
 import me.chanjar.weixin.mp.api.WxMpService;

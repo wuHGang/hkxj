@@ -1,6 +1,4 @@
-package cn.hkxj.platform.pojo;
-
-import org.checkerframework.checker.units.qual.C;
+package cn.hkxj.platform.pojo.wechat;
 
 import java.util.Objects;
 

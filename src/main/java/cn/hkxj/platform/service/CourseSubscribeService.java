@@ -2,6 +2,13 @@ package cn.hkxj.platform.service;
 
 import cn.hkxj.platform.mapper.*;
 import cn.hkxj.platform.pojo.*;
+import cn.hkxj.platform.pojo.example.CourseTimeTableExample;
+import cn.hkxj.platform.pojo.example.OpenidExample;
+import cn.hkxj.platform.pojo.example.StudentExample;
+import cn.hkxj.platform.pojo.timetable.ClassTimeTable;
+import cn.hkxj.platform.pojo.timetable.CourseTimeTable;
+import cn.hkxj.platform.pojo.wechat.CourseGroupMsg;
+import cn.hkxj.platform.pojo.wechat.Openid;
 import cn.hkxj.platform.utils.DateUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

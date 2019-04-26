@@ -1,5 +1,7 @@
 package cn.hkxj.platform.pojo;
 
+import cn.hkxj.platform.pojo.constant.Building;
+import cn.hkxj.platform.pojo.constant.Direction;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 

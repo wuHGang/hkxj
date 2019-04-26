@@ -1,4 +1,4 @@
-package cn.hkxj.platform.pojo;
+package cn.hkxj.platform.pojo.timetable;
 
 import lombok.Data;
 

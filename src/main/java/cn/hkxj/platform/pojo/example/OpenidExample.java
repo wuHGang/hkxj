@@ -1,17 +1,17 @@
-package cn.hkxj.platform.pojo;
+package cn.hkxj.platform.pojo.example;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class SubscribeOpenidExample {
+public class OpenidExample {
     protected String orderByClause;
 
     protected boolean distinct;
 
     protected List<Criteria> oredCriteria;
 
-    public SubscribeOpenidExample() {
+    public OpenidExample() {
         oredCriteria = new ArrayList<Criteria>();
     }
 
@@ -235,123 +235,63 @@ public class SubscribeOpenidExample {
             return (Criteria) this;
         }
 
-        public Criteria andSubTypeIsNull() {
-            addCriterion("sub_type is null");
+        public Criteria andAccountIsNull() {
+            addCriterion("account is null");
             return (Criteria) this;
         }
 
-        public Criteria andSubTypeIsNotNull() {
-            addCriterion("sub_type is not null");
+        public Criteria andAccountIsNotNull() {
+            addCriterion("account is not null");
             return (Criteria) this;
         }
 
-        public Criteria andSubTypeEqualTo(Integer value) {
-            addCriterion("sub_type =", value, "subType");
+        public Criteria andAccountEqualTo(Integer value) {
+            addCriterion("account =", value, "account");
             return (Criteria) this;
         }
 
-        public Criteria andSubTypeNotEqualTo(Integer value) {
-            addCriterion("sub_type <>", value, "subType");
+        public Criteria andAccountNotEqualTo(Integer value) {
+            addCriterion("account <>", value, "account");
             return (Criteria) this;
         }
 
-        public Criteria andSubTypeGreaterThan(Integer value) {
-            addCriterion("sub_type >", value, "subType");
+        public Criteria andAccountGreaterThan(Integer value) {
+            addCriterion("account >", value, "account");
             return (Criteria) this;
         }
 
-        public Criteria andSubTypeGreaterThanOrEqualTo(Integer value) {
-            addCriterion("sub_type >=", value, "subType");
+        public Criteria andAccountGreaterThanOrEqualTo(Integer value) {
+            addCriterion("account >=", value, "account");
             return (Criteria) this;
         }
 
-        public Criteria andSubTypeLessThan(Integer value) {
-            addCriterion("sub_type <", value, "subType");
+        public Criteria andAccountLessThan(Integer value) {
+            addCriterion("account <", value, "account");
             return (Criteria) this;
         }
 
-        public Criteria andSubTypeLessThanOrEqualTo(Integer value) {
-            addCriterion("sub_type <=", value, "subType");
+        public Criteria andAccountLessThanOrEqualTo(Integer value) {
+            addCriterion("account <=", value, "account");
             return (Criteria) this;
         }
 
-        public Criteria andSubTypeIn(List<Integer> values) {
-            addCriterion("sub_type in", values, "subType");
+        public Criteria andAccountIn(List<Integer> values) {
+            addCriterion("account in", values, "account");
             return (Criteria) this;
         }
 
-        public Criteria andSubTypeNotIn(List<Integer> values) {
-            addCriterion("sub_type not in", values, "subType");
+        public Criteria andAccountNotIn(List<Integer> values) {
+            addCriterion("account not in", values, "account");
             return (Criteria) this;
         }
 
-        public Criteria andSubTypeBetween(Integer value1, Integer value2) {
-            addCriterion("sub_type between", value1, value2, "subType");
+        public Criteria andAccountBetween(Integer value1, Integer value2) {
+            addCriterion("account between", value1, value2, "account");
             return (Criteria) this;
         }
 
-        public Criteria andSubTypeNotBetween(Integer value1, Integer value2) {
-            addCriterion("sub_type not between", value1, value2, "subType");
-            return (Criteria) this;
-        }
-
-        public Criteria andIsSendIsNull() {
-            addCriterion("is_send is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andIsSendIsNotNull() {
-            addCriterion("is_send is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andIsSendEqualTo(Byte value) {
-            addCriterion("is_send =", value, "isSend");
-            return (Criteria) this;
-        }
-
-        public Criteria andIsSendNotEqualTo(Byte value) {
-            addCriterion("is_send <>", value, "isSend");
-            return (Criteria) this;
-        }
-
-        public Criteria andIsSendGreaterThan(Byte value) {
-            addCriterion("is_send >", value, "isSend");
-            return (Criteria) this;
-        }
-
-        public Criteria andIsSendGreaterThanOrEqualTo(Byte value) {
-            addCriterion("is_send >=", value, "isSend");
-            return (Criteria) this;
-        }
-
-        public Criteria andIsSendLessThan(Byte value) {
-            addCriterion("is_send <", value, "isSend");
-            return (Criteria) this;
-        }
-
-        public Criteria andIsSendLessThanOrEqualTo(Byte value) {
-            addCriterion("is_send <=", value, "isSend");
-            return (Criteria) this;
-        }
-
-        public Criteria andIsSendIn(List<Byte> values) {
-            addCriterion("is_send in", values, "isSend");
-            return (Criteria) this;
-        }
-
-        public Criteria andIsSendNotIn(List<Byte> values) {
-            addCriterion("is_send not in", values, "isSend");
-            return (Criteria) this;
-        }
-
-        public Criteria andIsSendBetween(Byte value1, Byte value2) {
-            addCriterion("is_send between", value1, value2, "isSend");
-            return (Criteria) this;
-        }
-
-        public Criteria andIsSendNotBetween(Byte value1, Byte value2) {
-            addCriterion("is_send not between", value1, value2, "isSend");
+        public Criteria andAccountNotBetween(Integer value1, Integer value2) {
+            addCriterion("account not between", value1, value2, "account");
             return (Criteria) this;
         }
 
@@ -412,6 +352,126 @@ public class SubscribeOpenidExample {
 
         public Criteria andGmtCreateNotBetween(Date value1, Date value2) {
             addCriterion("gmt_create not between", value1, value2, "gmtCreate");
+            return (Criteria) this;
+        }
+
+        public Criteria andGmtModifiedIsNull() {
+            addCriterion("gmt_modified is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andGmtModifiedIsNotNull() {
+            addCriterion("gmt_modified is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andGmtModifiedEqualTo(Date value) {
+            addCriterion("gmt_modified =", value, "gmtModified");
+            return (Criteria) this;
+        }
+
+        public Criteria andGmtModifiedNotEqualTo(Date value) {
+            addCriterion("gmt_modified <>", value, "gmtModified");
+            return (Criteria) this;
+        }
+
+        public Criteria andGmtModifiedGreaterThan(Date value) {
+            addCriterion("gmt_modified >", value, "gmtModified");
+            return (Criteria) this;
+        }
+
+        public Criteria andGmtModifiedGreaterThanOrEqualTo(Date value) {
+            addCriterion("gmt_modified >=", value, "gmtModified");
+            return (Criteria) this;
+        }
+
+        public Criteria andGmtModifiedLessThan(Date value) {
+            addCriterion("gmt_modified <", value, "gmtModified");
+            return (Criteria) this;
+        }
+
+        public Criteria andGmtModifiedLessThanOrEqualTo(Date value) {
+            addCriterion("gmt_modified <=", value, "gmtModified");
+            return (Criteria) this;
+        }
+
+        public Criteria andGmtModifiedIn(List<Date> values) {
+            addCriterion("gmt_modified in", values, "gmtModified");
+            return (Criteria) this;
+        }
+
+        public Criteria andGmtModifiedNotIn(List<Date> values) {
+            addCriterion("gmt_modified not in", values, "gmtModified");
+            return (Criteria) this;
+        }
+
+        public Criteria andGmtModifiedBetween(Date value1, Date value2) {
+            addCriterion("gmt_modified between", value1, value2, "gmtModified");
+            return (Criteria) this;
+        }
+
+        public Criteria andGmtModifiedNotBetween(Date value1, Date value2) {
+            addCriterion("gmt_modified not between", value1, value2, "gmtModified");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsBindIsNull() {
+            addCriterion("is_bind is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsBindIsNotNull() {
+            addCriterion("is_bind is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsBindEqualTo(Boolean value) {
+            addCriterion("is_bind =", value, "isBind");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsBindNotEqualTo(Boolean value) {
+            addCriterion("is_bind <>", value, "isBind");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsBindGreaterThan(Boolean value) {
+            addCriterion("is_bind >", value, "isBind");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsBindGreaterThanOrEqualTo(Boolean value) {
+            addCriterion("is_bind >=", value, "isBind");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsBindLessThan(Boolean value) {
+            addCriterion("is_bind <", value, "isBind");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsBindLessThanOrEqualTo(Boolean value) {
+            addCriterion("is_bind <=", value, "isBind");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsBindIn(List<Boolean> values) {
+            addCriterion("is_bind in", values, "isBind");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsBindNotIn(List<Boolean> values) {
+            addCriterion("is_bind not in", values, "isBind");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsBindBetween(Boolean value1, Boolean value2) {
+            addCriterion("is_bind between", value1, value2, "isBind");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsBindNotBetween(Boolean value1, Boolean value2) {
+            addCriterion("is_bind not between", value1, value2, "isBind");
             return (Criteria) this;
         }
     }

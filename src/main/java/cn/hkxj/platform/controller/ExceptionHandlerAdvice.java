@@ -2,7 +2,7 @@ package cn.hkxj.platform.controller;
 
 import cn.hkxj.platform.exceptions.PasswordUncorrectException;
 import cn.hkxj.platform.exceptions.ReadTimeoutException;
-import cn.hkxj.platform.pojo.ErrorCode;
+import cn.hkxj.platform.pojo.constant.ErrorCode;
 import cn.hkxj.platform.pojo.WebResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ControllerAdvice;

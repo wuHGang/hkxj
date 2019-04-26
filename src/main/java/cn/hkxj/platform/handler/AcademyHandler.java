@@ -1,6 +1,6 @@
 package cn.hkxj.platform.handler;
 
-import cn.hkxj.platform.pojo.Academy;
+import cn.hkxj.platform.pojo.constant.Academy;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
 

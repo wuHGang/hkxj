@@ -1,4 +1,7 @@
-package cn.hkxj.platform.pojo;
+package cn.hkxj.platform.pojo.wechat;
+
+import cn.hkxj.platform.pojo.Classes;
+import cn.hkxj.platform.pojo.timetable.CourseTimeTable;
 
 import java.util.Comparator;
 import java.util.List;

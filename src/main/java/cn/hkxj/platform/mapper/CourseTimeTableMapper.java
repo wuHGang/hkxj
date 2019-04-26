@@ -1,7 +1,7 @@
 package cn.hkxj.platform.mapper;
 
-import cn.hkxj.platform.pojo.CourseTimeTable;
-import cn.hkxj.platform.pojo.CourseTimeTableExample;
+import cn.hkxj.platform.pojo.timetable.CourseTimeTable;
+import cn.hkxj.platform.pojo.example.CourseTimeTableExample;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;

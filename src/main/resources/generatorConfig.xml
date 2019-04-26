@@ -48,7 +48,7 @@
                <!--selectByExampleQueryId="false">-->
             <!--<property name="ignoreQualifiersAtRuntime" value="true"/>-->
             <!--<generatedKey column="id" sqlStatement="MySql" identity="true"/>-->
-            <!--<columnOverride column="academy" javaType="cn.hkxj.platform.pojo.Academy" typeHandler="cn.hkxj.platform.handler.AcademyHandler"/>-->
+            <!--<columnOverride column="academy" javaType="cn.hkxj.platform.pojo.constant.Academy" typeHandler="cn.hkxj.platform.handler.AcademyHandler"/>-->
         <!--</table>-->
         <table tableName="student">
             <property name="ignoreQualifiersAtRuntime" value="true"/>

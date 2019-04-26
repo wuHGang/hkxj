@@ -2,6 +2,8 @@ package cn.hkxj.platform.service.impl;
 
 import cn.hkxj.platform.mapper.*;
 import cn.hkxj.platform.pojo.*;
+import cn.hkxj.platform.pojo.example.CourseTimeTableExample;
+import cn.hkxj.platform.pojo.timetable.CourseTimeTable;
 import cn.hkxj.platform.service.CourseService;
 import cn.hkxj.platform.utils.DateUtils;
 import lombok.extern.slf4j.Slf4j;

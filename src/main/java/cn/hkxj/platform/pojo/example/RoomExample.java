@@ -1,4 +1,7 @@
-package cn.hkxj.platform.pojo;
+package cn.hkxj.platform.pojo.example;
+
+import cn.hkxj.platform.pojo.constant.Building;
+import cn.hkxj.platform.pojo.constant.Direction;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,18 +1,20 @@
-package cn.hkxj.platform.pojo;
+package cn.hkxj.platform.pojo.example;
 
 import cn.hkxj.platform.pojo.Course;
 import cn.hkxj.platform.pojo.Room;
+
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
-public class CourseTimeTableExample {
+public class ExamTimeTableExample {
     protected String orderByClause;
 
     protected boolean distinct;
 
     protected List<Criteria> oredCriteria;
 
-    public CourseTimeTableExample() {
+    public ExamTimeTableExample() {
         oredCriteria = new ArrayList<Criteria>();
     }
 
@@ -66,9 +68,9 @@ public class CourseTimeTableExample {
     }
 
     protected abstract static class GeneratedCriteria {
-        protected List<Criterion> courseCriteria;
-
         protected List<Criterion> roomCriteria;
+
+        protected List<Criterion> courseCriteria;
 
         protected List<Criterion> allCriteria;
 
@@ -77,8 +79,28 @@ public class CourseTimeTableExample {
         protected GeneratedCriteria() {
             super();
             criteria = new ArrayList<Criterion>();
-            courseCriteria = new ArrayList<Criterion>();
             roomCriteria = new ArrayList<Criterion>();
+            courseCriteria = new ArrayList<Criterion>();
+        }
+
+        public List<Criterion> getRoomCriteria() {
+            return roomCriteria;
+        }
+
+        protected void addRoomCriterion(String condition, Object value, String property) {
+            if (value == null) {
+                throw new RuntimeException("Value for " + property + " cannot be null");
+            }
+            roomCriteria.add(new Criterion(condition, value, "cn.hkxj.platform.handler.RoomHandler"));
+            allCriteria = null;
+        }
+
+        protected void addRoomCriterion(String condition, Room value1, Room value2, String property) {
+            if (value1 == null || value2 == null) {
+                throw new RuntimeException("Between values for " + property + " cannot be null");
+            }
+            roomCriteria.add(new Criterion(condition, value1, value2, "cn.hkxj.platform.handler.RoomHandler"));
+            allCriteria = null;
         }
 
         public List<Criterion> getCourseCriteria() {
@@ -101,38 +123,18 @@ public class CourseTimeTableExample {
             allCriteria = null;
         }
 
-        public List<Criterion> getRoomCriteria() {
-            return roomCriteria;
-        }
-
-        protected void addRoomCriterion(String condition, Object value, String property) {
-            if (value == null) {
-                throw new RuntimeException("Value for " + property + " cannot be null");
-            }
-            roomCriteria.add(new Criterion(condition, value, "cn.hkxj.platform.handler.RoomWarpperHandler"));
-            allCriteria = null;
-        }
-
-        protected void addRoomCriterion(String condition, Room value1, Room value2, String property) {
-            if (value1 == null || value2 == null) {
-                throw new RuntimeException("Between values for " + property + " cannot be null");
-            }
-            roomCriteria.add(new Criterion(condition, value1, value2, "cn.hkxj.platform.handler.RoomWarpperHandler"));
-            allCriteria = null;
-        }
-
         public boolean isValid() {
             return criteria.size() > 0
-                || courseCriteria.size() > 0
-                || roomCriteria.size() > 0;
+                || roomCriteria.size() > 0
+                || courseCriteria.size() > 0;
         }
 
         public List<Criterion> getAllCriteria() {
             if (allCriteria == null) {
                 allCriteria = new ArrayList<Criterion>();
                 allCriteria.addAll(criteria);
-                allCriteria.addAll(courseCriteria);
                 allCriteria.addAll(roomCriteria);
+                allCriteria.addAll(courseCriteria);
             }
             return allCriteria;
         }
@@ -222,6 +224,66 @@ public class CourseTimeTableExample {
 
         public Criteria andIdNotBetween(Integer value1, Integer value2) {
             addCriterion("id not between", value1, value2, "id");
+            return (Criteria) this;
+        }
+
+        public Criteria andRoomIsNull() {
+            addCriterion("room_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRoomIsNotNull() {
+            addCriterion("room_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRoomEqualTo(Room value) {
+            addRoomCriterion("room_id =", value, "room");
+            return (Criteria) this;
+        }
+
+        public Criteria andRoomNotEqualTo(Room value) {
+            addRoomCriterion("room_id <>", value, "room");
+            return (Criteria) this;
+        }
+
+        public Criteria andRoomGreaterThan(Room value) {
+            addRoomCriterion("room_id >", value, "room");
+            return (Criteria) this;
+        }
+
+        public Criteria andRoomGreaterThanOrEqualTo(Room value) {
+            addRoomCriterion("room_id >=", value, "room");
+            return (Criteria) this;
+        }
+
+        public Criteria andRoomLessThan(Room value) {
+            addRoomCriterion("room_id <", value, "room");
+            return (Criteria) this;
+        }
+
+        public Criteria andRoomLessThanOrEqualTo(Room value) {
+            addRoomCriterion("room_id <=", value, "room");
+            return (Criteria) this;
+        }
+
+        public Criteria andRoomIn(List<Room> values) {
+            addRoomCriterion("room_id in", values, "room");
+            return (Criteria) this;
+        }
+
+        public Criteria andRoomNotIn(List<Room> values) {
+            addRoomCriterion("room_id not in", values, "room");
+            return (Criteria) this;
+        }
+
+        public Criteria andRoomBetween(Room value1, Room value2) {
+            addRoomCriterion("room_id between", value1, value2, "room");
+            return (Criteria) this;
+        }
+
+        public Criteria andRoomNotBetween(Room value1, Room value2) {
+            addRoomCriterion("room_id not between", value1, value2, "room");
             return (Criteria) this;
         }
 
@@ -346,422 +408,302 @@ public class CourseTimeTableExample {
         }
 
         public Criteria andTermIsNull() {
-            addCriterion("term_ is null");
+            addCriterion("term is null");
             return (Criteria) this;
         }
 
         public Criteria andTermIsNotNull() {
-            addCriterion("term_ is not null");
+            addCriterion("term is not null");
             return (Criteria) this;
         }
 
         public Criteria andTermEqualTo(Integer value) {
-            addCriterion("term_ =", value, "term");
+            addCriterion("term =", value, "term");
             return (Criteria) this;
         }
 
         public Criteria andTermNotEqualTo(Integer value) {
-            addCriterion("term_ <>", value, "term");
+            addCriterion("term <>", value, "term");
             return (Criteria) this;
         }
 
         public Criteria andTermGreaterThan(Integer value) {
-            addCriterion("term_ >", value, "term");
+            addCriterion("term >", value, "term");
             return (Criteria) this;
         }
 
         public Criteria andTermGreaterThanOrEqualTo(Integer value) {
-            addCriterion("term_ >=", value, "term");
+            addCriterion("term >=", value, "term");
             return (Criteria) this;
         }
 
         public Criteria andTermLessThan(Integer value) {
-            addCriterion("term_ <", value, "term");
+            addCriterion("term <", value, "term");
             return (Criteria) this;
         }
 
         public Criteria andTermLessThanOrEqualTo(Integer value) {
-            addCriterion("term_ <=", value, "term");
+            addCriterion("term <=", value, "term");
             return (Criteria) this;
         }
 
         public Criteria andTermIn(List<Integer> values) {
-            addCriterion("term_ in", values, "term");
+            addCriterion("term in", values, "term");
             return (Criteria) this;
         }
 
         public Criteria andTermNotIn(List<Integer> values) {
-            addCriterion("term_ not in", values, "term");
+            addCriterion("term not in", values, "term");
             return (Criteria) this;
         }
 
         public Criteria andTermBetween(Integer value1, Integer value2) {
-            addCriterion("term_ between", value1, value2, "term");
+            addCriterion("term between", value1, value2, "term");
             return (Criteria) this;
         }
 
         public Criteria andTermNotBetween(Integer value1, Integer value2) {
-            addCriterion("term_ not between", value1, value2, "term");
+            addCriterion("term not between", value1, value2, "term");
             return (Criteria) this;
         }
 
-        public Criteria andStartIsNull() {
-            addCriterion("start_ is null");
+        public Criteria andSchoolWeekIsNull() {
+            addCriterion("school_week is null");
             return (Criteria) this;
         }
 
-        public Criteria andStartIsNotNull() {
-            addCriterion("start_ is not null");
+        public Criteria andSchoolWeekIsNotNull() {
+            addCriterion("school_week is not null");
             return (Criteria) this;
         }
 
-        public Criteria andStartEqualTo(Integer value) {
-            addCriterion("start_ =", value, "start");
+        public Criteria andSchoolWeekEqualTo(Integer value) {
+            addCriterion("school_week =", value, "schoolWeek");
             return (Criteria) this;
         }
 
-        public Criteria andStartNotEqualTo(Integer value) {
-            addCriterion("start_ <>", value, "start");
+        public Criteria andSchoolWeekNotEqualTo(Integer value) {
+            addCriterion("school_week <>", value, "schoolWeek");
             return (Criteria) this;
         }
 
-        public Criteria andStartGreaterThan(Integer value) {
-            addCriterion("start_ >", value, "start");
+        public Criteria andSchoolWeekGreaterThan(Integer value) {
+            addCriterion("school_week >", value, "schoolWeek");
             return (Criteria) this;
         }
 
-        public Criteria andStartGreaterThanOrEqualTo(Integer value) {
-            addCriterion("start_ >=", value, "start");
+        public Criteria andSchoolWeekGreaterThanOrEqualTo(Integer value) {
+            addCriterion("school_week >=", value, "schoolWeek");
             return (Criteria) this;
         }
 
-        public Criteria andStartLessThan(Integer value) {
-            addCriterion("start_ <", value, "start");
+        public Criteria andSchoolWeekLessThan(Integer value) {
+            addCriterion("school_week <", value, "schoolWeek");
             return (Criteria) this;
         }
 
-        public Criteria andStartLessThanOrEqualTo(Integer value) {
-            addCriterion("start_ <=", value, "start");
+        public Criteria andSchoolWeekLessThanOrEqualTo(Integer value) {
+            addCriterion("school_week <=", value, "schoolWeek");
             return (Criteria) this;
         }
 
-        public Criteria andStartIn(List<Integer> values) {
-            addCriterion("start_ in", values, "start");
+        public Criteria andSchoolWeekIn(List<Integer> values) {
+            addCriterion("school_week in", values, "schoolWeek");
             return (Criteria) this;
         }
 
-        public Criteria andStartNotIn(List<Integer> values) {
-            addCriterion("start_ not in", values, "start");
+        public Criteria andSchoolWeekNotIn(List<Integer> values) {
+            addCriterion("school_week not in", values, "schoolWeek");
             return (Criteria) this;
         }
 
-        public Criteria andStartBetween(Integer value1, Integer value2) {
-            addCriterion("start_ between", value1, value2, "start");
+        public Criteria andSchoolWeekBetween(Integer value1, Integer value2) {
+            addCriterion("school_week between", value1, value2, "schoolWeek");
             return (Criteria) this;
         }
 
-        public Criteria andStartNotBetween(Integer value1, Integer value2) {
-            addCriterion("start_ not between", value1, value2, "start");
-            return (Criteria) this;
-        }
-
-        public Criteria andEndIsNull() {
-            addCriterion("end_ is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andEndIsNotNull() {
-            addCriterion("end_ is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andEndEqualTo(Integer value) {
-            addCriterion("end_ =", value, "end");
-            return (Criteria) this;
-        }
-
-        public Criteria andEndNotEqualTo(Integer value) {
-            addCriterion("end_ <>", value, "end");
-            return (Criteria) this;
-        }
-
-        public Criteria andEndGreaterThan(Integer value) {
-            addCriterion("end_ >", value, "end");
-            return (Criteria) this;
-        }
-
-        public Criteria andEndGreaterThanOrEqualTo(Integer value) {
-            addCriterion("end_ >=", value, "end");
-            return (Criteria) this;
-        }
-
-        public Criteria andEndLessThan(Integer value) {
-            addCriterion("end_ <", value, "end");
-            return (Criteria) this;
-        }
-
-        public Criteria andEndLessThanOrEqualTo(Integer value) {
-            addCriterion("end_ <=", value, "end");
-            return (Criteria) this;
-        }
-
-        public Criteria andEndIn(List<Integer> values) {
-            addCriterion("end_ in", values, "end");
-            return (Criteria) this;
-        }
-
-        public Criteria andEndNotIn(List<Integer> values) {
-            addCriterion("end_ not in", values, "end");
-            return (Criteria) this;
-        }
-
-        public Criteria andEndBetween(Integer value1, Integer value2) {
-            addCriterion("end_ between", value1, value2, "end");
-            return (Criteria) this;
-        }
-
-        public Criteria andEndNotBetween(Integer value1, Integer value2) {
-            addCriterion("end_ not between", value1, value2, "end");
+        public Criteria andSchoolWeekNotBetween(Integer value1, Integer value2) {
+            addCriterion("school_week not between", value1, value2, "schoolWeek");
             return (Criteria) this;
         }
 
         public Criteria andWeekIsNull() {
-            addCriterion("week_ is null");
+            addCriterion("week is null");
             return (Criteria) this;
         }
 
         public Criteria andWeekIsNotNull() {
-            addCriterion("week_ is not null");
+            addCriterion("week is not null");
             return (Criteria) this;
         }
 
         public Criteria andWeekEqualTo(Integer value) {
-            addCriterion("week_ =", value, "week");
+            addCriterion("week =", value, "week");
             return (Criteria) this;
         }
 
         public Criteria andWeekNotEqualTo(Integer value) {
-            addCriterion("week_ <>", value, "week");
+            addCriterion("week <>", value, "week");
             return (Criteria) this;
         }
 
         public Criteria andWeekGreaterThan(Integer value) {
-            addCriterion("week_ >", value, "week");
+            addCriterion("week >", value, "week");
             return (Criteria) this;
         }
 
         public Criteria andWeekGreaterThanOrEqualTo(Integer value) {
-            addCriterion("week_ >=", value, "week");
+            addCriterion("week >=", value, "week");
             return (Criteria) this;
         }
 
         public Criteria andWeekLessThan(Integer value) {
-            addCriterion("week_ <", value, "week");
+            addCriterion("week <", value, "week");
             return (Criteria) this;
         }
 
         public Criteria andWeekLessThanOrEqualTo(Integer value) {
-            addCriterion("week_ <=", value, "week");
+            addCriterion("week <=", value, "week");
             return (Criteria) this;
         }
 
         public Criteria andWeekIn(List<Integer> values) {
-            addCriterion("week_ in", values, "week");
+            addCriterion("week in", values, "week");
             return (Criteria) this;
         }
 
         public Criteria andWeekNotIn(List<Integer> values) {
-            addCriterion("week_ not in", values, "week");
+            addCriterion("week not in", values, "week");
             return (Criteria) this;
         }
 
         public Criteria andWeekBetween(Integer value1, Integer value2) {
-            addCriterion("week_ between", value1, value2, "week");
+            addCriterion("week between", value1, value2, "week");
             return (Criteria) this;
         }
 
         public Criteria andWeekNotBetween(Integer value1, Integer value2) {
-            addCriterion("week_ not between", value1, value2, "week");
+            addCriterion("week not between", value1, value2, "week");
             return (Criteria) this;
         }
 
-        public Criteria andOrderIsNull() {
-            addCriterion("order_ is null");
+        public Criteria andStartIsNull() {
+            addCriterion("start is null");
             return (Criteria) this;
         }
 
-        public Criteria andOrderIsNotNull() {
-            addCriterion("order_ is not null");
+        public Criteria andStartIsNotNull() {
+            addCriterion("start is not null");
             return (Criteria) this;
         }
 
-        public Criteria andOrderEqualTo(Integer value) {
-            addCriterion("order_ =", value, "order");
+        public Criteria andStartEqualTo(Date value) {
+            addCriterion("start =", value, "start");
             return (Criteria) this;
         }
 
-        public Criteria andOrderNotEqualTo(Integer value) {
-            addCriterion("order_ <>", value, "order");
+        public Criteria andStartNotEqualTo(Date value) {
+            addCriterion("start <>", value, "start");
             return (Criteria) this;
         }
 
-        public Criteria andOrderGreaterThan(Integer value) {
-            addCriterion("order_ >", value, "order");
+        public Criteria andStartGreaterThan(Date value) {
+            addCriterion("start >", value, "start");
             return (Criteria) this;
         }
 
-        public Criteria andOrderGreaterThanOrEqualTo(Integer value) {
-            addCriterion("order_ >=", value, "order");
+        public Criteria andStartGreaterThanOrEqualTo(Date value) {
+            addCriterion("start >=", value, "start");
             return (Criteria) this;
         }
 
-        public Criteria andOrderLessThan(Integer value) {
-            addCriterion("order_ <", value, "order");
+        public Criteria andStartLessThan(Date value) {
+            addCriterion("start <", value, "start");
             return (Criteria) this;
         }
 
-        public Criteria andOrderLessThanOrEqualTo(Integer value) {
-            addCriterion("order_ <=", value, "order");
+        public Criteria andStartLessThanOrEqualTo(Date value) {
+            addCriterion("start <=", value, "start");
             return (Criteria) this;
         }
 
-        public Criteria andOrderIn(List<Integer> values) {
-            addCriterion("order_ in", values, "order");
+        public Criteria andStartIn(List<Date> values) {
+            addCriterion("start in", values, "start");
             return (Criteria) this;
         }
 
-        public Criteria andOrderNotIn(List<Integer> values) {
-            addCriterion("order_ not in", values, "order");
+        public Criteria andStartNotIn(List<Date> values) {
+            addCriterion("start not in", values, "start");
             return (Criteria) this;
         }
 
-        public Criteria andOrderBetween(Integer value1, Integer value2) {
-            addCriterion("order_ between", value1, value2, "order");
+        public Criteria andStartBetween(Date value1, Date value2) {
+            addCriterion("start between", value1, value2, "start");
             return (Criteria) this;
         }
 
-        public Criteria andOrderNotBetween(Integer value1, Integer value2) {
-            addCriterion("order_ not between", value1, value2, "order");
+        public Criteria andStartNotBetween(Date value1, Date value2) {
+            addCriterion("start not between", value1, value2, "start");
             return (Criteria) this;
         }
 
-        public Criteria andDistinctIsNull() {
-            addCriterion("distinct_ is null");
+        public Criteria andEndIsNull() {
+            addCriterion("end is null");
             return (Criteria) this;
         }
 
-        public Criteria andDistinctIsNotNull() {
-            addCriterion("distinct_ is not null");
+        public Criteria andEndIsNotNull() {
+            addCriterion("end is not null");
             return (Criteria) this;
         }
 
-        public Criteria andDistinctEqualTo(Integer value) {
-            addCriterion("distinct_ =", value, "distinct");
+        public Criteria andEndEqualTo(Date value) {
+            addCriterion("end =", value, "end");
             return (Criteria) this;
         }
 
-        public Criteria andDistinctNotEqualTo(Integer value) {
-            addCriterion("distinct_ <>", value, "distinct");
+        public Criteria andEndNotEqualTo(Date value) {
+            addCriterion("end <>", value, "end");
             return (Criteria) this;
         }
 
-        public Criteria andDistinctGreaterThan(Integer value) {
-            addCriterion("distinct_ >", value, "distinct");
+        public Criteria andEndGreaterThan(Date value) {
+            addCriterion("end >", value, "end");
             return (Criteria) this;
         }
 
-        public Criteria andDistinctGreaterThanOrEqualTo(Integer value) {
-            addCriterion("distinct_ >=", value, "distinct");
+        public Criteria andEndGreaterThanOrEqualTo(Date value) {
+            addCriterion("end >=", value, "end");
             return (Criteria) this;
         }
 
-        public Criteria andDistinctLessThan(Integer value) {
-            addCriterion("distinct_ <", value, "distinct");
+        public Criteria andEndLessThan(Date value) {
+            addCriterion("end <", value, "end");
             return (Criteria) this;
         }
 
-        public Criteria andDistinctLessThanOrEqualTo(Integer value) {
-            addCriterion("distinct_ <=", value, "distinct");
+        public Criteria andEndLessThanOrEqualTo(Date value) {
+            addCriterion("end <=", value, "end");
             return (Criteria) this;
         }
 
-        public Criteria andDistinctIn(List<Integer> values) {
-            addCriterion("distinct_ in", values, "distinct");
+        public Criteria andEndIn(List<Date> values) {
+            addCriterion("end in", values, "end");
             return (Criteria) this;
         }
 
-        public Criteria andDistinctNotIn(List<Integer> values) {
-            addCriterion("distinct_ not in", values, "distinct");
+        public Criteria andEndNotIn(List<Date> values) {
+            addCriterion("end not in", values, "end");
             return (Criteria) this;
         }
 
-        public Criteria andDistinctBetween(Integer value1, Integer value2) {
-            addCriterion("distinct_ between", value1, value2, "distinct");
+        public Criteria andEndBetween(Date value1, Date value2) {
+            addCriterion("end between", value1, value2, "end");
             return (Criteria) this;
         }
 
-        public Criteria andDistinctNotBetween(Integer value1, Integer value2) {
-            addCriterion("distinct_ not between", value1, value2, "distinct");
-            return (Criteria) this;
-        }
-
-        public Criteria andRoomIsNull() {
-            addCriterion("room_id is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andRoomIsNotNull() {
-            addCriterion("room_id is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andRoomEqualTo(Room value) {
-            addRoomCriterion("room_id =", value, "room");
-            return (Criteria) this;
-        }
-
-        public Criteria andRoomNotEqualTo(Room value) {
-            addRoomCriterion("room_id <>", value, "room");
-            return (Criteria) this;
-        }
-
-        public Criteria andRoomGreaterThan(Room value) {
-            addRoomCriterion("room_id >", value, "room");
-            return (Criteria) this;
-        }
-
-        public Criteria andRoomGreaterThanOrEqualTo(Room value) {
-            addRoomCriterion("room_id >=", value, "room");
-            return (Criteria) this;
-        }
-
-        public Criteria andRoomLessThan(Room value) {
-            addRoomCriterion("room_id <", value, "room");
-            return (Criteria) this;
-        }
-
-        public Criteria andRoomLessThanOrEqualTo(Room value) {
-            addRoomCriterion("room_id <=", value, "room");
-            return (Criteria) this;
-        }
-
-        public Criteria andRoomIn(List<Room> values) {
-            addRoomCriterion("room_id in", values, "room");
-            return (Criteria) this;
-        }
-
-        public Criteria andRoomNotIn(List<Room> values) {
-            addRoomCriterion("room_id not in", values, "room");
-            return (Criteria) this;
-        }
-
-        public Criteria andRoomBetween(Room value1, Room value2) {
-            addRoomCriterion("room_id between", value1, value2, "room");
-            return (Criteria) this;
-        }
-
-        public Criteria andRoomNotBetween(Room value1, Room value2) {
-            addRoomCriterion("room_id not between", value1, value2, "room");
+        public Criteria andEndNotBetween(Date value1, Date value2) {
+            addCriterion("end not between", value1, value2, "end");
             return (Criteria) this;
         }
     }

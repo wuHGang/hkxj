@@ -1,7 +1,7 @@
 package cn.hkxj.platform.mapper;
 
 import cn.hkxj.platform.pojo.Student;
-import cn.hkxj.platform.pojo.StudentExample;
+import cn.hkxj.platform.pojo.example.StudentExample;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;

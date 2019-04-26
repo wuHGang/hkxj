@@ -1,4 +1,7 @@
-package cn.hkxj.platform.pojo;
+package cn.hkxj.platform.pojo.example;
+
+import cn.hkxj.platform.pojo.constant.Academy;
+import cn.hkxj.platform.pojo.constant.CourseType;
 
 import java.util.ArrayList;
 import java.util.Date;

@@ -1,6 +1,6 @@
 package cn.hkxj.platform.task;
 
-import cn.hkxj.platform.pojo.CourseGroupMsg;
+import cn.hkxj.platform.pojo.wechat.CourseGroupMsg;
 import cn.hkxj.platform.service.CourseSubscribeService;
 import cn.hkxj.platform.service.SubscribeService;
 import lombok.AllArgsConstructor;
@@ -8,13 +8,9 @@ import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.exception.WxErrorException;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.kefu.WxMpKefuMessage;
-import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
-import me.chanjar.weixin.mp.bean.template.WxMpTemplateData;
-import me.chanjar.weixin.mp.builder.outxml.TextBuilder;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 

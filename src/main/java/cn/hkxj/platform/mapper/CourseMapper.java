@@ -1,7 +1,7 @@
 package cn.hkxj.platform.mapper;
 
 import cn.hkxj.platform.pojo.Course;
-import cn.hkxj.platform.pojo.CourseExample;
+import cn.hkxj.platform.pojo.example.CourseExample;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;

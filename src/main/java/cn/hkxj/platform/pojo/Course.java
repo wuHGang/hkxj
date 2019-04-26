@@ -1,5 +1,7 @@
 package cn.hkxj.platform.pojo;
 
+import cn.hkxj.platform.pojo.constant.Academy;
+import cn.hkxj.platform.pojo.constant.CourseType;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 

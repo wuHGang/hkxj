@@ -1,5 +1,7 @@
-package cn.hkxj.platform.pojo;
+package cn.hkxj.platform.pojo.timetable;
 
+import cn.hkxj.platform.pojo.Course;
+import cn.hkxj.platform.pojo.Room;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 

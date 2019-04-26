@@ -1,6 +1,6 @@
 package cn.hkxj.platform.mapper;
 
-import cn.hkxj.platform.pojo.SubscribeGradeUpdate;
+import cn.hkxj.platform.pojo.wechat.SubscribeGradeUpdate;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 

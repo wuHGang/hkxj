@@ -3,7 +3,7 @@ package cn.hkxj.platform.controller;
 
 import cn.hkxj.platform.exceptions.OpenidExistException;
 import cn.hkxj.platform.exceptions.PasswordUncorrectException;
-import cn.hkxj.platform.pojo.ErrorCode;
+import cn.hkxj.platform.pojo.constant.ErrorCode;
 import cn.hkxj.platform.pojo.WebResponse;
 import cn.hkxj.platform.service.wechat.StudentBindService;
 import cn.hkxj.platform.utils.OneOffSubcriptionUtil;

@@ -3,7 +3,7 @@ package cn.hkxj.platform.service;
 import cn.hkxj.platform.PlatformApplication;
 import cn.hkxj.platform.exceptions.PasswordUncorrectException;
 import cn.hkxj.platform.mapper.StudentMapper;
-import cn.hkxj.platform.pojo.ExamTimeTable;
+import cn.hkxj.platform.pojo.timetable.ExamTimeTable;
 import cn.hkxj.platform.pojo.Student;
 import org.junit.Test;
 import org.junit.runner.RunWith;

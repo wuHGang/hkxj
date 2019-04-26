@@ -1,7 +1,7 @@
 package cn.hkxj.platform.mapper;
 
 import cn.hkxj.platform.pojo.Subject;
-import cn.hkxj.platform.pojo.SubjectExample;
+import cn.hkxj.platform.pojo.example.SubjectExample;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 

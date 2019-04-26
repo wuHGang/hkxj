@@ -2,13 +2,12 @@ package cn.hkxj.platform.service;
 
 import cn.hkxj.platform.mapper.OpenidMapper;
 import cn.hkxj.platform.mapper.StudentMapper;
-import cn.hkxj.platform.pojo.Openid;
-import cn.hkxj.platform.pojo.OpenidExample;
+import cn.hkxj.platform.pojo.wechat.Openid;
+import cn.hkxj.platform.pojo.example.OpenidExample;
 import cn.hkxj.platform.pojo.Student;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.List;
 
 /**

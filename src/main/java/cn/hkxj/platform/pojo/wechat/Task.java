@@ -1,7 +1,9 @@
-package cn.hkxj.platform.pojo;
+package cn.hkxj.platform.pojo.wechat;
 
 import java.util.Date;
 
+
+//TODO  这个类重新命名
 public class Task {
     private Integer id;
 
