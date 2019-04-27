@@ -99,24 +99,21 @@ public class WxMessageRouter extends WxMpMessageRouter {
             } else {
                 res = rule.service(wxMessage, context, mpService, this.sessionManager, this.exceptionHandler);
                 // 在同步操作结束，session访问结束
-                this.log.debug("End session access: async=false, sessionId={}", wxMessage.getFromUser());
+                log.debug("End session access: async=false, sessionId={}", wxMessage.getFromUser());
                 sessionEndAccess(wxMessage);
             }
         }
 
         if (futures.size() > 0) {
-            this.executorService.submit(new Runnable() {
-                @Override
-                public void run() {
-                    for (Future<?> future : futures) {
-                        try {
-                            future.get();
-                            log.debug("End session access: async=true, sessionId={}", wxMessage.getFromUser());
-                            // 异步操作结束，session访问结束
-                            sessionEndAccess(wxMessage);
-                        } catch (InterruptedException | ExecutionException e) {
-                            log.error("Error happened when wait task finish", e);
-                        }
+            this.executorService.submit(() -> {
+                for (Future<?> future : futures) {
+                    try {
+                        future.get();
+                        log.debug("End session access: async=true, sessionId={}", wxMessage.getFromUser());
+                        // 异步操作结束，session访问结束
+                        sessionEndAccess(wxMessage);
+                    } catch (InterruptedException | ExecutionException e) {
+                        log.error("Error happened when wait task finish", e);
                     }
                 }
             });

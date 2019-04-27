@@ -1,6 +1,7 @@
 package cn.hkxj.platform.config;
 
 import cn.hkxj.platform.interceptor.LoginInterceptor;
+import cn.hkxj.platform.interceptor.TraceIDInterceptor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,7 +23,10 @@ public class WebAppConfigurer implements WebMvcConfigurer {
 
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
-//		registry.addInterceptor(loginInterceptor()).addPathPatterns("/course/timetable");
+        registry.addInterceptor(new TraceIDInterceptor()).addPathPatterns("/**");
+        registry.addInterceptor(loginInterceptor()).addPathPatterns("/course/timetable");
+//        registry.addInterceptor(new WechatMDCInterceptor()).addPathPatterns("/wechat/*");
+
 	}
 
 }
