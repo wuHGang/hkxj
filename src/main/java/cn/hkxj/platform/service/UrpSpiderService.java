@@ -4,16 +4,22 @@ import cn.hkxj.platform.exceptions.PasswordUncorrectException;
 import cn.hkxj.platform.exceptions.SpiderException;
 import cn.hkxj.platform.mapper.CourseMapper;
 import cn.hkxj.platform.mapper.StudentMapper;
-import cn.hkxj.platform.pojo.constant.Academy;
 import cn.hkxj.platform.pojo.Classes;
 import cn.hkxj.platform.pojo.Course;
-import cn.hkxj.platform.pojo.constant.CourseType;
 import cn.hkxj.platform.pojo.Grade;
 import cn.hkxj.platform.pojo.GradeAndCourse;
 import cn.hkxj.platform.pojo.Student;
+import cn.hkxj.platform.pojo.constant.Academy;
+import cn.hkxj.platform.pojo.constant.CourseType;
 import cn.hkxj.platform.spider.UrpCourseSpider;
 import cn.hkxj.platform.spider.UrpSpider;
-import cn.hkxj.platform.spider.model.*;
+import cn.hkxj.platform.spider.model.CurrentGrade;
+import cn.hkxj.platform.spider.model.EverGrade;
+import cn.hkxj.platform.spider.model.Information;
+import cn.hkxj.platform.spider.model.TermGrade;
+import cn.hkxj.platform.spider.model.UrpGrade;
+import cn.hkxj.platform.spider.model.UrpResult;
+import cn.hkxj.platform.spider.model.UrpStudentInfo;
 import cn.hkxj.platform.utils.TypeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -57,26 +63,15 @@ public class UrpSpiderService {
 
     //0 获取本学期成绩
     //1 获取往期成绩
-    public ArrayList<GradeAndCourse> getCurrentGrade(Student student ,int i ) {
+    public List<GradeAndCourse> getCurrentGrade(Student student, int i) {
         UrpSpider urpSpider = new UrpSpider(student.getAccount(), student.getPassword());
-        UrpResult<CurrentGrade> currentGrade = null;
+        UrpResult<CurrentGrade> currentGrade;
         try {
-            if(i==0){
-                currentGrade = urpSpider.getCurrentGrade();
-                log.error("account {} urp password error", student.getAccount());
-                if (currentGrade.getStatus() == 400) {
-                    student.setIsCorrect(false);
-                    studentMapper.updateByPrimaryKey(student);
-                }
-            }
-            else if (i==1){
-                urpSpider.getEverGrade();
-
-                log.error("account {} urp password error", student.getAccount());
-                if (currentGrade.getStatus() == 400) {
-                    student.setIsCorrect(false);
-                    studentMapper.updateByPrimaryKey(student);
-                }
+            currentGrade = urpSpider.getCurrentGrade();
+            log.error("account {} urp password error", student.getAccount());
+            if (currentGrade.getStatus() == 400) {
+                student.setIsCorrect(false);
+                studentMapper.updateByPrimaryKey(student);
             }
 
         } catch (Exception e) {
@@ -89,28 +84,54 @@ public class UrpSpiderService {
             return new ArrayList<>();
         }
 
-        ArrayList<GradeAndCourse> gradeAndCourses = new ArrayList<>();
-            for (UrpGrade urpGrade : currentGrade.getData().getUrpGradeList()) {
-                try {
-                    GradeAndCourse gradeAndCourse = new GradeAndCourse();
+        return parseResult(currentGrade.getData(), student);
+    }
 
+    List<GradeAndCourse> getEverGrade(Student student) {
+        UrpSpider urpSpider = new UrpSpider(student.getAccount(), student.getPassword());
+        UrpResult<EverGrade> everGrade = urpSpider.getEverGrade();
+        if (everGrade.getStatus() == 400) {
+            student.setIsCorrect(false);
+            studentMapper.updateByPrimaryKey(student);
+        }
+        if (everGrade.getStatus() != 200) {
+            log.warn("account {} urp error {}", student.getAccount(), everGrade.getMessage());
+            return new ArrayList<>();
+        }
+        return parseResult(everGrade.getData(), student);
+    }
 
-                    Grade grade = getGrade(urpGrade);
-                    grade.setAccount(student.getAccount());
-                    gradeAndCourse.setGrade(grade);
-
-                    Course course = getCourse(urpGrade, student);
-                    course.setCredit(grade.getPoint());
-                    gradeAndCourse.setCourse(course);
-
-                    gradeAndCourses.add(gradeAndCourse);
-                }catch (IllegalArgumentException e){
-                    continue;
-                }
-
-            }
+    private List<GradeAndCourse> parseResult(CurrentGrade currentGrade, Student student) {
+        List<GradeAndCourse> gradeAndCourses = new ArrayList<>();
+        currentGrade.getUrpGradeList()
+                .forEach(urpGrade ->
+                        gradeAndCourses.add(getGradeAndCourse(urpGrade, student)));
         return gradeAndCourses;
     }
+
+    private List<GradeAndCourse> parseResult(EverGrade everGrade, Student student) {
+        List<GradeAndCourse> gradeAndCourses = new ArrayList<>();
+        for (TermGrade currentGrade : everGrade.getEverGrade()) {
+            for (UrpGrade urpGrade : currentGrade.getGradeList()) {
+                gradeAndCourses.add(getGradeAndCourse(urpGrade, student));
+            }
+        }
+        return gradeAndCourses;
+    }
+
+    private GradeAndCourse getGradeAndCourse(UrpGrade urpGrade, Student student) {
+        GradeAndCourse gradeAndCourse = new GradeAndCourse();
+        Grade grade = getGrade(urpGrade);
+        grade.setAccount(student.getAccount());
+        gradeAndCourse.setGrade(grade);
+
+        Course course = getCourse(urpGrade, student);
+        course.setCredit(grade.getPoint());
+        gradeAndCourse.setCourse(course);
+
+        return gradeAndCourse;
+    }
+
 
     public Academy getAcademyByUid(int account, String password, String uid) {
         if (courseMapper.ifExistCourse(uid)) {

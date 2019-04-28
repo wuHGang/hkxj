@@ -50,7 +50,7 @@ public class GradeSearchService {
 	 * @return gradeAndCoourseList 学生的全部成绩
 	 */
     public List<GradeAndCourse> getAllGradeList(Student student) {
-        // 先查这个学生有美誉成绩 有的话返回  没有的话走爬虫;
+        // 先查这个学生有没有成绩 有的话返回  没有的话走爬虫;
 
         List<GradeAndCourse> gradeFromSpider = getGradeFromSpiderAsync(student);
         ExecutorService singleThreadPool = Executors.newSingleThreadExecutor();
@@ -182,7 +182,7 @@ public class GradeSearchService {
                 currentFromApp = gradeAndCourseByAccount.getCurrentTermGrade();
             }
             else if(type==1){
-                currentFromApp=gradeAndCourseByAccount.getEverTermGrade();
+                currentFromApp = gradeAndCourseByAccount.getEverTermGrade();
             }
         } catch (PasswordUncorrectException | SpiderException e) {
             log.warn("account {} app spider error {}", student.getAccount(), e.getMessage());
@@ -192,7 +192,7 @@ public class GradeSearchService {
         }
         //将app和教务网数据整合到一起
 
-        ArrayList<GradeAndCourse> currentFromUrp = urpSpiderService.getCurrentGrade(student,type);
+        List<GradeAndCourse> currentFromUrp = urpSpiderService.getCurrentGrade(student, type);
 
         ArrayList<GradeAndCourse> result = Lists.newArrayList();
         if (CollectionUtils.isEmpty(currentFromApp)) {
