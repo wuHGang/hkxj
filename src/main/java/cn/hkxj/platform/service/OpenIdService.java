@@ -8,6 +8,7 @@ import cn.hkxj.platform.pojo.Student;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -23,6 +24,10 @@ public class OpenIdService {
 
 	public boolean openidIsExist(String openid) {
 		return getOpenid(openid).size() == 1;
+	}
+
+	public boolean openidIsBind(String openid) {
+		return openidMapper.isOpenidBind(openid)==1;
 	}
 
 	public List<Openid> getOpenid(String openid) {
@@ -41,6 +46,10 @@ public class OpenIdService {
         Integer account = openidList.get(0).getAccount();
         return studentMapper.selectByAccount(account);
     }
+
+    public void openIdUnbind(String openid){
+		openidMapper.openidUnbind(openid);
+	}
 
 
 

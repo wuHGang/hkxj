@@ -29,4 +29,14 @@ public class SubjectService {
         return subjectList.get(0);
     }
 
+    public Subject getSubjectById(int subjectId){
+        SubjectExample subjectExample = new SubjectExample();
+        subjectExample.createCriteria().andIdEqualTo(subjectId);
+        List<Subject> subjectList = subjectMapper.selectByExample(subjectExample);
+        if(subjectList.size() > 1){
+            log.error("more than one subject {}", subjectList.toString());
+        }
+        return subjectList.get(0);
+    }
+
 }

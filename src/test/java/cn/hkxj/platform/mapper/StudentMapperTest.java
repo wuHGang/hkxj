@@ -22,24 +22,24 @@ public class StudentMapperTest {
 
 	@Test
 	public void selectByAccount() {
-		Student student = studentMapper.selectByAccount(2014025838);
+        Student student = studentMapper.selectByAccount(2017025971);
 		log.info(student.toString());
 	}
 
 	@Test
 	public void insertByStudent() throws PasswordUncorrectException, ReadTimeoutException {
-        UrpSpider urpSpider = new UrpSpider("2017025971", "1");
+        UrpSpider urpSpider = new UrpSpider(2017025971, "1");
 
-        studentMapper.insertByStudent(urpSpider.getInformation());
+//        studentMapper.insert(urpSpider.getInformation());
 	}
 
 	@Test
 	public void updateByStudent() {
-		Student student = Student.builder()
-				.account(2014025839)
-				.isCorrect(false)
-				.build();
+//		Student student = Student.builder()
+//				.account(2014025839)
+//				.isCorrect(false)
+//				.build();
 
-		studentMapper.updateByStudent(student);
+//		studentMapper.updateByPrimaryKey(student);
 	}
 }

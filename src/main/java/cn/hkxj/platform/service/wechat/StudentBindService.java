@@ -8,7 +8,7 @@ import cn.hkxj.platform.mapper.StudentMapper;
 import cn.hkxj.platform.pojo.Openid;
 import cn.hkxj.platform.pojo.OpenidExample;
 import cn.hkxj.platform.pojo.Student;
-import cn.hkxj.platform.spider.UrpSpider;
+import cn.hkxj.platform.service.UrpSpiderService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +27,8 @@ public class StudentBindService {
     private StudentMapper studentMapper;
     @Resource
     private OpenidMapper openidMapper;
+    @Resource
+    private UrpSpiderService urpSpiderService;
 
 	/**
 	 * 学号与微信公众平台openID关联
@@ -45,15 +47,33 @@ public class StudentBindService {
         if (isStudentBind(openid)){
             throw new OpenidExistException(String.format(template, account, openid));
         }
-	    Student student = null;
-        if (isStudentExist(account)) {
-            saveOpenid(openid, account);
-        }
-        else {
-            student = getStudentBySpider(account, password);
-			studentBind(student, openid);
-        }
-		return student;
+        //openid在数据库中分为两种状态时可以重新绑定
+		//1:数据库存在openid,is_bind=0
+		//2:数据库不存在openid
+        if(openidMapper.isOpenidExist(openid)!=null&&openidMapper.isOpenidBind(openid)==0){
+			Student student = null;
+			if (isStudentExist(account)) {
+				updateOpenid(openid, account);
+			}
+			else {
+				student = getStudentBySpider(account, password);
+				studentMapper.insert(student);
+				updateOpenid(openid, account);
+			}
+			return student;
+		}
+		else {
+			Student student = null;
+			if (isStudentExist(account)) {
+				saveOpenid(openid, account);
+			}
+			else {
+				student = getStudentBySpider(account, password);
+				studentBind(student, openid);
+			}
+			return student;
+		}
+
     }
 
 	/**
@@ -72,13 +92,22 @@ public class StudentBindService {
 	}
 
 	public Student studentBind(Student student, String openid){
-		studentMapper.insertByStudent(student);
+		studentMapper.insert(student);
 		saveOpenid(openid, student.getAccount().toString());
 		return student;
 	}
 
     public boolean isStudentBind(String openid) {
-        return getOpenID(openid).size() != 0;
+		List<Openid> openids= getOpenID(openid);
+		if (openids.size() == 0)
+			return false;
+		else {
+			Openid openidEntity= openids.get(0);
+			if (openidEntity.getIsBind()==true)
+				return true;
+			else return false;
+		}
+//        return getOpenID(openid).size() != 0;
     }
 
     private boolean isStudentExist(String account) {
@@ -86,11 +115,10 @@ public class StudentBindService {
         return student!=null;
     }
 
-    private Student getStudentBySpider(String account, String password) throws PasswordUncorrectException, ReadTimeoutException {
+    private Student getStudentBySpider(String account, String password) throws ReadTimeoutException {
 		log.info("urpSpider start");
-        UrpSpider urpSpider = new UrpSpider(account, password);
 
-        return urpSpider.getInformation();
+        return urpSpiderService.getInformation(Integer.parseInt(account), password);
     }
 
     private Student getStudentByDB(int account) {
@@ -115,13 +143,21 @@ public class StudentBindService {
     }
 
     private int saveStudent(Student student) {
-        return studentMapper.insertByStudent(student);
+        return studentMapper.insert(student);
     }
 
     private int saveOpenid(String openid, String account) {
         Openid save = new Openid();
         save.setOpenid(openid);
         save.setAccount(Integer.parseInt(account));
+        save.setIsBind(true);
         return openidMapper.insertSelective(save);
     }
+
+	private int updateOpenid(String openid, String account) {
+		Openid update=getOpenID(openid).get(0);
+		update.setAccount(Integer.parseInt(account));
+		update.setIsBind(true);
+		return openidMapper.updateByPrimaryKey(update);
+	}
 }

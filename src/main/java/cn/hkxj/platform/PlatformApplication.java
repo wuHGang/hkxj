@@ -7,10 +7,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 import javax.annotation.Resource;
 
+@PropertySource(value = "classpath:application-local.properties", ignoreResourceNotFound = true)
 @EnableScheduling
 @SpringBootApplication
 public class PlatformApplication {

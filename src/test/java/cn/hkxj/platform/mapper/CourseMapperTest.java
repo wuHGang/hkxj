@@ -1,6 +1,5 @@
 package cn.hkxj.platform.mapper;
 
-import cn.hkxj.platform.pojo.Course;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,15 +21,13 @@ public class CourseMapperTest {
 
 	@Test
 	public void insertStudentAndCourse() {
-
+        courseMapper.selectByPrimaryKey(1259);
 	}
 
 
 	@Test
 	public void selectByName() {
-		for (Course course : courseMapper.selectCourseByName("理论力学")) {
-			log.info(course.toString());
-		}
-		;
-	}
+
+
+    }
 }

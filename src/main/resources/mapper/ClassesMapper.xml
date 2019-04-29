@@ -242,5 +242,8 @@
             #{id}
         </foreach>
     </select>
-
+    <select id="getAllCourseTimetableIds" parameterType="int" resultType="int">
+        select time_table_id
+        from class_timetable where class_id = #{value}
+    </select>
 </mapper>

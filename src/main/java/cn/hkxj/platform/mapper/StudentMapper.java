@@ -1,31 +1,40 @@
 package cn.hkxj.platform.mapper;
 
-
 import cn.hkxj.platform.pojo.Student;
+import cn.hkxj.platform.pojo.StudentExample;
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
-/**
- * @author junrong.chen
- */
 @Mapper
 @Repository
 public interface StudentMapper {
-	/**
-	 * 通过学号查找学生信息
-	 * 这个字段上建立了唯一索引
-	 * 考虑到比较常用单独构建成一个方法
-	 * @param account
-	 * @return
-	 */
-	Student selectByAccount(Integer account);
+    int countByExample(StudentExample example);
 
-	int insertByStudent(Student student);
+    int deleteByExample(StudentExample example);
 
-	int updateByStudent(Student student);
+    int deleteByPrimaryKey(Integer id);
 
-	List<Student> getStudentsByClassnames(@Param("classnames") List<String> classnames);
+    int insert(Student record);
+
+    int insertSelective(Student record);
+
+    List<Student> selectByExample(StudentExample example);
+
+    Student selectByPrimaryKey(Integer id);
+
+    int updateByExampleSelective(@Param("record") Student record, @Param("example") StudentExample example);
+
+    int updateByExample(@Param("record") Student record, @Param("example") StudentExample example);
+
+    int updateByPrimaryKeySelective(Student record);
+
+    int updateByPrimaryKey(Student record);
+
+    Student selectByAccount(Integer account);
+
+    List<Student> getAllStudentsByClassesids(@Param("classesIds") List<Integer> classesIds);
+
 }

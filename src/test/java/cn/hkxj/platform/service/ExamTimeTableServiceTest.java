@@ -15,8 +15,6 @@ import javax.annotation.Resource;
 
 import java.util.List;
 
-import static org.junit.Assert.*;
-
 /**
  * @author junrong.chen
  * @date 2018/11/28

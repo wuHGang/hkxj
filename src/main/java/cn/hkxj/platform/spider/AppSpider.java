@@ -1,10 +1,14 @@
 package cn.hkxj.platform.spider;
 
+import cn.hkxj.platform.exceptions.DataNotFoundException;
+import cn.hkxj.platform.exceptions.FormNotFillException;
 import cn.hkxj.platform.exceptions.PasswordUncorrectException;
+import cn.hkxj.platform.exceptions.ReadTimeoutException;
 import cn.hkxj.platform.pojo.AllGradeAndCourse;
 import cn.hkxj.platform.pojo.Course;
 import cn.hkxj.platform.pojo.CourseType;
 import cn.hkxj.platform.pojo.Grade;
+import cn.hkxj.platform.pojo.GradeAndCourse;
 import cn.hkxj.platform.utils.ReadProperties;
 import cn.hkxj.platform.utils.TypeUtil;
 import com.google.common.base.Splitter;
@@ -23,9 +27,11 @@ import org.springframework.beans.factory.annotation.Configurable;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -58,7 +64,9 @@ public class AppSpider {
 	private final static String SCHEDULE = URL_ROOT + "//university-facade/Schedule/ScheduleList";
 	private final static String EXAM = URL_ROOT + "//university-facade/MyUniversity/Exam";
 	private final static OkHttpClient CLIENT = new OkHttpClient.Builder()
-			.connectTimeout(5, TimeUnit.SECONDS)
+            .readTimeout(4, TimeUnit.SECONDS)
+            .writeTimeout(4, TimeUnit.SECONDS)
+            .connectTimeout(3, TimeUnit.SECONDS)
 			.build();
 
 	private final static Headers HEADERS = new Headers.Builder()
@@ -70,8 +78,11 @@ public class AppSpider {
 
 	private static Splitter SPLITTER = Splitter.on('*').trimResults().omitEmptyStrings();
 	private static Pattern FIND_NUM = Pattern.compile("[^0-9]");
+
 	private static int PASSWORD_ERROR = 2002;
     private static int SUCCESS = 200;
+    private static int FORM_NOT_FILL = 4001;
+    private static int NO_DATA = 204;
 
 	public AppSpider(int account) {
 		this.account = account;
@@ -120,8 +131,6 @@ public class AppSpider {
 		String url = GRADE + "?token=" + token;
 		Map data = getData(url);
 
-		new AppGradeResult((ArrayList) data.get("data"));
-
 		return (ArrayList) data.get("data");
 	}
 
@@ -137,6 +146,12 @@ public class AppSpider {
 		return (Map) data.get("data");
 	}
 
+	public Map getSchedule(String week) {
+		String url = SCHEDULE + "?token=" + token + "&week=" + week;
+		Map data = getData(url);
+		return (Map) data.get("data");
+	}
+
 	public ArrayList getExam() {
 		String url = EXAM + "?token=" + token;
 		Map data = getData(url);
@@ -147,22 +162,22 @@ public class AppSpider {
 	public AllGradeAndCourse getGradeAndCourse() {
 		AllGradeAndCourse allGradeAndCourse = new AllGradeAndCourse();
 		for (Object item : getGrade()) {
-			Map itemMap = (Map) item;
-			ArrayList<Map> items = (ArrayList) itemMap.get("items");
+            Map<String, Object> itemMap = (Map) item;
+            ArrayList<Map<String, String>> items = (ArrayList) itemMap.get("items");
 			String xn = itemMap.get("xn").toString();
 			String xq = itemMap.get("xq").toString();
-			ArrayList<AllGradeAndCourse.GradeAndCourse> gradeAndCourseList = new ArrayList<>();
-			for (Map detail : items) {
-
-				String uid = detail.get("kcdm").toString();
-				String type = detail.get("kcxz").toString();
-				String name = detail.get("kcmc").toString();
-				String cj = detail.get("cj").toString();
-				Double xf = (Double) detail.get("xf");
+            ArrayList<GradeAndCourse> gradeAndCourseList = new ArrayList<>();
+            for (Map detail : items) {
+                String uid = detail.get("kcdm").toString();
+                Object kcxz = detail.get("kcxz");
+                String type = (Objects.isNull(kcxz) ? "" : kcxz.toString());
+                String name = detail.get("kcmc").toString();
+                String cj = detail.get("cj").toString();
+                String xf = detail.get("xf").toString();
 
 				Grade grade = getGrade(uid, cj, xf, xq, xn);
 				Course course = getCourse(uid, name, type, xf);
-				AllGradeAndCourse.GradeAndCourse gradeAndCourse = new AllGradeAndCourse.GradeAndCourse();
+                GradeAndCourse gradeAndCourse = new GradeAndCourse();
 				gradeAndCourse.setCourse(course);
 				gradeAndCourse.setGrade(grade);
 				gradeAndCourseList.add(gradeAndCourse);
@@ -173,7 +188,7 @@ public class AppSpider {
 		return allGradeAndCourse;
 	}
 
-	private Course getCourse(String uid, String name, String type, double xf) {
+    private Course getCourse(String uid, String name, String type, String xf) {
 		Course course = new Course();
 		course.setUid(uid);
 		course.setName(name);
@@ -183,7 +198,7 @@ public class AppSpider {
 		return course;
 	}
 
-	private Grade getGrade(String uid, String cj, double xf, String xq, String xn) {
+    private Grade getGrade(String uid, String cj, String xf, String xq, String xn) {
 		Grade grade = new Grade();
 		grade.setAccount(account);
 		grade.setCourseId(uid);
@@ -202,7 +217,8 @@ public class AppSpider {
 		try {
 			postData.put("u", String.valueOf(account));
 			postData.put("p", DigestUtils.md5Hex(password.getBytes("UTF-8")));
-		} catch (UnsupportedEncodingException e) {
+
+        } catch (UnsupportedEncodingException e) {
 			log.error(e.getMessage(), e);
 			throw new RuntimeException("UnsupportedEncoding in password", e);
 		}
@@ -239,7 +255,9 @@ public class AppSpider {
 		try {
 			response = CLIENT.newCall(request).execute();
 			data = response.body().string();
-		} catch (IOException e) {
+        } catch (SocketTimeoutException e) {
+            throw new ReadTimeoutException("app spider read time out", e);
+        } catch (IOException e) {
 			throw new RuntimeException("AppSpider fail in execute request", e);
 		}
 
@@ -251,6 +269,14 @@ public class AppSpider {
 		if (state == PASSWORD_ERROR) {
 			throw new PasswordUncorrectException();
 		}
+
+        if (state == FORM_NOT_FILL) {
+            throw new FormNotFillException(account);
+        }
+
+        if (state == NO_DATA) {
+            throw new DataNotFoundException(account);
+        }
 
 		if (state != SUCCESS) {
 			String msg = (String) resultMap.get("message");

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.hkxj.platform.mapper.CETMapper">
+
+    <insert id="insertCET" parameterType="cn.hkxj.platform.pojo.CETStudent" >
+        insert into cetStudent
+         (id,level,account, name,classRoom,examinee,gmt_create)
+        values
+        (#{id,jdbcType=INTEGER}, #{level,jdbcType=VARCHAR},#{account,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR},
+        #{classRoom,jdbcType=VARCHAR},#{examinee,jdbcType=VARCHAR},#{gmtCreate,jdbcType=TIMESTAMP})
+    </insert>
+
+    <select id="getCETStudentByAccount"  resultType="cn.hkxj.platform.pojo.CETStudent">
+        select * from cetStudent where account = #{account}
+    </select>
+</mapper>

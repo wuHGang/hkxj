@@ -1,16 +1,29 @@
 package cn.hkxj.platform.service;
 
 import cn.hkxj.platform.exceptions.PasswordUncorrectException;
-import cn.hkxj.platform.mapper.*;
-import cn.hkxj.platform.pojo.*;
-import cn.hkxj.platform.spider.AppSpider;
+import cn.hkxj.platform.exceptions.SpiderException;
+import cn.hkxj.platform.mapper.CourseMapper;
+import cn.hkxj.platform.mapper.GradeMapper;
+import cn.hkxj.platform.pojo.AllGradeAndCourse;
+import cn.hkxj.platform.pojo.Course;
+import cn.hkxj.platform.pojo.Grade;
+import cn.hkxj.platform.pojo.GradeAndCourse;
+import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.spider.UrpCourseSpider;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+
 import javax.annotation.Resource;
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CompletionService;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -25,67 +38,64 @@ public class GradeSearchService {
 	private CourseMapper courseMapper;
 	@Resource
 	private GradeMapper gradeMapper;
+    @Resource
+    private UrpSpiderService urpSpiderService;
+    @Resource
+    private AppSpiderService appSpiderService;
+    private static ExecutorService executorService = Executors.newFixedThreadPool(10);
 
 	/**
 	 * 通过appspider返回学生本学期的全部成绩
-	 * @param account 学生账户
+     * @param student 学生账户
 	 * @return gradeAndCoourseList 学生的全部成绩
 	 */
-	public AllGradeAndCourse getGradeList(int account){
-		AppSpider appSpider = new AppSpider(account);
-		AllGradeAndCourse gradeAndCourseList=new AllGradeAndCourse();
-		try {
-			appSpider.getToken();
-			gradeAndCourseList = appSpider.getGradeAndCourse();
-		} catch (PasswordUncorrectException e) {
-			log.error("error password");
-		}catch (IllegalArgumentException e){
-			log.error(e.getMessage(), e);
-		}
-			return gradeAndCourseList;
+    public List<GradeAndCourse> getAllGradeList(Student student) {
+        // 先查这个学生有美誉成绩 有的话返回  没有的话走爬虫;
+
+        List<GradeAndCourse> gradeFromSpider = getGradeFromSpiderAsync(student);
+        ExecutorService singleThreadPool = Executors.newSingleThreadExecutor();
+        singleThreadPool.execute(() -> saveGradeAndCourse(student, gradeFromSpider));
+        return gradeFromSpider;
 	}
 
 	/**
-	 * 将本学期的成绩数据存储于数据库，同时适用于自动更新
-	 * @param account 学生账户
-	 * @param password 学生密码
-	 * @param gradeAndCoourseList 学生的全部成绩
+	 * 将本学期的成绩数据存储于数据库，同时适用于自动更新，返回最新爬取更新的成绩集合用于自动更新的回复功能
+     * @param student 学生账户
+     * @param gradeAndCourseList 学生的全部成绩
+     * @return 返回最新爬取更新的成绩集合
 	 */
-	public void saveGradeAndCourse(int account,String password,AllGradeAndCourse gradeAndCoourseList )throws IOException {
-		//暂定只要是半学期的都应该直接查询最新的数据
-		//先查询数据库中有没有这个数据，有就返回（如果要查本学期的数据，怎么判断知道数据有没有更新完）
-		//如果没有从App中进行抓取，要先判断这个他的app账号是否正确，不正确从校务网抓
-		//抓到的数据保存到数据并且返回结果（并行执行）在密集查成绩的期间要考虑是否需要存库这个功能
-		UrpCourseSpider urpCourseSpider=new UrpCourseSpider(account,password);
-		for (AllGradeAndCourse.GradeAndCourse gradeAndCourse : gradeAndCoourseList.getCurrentTermGrade()) {
-			if(gradeAndCourse.getGrade().getYear()==2018){
-				if (!courseMapper.ifExistCourse(gradeAndCourse.getCourse().getUid())) {
-					gradeAndCourse.getCourse().setAcademy(urpCourseSpider.getAcademyId(gradeAndCourse.getCourse().getUid()));
-					saveCourse(gradeAndCourse.getCourse());
-				}
-				if (gradeMapper.ifExistGrade(gradeAndCourse.getGrade().getAccount(),gradeAndCourse.getGrade().getCourseId())==0){
-					saveGrade(account,gradeAndCourse.getGrade(),gradeAndCourse.getCourse());
-				}
-			}
+    public List<GradeAndCourse> saveGradeAndCourse(Student student, List<GradeAndCourse> gradeAndCourseList) {
+        List<GradeAndCourse> studentGrades=new ArrayList<>();
+        UrpCourseSpider urpCourseSpider = new UrpCourseSpider(student.getAccount(), student.getPassword());
+        for (GradeAndCourse gradeAndCourse : gradeAndCourseList) {
+            Course course = gradeAndCourse.getCourse();
+            Grade grade = gradeAndCourse.getGrade();
+            String uid = course.getUid();
+            if (!courseMapper.ifExistCourse(uid)) {
+                course.setAcademy(urpCourseSpider.getAcademyId(uid));
+                courseMapper.insert(course);
+            }
+            if (grade.getScore() == -1) {
+                continue;
+            }
+            if (gradeMapper.ifExistGrade(student.getAccount(), grade.getCourseId()) == 0) {
+                courseMapper.insertStudentAndCourse(student.getAccount(), uid);
+                gradeMapper.insert(grade);
+                studentGrades.add(gradeAndCourse);
+            }
 		}
+		return studentGrades;
 	}
 
 	/**
 	 * 获取本学期的成绩用于回复
 	 * 同时启用一个新线程进行成绩保存
-	 * @param gradeAndCoourseList 学生的全部成绩与课程
+     * @param student 学生的全部成绩与课程
 	 */
-	public List<AllGradeAndCourse.GradeAndCourse>  returnGrade(int account,String password,AllGradeAndCourse gradeAndCoourseList) {
-		ExecutorService singleThreadPool = Executors.newSingleThreadExecutor();
-		singleThreadPool.execute(()-> {
-				try {
-					saveGradeAndCourse(account,password,gradeAndCoourseList);
-				}catch (IOException e){
-					log.error(e.getMessage());
-				}
-		});
-		List<AllGradeAndCourse.GradeAndCourse> studentGrades=new ArrayList<>();
-		for (AllGradeAndCourse.GradeAndCourse gradeAndCourse : gradeAndCoourseList.getCurrentTermGrade()) {
+    public List<GradeAndCourse> getCurrentTermGradeAsync(Student student) {
+        List<GradeAndCourse> allGradeList = getAllGradeList(student);
+        List<GradeAndCourse> studentGrades = new ArrayList<>();
+        for (GradeAndCourse gradeAndCourse : allGradeList) {
 			if(gradeAndCourse.getGrade().getYear()==2018){
 				studentGrades.add(gradeAndCourse);
 			}
@@ -93,64 +103,184 @@ public class GradeSearchService {
 		return studentGrades;
 	}
 
-	/**
-	 * @param student 学生信息
-	 * @return studentGrades 学生成绩
-	 */
-	public List<Grade> getStudentGrades(Student student)throws IOException{
-//		getCurrentGrade(student.getAccount(),student.getPassword());
-		List<Grade> studentGrades=gradeMapper.selectByAccount(student.getAccount());
-		return studentGrades;
-	}
-
-	/**
-	 * 保存未存储过的课程
-	 * @param course 课程
-	 */
-	private void saveCourse( Course course){
-		courseMapper.insert(course);
-	}
-
-	/**
-	 * 保存学生成绩
-	 * @param account 学生账号
-	 * @param grade 学生成绩
-	 * @param course 课程
-	 */
-	private void saveGrade(int account,Grade grade,Course course){
-		courseMapper.insertStudentAndCourse(account, course.getUid());
-		gradeMapper.insert(grade);
-	}
-
-	private void updateGrade(int gradeId,Grade grade){
-	    grade.setId(gradeId);
-	    gradeMapper.updateByPrimaryKey(grade);
+    public List<GradeAndCourse> getCurrentTermGradeSync(Student student) {
+        List<GradeAndCourse> allGradeList = getGradeFromSpiderSync(student,0);
+        List<GradeAndCourse> studentGrades = new ArrayList<>();
+        for (GradeAndCourse gradeAndCourse : allGradeList) {
+            if (gradeAndCourse.getGrade().getYear() == 2018) {
+                studentGrades.add(gradeAndCourse);
+            }
+        }
+        return studentGrades;
     }
-/**
- * 将学生成绩文本化
- * @param studentGrades 学生全部成绩
- */
-	public String toText(List<AllGradeAndCourse.GradeAndCourse> studentGrades){
-		StringBuffer buffer = new StringBuffer();
-		boolean i=true;
-		if(studentGrades.size()==0){
-			buffer.append("尚无本学期成绩");
-		}
-		else {
-			AllGradeAndCourse allGradeAndCourse=new AllGradeAndCourse();
-			allGradeAndCourse.addGradeAndCourse(studentGrades);
-			for (AllGradeAndCourse.GradeAndCourse gradeAndCourse:allGradeAndCourse.getCurrentTermGrade()){
-				if(i){
-					i=false;
-					buffer.append("- - - - - - - - - - - - - -\n");
-					buffer.append("|"+gradeAndCourse.getGrade().getYear()+"学年，第"+gradeAndCourse.getGrade().getTerm()+"学期|\n");
-					buffer.append("- - - - - - - - - - - - - -\n\n");
-				}
-				buffer.append("考试名称："+gradeAndCourse.getCourse().getName()+"\n")
-						.append("成绩："+gradeAndCourse.getGrade().getScore()/10).append("   学分："+gradeAndCourse.getGrade().getPoint()/10+"\n\n");
-			}
-		}
-		return buffer.toString();
-	}
 
+    public List<GradeAndCourse> getElectiveCourseGradeSync(Student student) {
+        List<GradeAndCourse> allGradeList = getGradeFromSpiderSync(student,1);
+        List<GradeAndCourse> studentGrades = new ArrayList<>();
+        for (GradeAndCourse gradeAndCourse : allGradeList) {
+            char c=gradeAndCourse.getGrade().getCourseId().charAt(0);
+            if (c>='a'&&c<='z'||c>='A'&&c<='Z') {
+                studentGrades.add(gradeAndCourse);
+            }
+        }
+        return studentGrades;
+    }
+
+    public List<GradeAndCourse> getElectiveCourseGradeAsync(Student student) {
+        List<GradeAndCourse> allGradeList = getGradeFromSpiderSync(student,1);
+        List<GradeAndCourse> studentGrades = new ArrayList<>();
+        for (GradeAndCourse gradeAndCourse : allGradeList) {
+            char c=gradeAndCourse.getGrade().getCourseId().charAt(0);
+            if (c>='a'&&c<='z'||c>='A'&&c<='Z') {
+                studentGrades.add(gradeAndCourse);
+            }
+        }
+        return studentGrades;
+    }
+
+    public List<GradeAndCourse> getGradeFromSpiderAsync(Student student) {
+        CompletionService<List<GradeAndCourse>> spiderExecutorService = new ExecutorCompletionService<>(executorService);
+
+        spiderExecutorService.submit(appSpiderTask(student));
+        spiderExecutorService.submit(urpSpiderTask(student));
+        HashSet<GradeAndCourse> resultSet = Sets.newHashSet();
+        ArrayList<GradeAndCourse> prepare = Lists.newArrayList();
+        try {
+            for (int x = 0; x < 2; x++) {
+                // 结果不为空的时候  如果result已经记录全部插入到
+                List<GradeAndCourse> gradeAndCourses = spiderExecutorService.take().get();
+                if (!CollectionUtils.isEmpty(gradeAndCourses)) {
+                    prepare.addAll(gradeAndCourses);
+                }
+            }
+            for (GradeAndCourse gradeAndCourse : prepare) {
+                gradeAndCourse.getCourse().setAcademy(null);
+                if (resultSet.contains(gradeAndCourse)) {
+                    if (gradeAndCourse.getGrade().getScore() != -1) {
+                        //这里排除app有成绩但是教务网没成绩  app成绩被顶掉的情况
+                        resultSet.remove(gradeAndCourse);
+                        resultSet.add(gradeAndCourse);
+                    }
+                } else {
+                    resultSet.add(gradeAndCourse);
+                }
+            }
+
+
+        } catch (InterruptedException | ExecutionException e) {
+            log.error("app spider execute error", e);
+        }
+        return Lists.newArrayList(resultSet);
+    }
+
+
+    public List<GradeAndCourse> getGradeFromSpiderSync(Student student ,int type) {
+        List<GradeAndCourse> currentFromApp = new ArrayList<>();
+        try {
+            AllGradeAndCourse gradeAndCourseByAccount = appSpiderService.getGradeAndCourseByAccount(student.getAccount());
+            if (type==0){
+                currentFromApp = gradeAndCourseByAccount.getCurrentTermGrade();
+            }
+            else if(type==1){
+                currentFromApp=gradeAndCourseByAccount.getEverTermGrade();
+            }
+        } catch (PasswordUncorrectException | SpiderException e) {
+            log.warn("account {} app spider error {}", student.getAccount(), e.getMessage());
+
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+        //将app和教务网数据整合到一起
+
+        ArrayList<GradeAndCourse> currentFromUrp = urpSpiderService.getCurrentGrade(student,type);
+
+        ArrayList<GradeAndCourse> result = Lists.newArrayList();
+        if (CollectionUtils.isEmpty(currentFromApp)) {
+            return currentFromUrp;
+        }
+
+        if (CollectionUtils.isEmpty(currentFromUrp)) {
+            return currentFromApp;
+        }
+
+        for (GradeAndCourse fromApp : currentFromApp) {
+            for (GradeAndCourse fromUrp : currentFromUrp) {
+                if (fromApp.equals(fromUrp)) {
+                    result.add(fromUrp.getGrade().getScore() == -1 ? fromApp : fromUrp);
+                }
+            }
+
+        }
+
+
+        return result;
+    }
+
+
+    private Callable<List<GradeAndCourse>> appSpiderTask(Student student) {
+        return () -> {
+            try {
+                AllGradeAndCourse gradeAndCourseByAccount = appSpiderService.getGradeAndCourseByAccount(student.getAccount());
+                return gradeAndCourseByAccount.getCurrentTermGrade();
+            } catch (PasswordUncorrectException | SpiderException e) {
+                log.warn("account {} app spider error {}", student.getAccount(), e.getMessage());
+
+            } catch (Exception e) {
+                log.error(e.getMessage(), e);
+            }
+            return Lists.newArrayList();
+        };
+    }
+
+    private Callable<List<GradeAndCourse>> urpSpiderTask(Student student) {
+        return () -> urpSpiderService.getCurrentGrade(student,0);
+    }
+
+    public String gradeListToText(List<GradeAndCourse> studentGrades) {
+        StringBuffer buffer = new StringBuffer();
+        boolean i = true;
+        if (studentGrades.size() == 0) {
+            buffer.append("尚无本学期成绩");
+        } else {
+            AllGradeAndCourse allGradeAndCourse = new AllGradeAndCourse();
+            allGradeAndCourse.addGradeAndCourse(studentGrades);
+            for (GradeAndCourse gradeAndCourse : allGradeAndCourse.getCurrentTermGrade()) {
+                if (i) {
+                    i = false;
+                    buffer.append("- - - - - - - - - - - - - -\n");
+                    buffer.append("|").append(gradeAndCourse.getGrade().getYear()).append("学年，第").append(gradeAndCourse.getGrade().getTerm()).append("学期|\n");
+                    buffer.append("- - - - - - - - - - - - - -\n\n");
+                }
+                int grade = gradeAndCourse.getGrade().getScore();
+                buffer.append("考试名称：").append(gradeAndCourse.getCourse().getName()).append("\n")
+                        .append("成绩：").append(grade == -1 ? "" : grade / 10).append("   学分：")
+                        .append(((float) gradeAndCourse.getGrade().getPoint()) / 10).append("\n\n");
+            }
+        }
+        return buffer.toString();
+    }
+
+    public String getElectiveCourseText(List<GradeAndCourse> studentGrades) {
+        StringBuffer buffer = new StringBuffer();
+        if (studentGrades.size() == 0) {
+            buffer.append("尚无选修课成绩");
+        } else {
+            int allPoint=0;
+            for (GradeAndCourse gradeAndCourse : studentGrades) {
+                allPoint+=gradeAndCourse.getCourse().getCredit();
+                float grade = gradeAndCourse.getGrade().getScore();
+                buffer.append("考试名称：").append(gradeAndCourse.getCourse().getName()).append("\n")
+                        .append("成绩：").append(grade == -1 ? "" : grade / 100).append("   学分：")
+                        .append(((float) gradeAndCourse.getGrade().getPoint()) / 10).append("\n\n");
+            }
+            allPoint/=10;
+            buffer.insert(0,"- - - - - - - - - - - - - - - \n");
+            int num=0;
+            if(allPoint<7)num=7-allPoint;
+            buffer.insert(0,"你选修的公共选修课共"+allPoint+"学分\n还差"+num+"学分\n");
+            buffer.insert(0,"- - - - - - - - - - - - - - - \n");
+        }
+        buffer.append("\n 查询仅供参考，以教务网为准，如有疑问微信联系：吴彦祖【hkdhd666】\n（有同学反映，大学英语提高班也是选修课）");
+        return buffer.toString();
+    }
 }

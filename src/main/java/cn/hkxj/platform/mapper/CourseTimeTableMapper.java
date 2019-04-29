@@ -1,13 +1,12 @@
 package cn.hkxj.platform.mapper;
 
-
 import cn.hkxj.platform.pojo.CourseTimeTable;
 import cn.hkxj.platform.pojo.CourseTimeTableExample;
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 @Mapper
 @Repository
@@ -34,9 +33,6 @@ public interface CourseTimeTableMapper {
 
     int updateByPrimaryKey(CourseTimeTable record);
 
-    List<CourseTimeTable> getTimeTables(@Param("ids") List<Integer> ids);
+    Integer isCourseTimeTableExist(CourseTimeTable courseTimeTable);
 
-    List<CourseTimeTable> getTimetablesByTimeCondition(Integer currentYear, Integer currentWeek, Integer currentDay);
-
-    List<CourseTimeTable> getTimetablesByIdsForCurrentDay(Integer currentYear, Integer currentWeek, Integer currentDay, @Param("ids") List<Integer> ids);
 }

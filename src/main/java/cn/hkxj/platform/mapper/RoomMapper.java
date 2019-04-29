@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Mapper
+@Repository
 public interface RoomMapper {
     int deleteByPrimaryKey(Integer id);
 
@@ -24,4 +25,6 @@ public interface RoomMapper {
     int updateByPrimaryKey(Room record);
 
     List<Integer> selectCourseTimeTableID(int roomId);
+
+    Room selectByFuzzy(String name);
 }

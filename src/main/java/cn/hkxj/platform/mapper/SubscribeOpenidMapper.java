@@ -37,4 +37,6 @@ public interface SubscribeOpenidMapper {
     List<String> getSubscribeOpenids(@Param("openids") List<Openid> openids);
 
     List<String> getAllSubscribeOpenids();
+
+    List<String> getOnlySubcribeOpenids();
 }

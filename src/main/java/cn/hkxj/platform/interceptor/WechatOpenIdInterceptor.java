@@ -25,12 +25,15 @@ public class WechatOpenIdInterceptor implements WxMessageInterceptor {
 	private OpenIdService openIdService;
 	@Value("${domain}")
 	private String domain;
-	private static final String PATTERN = "<a href=\"%s\\bind?openid=%s\">点击我绑定</a>";
+	private static final String PATTERN = "<a href=\"%s/bind?openid=%s\">点击我绑定</a>";
 
 
 	@Override
 	public boolean intercept(WxMpXmlMessage wxMessage, Map<String, Object> context, WxMpService wxMpService, WxSessionManager sessionManager) {
-		return openIdService.openidIsExist(wxMessage.getFromUser());
+//		return openIdService.openidIsExist(wxMessage.getFromUser());
+		return openIdService.openidIsExist(wxMessage.getFromUser())==true?openIdService.openidIsBind(wxMessage.getFromUser()):false;
+
+//		return openIdService.openidIsBind(wxMessage.getFromUser());
 	}
 
 	@Override

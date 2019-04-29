@@ -75,14 +75,14 @@
                             window.location="/platform/show/timetable";
                         }
                         else if (data.status==402){
-                            alert(key+"账号密码错误");
+                            alert("账号密码错误");
                             window.location.reload();
                         }
                         else if (data.status==403){
                             alert("账号已经绑定")
                         }
                         else {
-                            alert(key+"服务器读取超时");
+                            alert("服务器读取超时");
                             window.location.reload();
                         }
 

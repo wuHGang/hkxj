@@ -14,7 +14,8 @@ public enum Building {
 	SCIENCE("科厦"),
 	SCIENCE_HIGH("科高"),
 	PLAYGROUND("操场"),
-	LABORATORY("实验室");
+	LABORATORY("实验室"),
+	LIBRARY("图书馆");
 
 	private String chinese;
 
@@ -34,6 +35,8 @@ public enum Building {
 				return PLAYGROUND;
 			case "实验室":
 				return LABORATORY;
+			case "图书馆":
+				return LIBRARY;
 			default:
 				throw new IllegalArgumentException("no building match:" + name);
 		}
@@ -50,6 +53,8 @@ public enum Building {
 			case "操场":
 				return true;
 			case "实验室":
+				return true;
+			case "图书馆":
 				return true;
 			default:
 				return false;

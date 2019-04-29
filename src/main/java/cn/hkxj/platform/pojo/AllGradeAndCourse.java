@@ -30,32 +30,12 @@ public class AllGradeAndCourse {
 		return list.get(list.size() -1);
 	}
 
-	public static class GradeAndCourse {
-		private Grade grade;
-		private Course course;
-
-		public Grade getGrade() {
-			return grade;
+	public List<GradeAndCourse> getEverTermGrade(){
+		List<GradeAndCourse> everList=new ArrayList<>();
+		for (List<GradeAndCourse> o:list){
+			everList.addAll(o);
 		}
-
-		public void setGrade(Grade grade) {
-			this.grade = grade;
-		}
-
-		public Course getCourse() {
-			return course;
-		}
-
-		public void setCourse(Course course) {
-			this.course = course;
-		}
-
-		@Override
-		public String toString() {
-			return MoreObjects.toStringHelper(this)
-					.add("grade", grade)
-					.add("course", course)
-					.toString();
-		}
+		return everList;
 	}
+
 }

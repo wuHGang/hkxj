@@ -201,4 +201,10 @@
     <select id="selectCourseTimeTableID" parameterType="java.lang.Integer" resultType="java.lang.Integer">
         select course_timetable_id from room_course_timetable where room_id = #{roomId,jdbcType=INTEGER}
     </select>
+  <select id="selectByFuzzy" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from room
+    where name like #{name}
+  </select>
 </mapper>

@@ -1,15 +1,24 @@
 package cn.hkxj.platform.spider;
 
-import cn.hkxj.platform.exceptions.PasswordUncorrectException;
 import cn.hkxj.platform.pojo.Academy;
+import cn.hkxj.platform.pojo.Course;
+import com.alibaba.fastjson.JSON;
+import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import org.apache.commons.lang3.StringUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
+;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -27,13 +36,13 @@ public class UrpCourseSpider {
     //http://60.219.165.24/kcxxAction.do?oper=kcxx_if&kch=课程号
     //这个接口来获取完整课程的学院信息
     //后期会整合进urpSpider中
+    private final static Gson GSON = new Gson();
     private String account;
     private String password;
     private String uid;
     private String loginUrl="http://60.219.165.24/loginAction.do";
     private String courseInformatiomUrl="http://60.219.165.24/kcxxAction.do?oper=kcxx_if&kch=";
-    private static String creditRgex = "学分:</td><tdwidth=\"3\"height=\"18\"></td><tdcolspan=\"5\">.*?</td>";
-    private static String academyRgex ="开课院系:</td><tdwidth=\"3\"></td><td>.*?</td>";
+
     private static OkHttpClient client = new OkHttpClient.Builder()
             .connectTimeout(15, TimeUnit.SECONDS)
             .build();
@@ -43,39 +52,6 @@ public class UrpCourseSpider {
         this.password = password;
     }
 
-    public int getAcademyId(String uid) throws IOException{
-        int academyId=0;
-        Pattern pattern = Pattern.compile(academyRgex);
-        Matcher matcher = pattern.matcher(getCourseResult(uid));
-        while (matcher.find()) {
-            String a=StringUtils.substringBetween(matcher.group(),"</td><tdwidth=\"3\"></td><td>","</td>");
-            academyId=Academy.getAcademyCodeByName(a);
-        }
-        if(academyId==0){
-            log.error("no course information found");
-        }
-        return academyId;
-    }
-
-    private String getCourseResult(String uid) throws IOException{
-        this.uid=uid;
-        FormBody formBody = getFormBody(account,password);
-        Request request = new Request.Builder()
-                .url(loginUrl)
-                .post(formBody)
-                .build();
-        Response response = client.newCall(request).execute();
-        String cookie=response.headers().get("Set-Cookie").substring(0, response.headers().get("Set-Cookie").indexOf(";"));
-        request = new Request.Builder()
-                .url(courseInformatiomUrl+uid)
-                .post(formBody)
-                .addHeader("Cookie",cookie)
-                .build();
-        String result = client.newCall(request).execute().body().string().replaceAll("\\s*", "");
-        response.body().close();
-        return result;
-    }
-
     private FormBody getFormBody(String account,String password) {
         FormBody formBody = new FormBody.Builder()
                 .add("zjh", account)
@@ -83,4 +59,100 @@ public class UrpCourseSpider {
                 .build();
         return formBody;
     }
+
+    private String getCourseResult(String uid) {
+        this.uid=uid;
+        FormBody formBody = getFormBody(account,password);
+        Request request = new Request.Builder()
+                .url(loginUrl)
+                .post(formBody)
+                .build();
+        Response response ;
+        try {
+            response = client.newCall(request).execute();
+        } catch (IOException e) {
+            log.error("get course error, course id {}", uid);
+            throw new RuntimeException(e);
+        }
+        String cookie=response.headers().get("Set-Cookie").substring(0, response.headers().get("Set-Cookie").indexOf(";"));
+        request = new Request.Builder()
+                .url(courseInformatiomUrl+uid)
+                .post(formBody)
+                .addHeader("Cookie",cookie)
+                .build();
+        String result ;
+        try {
+            result = client.newCall(request).execute().body().string();
+        } catch (IOException e) {
+            log.error("get course error, course id {}", uid);
+            throw new RuntimeException(e);
+        }
+        response.body().close();
+        return result;
+    }
+
+    //小程序获取openid
+    public Map getAppJson(String js_code)throws IOException{
+        String app="https://api.weixin.qq.com/sns/jscode2session?appid=wx05f7264e83fa40e9&secret=a6053643e57616937b876d69bb080fa7&js_code="+js_code+"&grant_type=authorization_code";
+        Request request=new Request.Builder()
+                .url(app)
+                .get()
+                .build();
+            Response response=client.newCall(request).execute();
+            Map result=GSON.fromJson(response.body().string(),Map.class);
+        return result;
+    }
+
+    //jsoup解析页面
+    private Map getResultMap(){
+        Map<String,String> infoMap=new HashMap<>();
+        getCourseResult(uid);
+        Document doc = Jsoup.parse(getCourseResult(uid));
+        Elements tables  = doc.getElementsByClass("titleTop3");
+        Element table=tables.get(0);
+        tables=table.select("table");
+        Element baseInfoTable=tables.get(1);
+        Elements courseInfoList = baseInfoTable.select("tr");
+        for(int i = 0; i < courseInfoList.size(); ++i){
+            Element tr = courseInfoList.get(i);
+            Elements tds = tr.select("td");
+            infoMap.put(tds.get(0).text(),tds.get(2).text());
+        }
+        System.out.println(infoMap);
+        return infoMap;
+    }
+
+    //获取课程的学院信息
+    public Academy getAcademyId(String uid) {
+        Map infoMap=getResultMap();
+        try {
+            return Academy.getAcademyByName((String) infoMap.get("开课院系"));
+        }catch (Exception e){
+            log.error("course uid:{} can`t find academy", uid);
+            throw new IllegalArgumentException("can`t find academy uid: " + uid);
+        }
+    }
+
+    //获取课程的名称信息
+    public String getCourseName(String uid){
+        Map infoMap=getResultMap();
+        try {
+            return (String) infoMap.get("课程名");
+        }catch (Exception e){
+            log.error("course uid:{} can`t find courseName", uid);
+            throw new IllegalArgumentException("can`t find courseName uid: " + uid);
+        }
+    }
+
+    //获取课程的学分信息
+    public int getCourseCredit(String uid){
+        Map infoMap=getResultMap();
+        try {
+            return (int) infoMap.get("学分");
+        }catch (Exception e){
+            log.error("course uid:{} can`t find courseCredit", uid);
+            throw new IllegalArgumentException("can`t find courseCredit uid: " + uid);
+        }
+    }
+
 }

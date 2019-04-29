@@ -2,23 +2,24 @@ package cn.hkxj.platform.utils;
 
 import cn.hkxj.platform.mapper.OpenidMapper;
 import cn.hkxj.platform.pojo.CourseTimeTable;
+import cn.hkxj.platform.pojo.OneOffSubscription;
 import cn.hkxj.platform.pojo.Openid;
 import cn.hkxj.platform.pojo.OpenidExample;
 import cn.hkxj.platform.service.CourseService;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.exception.WxErrorException;
 import me.chanjar.weixin.mp.api.WxMpService;
+import okhttp3.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.io.*;
 import java.net.*;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Yuki
@@ -35,6 +36,8 @@ public class OneOffSubcriptionUtil {
     @Resource
     private OpenidMapper openidMapper;
 
+    private static String domain;
+
     private static OneOffSubcriptionUtil util;
 
     @PostConstruct
@@ -43,14 +46,13 @@ public class OneOffSubcriptionUtil {
         util.wxMpService = this.wxMpService;
         util.courseService = this.courseService;
         util.openidMapper = this.openidMapper;
+        REDIRECT_URL = domain + "/wechat/sub/test";
     }
 
+    private static String REDIRECT_URL;
     private static final String BASE_URL = "https://mp.weixin.qq.com/mp/subscribemsg?action=get_confirm";
-    private static final String REDIRECT_URL = "http://test.mrbeen.cn/wechat/sub/test";
     private static final String TEMPLATE_ID = "5TgQ5wk_3q01xfdqAqPDgAJDiT4YfmYOoIP6cnAhOKc";
     private static final String REPLY_URL = "https://api.weixin.qq.com/cgi-bin/message/template/subscribe?access_token=";
-
-    private static String appid;
 
     /**
      * 获取带有一次性订阅链接的超链接
@@ -64,7 +66,7 @@ public class OneOffSubcriptionUtil {
                 .append("'>").append(content).append("</a>").toString();
     }
 
-    public static String getOneOffSubscriptionUrl(String scene) {
+    private static String getOneOffSubscriptionUrl(String scene) {
         StringBuilder builder = new StringBuilder();
         builder.append(BASE_URL).append("&")
                 .append("appid=").append(util.wxMpService.getWxMpConfigStorage().getAppId()).append("&")
@@ -82,14 +84,40 @@ public class OneOffSubcriptionUtil {
     public static void sendTemplateMessageToUser(String openid, String scene) {
         try {
             replyOneOffSubscribeRequest(generateDataJson(openid, scene));
-        } catch (WxErrorException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (WxErrorException | IOException e) {
             e.printStackTrace();
         }
     }
 
     private static void replyOneOffSubscribeRequest(String sendContent) throws WxErrorException, IOException {
+        OkHttpClient okHttpClient = new OkHttpClient().newBuilder()
+                .connectTimeout(10, TimeUnit.SECONDS)
+                .writeTimeout(10, TimeUnit.SECONDS)
+                .readTimeout(20, TimeUnit.SECONDS)
+                .build();
+
+        OneOffSubscription oneOffSubscription = new OneOffSubscription.Builder("123123", "1005", "今日课表")
+                .data("今日课表")
+                .build();
+
+        RequestBody requestBody = FormBody.create(MediaType.parse("appliaction/json;charset=UTF-8"), JsonUtils.wxToJson(oneOffSubscription));
+
+        Request request = new Request.Builder()
+                .url(getReplyUrl())
+                .post(requestBody)
+                .build();
+        Call call = okHttpClient.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                log.error("while send post message some error has been happened");
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                System.out.println(response.body().string());
+            }
+        });
         //建立链接
         URL url = new URL(getReplyUrl());
         HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
@@ -124,7 +152,7 @@ public class OneOffSubcriptionUtil {
         }
     }
 
-    public static String generateDataJson(String openid, String scene){
+    private static String generateDataJson(String openid, String scene){
         return new StringBuilder().append("{")
                 .append("\"touser\":\"").append(openid).append("\",")
                 .append("\"template_id\":\"").append(TEMPLATE_ID).append("\",")
@@ -149,6 +177,11 @@ public class OneOffSubcriptionUtil {
 
     private static String getReplyUrl() throws WxErrorException {
         return REPLY_URL + util.wxMpService.getAccessToken();
+    }
+
+    @Value("${domain}")
+    public void setDomain(String target) {
+        OneOffSubcriptionUtil.domain = target;
     }
 
 }
