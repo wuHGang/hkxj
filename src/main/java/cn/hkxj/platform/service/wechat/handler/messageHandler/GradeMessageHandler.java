@@ -51,10 +51,10 @@ public class GradeMessageHandler implements WxMpMessageHandler {
 
             ExecutorService singleThreadPool = Executors.newSingleThreadExecutor();
             singleThreadPool.execute(() -> taskBindingService.subscribeGradeUpdateBinding(wxMpXmlMessage.getFromUser()));
-            List<GradeAndCourse> currentTermGrade = gradeSearchService.getCurrentTermGradeAsync(student);
+            List<GradeAndCourse> currentTermGrade = gradeSearchService.getCurrentGradeFromSpider(student);
             if (CollectionUtils.isEmpty(currentTermGrade)) {
                 singleThreadPool.execute(() -> {
-                    List<GradeAndCourse> gradeFromSpiderSync = gradeSearchService.getCurrentTermGradeSync(student);
+                    List<GradeAndCourse> gradeFromSpiderSync = gradeSearchService.getCurrentGradeFromSpider(student);
                     String gradeListToText = gradeSearchService.gradeListToText(gradeFromSpiderSync);
                     WxMpKefuMessage wxMpKefuMessage = new WxMpKefuMessage();
                     wxMpKefuMessage.setContent(gradeListToText);

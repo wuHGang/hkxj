@@ -52,9 +52,9 @@ public class ElectiveCourseMessageHandler implements WxMpMessageHandler {
         String gradesMsg;
         try {
             Student student = openIdService.getStudentByOpenId(wxMpXmlMessage.getFromUser());
-            List<GradeAndCourse> electiveCourseAsyncGrade = gradeSearchService.getElectiveCourseGradeAsync(student);
+            List<GradeAndCourse> electiveCourseAsyncGrade = gradeSearchService.getEverGradeFromSpider(student);
             if (CollectionUtils.isEmpty(electiveCourseAsyncGrade)) {
-                List<GradeAndCourse> electiveCourseSyncGrade = gradeSearchService.getElectiveCourseGradeSync(student);
+                List<GradeAndCourse> electiveCourseSyncGrade = gradeSearchService.getEverGradeFromSpider(student);
                 gradesMsg = gradeSearchService.getElectiveCourseText(electiveCourseSyncGrade);
             }
             else {

@@ -5,8 +5,8 @@ import cn.hkxj.platform.mapper.StudentMapper;
 import cn.hkxj.platform.mapper.SubscribeGradeUpdateMapper;
 import cn.hkxj.platform.mapper.TaskMapper;
 import cn.hkxj.platform.pojo.GradeAndCourse;
-import cn.hkxj.platform.pojo.wechat.Openid;
 import cn.hkxj.platform.pojo.Student;
+import cn.hkxj.platform.pojo.wechat.Openid;
 import cn.hkxj.platform.pojo.wechat.SubscribeGradeUpdate;
 import cn.hkxj.platform.service.GradeSearchService;
 import lombok.extern.slf4j.Slf4j;
@@ -74,7 +74,7 @@ public class GradeAutoUpdateTask {
         while (Objects.nonNull(student)) {
             try {
                 taskMapper.taskCountUpdate(openidMap.get(student.getAccount()),1);
-                List<GradeAndCourse> gradeFromSpider = gradeSearchService.getGradeFromSpiderAsync(student);
+                List<GradeAndCourse> gradeFromSpider = gradeSearchService.getCurrentGradeFromSpider(student);
                 List<GradeAndCourse> studentGrades=gradeSearchService.saveGradeAndCourse(student, gradeFromSpider);
                 if (!CollectionUtils.isEmpty(studentGrades)) {
                     String result = gradeSearchService.gradeListToText(studentGrades);

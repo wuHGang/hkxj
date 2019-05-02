@@ -1,17 +1,24 @@
 package cn.hkxj.platform.service;
 
 import cn.hkxj.platform.exceptions.PasswordUncorrectException;
+import cn.hkxj.platform.exceptions.SpiderException;
 import cn.hkxj.platform.mapper.CourseMapper;
 import cn.hkxj.platform.mapper.CourseTimeTableMapper;
 import cn.hkxj.platform.mapper.RoomMapper;
-import cn.hkxj.platform.pojo.*;
+import cn.hkxj.platform.pojo.AllGradeAndCourse;
+import cn.hkxj.platform.pojo.Course;
+import cn.hkxj.platform.pojo.Room;
+import cn.hkxj.platform.pojo.Student;
+import cn.hkxj.platform.pojo.constant.Academy;
 import cn.hkxj.platform.pojo.constant.CourseType;
 import cn.hkxj.platform.pojo.timetable.CourseTimeTable;
 import cn.hkxj.platform.pojo.timetable.ExamTimeTable;
 import cn.hkxj.platform.spider.AppSpider;
+import cn.hkxj.platform.spider.UrpCourse;
 import cn.hkxj.platform.spider.UrpCourseSpider;
 import cn.hkxj.platform.utils.SchoolTimeUtil;
 import com.google.common.base.Splitter;
+import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
 
@@ -23,20 +30,21 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.StreamSupport;
 
+@Slf4j
 @Service("appSpiderService")
 public class AppSpiderService {
-	@Resource
-	private RoomService roomService;
-	@Resource
-	private CourseMapper courseMapper;
+    @Resource
+    private RoomService roomService;
+    @Resource
+    private CourseMapper courseMapper;
     @Resource
     private RoomMapper roomMapper;
     @Resource
     private CourseTimeTableMapper courseTimeTableMapper;
-	private static Splitter SPLITTER = Splitter.on('*').trimResults().omitEmptyStrings();
+    private static Splitter SPLITTER = Splitter.on('*').trimResults().omitEmptyStrings();
     private static Splitter DATA_SPLITTER = Splitter.on('-').trimResults().omitEmptyStrings();
     private static Splitter TIME_SPLITTER = Splitter.on(':').trimResults().omitEmptyStrings();
-	private static Pattern FIND_NUM = Pattern.compile("[^0-9]");
+    private static Pattern FIND_NUM = Pattern.compile("[^0-9]");
 
 
     public ArrayList<ExamTimeTable> getExamByAccount(int account) throws PasswordUncorrectException {
@@ -56,10 +64,15 @@ public class AppSpiderService {
         return examTimeTableArrayList;
     }
 
-    public AllGradeAndCourse getGradeAndCourseByAccount(int account) throws PasswordUncorrectException {
+    AllGradeAndCourse getGradeAndCourseByAccount(int account) {
         AppSpider appSpider = new AppSpider(account);
-        appSpider.getToken();
-        return appSpider.getGradeAndCourse();
+        try {
+            appSpider.getToken();
+            return appSpider.getGradeAndCourse();
+        } catch (PasswordUncorrectException | SpiderException e) {
+            log.warn("account {} app spider error {}", account, e.getMessage());
+        }
+        return new AllGradeAndCourse();
     }
 
 
@@ -95,7 +108,7 @@ public class AppSpiderService {
         examTimeTable.setStart(startTime.toDate());
         examTimeTable.setEnd(endTime.toDate());
 
-		return examTimeTable;
+        return examTimeTable;
     }
 
     private Course parseCourseText(String courseText) {
@@ -123,10 +136,10 @@ public class AppSpiderService {
         throw new IllegalArgumentException("无法解析考试教室: "+roomName);
     }
 
-	private static int xnToYear(String xn) {
-		String[] split = xn.split("-");
-		return Integer.parseInt(split[0]);
-	}
+    private static int xnToYear(String xn) {
+        String[] split = xn.split("-");
+        return Integer.parseInt(split[0]);
+    }
 
     /**
      * 从m黑科技上获取学生的课表信息，转换成courseTimeTable形式并存入数据库
@@ -167,9 +180,9 @@ public class AppSpiderService {
             int start ;
             int end ;
             int distinct = 0;
-            if (startToEnd.indexOf("-")!=-1) {
+            if (startToEnd.contains("-")) {
                 String[] startAndEnd ;
-                if (startToEnd.indexOf(",")!=-1){
+                if (startToEnd.contains(",")) {
                     startAndEnd = startToEnd.split("[, -]");
                     start = Integer.valueOf(startAndEnd[0]);
                     end = Integer.valueOf(startAndEnd[startAndEnd.length-1]);
@@ -207,9 +220,11 @@ public class AppSpiderService {
 
             if (!courseMapper.ifExistCourse(course.getUid())) {
                 UrpCourseSpider urpCourseSpider = new UrpCourseSpider(student.getAccount(), student.getPassword());
-                course.setAcademy(urpCourseSpider.getAcademyId(course.getUid()));
+                UrpCourse urpCourse = urpCourseSpider.getUrpCourse(course.getUid());
+                Academy academy = Academy.getAcademyByName(urpCourse.getAcademyName());
+                course.setAcademy(academy);
                 if(course.getName()==null){
-                    course.setName(urpCourseSpider.getCourseName(course.getUid()));
+                    course.setName(urpCourse.getName());
                 }
                 System.out.println(course);
                 courseMapper.insert(course);
@@ -222,8 +237,7 @@ public class AppSpiderService {
             Room room;
             if(roomName.equals("操场1")){
                 room = roomMapper.selectByFuzzy(roomName);
-            }
-            else room = roomMapper.selectByFuzzy("%" + roomName);
+            } else room = roomMapper.selectByFuzzy("%" + roomName);
             if(room!=null){
                 CourseTimeTable courseTimeTable = new CourseTimeTable();
                 courseTimeTable.setCourse(course);
@@ -242,4 +256,4 @@ public class AppSpiderService {
         }
     }
 
-    }
+}

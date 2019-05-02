@@ -28,7 +28,7 @@ public class UrpSpiderServiceTest {
     @Before
     public void init() {
         student = new Student();
-        student.setAccount(2017025971);
+        student.setAccount(2016024249);
         student.setPassword("1");
     }
 
@@ -41,7 +41,14 @@ public class UrpSpiderServiceTest {
     @Test
     public void getCurrentGrade() throws PasswordUncorrectException {
 
-        for (GradeAndCourse gradeAndCourse : urpSpiderService.getCurrentGrade(student,0)) {
+        for (GradeAndCourse gradeAndCourse : urpSpiderService.getCurrentGrade(student)) {
+            log.info(gradeAndCourse.toString());
+        }
+    }
+
+    @Test
+    public void getEverGrade() throws PasswordUncorrectException {
+        for (GradeAndCourse gradeAndCourse : urpSpiderService.getEverGrade(student)) {
             log.info(gradeAndCourse.toString());
         }
     }

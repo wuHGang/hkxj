@@ -1,6 +1,7 @@
 package cn.hkxj.platform.pojo;
 
 import com.google.common.base.MoreObjects;
+import com.google.common.collect.Lists;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +28,7 @@ public class AllGradeAndCourse {
 	 * @return 当前学期成绩的列表
 	 */
 	public List<GradeAndCourse> getCurrentTermGrade(){
-		return list.get(list.size() -1);
+        return list.size() == 0 ? Lists.newArrayList() : list.get(list.size() - 1);
 	}
 
 	public List<GradeAndCourse> getEverTermGrade(){
