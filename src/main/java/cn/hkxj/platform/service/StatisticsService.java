@@ -1,6 +1,7 @@
 
 package cn.hkxj.platform.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -11,6 +12,7 @@ import cn.hkxj.platform.pojo.constant.StatisticsTypeEnum;
 import cn.hkxj.platform.pojo.vo.PagerVO;
 import cn.hkxj.platform.pojo.vo.StatisticsDetailVo;
 import cn.hkxj.platform.pojo.vo.StatisticsV0;
+import cn.hkxj.platform.utils.DateUtils;
 
 /**
  * @author zhouqinglai
@@ -32,19 +34,25 @@ public class StatisticsService {
     public StatisticsV0 listInterfaceStatisticsByPage(Integer currentPage,Integer size) {
         final Long count = cacheService.sizeByBizKey(StatisticsTypeEnum.INTERFACE_STATISTICS.getDesc());
         final PagerVO pager = PagerVO.getPager(count.intValue(), currentPage, size);
-        final List<StatisticsDetailVo> statisticsDetailVos = cacheService.listStatisticsVoByPage(StatisticsTypeEnum.INTERFACE_STATISTICS.getDesc(), PagerVO.getStart(currentPage, size), PagerVO.getEnd(currentPage, size));
+        final List<StatisticsDetailVo> statisticsDetailVos = cacheService.listStatisticsVoByPage(StatisticsTypeEnum.INTERFACE_STATISTICS.getDesc(), PagerVO.getStart(currentPage, size), PagerVO
+                .getEnd(currentPage, size),false,LocalDateTime.now());
         return new StatisticsV0().setPagerVO(pager).setStatisticsDetail(statisticsDetailVos);
     }
 
     /**
-     * 分页获取接口统计数据,自定义key的方式来统计
-     * @param  currentPage
+     * 列出每天或者每个月的统计数据
+     * @param currentPage
      * @param size
+     * @param time
+     * @param isEveryDay
+     * @return
      */
-    public StatisticsV0 listByKeyAndPage(String key,Integer currentPage,Integer size) {
-        final Long count = cacheService.sizeByBizKey(key);
-        final PagerVO pager = PagerVO.getPager(count.intValue(), currentPage, size);
-        final List<StatisticsDetailVo> statisticsDetailVos = cacheService.listStatisticsVoByPage(key, PagerVO.getStart(currentPage, size), PagerVO.getEnd(currentPage, size));
+    public StatisticsV0 listByEveryDayOrMonth(Integer currentPage,Integer size,Long time,boolean isEveryDay) {
+        String key = StatisticsTypeEnum.INTERFACE_STATISTICS.getDesc();
+        LocalDateTime localDateTime = DateUtils.timestampToLocalDateTime(time);
+        final Long countForEveryDayOrMonth = cacheService.count(StatisticsTypeEnum.INTERFACE_STATISTICS.getDesc(),localDateTime,isEveryDay);
+        final PagerVO pager = PagerVO.getPager(countForEveryDayOrMonth.intValue(), currentPage, size);
+        final List<StatisticsDetailVo> statisticsDetailVos = cacheService.listStatisticsVoByPage(key, PagerVO.getStart(currentPage, size), PagerVO.getEnd(currentPage, size),isEveryDay,localDateTime);
         return new StatisticsV0().setPagerVO(pager).setStatisticsDetail(statisticsDetailVos);
     }
 

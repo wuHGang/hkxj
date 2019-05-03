@@ -33,7 +33,7 @@ public class StatisticsController {
     @GetMapping("/interface")
     public WebResponse<StatisticsV0> listStatisticsByPage(StatisticsRequest request) {
         request.validateParam();
-        return WebResponse.success(statisticsService.listInterfaceStatisticsByPage(request.getCurrentPage(),request.getSize()));
+        return WebResponse.success(statisticsService.listByEveryDayOrMonth(request.getCurrentPage(),request.getSize(),request.getFindDate(),request.getIsEveryDay()));
     }
 
 }

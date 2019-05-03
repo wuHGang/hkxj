@@ -1,6 +1,9 @@
 
 package cn.hkxj.platform.pojo.request;
 
+import java.time.LocalDateTime;
+
+import cn.hkxj.platform.utils.DateUtils;
 import lombok.Data;
 
 /**
@@ -14,6 +17,8 @@ import lombok.Data;
 public class StatisticsRequest {
     private Integer currentPage;
     private Integer size;
+    private Long findDate;
+    private Boolean isEveryDay;
 
     public void validateParam () {
         if (currentPage == null) {
@@ -21,6 +26,12 @@ public class StatisticsRequest {
         }
         if (size == null) {
             size = 10;
+        }
+        if (findDate == null) {
+            findDate = DateUtils.getTimeStamp(LocalDateTime.now());
+        }
+        if (isEveryDay == null) {
+            isEveryDay = true;
         }
     }
 }

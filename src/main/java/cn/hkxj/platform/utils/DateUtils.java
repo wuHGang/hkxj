@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -81,4 +82,15 @@ public class DateUtils {
         return DateTimeFormatter.ofPattern(pattern).format(localDateTime);
     }
 
+
+    public static LocalDateTime timestampToLocalDateTime(Long timestamp) {
+
+        if (timestamp == null) {
+            return null;
+        }
+
+        Instant instant = Instant.ofEpochSecond(timestamp);
+
+        return LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
+    }
 }
