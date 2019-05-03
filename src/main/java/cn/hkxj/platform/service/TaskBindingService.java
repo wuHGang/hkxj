@@ -23,9 +23,17 @@ public class TaskBindingService {
 
     @Autowired
     SubscribeGradeUpdateMapper subscribeGradeUpdateMapper;
+    //TODO 配置多个公众号时的修改，取消注入改为通过set方法设置尽量
+//    @Resource
+    private WxMpService wxMpService;
 
-    @Resource
-    WxMpService wxMpService;
+    public WxMpService getWxMpService() {
+        return wxMpService;
+    }
+
+    public void setWxMpService(WxMpService wxMpService) {
+        this.wxMpService = wxMpService;
+    }
 
     /***
      *记录哪些用户在后台回复过查询成绩

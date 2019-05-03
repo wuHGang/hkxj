@@ -56,7 +56,7 @@ public class UserBindingController {
 		String scene = (String) session.getAttribute(openid + "_subscribe_scene");
 		if(!Objects.isNull(scene)){
 			if(Objects.equals("1005", scene)){
-				OneOffSubcriptionUtil.sendTemplateMessageToUser(openid, "1005");
+//				OneOffSubcriptionUtil.sendTemplateMessageToUser(openid, "1005");
 			}
 		}
 

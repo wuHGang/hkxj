@@ -1,5 +1,6 @@
 package cn.hkxj.platform.utils;
 
+import cn.hkxj.platform.config.wechat.WechatMpConfiguration;
 import cn.hkxj.platform.mapper.OpenidMapper;
 import cn.hkxj.platform.pojo.timetable.CourseTimeTable;
 import cn.hkxj.platform.pojo.wechat.OneOffSubscription;
@@ -29,8 +30,6 @@ import java.util.concurrent.TimeUnit;
 public class OneOffSubcriptionUtil {
 
     @Resource
-    private WxMpService wxMpService;
-    @Resource
     private CourseService courseService;
     @Resource
     private OpenidMapper openidMapper;
@@ -42,7 +41,6 @@ public class OneOffSubcriptionUtil {
     @PostConstruct
     public void init() {
         util = this;
-        util.wxMpService = this.wxMpService;
         util.courseService = this.courseService;
         util.openidMapper = this.openidMapper;
         REDIRECT_URL = domain + "/wechat/sub/test";
@@ -59,16 +57,17 @@ public class OneOffSubcriptionUtil {
      * @param scene 要生成的一次性订阅连接中的场景值
      * @return  返回一个带有一次性订阅链接的超链接
      */
-    public static String getHyperlinks(String content, String scene){
+    public static String getHyperlinks(String content, String scene, WxMpService wxMpService){
         return new StringBuilder().append("<a href='")
-                .append(getOneOffSubscriptionUrl(scene))
+                .append(getOneOffSubscriptionUrl(scene, wxMpService))
                 .append("'>").append(content).append("</a>").toString();
     }
 
-    private static String getOneOffSubscriptionUrl(String scene) {
+    private static String getOneOffSubscriptionUrl(String scene, WxMpService wxMpService) {
         StringBuilder builder = new StringBuilder();
+        //TODO 配置多个公众号时的修改
         builder.append(BASE_URL).append("&")
-                .append("appid=").append(util.wxMpService.getWxMpConfigStorage().getAppId()).append("&")
+                .append("appid=").append(wxMpService.getWxMpConfigStorage().getAppId()).append("&")
                 .append("scene=").append(scene).append("&")
                 .append("template_id=").append(TEMPLATE_ID).append("&");
         try {
@@ -80,15 +79,15 @@ public class OneOffSubcriptionUtil {
         return builder.toString();
     }
 
-    public static void sendTemplateMessageToUser(String openid, String scene) {
+    public static void sendTemplateMessageToUser(String openid, String scene, WxMpService wxMpService) {
         try {
-            replyOneOffSubscribeRequest(generateDataJson(openid, scene));
+            replyOneOffSubscribeRequest(generateDataJson(openid, scene, wxMpService), wxMpService);
         } catch (WxErrorException | IOException e) {
             e.printStackTrace();
         }
     }
 
-    private static void replyOneOffSubscribeRequest(String sendContent) throws WxErrorException, IOException {
+    private static void replyOneOffSubscribeRequest(String sendContent, WxMpService wxMpService) throws WxErrorException, IOException {
         OkHttpClient okHttpClient = new OkHttpClient().newBuilder()
                 .connectTimeout(10, TimeUnit.SECONDS)
                 .writeTimeout(10, TimeUnit.SECONDS)
@@ -102,7 +101,7 @@ public class OneOffSubcriptionUtil {
         RequestBody requestBody = FormBody.create(MediaType.parse("appliaction/json;charset=UTF-8"), JsonUtils.wxToJson(oneOffSubscription));
 
         Request request = new Request.Builder()
-                .url(getReplyUrl())
+                .url(getReplyUrl(wxMpService))
                 .post(requestBody)
                 .build();
         Call call = okHttpClient.newCall(request);
@@ -118,7 +117,7 @@ public class OneOffSubcriptionUtil {
             }
         });
         //建立链接
-        URL url = new URL(getReplyUrl());
+        URL url = new URL(getReplyUrl(wxMpService));
         HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
 
         //设置参数
@@ -151,11 +150,11 @@ public class OneOffSubcriptionUtil {
         }
     }
 
-    private static String generateDataJson(String openid, String scene){
+    private static String generateDataJson(String openid, String scene, WxMpService wxMpService){
         return new StringBuilder().append("{")
                 .append("\"touser\":\"").append(openid).append("\",")
                 .append("\"template_id\":\"").append(TEMPLATE_ID).append("\",")
-                .append("\"url\":\"").append(getOneOffSubscriptionUrl(scene)).append("\",")
+                .append("\"url\":\"").append(getOneOffSubscriptionUrl(scene, wxMpService)).append("\",")
                 .append("\"scene\":\"").append(scene).append("\",")
                 .append("\"title\":\"").append("今日课表").append("\",")
                 .append("\"data\":{")
@@ -174,8 +173,9 @@ public class OneOffSubcriptionUtil {
         return util.courseService.toText(courseTimeTables);
     }
 
-    private static String getReplyUrl() throws WxErrorException {
-        return REPLY_URL + util.wxMpService.getAccessToken();
+    private static String getReplyUrl(WxMpService wxMpService) throws WxErrorException {
+        //TODO 配置多个公众号的修改,修改了获取WxMpService的方式，不再通过自动注入，而且通过appid手动获取
+        return REPLY_URL + wxMpService.getAccessToken();
     }
 
     @Value("${domain}")

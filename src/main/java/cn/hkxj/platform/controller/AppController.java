@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,9 +27,9 @@ import java.util.Map;
 @Slf4j
 public class AppController {
     private final static Gson GSON = new Gson();
-    @Autowired
+    @Resource
     private SubjectService subjectService;
-    @Autowired
+    @Resource
     private StudentBindService studentBindService;
 
 

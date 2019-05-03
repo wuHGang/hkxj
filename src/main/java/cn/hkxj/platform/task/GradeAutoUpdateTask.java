@@ -49,8 +49,8 @@ public class GradeAutoUpdateTask {
     private OpenidMapper openidMapper;
     @Resource
     private StudentMapper studentMapper;
-    @Resource
-    private WxMpService wxMpService;
+//    @Resource
+//    private WxMpService wxMpService;
     @Resource
     private TaskMapper taskMapper;
     @Value("scheduled.gradeUpdate")
@@ -79,11 +79,11 @@ public class GradeAutoUpdateTask {
                 if (!CollectionUtils.isEmpty(studentGrades)) {
                     String result = gradeSearchService.gradeListToText(studentGrades);
                     WxMpKefuMessage kefuMessage = getKefuMessage(student, result);
-                    wxMpService.getKefuService().sendKefuMessage(kefuMessage);
+//                    wxMpService.getKefuService().sendKefuMessage(kefuMessage);
                 }
-
-            } catch (WxErrorException e) {
-                log.warn("account {} send grade update message error {}", e.getMessage());
+                //FIXME 配置多个公众号时的修改
+//            } catch (WxErrorException e) {
+//                log.warn("account {} send grade update message error {}", e.getMessage());
             } catch (Exception e) {
                 log.error("grade update task error", e);
             }

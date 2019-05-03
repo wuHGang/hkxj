@@ -1,5 +1,6 @@
 package cn.hkxj.platform.controller.wechat;
 
+import cn.hkxj.platform.config.wechat.WechatMpConfiguration;
 import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.service.SubscribeService;
 import cn.hkxj.platform.service.wechat.StudentBindService;
@@ -8,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -23,7 +25,7 @@ import java.util.Objects;
  * @date 2018/10/7
  */
 @Controller
-@RequestMapping("/wechat/sub")
+@RequestMapping("/wechat/sub/{appid}")
 @Slf4j
 public class WxSubscriptionController {
 	@Resource(name = "studentBindService")
@@ -45,6 +47,7 @@ public class WxSubscriptionController {
 	 */
 	@GetMapping("/test")
 	public String testSubscription(
+			@PathVariable String appid,
 			@RequestParam(name = "openid", required = false) String openid,
 			@RequestParam(name = "template_id", required = false) String templateId,
 			@RequestParam(name = "action", required = false) String action,
@@ -69,7 +72,7 @@ public class WxSubscriptionController {
 				subscribeService.insertOneSubOpenid(openid, scene);
 			}
 			if(Objects.equals("1005", scene)){
-				OneOffSubcriptionUtil.sendTemplateMessageToUser(openid, scene);
+				OneOffSubcriptionUtil.sendTemplateMessageToUser(openid, scene, WechatMpConfiguration.getMpServices().get(appid));
 			}
 			return "new";
 
