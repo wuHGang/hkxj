@@ -1,6 +1,4 @@
-/*
- *Baijiahulian.comInc.Copyright(c)2014-2019AllRightsReserved.
- */
+
 package cn.hkxj.platform.controller;
 
 import javax.annotation.Resource;
