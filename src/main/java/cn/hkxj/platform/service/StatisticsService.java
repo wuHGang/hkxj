@@ -47,9 +47,9 @@ public class StatisticsService {
      * @param isEveryDay
      * @return
      */
-    public StatisticsV0 listByEveryDayOrMonth(Integer currentPage,Integer size,Long time,boolean isEveryDay) {
+    public StatisticsV0 listByEveryDayOrMonth(Integer currentPage,Integer size,String time,boolean isEveryDay) {
         String key = StatisticsTypeEnum.INTERFACE_STATISTICS.getDesc();
-        LocalDateTime localDateTime = DateUtils.timestampToLocalDateTime(time);
+        LocalDateTime localDateTime = DateUtils.string2LocalDateTime(time,DateUtils.YYYY_MM_DD_PATTERN);
         final Long countForEveryDayOrMonth = cacheService.count(StatisticsTypeEnum.INTERFACE_STATISTICS.getDesc(),localDateTime,isEveryDay);
         final PagerVO pager = PagerVO.getPager(countForEveryDayOrMonth.intValue(), currentPage, size);
         final List<StatisticsDetailVo> statisticsDetailVos = cacheService.listStatisticsVoByPage(key, PagerVO.getStart(currentPage, size), PagerVO.getEnd(currentPage, size),isEveryDay,localDateTime);

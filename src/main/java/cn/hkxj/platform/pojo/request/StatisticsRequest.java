@@ -17,7 +17,7 @@ import lombok.Data;
 public class StatisticsRequest {
     private Integer currentPage;
     private Integer size;
-    private Long findDate;
+    private String date;
     private Boolean isEveryDay;
 
     public void validateParam () {
@@ -27,8 +27,8 @@ public class StatisticsRequest {
         if (size == null) {
             size = 10;
         }
-        if (findDate == null) {
-            findDate = DateUtils.getTimeStamp(LocalDateTime.now());
+        if (date == null) {
+            date = DateUtils.getTimeOfPattern(LocalDateTime.now(), DateUtils.YYYY_MM_DD_PATTERN);
         }
         if (isEveryDay == null) {
             isEveryDay = true;
