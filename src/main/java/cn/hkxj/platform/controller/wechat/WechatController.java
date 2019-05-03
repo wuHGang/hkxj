@@ -56,15 +56,18 @@ public class WechatController {
 		this.logger.info("\n接收到来自微信服务器的认证消息：[{}, {}, {}, {}]", signature,
 				timestamp, nonce, echostr);
 
+        String result = "非法请求";
 		if (StringUtils.isAnyBlank(signature, timestamp, nonce, echostr)) {
-			return ("请求参数非法，请核实!");
+            log.info("wechat portal response param error");
+            return result;
 		}
 
 		if (this.wxService.checkSignature(timestamp, nonce, signature)) {
+            log.info("response echo: {}", echostr);
 			return echostr;
 		}
-
-		return "非法请求";
+        log.info("wechat portal response fail: {}", result);
+        return result;
 	}
 
 	@PostMapping(produces = "application/xml; charset=UTF-8")
