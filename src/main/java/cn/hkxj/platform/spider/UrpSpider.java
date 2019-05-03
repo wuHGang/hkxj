@@ -1,23 +1,24 @@
 package cn.hkxj.platform.spider;
 
 import cn.hkxj.platform.spider.model.CurrentGrade;
+import cn.hkxj.platform.spider.model.EverGrade;
 import cn.hkxj.platform.spider.model.Information;
 import cn.hkxj.platform.spider.model.UrpResult;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
-import com.google.gson.Gson;
-import com.google.gson.internal.LinkedTreeMap;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
+
+/**
+ * 教务网爬虫  由flask提供服务
+ * @author JR Chan
+ */
+
 
 @Slf4j
 public class UrpSpider {
@@ -27,12 +28,15 @@ public class UrpSpider {
     private static final String GRADE_URL = "http://spider.hackerda.com/apiV2/grade";
 	private static final String CURRENT_GRADE_URL = GRADE_URL+"/current";
 	private static final String EVER_GRADE_URL = GRADE_URL+"/ever";
-	private static final Gson gson=new Gson();
+    private static final String TEMP_EVER_GRADE_URL = GRADE_URL+"/ever/temp";
     private static final TypeReference<UrpResult<Information>> informationTypeReference
             = new TypeReference<UrpResult<Information>>() {
     };
     private static final TypeReference<UrpResult<CurrentGrade>> currentTypeReference
             = new TypeReference<UrpResult<CurrentGrade>>() {
+    };
+    private static final TypeReference<UrpResult<EverGrade>> everTypeReference
+            = new TypeReference<UrpResult<EverGrade>>() {
     };
 	private static OkHttpClient client = new OkHttpClient.Builder()
             .readTimeout(4, TimeUnit.SECONDS)
@@ -63,33 +67,10 @@ public class UrpSpider {
         return JSON.parseObject(result, currentTypeReference);
     }
 
-    public UrpResult<CurrentGrade> getEverGrade() {
+    public UrpResult<EverGrade> getEverGrade() {
+		String result = getResult(TEMP_EVER_GRADE_URL);
 
-        List valueList=new ArrayList();
-		String result = getResult(EVER_GRADE_URL);
-        Map resultMap= gson.fromJson(result,Map.class);
-        String message=(String) resultMap.get("message");
-        Double status=(Double) resultMap.get("status");
-		for (Object l:(List)((Map) resultMap.get("data")).get("evertGrade")){
-		    for (Object values:((LinkedTreeMap) l).values()){
-		        for (Object grade:(List)values){
-                    if(grade.getClass().getName()==ArrayList.class.getName()){
-                        for (Object more:(List)grade){
-                            valueList.add(more);
-                        }
-                    }
-                    else valueList.add(grade);
-                }
-            }
-        }
-        Map everToCurrentMap=new HashMap();
-		Map data=new HashMap();
-        data.put("currentGrade",valueList);
-        everToCurrentMap.put("data",data);
-        everToCurrentMap.put("message",message);
-        everToCurrentMap.put("status",status.intValue());
-        String jsonStr = gson.toJson(everToCurrentMap);
-        return JSON.parseObject(jsonStr, currentTypeReference);
+        return JSON.parseObject(result, everTypeReference);
     }
 
     private String getResult(String url) {

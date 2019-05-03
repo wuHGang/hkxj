@@ -2,15 +2,21 @@ package cn.hkxj.platform.service;
 
 import cn.hkxj.platform.mapper.*;
 import cn.hkxj.platform.pojo.*;
+import cn.hkxj.platform.pojo.constant.Academy;
+import cn.hkxj.platform.pojo.constant.Building;
+import cn.hkxj.platform.pojo.constant.CourseType;
+import cn.hkxj.platform.pojo.constant.Direction;
+import cn.hkxj.platform.pojo.example.ClassesExample;
+import cn.hkxj.platform.pojo.example.CourseExample;
+import cn.hkxj.platform.pojo.example.RoomExample;
+import cn.hkxj.platform.pojo.timetable.CourseTimeTable;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.ibatis.annotations.Param;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

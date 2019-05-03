@@ -1,14 +1,11 @@
 package cn.hkxj.platform.service.course.impl;
 
 import cn.hkxj.platform.PlatformApplication;
-import cn.hkxj.platform.pojo.CourseGroupMsg;
-import cn.hkxj.platform.pojo.CourseTimeTable;
-import cn.hkxj.platform.pojo.OneOffSubscription;
+import cn.hkxj.platform.pojo.timetable.CourseTimeTable;
+import cn.hkxj.platform.pojo.wechat.OneOffSubscription;
 import cn.hkxj.platform.service.CourseService;
 import cn.hkxj.platform.service.CourseSubscribeService;
-import cn.hkxj.platform.service.impl.CourseServiceImpl;
 import cn.hkxj.platform.utils.JsonUtils;
-import org.checkerframework.checker.units.qual.A;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +15,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.util.List;
-import java.util.Objects;
 
 /**
  * @author Yuki

@@ -2,12 +2,11 @@ package cn.hkxj.platform.service;
 
 import cn.hkxj.platform.mapper.OpenidMapper;
 import cn.hkxj.platform.mapper.SubscribeOpenidMapper;
-import cn.hkxj.platform.pojo.SubscribeOpenid;
-import cn.hkxj.platform.pojo.SubscribeOpenidExample;
+import cn.hkxj.platform.pojo.wechat.SubscribeOpenid;
+import cn.hkxj.platform.pojo.example.SubscribeOpenidExample;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.Objects;

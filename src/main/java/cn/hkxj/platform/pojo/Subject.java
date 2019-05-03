@@ -1,5 +1,6 @@
 package cn.hkxj.platform.pojo;
 
+import cn.hkxj.platform.pojo.constant.Academy;
 import com.google.common.base.MoreObjects;
 
 public class Subject {

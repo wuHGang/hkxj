@@ -6,7 +6,7 @@
       select openid from subscribe_grade_update where openid = #{value}
     </select>
 
-    <insert id="insert" parameterType="cn.hkxj.platform.pojo.SubscribeGradeUpdate">
+    <insert id="insert" parameterType="cn.hkxj.platform.pojo.wechat.SubscribeGradeUpdate">
         insert into subscribe_grade_update
         <trim prefix="(" suffix=")" suffixOverrides="," >
             <if test="id != null" >
@@ -32,7 +32,7 @@
         </trim>
     </insert>
 
-    <select id="getSubscribedList"  resultType="cn.hkxj.platform.pojo.SubscribeGradeUpdate">
+    <select id="getSubscribedList"  resultType="cn.hkxj.platform.pojo.wechat.SubscribeGradeUpdate">
       select * from subscribe_grade_update
     </select>
 

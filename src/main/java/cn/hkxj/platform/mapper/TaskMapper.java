@@ -1,6 +1,6 @@
 package cn.hkxj.platform.mapper;
 
-import cn.hkxj.platform.pojo.Task;
+import cn.hkxj.platform.pojo.wechat.Task;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;

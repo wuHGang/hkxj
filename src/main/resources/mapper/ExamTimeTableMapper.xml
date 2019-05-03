@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.hkxj.platform.mapper.ExamTimeTableMapper">
-  <resultMap id="BaseResultMap" type="cn.hkxj.platform.pojo.ExamTimeTable">
+  <resultMap id="BaseResultMap" type="cn.hkxj.platform.pojo.timetable.ExamTimeTable">
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="room_id" jdbcType="INTEGER" property="room" typeHandler="cn.hkxj.platform.handler.RoomWarpperHandler" />
     <result column="course_id" jdbcType="INTEGER" property="course" typeHandler="cn.hkxj.platform.handler.CourseHandler" />
@@ -82,7 +82,7 @@
   <sql id="Base_Column_List">
     id, room_id, course_id, year_, term, school_week, week, start, end
   </sql>
-  <select id="selectByExample" parameterType="cn.hkxj.platform.pojo.ExamTimeTableExample" resultMap="BaseResultMap">
+  <select id="selectByExample" parameterType="cn.hkxj.platform.pojo.example.ExamTimeTableExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
@@ -107,7 +107,7 @@
     delete from exam_timetable
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="cn.hkxj.platform.pojo.ExamTimeTable">
+  <insert id="insert" parameterType="cn.hkxj.platform.pojo.timetable.ExamTimeTable">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
       SELECT LAST_INSERT_ID()
     </selectKey>
@@ -122,7 +122,7 @@
       #{week,jdbcType=INTEGER}, #{start,jdbcType=TIMESTAMP}, #{end,jdbcType=TIMESTAMP}
       )
   </insert>
-  <insert id="insertSelective" parameterType="cn.hkxj.platform.pojo.ExamTimeTable">
+  <insert id="insertSelective" parameterType="cn.hkxj.platform.pojo.timetable.ExamTimeTable">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
       SELECT LAST_INSERT_ID()
     </selectKey>
@@ -183,7 +183,7 @@
     <insert id="insertClassAndExamRelation">
         insert ignore into class_exam_timetable (class_id, exam_timetable_id) VALUES (#{class_id}, #{exam_timetable_id})
     </insert>
-    <update id="updateByPrimaryKeySelective" parameterType="cn.hkxj.platform.pojo.ExamTimeTable">
+    <update id="updateByPrimaryKeySelective" parameterType="cn.hkxj.platform.pojo.timetable.ExamTimeTable">
     update exam_timetable
     <set>
       <if test="room != null">
@@ -213,7 +213,7 @@
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="cn.hkxj.platform.pojo.ExamTimeTable">
+  <update id="updateByPrimaryKey" parameterType="cn.hkxj.platform.pojo.timetable.ExamTimeTable">
     update exam_timetable
     set room_id = #{room,jdbcType=INTEGER,typeHandler=cn.hkxj.platform.handler.RoomWarpperHandler},
       course_id = #{course,jdbcType=INTEGER,typeHandler=cn.hkxj.platform.handler.CourseHandler},

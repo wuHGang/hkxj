@@ -99,7 +99,7 @@
         <include refid="Base_Column_List"/>
         from course where uid=#{uid,jdbcType=VARCHAR}
   </select>
-    <select id="selectByExample" parameterType="cn.hkxj.platform.pojo.CourseExample" resultMap="BaseResultMap">
+    <select id="selectByExample" parameterType="cn.hkxj.platform.pojo.example.CourseExample" resultMap="BaseResultMap">
         select
         <if test="distinct">
             distinct

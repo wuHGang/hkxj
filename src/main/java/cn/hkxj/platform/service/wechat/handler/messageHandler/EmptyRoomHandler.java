@@ -2,6 +2,10 @@ package cn.hkxj.platform.service.wechat.handler.messageHandler;
 
 import cn.hkxj.platform.builder.TextBuilder;
 import cn.hkxj.platform.pojo.*;
+import cn.hkxj.platform.pojo.constant.Building;
+import cn.hkxj.platform.pojo.constant.LessonOrder;
+import cn.hkxj.platform.pojo.timetable.CourseTimeTable;
+import cn.hkxj.platform.pojo.timetable.RoomTimeTable;
 import cn.hkxj.platform.service.CourseService;
 import cn.hkxj.platform.service.EmptyRoomService;
 import cn.hkxj.platform.utils.SchoolTimeUtil;

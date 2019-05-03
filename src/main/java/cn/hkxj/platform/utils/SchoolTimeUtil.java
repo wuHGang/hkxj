@@ -1,7 +1,6 @@
 package cn.hkxj.platform.utils;
 
-import cn.hkxj.platform.pojo.LessonOrder;
-import org.apache.commons.lang3.StringUtils;
+import cn.hkxj.platform.pojo.constant.LessonOrder;
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
 import org.joda.time.LocalTime;

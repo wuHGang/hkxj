@@ -30,14 +30,13 @@ public class WechatOpenIdInterceptor implements WxMessageInterceptor {
 
 	@Override
 	public boolean intercept(WxMpXmlMessage wxMessage, Map<String, Object> context, WxMpService wxMpService, WxSessionManager sessionManager) {
-//		return openIdService.openidIsExist(wxMessage.getFromUser());
-		return openIdService.openidIsExist(wxMessage.getFromUser())==true?openIdService.openidIsBind(wxMessage.getFromUser()):false;
 
-//		return openIdService.openidIsBind(wxMessage.getFromUser());
+		return openIdService.openidIsExist(wxMessage.getFromUser()) && openIdService.openidIsBind(wxMessage.getFromUser());
+
 	}
 
 	@Override
-	public WxMpXmlOutMessage handle(WxMpXmlMessage wxMessage, Map<String, Object> context, WxMpService wxMpService, WxSessionManager sessionManager) throws WxErrorException {
+	public WxMpXmlOutMessage handle(WxMpXmlMessage wxMessage, Map<String, Object> context, WxMpService wxMpService, WxSessionManager sessionManager) {
 		String content = String.format(PATTERN, domain, wxMessage.getFromUser());
 		log.info("content {} check openid {} is not bind", wxMessage.getContent(), wxMessage.getFromUser());
 		return new TextBuilder().build(content, wxMessage, wxMpService);

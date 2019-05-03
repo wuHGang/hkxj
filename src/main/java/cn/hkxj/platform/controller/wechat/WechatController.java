@@ -9,6 +9,7 @@ import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -55,15 +56,18 @@ public class WechatController {
 		this.logger.info("\n接收到来自微信服务器的认证消息：[{}, {}, {}, {}]", signature,
 				timestamp, nonce, echostr);
 
+        String result = "非法请求";
 		if (StringUtils.isAnyBlank(signature, timestamp, nonce, echostr)) {
-			return ("请求参数非法，请核实!");
+            log.info("wechat portal response param error");
+            return result;
 		}
 
 		if (this.wxService.checkSignature(timestamp, nonce, signature)) {
+            log.info("response echo: {}", echostr);
 			return echostr;
 		}
-
-		return "非法请求";
+        log.info("wechat portal response fail: {}", result);
+        return result;
 	}
 
 	@PostMapping(produces = "application/xml; charset=UTF-8")
@@ -89,6 +93,7 @@ public class WechatController {
 			// 明文传输的消息
 
 			WxMpXmlMessage inMessage = WxMpXmlMessage.fromXml(requestBody);
+            MDC.put("openid", inMessage.getFromUser());
 			WxMpXmlOutMessage outMessage = this.route(inMessage);
 			if (outMessage == null) {
 				return "success";

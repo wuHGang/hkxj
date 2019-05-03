@@ -5,6 +5,9 @@ import org.springframework.stereotype.Component;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -19,6 +22,10 @@ import java.util.Locale;
 public class DateUtils {
 
     private final static String term_start = "2019-03-04";
+
+    public final static String YYYY_MM_DD_PATTERN = "yyyyMMdd";
+
+    public final static String YYYY_MM_PATTERN = "yyyyMM";
 
     public static Integer getCurrentYear(){
         Calendar calendar = Calendar.getInstance();
@@ -54,6 +61,24 @@ public class DateUtils {
             currentDay = 0;
         }
         return currentDay;
+    }
+
+    /**
+     * 获取当前时间戳
+     *
+     * @param localDateTime 时间
+     *
+     * @return 时间戳；或者null
+     */
+    public static Long getTimeStamp(LocalDateTime localDateTime) {
+        if (localDateTime == null) {
+            return null;
+        }
+        return localDateTime.atZone(ZoneId.systemDefault()).toEpochSecond();
+    }
+
+    public static String getTimeOfPattern(LocalDateTime localDateTime,String pattern) {
+        return DateTimeFormatter.ofPattern(pattern).format(localDateTime);
     }
 
 }

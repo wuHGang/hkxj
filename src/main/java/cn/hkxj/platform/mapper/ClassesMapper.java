@@ -1,13 +1,12 @@
 package cn.hkxj.platform.mapper;
 
-import cn.hkxj.platform.pojo.ClassTimeTable;
+import cn.hkxj.platform.pojo.timetable.ClassTimeTable;
 import cn.hkxj.platform.pojo.Classes;
-import cn.hkxj.platform.pojo.ClassesExample;
+import cn.hkxj.platform.pojo.example.ClassesExample;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**

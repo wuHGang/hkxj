@@ -1,7 +1,7 @@
 package cn.hkxj.platform.controller;
 
-import cn.hkxj.platform.pojo.CourseTimeTable;
-import cn.hkxj.platform.pojo.ErrorCode;
+import cn.hkxj.platform.pojo.timetable.CourseTimeTable;
+import cn.hkxj.platform.pojo.constant.ErrorCode;
 import cn.hkxj.platform.pojo.WebResponse;
 import cn.hkxj.platform.service.CourseService;
 import lombok.extern.slf4j.Slf4j;

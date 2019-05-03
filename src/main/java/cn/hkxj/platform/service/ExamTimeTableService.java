@@ -2,8 +2,8 @@ package cn.hkxj.platform.service;
 
 import cn.hkxj.platform.exceptions.PasswordUncorrectException;
 import cn.hkxj.platform.mapper.ExamTimeTableMapper;
-import cn.hkxj.platform.pojo.ExamTimeTable;
-import cn.hkxj.platform.pojo.ExamTimeTableExample;
+import cn.hkxj.platform.pojo.timetable.ExamTimeTable;
+import cn.hkxj.platform.pojo.example.ExamTimeTableExample;
 import cn.hkxj.platform.pojo.Student;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

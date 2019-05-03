@@ -2,6 +2,8 @@ package cn.hkxj.platform.service.spider;
 
 import cn.hkxj.platform.exceptions.PasswordUncorrectException;
 import cn.hkxj.platform.spider.UrpSpider;
+import cn.hkxj.platform.spider.model.CurrentGrade;
+import cn.hkxj.platform.spider.model.EverGrade;
 import cn.hkxj.platform.spider.model.Information;
 import cn.hkxj.platform.spider.model.UrpResult;
 import com.google.gson.Gson;
@@ -15,7 +17,7 @@ public class UrpSpiderTest {
 
 	@Before
 	public void init() {
-        spider = new UrpSpider(2018026461, "zzt20000303");
+        spider = new UrpSpider(2016024249, "1");
 	}
 
 	@Test
@@ -37,12 +39,13 @@ public class UrpSpiderTest {
 
 	@Test
     public void getCurrent() throws PasswordUncorrectException {
-//        Map grade = spider.getCurrentGrade();
-//        log.info(grade.toString());
+        UrpResult<CurrentGrade> grade = spider.getCurrentGrade();
+        log.info(grade.toString());
     }
 
 	@Test
     public void getEver() throws PasswordUncorrectException {
-		spider.getEverGrade();
-	}
+        UrpResult<EverGrade> everGrade = spider.getEverGrade();
+        System.out.println(everGrade);
+    }
 }

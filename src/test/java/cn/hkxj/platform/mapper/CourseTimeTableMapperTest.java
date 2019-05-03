@@ -1,7 +1,7 @@
 package cn.hkxj.platform.mapper;
 
-import cn.hkxj.platform.pojo.CourseTimeTable;
-import cn.hkxj.platform.pojo.CourseTimeTableExample;
+import cn.hkxj.platform.pojo.timetable.CourseTimeTable;
+import cn.hkxj.platform.pojo.example.CourseTimeTableExample;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;

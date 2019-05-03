@@ -61,7 +61,7 @@
   <sql id="Base_Column_List">
     id, name, academy, code, approve_time, property_first, property_second
   </sql>
-  <select id="selectByExample" parameterType="cn.hkxj.platform.pojo.SubjectExample" resultMap="BaseResultMap">
+  <select id="selectByExample" parameterType="cn.hkxj.platform.pojo.example.SubjectExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct

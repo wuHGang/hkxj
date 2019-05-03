@@ -1,7 +1,6 @@
 package cn.hkxj.platform.config.wechat;
 
 import cn.hkxj.platform.service.wechat.WxMessageRouter;
-import cn.hkxj.platform.service.wechat.handler.LogHandler;
 import me.chanjar.weixin.mp.api.WxMpConfigStorage;
 import me.chanjar.weixin.mp.api.WxMpInMemoryConfigStorage;
 import me.chanjar.weixin.mp.api.WxMpService;
@@ -23,8 +22,6 @@ import org.springframework.context.annotation.Configuration;
 @ConditionalOnClass(WxMpService.class)
 @EnableConfigurationProperties(WechatMpProperties.class)
 public class WechatMpConfiguration {
-	@Autowired
-	protected LogHandler logHandler;
 	@Autowired
 	private WechatMpProperties properties;
 

@@ -1,6 +1,6 @@
 package cn.hkxj.platform.mapper;
 
-import cn.hkxj.platform.pojo.ExamTimeTable;
+import cn.hkxj.platform.pojo.timetable.ExamTimeTable;
 import cn.hkxj.platform.utils.ApplicationUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Before;

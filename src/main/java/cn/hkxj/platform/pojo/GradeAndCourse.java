@@ -10,6 +10,7 @@ import com.google.common.base.Objects;
 public class GradeAndCourse {
     private Grade grade;
     private Course course;
+    private Term term;
 
     public Grade getGrade() {
         return grade;
@@ -27,14 +28,14 @@ public class GradeAndCourse {
         this.course = course;
     }
 
-
-    @Override
-    public String toString() {
-        return MoreObjects.toStringHelper(this)
-                .add("grade", grade)
-                .add("course", course)
-                .toString();
+    public Term getTerm() {
+        return term;
     }
+
+    public void setTerm(Term term) {
+        this.term = term;
+    }
+
 
     @Override
     public boolean equals(Object o) {
@@ -50,5 +51,14 @@ public class GradeAndCourse {
     @Override
     public int hashCode() {
         return Objects.hashCode(grade, course);
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("grade", grade)
+                .add("course", course)
+                .add("term", term)
+                .toString();
     }
 }

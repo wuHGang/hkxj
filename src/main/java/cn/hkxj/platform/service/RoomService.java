@@ -1,9 +1,9 @@
 package cn.hkxj.platform.service;
 
 import cn.hkxj.platform.mapper.RoomMapper;
-import cn.hkxj.platform.pojo.Building;
+import cn.hkxj.platform.pojo.constant.Building;
 import cn.hkxj.platform.pojo.Room;
-import cn.hkxj.platform.pojo.RoomExample;
+import cn.hkxj.platform.pojo.example.RoomExample;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 

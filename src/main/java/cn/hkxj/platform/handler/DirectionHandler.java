@@ -1,6 +1,6 @@
 package cn.hkxj.platform.handler;
 
-import cn.hkxj.platform.pojo.Direction;
+import cn.hkxj.platform.pojo.constant.Direction;
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
 

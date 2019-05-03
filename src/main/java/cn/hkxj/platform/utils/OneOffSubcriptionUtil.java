@@ -1,16 +1,15 @@
 package cn.hkxj.platform.utils;
 
 import cn.hkxj.platform.mapper.OpenidMapper;
-import cn.hkxj.platform.pojo.CourseTimeTable;
-import cn.hkxj.platform.pojo.OneOffSubscription;
-import cn.hkxj.platform.pojo.Openid;
-import cn.hkxj.platform.pojo.OpenidExample;
+import cn.hkxj.platform.pojo.timetable.CourseTimeTable;
+import cn.hkxj.platform.pojo.wechat.OneOffSubscription;
+import cn.hkxj.platform.pojo.wechat.Openid;
+import cn.hkxj.platform.pojo.example.OpenidExample;
 import cn.hkxj.platform.service.CourseService;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.exception.WxErrorException;
 import me.chanjar.weixin.mp.api.WxMpService;
 import okhttp3.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 

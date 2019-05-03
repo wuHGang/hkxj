@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="cn.hkxj.platform.mapper.ClassesMapper" >
-    <resultMap id="ClassTimetableMap" type="cn.hkxj.platform.pojo.ClassTimeTable">
+    <resultMap id="ClassTimetableMap" type="cn.hkxj.platform.pojo.timetable.ClassTimeTable">
         <result column="class_id" property="classId" javaType="INTEGER"/>
         <result column="time_table_id" property="timetableId" javaType="INTEGER"/>
     </resultMap>
@@ -74,7 +74,7 @@
     <sql id="Base_Column_List" >
         id, name, academy, subject, year, num
     </sql>
-    <select id="selectByExample" resultMap="BaseResultMap" parameterType="cn.hkxj.platform.pojo.ClassesExample" >
+    <select id="selectByExample" resultMap="BaseResultMap" parameterType="cn.hkxj.platform.pojo.example.ClassesExample" >
         select
         <if test="distinct" >
             distinct
@@ -98,7 +98,7 @@
         delete from classes
         where id = #{id,jdbcType=INTEGER}
     </delete>
-    <delete id="deleteByExample" parameterType="cn.hkxj.platform.pojo.ClassesExample" >
+    <delete id="deleteByExample" parameterType="cn.hkxj.platform.pojo.example.ClassesExample" >
         delete from classes
         <if test="_parameter != null" >
             <include refid="Example_Where_Clause" />
@@ -153,7 +153,7 @@
             </if>
         </trim>
     </insert>
-    <select id="countByExample" parameterType="cn.hkxj.platform.pojo.ClassesExample" resultType="java.lang.Integer" >
+    <select id="countByExample" parameterType="cn.hkxj.platform.pojo.example.ClassesExample" resultType="java.lang.Integer" >
         select count(*) from classes
         <if test="_parameter != null" >
             <include refid="Example_Where_Clause" />

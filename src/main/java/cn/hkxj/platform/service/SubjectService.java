@@ -2,7 +2,7 @@ package cn.hkxj.platform.service;
 
 import cn.hkxj.platform.mapper.SubjectMapper;
 import cn.hkxj.platform.pojo.Subject;
-import cn.hkxj.platform.pojo.SubjectExample;
+import cn.hkxj.platform.pojo.example.SubjectExample;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 

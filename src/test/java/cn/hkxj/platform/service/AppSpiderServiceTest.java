@@ -2,7 +2,7 @@ package cn.hkxj.platform.service;
 
 import cn.hkxj.platform.PlatformApplication;
 import cn.hkxj.platform.exceptions.PasswordUncorrectException;
-import cn.hkxj.platform.pojo.ExamTimeTable;
+import cn.hkxj.platform.pojo.timetable.ExamTimeTable;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -12,8 +12,6 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import javax.annotation.Resource;
 
 import java.util.ArrayList;
-
-import static org.junit.Assert.*;
 
 /**
  * @author junrong.chen

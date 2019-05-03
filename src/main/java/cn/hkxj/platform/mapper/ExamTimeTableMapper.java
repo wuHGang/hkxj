@@ -1,13 +1,11 @@
 package cn.hkxj.platform.mapper;
 
-import cn.hkxj.platform.pojo.ExamTimeTable;
-import cn.hkxj.platform.pojo.ExamTimeTableExample;
+import cn.hkxj.platform.pojo.timetable.ExamTimeTable;
+import cn.hkxj.platform.pojo.example.ExamTimeTableExample;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Mapper

@@ -1,17 +1,13 @@
 package cn.hkxj.platform.service;
 
-import cn.hkxj.platform.mapper.CourseMapper;
 import cn.hkxj.platform.mapper.CourseTimeTableMapper;
-import cn.hkxj.platform.mapper.RoomMapper;
-import cn.hkxj.platform.pojo.*;
-import cn.hkxj.platform.spider.AppSpider;
+import cn.hkxj.platform.pojo.example.CourseTimeTableExample;
+import cn.hkxj.platform.pojo.timetable.CourseTimeTable;
 import cn.hkxj.platform.utils.SchoolTimeUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 

@@ -1,10 +1,7 @@
 package cn.hkxj.platform.service;
 
-import cn.hkxj.platform.pojo.CETStudent;
-import cn.hkxj.platform.pojo.CourseTimeTable;
 import cn.hkxj.platform.pojo.Student;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;

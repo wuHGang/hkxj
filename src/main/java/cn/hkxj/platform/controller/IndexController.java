@@ -19,6 +19,7 @@ public class IndexController {
 
 	@GetMapping("/")
 	public String index(){
+        log.info("boom");
 		return "boom";
 	}
 }

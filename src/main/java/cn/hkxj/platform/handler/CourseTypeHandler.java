@@ -1,8 +1,9 @@
 package cn.hkxj.platform.handler;
 
-import cn.hkxj.platform.pojo.CourseType;
+import cn.hkxj.platform.pojo.constant.CourseType;
 import org.apache.ibatis.type.EnumTypeHandler;
 import org.apache.ibatis.type.JdbcType;
+import org.apache.ibatis.type.TypeHandler;
 
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
