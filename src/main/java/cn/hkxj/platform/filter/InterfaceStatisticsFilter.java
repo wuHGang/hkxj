@@ -27,14 +27,11 @@ import lombok.extern.slf4j.Slf4j;
  * @desc 接口统计过滤器
  * @date: 2019年05月02日
  */
-@WebFilter
-@Component
 @Slf4j
 public class InterfaceStatisticsFilter implements Filter {
 
-
     @Resource
-   private CacheService cacheService;
+    private CacheService cacheService;
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
