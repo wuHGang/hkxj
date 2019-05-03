@@ -64,9 +64,9 @@ public class AppSpider {
 	private final static String SCHEDULE = URL_ROOT + "//university-facade/Schedule/ScheduleList";
 	private final static String EXAM = URL_ROOT + "//university-facade/MyUniversity/Exam";
 	private final static OkHttpClient CLIENT = new OkHttpClient.Builder()
-            .readTimeout(10, TimeUnit.SECONDS)
-            .writeTimeout(4, TimeUnit.SECONDS)
-            .connectTimeout(10, TimeUnit.SECONDS)
+            .readTimeout(3, TimeUnit.SECONDS)
+            .writeTimeout(3, TimeUnit.SECONDS)
+            .connectTimeout(3, TimeUnit.SECONDS)
 			.build();
 
 	private final static Headers HEADERS = new Headers.Builder()

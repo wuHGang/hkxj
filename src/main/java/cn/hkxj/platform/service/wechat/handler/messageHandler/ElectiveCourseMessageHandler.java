@@ -1,6 +1,5 @@
 package cn.hkxj.platform.service.wechat.handler.messageHandler;
 
-import cn.hkxj.platform.builder.TextBuilder;
 import cn.hkxj.platform.pojo.GradeAndCourse;
 import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.pojo.constant.Academy;
@@ -27,16 +26,10 @@ import java.util.stream.Collectors;
 @Component
 public class ElectiveCourseMessageHandler implements WxMpMessageHandler {
     @Resource
-    private TextBuilder textBuilder;
-
-    @Resource
     private GradeSearchService gradeSearchService;
 
     @Resource
     private OpenIdService openIdService;
-
-    @Resource
-    private CustomerMessageService customerMessageService;
 
 
     public WxMpXmlOutMessage handle(WxMpXmlMessage wxMpXmlMessage,
@@ -46,9 +39,7 @@ public class ElectiveCourseMessageHandler implements WxMpMessageHandler {
         ExecutorService singleThreadPool = Executors.newSingleThreadExecutor();
         Student student = openIdService.getStudentByOpenId(wxMpXmlMessage.getFromUser());
 
-        Future<String> future = singleThreadPool.submit(() -> {
-            return getResult(student);
-        });
+        Future<String> future = singleThreadPool.submit(() -> getResult(student));
 
         CustomerMessageService messageService = new CustomerMessageService(wxMpXmlMessage, wxMpService);
         return messageService.sendMessage(future, student);
