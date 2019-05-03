@@ -1,7 +1,10 @@
 
 package cn.hkxj.platform.filter;
 
-import java.io.IOException;
+import cn.hkxj.platform.pojo.constant.StatisticsTypeEnum;
+import cn.hkxj.platform.service.CacheService;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import javax.servlet.Filter;
@@ -12,13 +15,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
-
-
-import org.springframework.stereotype.Component;
-
-import cn.hkxj.platform.pojo.constant.StatisticsTypeEnum;
-import cn.hkxj.platform.service.CacheService;
-import lombok.extern.slf4j.Slf4j;
+import java.io.IOException;
 
 /**
  * @author zhouqinglai
@@ -32,9 +29,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class InterfaceStatisticsFilter implements Filter {
 
-
     @Resource
-   private CacheService cacheService;
+    private CacheService cacheService;
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {

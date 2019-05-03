@@ -25,7 +25,6 @@ public class WebAppConfigurer implements WebMvcConfigurer {
 	public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new TraceIDInterceptor()).addPathPatterns("/**");
         registry.addInterceptor(loginInterceptor()).addPathPatterns("/course/timetable");
-//        registry.addInterceptor(new WechatMDCInterceptor()).addPathPatterns("/wechat/*");
 
 	}
 
