@@ -1,16 +1,15 @@
 
 package cn.hkxj.platform.controller;
 
-import javax.annotation.Resource;
-
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import cn.hkxj.platform.pojo.WebResponse;
 import cn.hkxj.platform.pojo.request.StatisticsRequest;
 import cn.hkxj.platform.pojo.vo.StatisticsV0;
 import cn.hkxj.platform.service.StatisticsService;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.annotation.Resource;
 
 /**
  * @author zhouqinglai
@@ -31,7 +30,7 @@ public class StatisticsController {
      * @param request
      * @return
      */
-    @PostMapping("/interface")
+    @GetMapping("/interface")
     public WebResponse<StatisticsV0> listStatisticsByPage(StatisticsRequest request) {
         request.validateParam();
         return WebResponse.success(statisticsService.listInterfaceStatisticsByPage(request.getCurrentPage(),request.getSize()));
