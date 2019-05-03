@@ -24,8 +24,6 @@ import java.io.IOException;
  * @desc 接口统计过滤器
  * @date: 2019年05月02日
  */
-@WebFilter
-@Component
 @Slf4j
 public class InterfaceStatisticsFilter implements Filter {
 
