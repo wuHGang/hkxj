@@ -1,9 +1,7 @@
 package cn.hkxj.platform.controller.wechat;
 
 import cn.hkxj.platform.config.wechat.WechatMpConfiguration;
-import cn.hkxj.platform.service.wechat.HandlerRouteService;
 import lombok.extern.slf4j.Slf4j;
-import me.chanjar.weixin.mp.api.WxMpMessageRouter;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
@@ -11,8 +9,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpSession;
 
 /**
  * @author Binary Wang(https://github.com/binarywang)
@@ -21,32 +21,11 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/wechat/portal/{appid}")
 public class WechatController {
+
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-//	private final WxMpService wxService;
-
-//	private final WxMpMessageRouter router;
-
-//	private final HandlerRouteService handlerService;
-//
-//	@Autowired
-//	public WechatController(HandlerRouteService handlerService) {
-//		this.handlerService = handlerService;
-//		init();
-//	}
-
-//	@Autowired
-//	public WechatController(WxMpService wxService, WxMpMessageRouter router, HandlerRouteService handlerService) {
-//		this.wxService = wxService;
-//		this.router = router;
-//		this.handlerService = handlerService;
-//		init();
-//	}
-
-
-//	private void init() {
-//		this.handlerService.handlerRegister();
-//	}
+	@Resource
+	private HttpSession httpSession;
 
 	@GetMapping(produces = "text/plain;charset=utf-8")
 	public String authGet(@PathVariable String appid,
@@ -84,6 +63,7 @@ public class WechatController {
 						+ " timestamp=[{}], nonce=[{}], requestBody=[\n{}\n] ",
 				signature, encType, msgSignature, timestamp, nonce, requestBody);
 		final WxMpService wxService = WechatMpConfiguration.getMpServices().get(appid);
+
 		if (!wxService.checkSignature(timestamp, nonce, signature)) {
 			throw new IllegalArgumentException("非法请求，可能属于伪造的请求！");
 		}
@@ -106,6 +86,7 @@ public class WechatController {
 					requestBody, wxService.getWxMpConfigStorage(), timestamp,
 					nonce, msgSignature);
 			this.logger.debug("\n消息解密后内容为：\n{} ", inMessage.toString());
+			httpSession.setAttribute("appid", appid);
 			WxMpXmlOutMessage outMessage = this.route(inMessage, appid);
 			if (outMessage == null) {
 				return "";

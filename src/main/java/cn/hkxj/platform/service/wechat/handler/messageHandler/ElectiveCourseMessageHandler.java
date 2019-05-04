@@ -51,7 +51,8 @@ public class ElectiveCourseMessageHandler implements WxMpMessageHandler {
     private void asynKefuMessage(WxMpXmlMessage wxMpXmlMessage,WxMpService wxMpService){
         String gradesMsg;
         try {
-            Student student = openIdService.getStudentByOpenId(wxMpXmlMessage.getFromUser());
+            String appid = wxMpService.getWxMpConfigStorage().getAppId();
+            Student student = openIdService.getStudentByOpenId(wxMpXmlMessage.getFromUser(), appid);
             List<GradeAndCourse> electiveCourseAsyncGrade = gradeSearchService.getElectiveCourseGradeAsync(student);
             if (CollectionUtils.isEmpty(electiveCourseAsyncGrade)) {
                 List<GradeAndCourse> electiveCourseSyncGrade = gradeSearchService.getElectiveCourseGradeSync(student);

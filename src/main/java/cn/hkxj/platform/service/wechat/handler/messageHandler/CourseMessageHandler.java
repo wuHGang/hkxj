@@ -44,16 +44,18 @@ public class CourseMessageHandler extends AbstractHandler{
 		if(Objects.equals("wx342acff3b65da191", wxMpService.getWxMpConfigStorage().getAppId())){
 			List<CourseTimeTable> courseTimeTables = courseService.getCoursesCurrentDay(2016024170);
 			List<WxMpTemplateData> templateData = new ArrayList<>();
-			WxMpTemplateData wxMpTemplateData = new WxMpTemplateData();
-			wxMpTemplateData.setName("first");
-			wxMpTemplateData.setValue(courseService.toText(courseTimeTables));
-			wxMpTemplateData.setName("second");
-			wxMpTemplateData.setValue("啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦");
+			WxMpTemplateData first = new WxMpTemplateData();
+			first.setName("first");
+			first.setValue(courseService.toText(courseTimeTables));
+			WxMpTemplateData second = new WxMpTemplateData();
+			second.setName("second");
+			second.setValue("啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦");
+			templateData.add(first);
+			templateData.add(second);
 			WxMpTemplateMessage wxMpTemplateMessage = templateBuilder.build(wxMpXmlMessage, templateData, URL);
 			wxMpTemplateMessage.setToUser(wxMpXmlMessage.getFromUser());
 			try {
 				wxMpService.getTemplateMsgService().sendTemplateMsg(wxMpTemplateMessage);
-				wxMpService.getTemplateMsgService().getAllPrivateTemplate();
 			} catch (WxErrorException e) {
 				e.printStackTrace();
 			}

@@ -47,7 +47,8 @@ public class GradeMessageHandler implements WxMpMessageHandler {
                                     WxMpService wxMpService,
                                     WxSessionManager wxSessionManager) {
 		try {
-            Student student = openIdService.getStudentByOpenId(wxMpXmlMessage.getFromUser());
+		    String appid = wxMpService.getWxMpConfigStorage().getAppId();
+            Student student = openIdService.getStudentByOpenId(wxMpXmlMessage.getFromUser(), appid);
             //通过设置方法设置相应WxMpService对象
             taskBindingService.setWxMpService(wxMpService);
 
