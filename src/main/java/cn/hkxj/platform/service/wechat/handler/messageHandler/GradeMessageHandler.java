@@ -43,13 +43,12 @@ public class GradeMessageHandler implements WxMpMessageHandler {
                                     Map<String, Object> map,
                                     WxMpService wxMpService,
                                     WxSessionManager wxSessionManager) {
-        Student student = openIdService.getStudentByOpenId(wxMpXmlMessage.getFromUser());
+        String appid = wxMpService.getWxMpConfigStorage().getAppId();
+        Student student = openIdService.getStudentByOpenId(wxMpXmlMessage.getFromUser(), appid);
         cacheThreadPool.execute(() -> taskBindingService.subscribeGradeUpdateBinding(wxMpXmlMessage.getFromUser()));
 
         //通过设置方法设置相应WxMpService对象
         taskBindingService.setWxMpService(wxMpService);
-        String appid = wxMpService.getWxMpConfigStorage().getAppId();
-        Student student = openIdService.getStudentByOpenId(wxMpXmlMessage.getFromUser(), appid);
 
         Future<String> future = cacheThreadPool.submit(() -> {
             List<GradeAndCourse> gradeFromSpiderSync = gradeSearchService.getCurrentGradeFromSpider(student);
