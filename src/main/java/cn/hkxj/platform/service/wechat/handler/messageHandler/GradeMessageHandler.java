@@ -46,7 +46,8 @@ public class GradeMessageHandler implements WxMpMessageHandler {
         Student student = openIdService.getStudentByOpenId(wxMpXmlMessage.getFromUser());
         cacheThreadPool.execute(() -> taskBindingService.subscribeGradeUpdateBinding(wxMpXmlMessage.getFromUser()));
 		try {
-            Student student = openIdService.getStudentByOpenId(wxMpXmlMessage.getFromUser());
+		    String appid = wxMpService.getWxMpConfigStorage().getAppId();
+            Student student = openIdService.getStudentByOpenId(wxMpXmlMessage.getFromUser(), appid);
             //通过设置方法设置相应WxMpService对象
             taskBindingService.setWxMpService(wxMpService);
 

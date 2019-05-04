@@ -73,17 +73,17 @@ public class WechatMpConfiguration {
 	public Object services(){
 		mpServices = this.wechatMpProperties.getConfigs()
 				.stream()
-				.map(a ->{
+				.map(appConfig ->{
 					WxMpInMemoryConfigStorage configStorage = new WxMpInMemoryConfigStorage();
-					configStorage.setAppId(a.getAppId());
-					configStorage.setSecret(a.getSecret());
-					configStorage.setToken(a.getToken());
-					configStorage.setAesKey(a.getAesKey());
+					configStorage.setAppId(appConfig.getAppId());
+					configStorage.setSecret(appConfig.getSecret());
+					configStorage.setToken(appConfig.getToken());
+					configStorage.setAesKey(appConfig.getAesKey());
 					WxMpService wxMpService = new WxMpServiceImpl();
 					wxMpService.setWxMpConfigStorage(configStorage);
-					routers.put(a.getAppId(), this.newRouter(wxMpService));
+					routers.put(appConfig.getAppId(), this.newRouter(wxMpService));
 					return wxMpService;
-				}).collect(Collectors.toMap(s -> s.getWxMpConfigStorage().getAppId(), a -> a));
+				}).collect(Collectors.toMap(wxMpService -> wxMpService.getWxMpConfigStorage().getAppId(), wxMpService -> wxMpService));
 		return Boolean.TRUE;
 	}
 
@@ -92,7 +92,7 @@ public class WechatMpConfiguration {
 		newRouter.rule()
 				.async(false)
 				.rContent("(课表|课程|今日课表)")
-//				.interceptor(wechatOpenIdInterceptor)
+				.interceptor(wechatOpenIdInterceptor)
 				.handler(courseMessageHandler)
 				.end()
 				.rule()
@@ -147,35 +147,4 @@ public class WechatMpConfiguration {
 		return mpServices;
 	}
 
-	//	@Autowired
-//	private WechatMpProperties properties;
-//
-//	@Bean
-//	@ConditionalOnMissingBean
-//	public WxMpConfigStorage configStorage() {
-//		WxMpInMemoryConfigStorage configStorage = new WxMpInMemoryConfigStorage();
-//		configStorage.setAppId(this.properties.getAppId());
-//		configStorage.setSecret(this.properties.getSecret());
-//		configStorage.setToken(this.properties.getToken());
-//		configStorage.setAesKey(this.properties.getAesKey());
-//		return configStorage;
-//	}
-//
-//	@Bean
-//	@ConditionalOnMissingBean
-//	public WxMpService wxMpService(WxMpConfigStorage configStorage) {
-////        WxMpService wxMpService = new me.chanjar.weixin.mp.api.impl.okhttp.WxMpServiceImpl();
-////        WxMpService wxMpService = new me.chanjar.weixin.mp.api.impl.jodd.WxMpServiceImpl();
-////        WxMpService wxMpService = new me.chanjar.weixin.mp.api.impl.apache.WxMpServiceImpl();
-//		WxMpService wxMpService = new me.chanjar.weixin.mp.api.impl.WxMpServiceImpl();
-//		wxMpService.setWxMpConfigStorage(configStorage);
-//		return wxMpService;
-//	}
-//
-//	@Bean
-//	public WxMessageRouter router(WxMpService wxMpService) {
-//		final WxMessageRouter newRouter = new WxMessageRouter(wxMpService);
-//
-//		return newRouter;
-//	}
 }

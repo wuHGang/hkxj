@@ -1,551 +1,556 @@
-2019-04-28 19:24:23.545 [][] INFO  cn.hkxj.platform.PlatformApplication 50 - Starting PlatformApplication on LAPTOP-0P9MRN9T with PID 3784 (D:\Java\GithubRepository\hkxj\target\classes started by Yuki in D:\Java\GithubRepository\hkxj)
-2019-04-28 19:24:23.570 [][] INFO  cn.hkxj.platform.PlatformApplication 659 - No active profile set, falling back to default profiles: default
-2019-04-28 19:24:57.485 [][] INFO  cn.hkxj.platform.PlatformApplication 50 - Starting PlatformApplication on LAPTOP-0P9MRN9T with PID 9152 (D:\Java\GithubRepository\hkxj\target\classes started by Yuki in D:\Java\GithubRepository\hkxj)
-2019-04-28 19:24:57.516 [][] INFO  cn.hkxj.platform.PlatformApplication 659 - No active profile set, falling back to default profiles: default
-2019-04-28 19:26:39.189 [][] INFO  cn.hkxj.platform.PlatformApplication 50 - Starting PlatformApplication on LAPTOP-0P9MRN9T with PID 10020 (D:\Java\GithubRepository\hkxj\target\classes started by Yuki in D:\Java\GithubRepository\hkxj)
-2019-04-28 19:26:39.194 [][] INFO  cn.hkxj.platform.PlatformApplication 659 - No active profile set, falling back to default profiles: default
-2019-04-28 19:26:56.825 [][] INFO  cn.hkxj.platform.PlatformApplication 50 - Starting PlatformApplication on LAPTOP-0P9MRN9T with PID 7692 (D:\Java\GithubRepository\hkxj\target\classes started by Yuki in D:\Java\GithubRepository\hkxj)
-2019-04-28 19:26:56.835 [][] INFO  cn.hkxj.platform.PlatformApplication 659 - No active profile set, falling back to default profiles: default
-2019-04-28 19:28:07.180 [][] INFO  cn.hkxj.platform.PlatformApplication 50 - Starting PlatformApplication on LAPTOP-0P9MRN9T with PID 15968 (D:\Java\GithubRepository\hkxj\target\classes started by Yuki in D:\Java\GithubRepository\hkxj)
-2019-04-28 19:28:07.187 [][] INFO  cn.hkxj.platform.PlatformApplication 659 - No active profile set, falling back to default profiles: default
-2019-04-28 19:29:42.940 [][] INFO  cn.hkxj.platform.PlatformApplication 50 - Starting PlatformApplication on LAPTOP-0P9MRN9T with PID 8372 (D:\Java\GithubRepository\hkxj\target\classes started by Yuki in D:\Java\GithubRepository\hkxj)
-2019-04-28 19:29:42.946 [][] INFO  cn.hkxj.platform.PlatformApplication 659 - No active profile set, falling back to default profiles: default
-2019-04-28 19:31:53.789 [][] INFO  cn.hkxj.platform.PlatformApplication 50 - Starting PlatformApplication on LAPTOP-0P9MRN9T with PID 14608 (D:\Java\GithubRepository\hkxj\target\classes started by Yuki in D:\Java\GithubRepository\hkxj)
-2019-04-28 19:31:53.796 [][] INFO  cn.hkxj.platform.PlatformApplication 659 - No active profile set, falling back to default profiles: default
-2019-04-28 19:35:28.712 [][] INFO  cn.hkxj.platform.PlatformApplication 50 - Starting PlatformApplication on LAPTOP-0P9MRN9T with PID 13528 (D:\Java\GithubRepository\hkxj\target\classes started by Yuki in D:\Java\GithubRepository\hkxj)
-2019-04-28 19:35:28.719 [][] INFO  cn.hkxj.platform.PlatformApplication 659 - No active profile set, falling back to default profiles: default
-2019-04-28 19:37:14.984 [][] INFO  cn.hkxj.platform.PlatformApplication 50 - Starting PlatformApplication on LAPTOP-0P9MRN9T with PID 12944 (D:\Java\GithubRepository\hkxj\target\classes started by Yuki in D:\Java\GithubRepository\hkxj)
-2019-04-28 19:37:14.992 [][] INFO  cn.hkxj.platform.PlatformApplication 659 - No active profile set, falling back to default profiles: default
-2019-04-28 19:37:39.913 [][] INFO  cn.hkxj.platform.PlatformApplication 50 - Starting PlatformApplication on LAPTOP-0P9MRN9T with PID 13700 (D:\Java\GithubRepository\hkxj\target\classes started by Yuki in D:\Java\GithubRepository\hkxj)
-2019-04-28 19:37:39.919 [][] INFO  cn.hkxj.platform.PlatformApplication 659 - No active profile set, falling back to default profiles: default
-2019-04-28 19:39:06.515 [][] INFO  cn.hkxj.platform.PlatformApplication 50 - Starting PlatformApplication on LAPTOP-0P9MRN9T with PID 728 (D:\Java\GithubRepository\hkxj\target\classes started by Yuki in D:\Java\GithubRepository\hkxj)
-2019-04-28 19:39:06.522 [][] INFO  cn.hkxj.platform.PlatformApplication 659 - No active profile set, falling back to default profiles: default
-2019-04-28 19:39:33.110 [][] INFO  cn.hkxj.platform.PlatformApplication 50 - Starting PlatformApplication on LAPTOP-0P9MRN9T with PID 9592 (D:\Java\GithubRepository\hkxj\target\classes started by Yuki in D:\Java\GithubRepository\hkxj)
-2019-04-28 19:39:33.116 [][] INFO  cn.hkxj.platform.PlatformApplication 659 - No active profile set, falling back to default profiles: default
-2019-04-28 19:40:40.927 [][] INFO  cn.hkxj.platform.PlatformApplication 50 - Starting PlatformApplication on LAPTOP-0P9MRN9T with PID 7936 (D:\Java\GithubRepository\hkxj\target\classes started by Yuki in D:\Java\GithubRepository\hkxj)
-2019-04-28 19:40:40.933 [][] INFO  cn.hkxj.platform.PlatformApplication 659 - No active profile set, falling back to default profiles: default
-2019-04-28 19:41:11.109 [][] INFO  cn.hkxj.platform.PlatformApplication 50 - Starting PlatformApplication on LAPTOP-0P9MRN9T with PID 9940 (D:\Java\GithubRepository\hkxj\target\classes started by Yuki in D:\Java\GithubRepository\hkxj)
-2019-04-28 19:41:11.120 [][] INFO  cn.hkxj.platform.PlatformApplication 659 - No active profile set, falling back to default profiles: default
-2019-04-28 19:43:55.101 [][] INFO  cn.hkxj.platform.PlatformApplication 50 - Starting PlatformApplication on LAPTOP-0P9MRN9T with PID 15828 (D:\Java\GithubRepository\hkxj\target\classes started by Yuki in D:\Java\GithubRepository\hkxj)
-2019-04-28 19:43:55.109 [][] INFO  cn.hkxj.platform.PlatformApplication 659 - No active profile set, falling back to default profiles: default
-2019-04-28 19:46:27.634 [][] INFO  cn.hkxj.platform.PlatformApplication 50 - Starting PlatformApplication on LAPTOP-0P9MRN9T with PID 7760 (D:\Java\GithubRepository\hkxj\target\classes started by Yuki in D:\Java\GithubRepository\hkxj)
-2019-04-28 19:46:27.640 [][] INFO  cn.hkxj.platform.PlatformApplication 659 - No active profile set, falling back to default profiles: default
-2019-04-28 19:48:09.644 [][] INFO  cn.hkxj.platform.PlatformApplication 50 - Starting PlatformApplication on LAPTOP-0P9MRN9T with PID 15936 (D:\Java\GithubRepository\hkxj\target\classes started by Yuki in D:\Java\GithubRepository\hkxj)
-2019-04-28 19:48:09.650 [][] INFO  cn.hkxj.platform.PlatformApplication 659 - No active profile set, falling back to default profiles: default
-2019-04-28 19:49:35.403 [][] INFO  cn.hkxj.platform.PlatformApplication 50 - Starting PlatformApplication on LAPTOP-0P9MRN9T with PID 10904 (D:\Java\GithubRepository\hkxj\target\classes started by Yuki in D:\Java\GithubRepository\hkxj)
-2019-04-28 19:49:35.409 [][] INFO  cn.hkxj.platform.PlatformApplication 659 - No active profile set, falling back to default profiles: default
-2019-04-28 19:49:45.044 [][] INFO  cn.hkxj.platform.PlatformApplication 50 - Starting PlatformApplication on LAPTOP-0P9MRN9T with PID 6308 (D:\Java\GithubRepository\hkxj\target\classes started by Yuki in D:\Java\GithubRepository\hkxj)
-2019-04-28 19:49:45.050 [][] INFO  cn.hkxj.platform.PlatformApplication 659 - No active profile set, falling back to default profiles: default
-2019-04-28 19:52:10.353 [][] INFO  cn.hkxj.platform.PlatformApplication 50 - Starting PlatformApplication on LAPTOP-0P9MRN9T with PID 7880 (D:\Java\GithubRepository\hkxj\target\classes started by Yuki in D:\Java\GithubRepository\hkxj)
-2019-04-28 19:52:10.360 [][] INFO  cn.hkxj.platform.PlatformApplication 659 - No active profile set, falling back to default profiles: default
-2019-04-28 19:54:53.964 [][] INFO  cn.hkxj.platform.PlatformApplication 50 - Starting PlatformApplication on LAPTOP-0P9MRN9T with PID 10668 (D:\Java\GithubRepository\hkxj\target\classes started by Yuki in D:\Java\GithubRepository\hkxj)
-2019-04-28 19:54:53.972 [][] INFO  cn.hkxj.platform.PlatformApplication 659 - No active profile set, falling back to default profiles: default
-2019-04-28 19:55:20.412 [][] INFO  cn.hkxj.platform.PlatformApplication 50 - Starting PlatformApplication on LAPTOP-0P9MRN9T with PID 14280 (D:\Java\GithubRepository\hkxj\target\classes started by Yuki in D:\Java\GithubRepository\hkxj)
-2019-04-28 19:55:20.418 [][] INFO  cn.hkxj.platform.PlatformApplication 659 - No active profile set, falling back to default profiles: default
-2019-04-28 19:59:26.628 [][] INFO  cn.hkxj.platform.PlatformApplication 50 - Starting PlatformApplication on LAPTOP-0P9MRN9T with PID 14940 (D:\Java\GithubRepository\hkxj\target\classes started by Yuki in D:\Java\GithubRepository\hkxj)
-2019-04-28 19:59:26.634 [][] INFO  cn.hkxj.platform.PlatformApplication 659 - No active profile set, falling back to default profiles: default
-2019-04-28 19:59:30.188 [][] INFO  org.apache.coyote.http11.Http11NioProtocol 180 - Initializing ProtocolHandler ["http-nio-80"]
-2019-04-28 19:59:30.203 [][] INFO  org.apache.catalina.core.StandardService 180 - Starting service [Tomcat]
-2019-04-28 19:59:30.203 [][] INFO  org.apache.catalina.core.StandardEngine 180 - Starting Servlet Engine: Apache Tomcat/8.5.31
-2019-04-28 19:59:30.218 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - Loaded APR based Apache Tomcat Native library [1.2.16] using APR version [1.6.3].
-2019-04-28 19:59:30.219 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR capabilities: IPv6 [true], sendfile [true], accept filters [false], random [true].
-2019-04-28 19:59:30.219 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR/OpenSSL configuration: useAprConnector [false], useOpenSSL [true]
-2019-04-28 19:59:31.340 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - OpenSSL successfully initialized [OpenSSL 1.0.2m  2 Nov 2017]
-2019-04-28 19:59:31.581 [][] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] 180 - Initializing Spring embedded WebApplicationContext
-2019-04-28 19:59:33.992 [][] INFO  org.apache.catalina.core.StandardService 180 - Stopping service [Tomcat]
-2019-04-28 20:00:35.532 [][] INFO  cn.hkxj.platform.PlatformApplication 50 - Starting PlatformApplication on LAPTOP-0P9MRN9T with PID 9408 (D:\Java\GithubRepository\hkxj\target\classes started by Yuki in D:\Java\GithubRepository\hkxj)
-2019-04-28 20:00:35.542 [][] INFO  cn.hkxj.platform.PlatformApplication 659 - No active profile set, falling back to default profiles: default
-2019-04-28 20:00:38.774 [][] INFO  org.apache.coyote.http11.Http11NioProtocol 180 - Initializing ProtocolHandler ["http-nio-80"]
-2019-04-28 20:00:38.788 [][] INFO  org.apache.catalina.core.StandardService 180 - Starting service [Tomcat]
-2019-04-28 20:00:38.788 [][] INFO  org.apache.catalina.core.StandardEngine 180 - Starting Servlet Engine: Apache Tomcat/8.5.31
-2019-04-28 20:00:38.794 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - Loaded APR based Apache Tomcat Native library [1.2.16] using APR version [1.6.3].
-2019-04-28 20:00:38.794 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR capabilities: IPv6 [true], sendfile [true], accept filters [false], random [true].
-2019-04-28 20:00:38.794 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR/OpenSSL configuration: useAprConnector [false], useOpenSSL [true]
-2019-04-28 20:00:39.877 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - OpenSSL successfully initialized [OpenSSL 1.0.2m  2 Nov 2017]
-2019-04-28 20:00:40.171 [][] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] 180 - Initializing Spring embedded WebApplicationContext
-2019-04-28 20:00:42.450 [][] INFO  org.apache.catalina.core.StandardService 180 - Stopping service [Tomcat]
-2019-04-28 20:02:14.510 [][] INFO  cn.hkxj.platform.PlatformApplication 50 - Starting PlatformApplication on LAPTOP-0P9MRN9T with PID 14564 (D:\Java\GithubRepository\hkxj\target\classes started by Yuki in D:\Java\GithubRepository\hkxj)
-2019-04-28 20:02:14.516 [][] INFO  cn.hkxj.platform.PlatformApplication 659 - No active profile set, falling back to default profiles: default
-2019-04-28 20:02:17.795 [][] INFO  org.apache.coyote.http11.Http11NioProtocol 180 - Initializing ProtocolHandler ["http-nio-80"]
-2019-04-28 20:02:17.808 [][] INFO  org.apache.catalina.core.StandardService 180 - Starting service [Tomcat]
-2019-04-28 20:02:17.809 [][] INFO  org.apache.catalina.core.StandardEngine 180 - Starting Servlet Engine: Apache Tomcat/8.5.31
-2019-04-28 20:02:17.816 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - Loaded APR based Apache Tomcat Native library [1.2.16] using APR version [1.6.3].
-2019-04-28 20:02:17.816 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR capabilities: IPv6 [true], sendfile [true], accept filters [false], random [true].
-2019-04-28 20:02:17.816 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR/OpenSSL configuration: useAprConnector [false], useOpenSSL [true]
-2019-04-28 20:02:18.880 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - OpenSSL successfully initialized [OpenSSL 1.0.2m  2 Nov 2017]
-2019-04-28 20:02:19.093 [][] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] 180 - Initializing Spring embedded WebApplicationContext
-2019-04-28 20:02:20.867 [][] INFO  org.apache.catalina.core.StandardService 180 - Stopping service [Tomcat]
-2019-04-28 20:09:38.987 [][] INFO  cn.hkxj.platform.PlatformApplication 50 - Starting PlatformApplication on LAPTOP-0P9MRN9T with PID 15616 (D:\Java\GithubRepository\hkxj\target\classes started by Yuki in D:\Java\GithubRepository\hkxj)
-2019-04-28 20:09:38.993 [][] INFO  cn.hkxj.platform.PlatformApplication 659 - No active profile set, falling back to default profiles: default
-2019-04-28 20:09:42.082 [][] INFO  org.apache.coyote.http11.Http11NioProtocol 180 - Initializing ProtocolHandler ["http-nio-80"]
-2019-04-28 20:09:42.096 [][] INFO  org.apache.catalina.core.StandardService 180 - Starting service [Tomcat]
-2019-04-28 20:09:42.097 [][] INFO  org.apache.catalina.core.StandardEngine 180 - Starting Servlet Engine: Apache Tomcat/8.5.31
-2019-04-28 20:09:42.102 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - Loaded APR based Apache Tomcat Native library [1.2.16] using APR version [1.6.3].
-2019-04-28 20:09:42.103 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR capabilities: IPv6 [true], sendfile [true], accept filters [false], random [true].
-2019-04-28 20:09:42.103 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR/OpenSSL configuration: useAprConnector [false], useOpenSSL [true]
-2019-04-28 20:09:43.168 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - OpenSSL successfully initialized [OpenSSL 1.0.2m  2 Nov 2017]
-2019-04-28 20:09:43.371 [][] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] 180 - Initializing Spring embedded WebApplicationContext
-2019-04-28 20:09:45.480 [][] INFO  org.apache.catalina.core.StandardService 180 - Stopping service [Tomcat]
-2019-04-28 20:19:25.173 [][] INFO  cn.hkxj.platform.PlatformApplication 50 - Starting PlatformApplication on LAPTOP-0P9MRN9T with PID 2916 (D:\Java\GithubRepository\hkxj\target\classes started by Yuki in D:\Java\GithubRepository\hkxj)
-2019-04-28 20:19:25.179 [][] INFO  cn.hkxj.platform.PlatformApplication 659 - No active profile set, falling back to default profiles: default
-2019-04-28 20:19:28.462 [][] INFO  org.apache.coyote.http11.Http11NioProtocol 180 - Initializing ProtocolHandler ["http-nio-80"]
-2019-04-28 20:19:28.473 [][] INFO  org.apache.catalina.core.StandardService 180 - Starting service [Tomcat]
-2019-04-28 20:19:28.474 [][] INFO  org.apache.catalina.core.StandardEngine 180 - Starting Servlet Engine: Apache Tomcat/8.5.31
-2019-04-28 20:19:28.482 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - Loaded APR based Apache Tomcat Native library [1.2.16] using APR version [1.6.3].
-2019-04-28 20:19:28.482 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR capabilities: IPv6 [true], sendfile [true], accept filters [false], random [true].
-2019-04-28 20:19:28.482 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR/OpenSSL configuration: useAprConnector [false], useOpenSSL [true]
-2019-04-28 20:19:29.556 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - OpenSSL successfully initialized [OpenSSL 1.0.2m  2 Nov 2017]
-2019-04-28 20:19:29.832 [][] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] 180 - Initializing Spring embedded WebApplicationContext
-2019-04-28 20:19:32.089 [][] INFO  org.apache.catalina.core.StandardService 180 - Stopping service [Tomcat]
-2019-04-28 20:37:42.828 [][] INFO  cn.hkxj.platform.PlatformApplication 50 - Starting PlatformApplication on LAPTOP-0P9MRN9T with PID 12368 (D:\Java\GithubRepository\hkxj\target\classes started by Yuki in D:\Java\GithubRepository\hkxj)
-2019-04-28 20:37:42.834 [][] INFO  cn.hkxj.platform.PlatformApplication 659 - No active profile set, falling back to default profiles: default
-2019-04-28 20:37:45.908 [][] INFO  org.apache.coyote.http11.Http11NioProtocol 180 - Initializing ProtocolHandler ["http-nio-80"]
-2019-04-28 20:37:45.921 [][] INFO  org.apache.catalina.core.StandardService 180 - Starting service [Tomcat]
-2019-04-28 20:37:45.921 [][] INFO  org.apache.catalina.core.StandardEngine 180 - Starting Servlet Engine: Apache Tomcat/8.5.31
-2019-04-28 20:37:45.926 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - Loaded APR based Apache Tomcat Native library [1.2.16] using APR version [1.6.3].
-2019-04-28 20:37:45.927 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR capabilities: IPv6 [true], sendfile [true], accept filters [false], random [true].
-2019-04-28 20:37:45.927 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR/OpenSSL configuration: useAprConnector [false], useOpenSSL [true]
-2019-04-28 20:37:46.994 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - OpenSSL successfully initialized [OpenSSL 1.0.2m  2 Nov 2017]
-2019-04-28 20:37:47.183 [][] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] 180 - Initializing Spring embedded WebApplicationContext
-2019-04-28 20:37:49.251 [][] INFO  org.apache.catalina.core.StandardService 180 - Stopping service [Tomcat]
-2019-04-28 20:37:53.864 [][] INFO  cn.hkxj.platform.PlatformApplication 50 - Starting PlatformApplication on LAPTOP-0P9MRN9T with PID 15628 (D:\Java\GithubRepository\hkxj\target\classes started by Yuki in D:\Java\GithubRepository\hkxj)
-2019-04-28 20:37:53.870 [][] INFO  cn.hkxj.platform.PlatformApplication 659 - No active profile set, falling back to default profiles: default
-2019-04-28 20:37:56.957 [][] INFO  org.apache.coyote.http11.Http11NioProtocol 180 - Initializing ProtocolHandler ["http-nio-80"]
-2019-04-28 20:37:56.974 [][] INFO  org.apache.catalina.core.StandardService 180 - Starting service [Tomcat]
-2019-04-28 20:37:56.974 [][] INFO  org.apache.catalina.core.StandardEngine 180 - Starting Servlet Engine: Apache Tomcat/8.5.31
-2019-04-28 20:37:56.980 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - Loaded APR based Apache Tomcat Native library [1.2.16] using APR version [1.6.3].
-2019-04-28 20:37:56.981 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR capabilities: IPv6 [true], sendfile [true], accept filters [false], random [true].
-2019-04-28 20:37:56.981 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR/OpenSSL configuration: useAprConnector [false], useOpenSSL [true]
-2019-04-28 20:37:58.048 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - OpenSSL successfully initialized [OpenSSL 1.0.2m  2 Nov 2017]
-2019-04-28 20:37:58.241 [][] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] 180 - Initializing Spring embedded WebApplicationContext
-2019-04-28 20:38:00.295 [][] INFO  org.apache.catalina.core.StandardService 180 - Stopping service [Tomcat]
-2019-04-28 20:45:33.641 [][] INFO  cn.hkxj.platform.PlatformApplication 50 - Starting PlatformApplication on LAPTOP-0P9MRN9T with PID 12408 (D:\Java\GithubRepository\hkxj\target\classes started by Yuki in D:\Java\GithubRepository\hkxj)
-2019-04-28 20:45:33.647 [][] INFO  cn.hkxj.platform.PlatformApplication 659 - No active profile set, falling back to default profiles: default
-2019-04-28 20:45:36.758 [][] INFO  org.apache.coyote.http11.Http11NioProtocol 180 - Initializing ProtocolHandler ["http-nio-80"]
-2019-04-28 20:45:36.771 [][] INFO  org.apache.catalina.core.StandardService 180 - Starting service [Tomcat]
-2019-04-28 20:45:36.771 [][] INFO  org.apache.catalina.core.StandardEngine 180 - Starting Servlet Engine: Apache Tomcat/8.5.31
-2019-04-28 20:45:36.777 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - Loaded APR based Apache Tomcat Native library [1.2.16] using APR version [1.6.3].
-2019-04-28 20:45:36.777 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR capabilities: IPv6 [true], sendfile [true], accept filters [false], random [true].
-2019-04-28 20:45:36.777 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR/OpenSSL configuration: useAprConnector [false], useOpenSSL [true]
-2019-04-28 20:45:37.847 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - OpenSSL successfully initialized [OpenSSL 1.0.2m  2 Nov 2017]
-2019-04-28 20:45:38.037 [][] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] 180 - Initializing Spring embedded WebApplicationContext
-2019-04-28 20:45:40.244 [][] INFO  org.apache.catalina.core.StandardService 180 - Stopping service [Tomcat]
-2019-04-28 20:49:28.159 [][] INFO  cn.hkxj.platform.PlatformApplication 50 - Starting PlatformApplication on LAPTOP-0P9MRN9T with PID 14908 (D:\Java\GithubRepository\hkxj\target\classes started by Yuki in D:\Java\GithubRepository\hkxj)
-2019-04-28 20:49:28.164 [][] INFO  cn.hkxj.platform.PlatformApplication 659 - No active profile set, falling back to default profiles: default
-2019-04-28 20:49:31.280 [][] INFO  org.apache.coyote.http11.Http11NioProtocol 180 - Initializing ProtocolHandler ["http-nio-80"]
-2019-04-28 20:49:31.292 [][] INFO  org.apache.catalina.core.StandardService 180 - Starting service [Tomcat]
-2019-04-28 20:49:31.292 [][] INFO  org.apache.catalina.core.StandardEngine 180 - Starting Servlet Engine: Apache Tomcat/8.5.31
-2019-04-28 20:49:31.298 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - Loaded APR based Apache Tomcat Native library [1.2.16] using APR version [1.6.3].
-2019-04-28 20:49:31.299 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR capabilities: IPv6 [true], sendfile [true], accept filters [false], random [true].
-2019-04-28 20:49:31.299 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR/OpenSSL configuration: useAprConnector [false], useOpenSSL [true]
-2019-04-28 20:49:32.350 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - OpenSSL successfully initialized [OpenSSL 1.0.2m  2 Nov 2017]
-2019-04-28 20:49:32.536 [][] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] 180 - Initializing Spring embedded WebApplicationContext
-2019-04-28 20:49:34.639 [][] INFO  org.apache.catalina.core.StandardService 180 - Stopping service [Tomcat]
-2019-04-28 20:53:25.853 [][] INFO  cn.hkxj.platform.PlatformApplication 50 - Starting PlatformApplication on LAPTOP-0P9MRN9T with PID 14976 (D:\Java\GithubRepository\hkxj\target\classes started by Yuki in D:\Java\GithubRepository\hkxj)
-2019-04-28 20:53:25.860 [][] INFO  cn.hkxj.platform.PlatformApplication 659 - No active profile set, falling back to default profiles: default
-2019-04-28 20:53:29.041 [][] INFO  org.apache.coyote.http11.Http11NioProtocol 180 - Initializing ProtocolHandler ["http-nio-80"]
-2019-04-28 20:53:29.052 [][] INFO  org.apache.catalina.core.StandardService 180 - Starting service [Tomcat]
-2019-04-28 20:53:29.052 [][] INFO  org.apache.catalina.core.StandardEngine 180 - Starting Servlet Engine: Apache Tomcat/8.5.31
-2019-04-28 20:53:29.058 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - Loaded APR based Apache Tomcat Native library [1.2.16] using APR version [1.6.3].
-2019-04-28 20:53:29.058 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR capabilities: IPv6 [true], sendfile [true], accept filters [false], random [true].
-2019-04-28 20:53:29.058 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR/OpenSSL configuration: useAprConnector [false], useOpenSSL [true]
-2019-04-28 20:53:30.122 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - OpenSSL successfully initialized [OpenSSL 1.0.2m  2 Nov 2017]
-2019-04-28 20:53:30.302 [][] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] 180 - Initializing Spring embedded WebApplicationContext
-2019-04-28 20:53:32.405 [][] INFO  org.apache.catalina.core.StandardService 180 - Stopping service [Tomcat]
-2019-04-28 20:57:58.838 [][] INFO  cn.hkxj.platform.PlatformApplication 50 - Starting PlatformApplication on LAPTOP-0P9MRN9T with PID 10280 (D:\Java\GithubRepository\hkxj\target\classes started by Yuki in D:\Java\GithubRepository\hkxj)
-2019-04-28 20:57:58.843 [][] INFO  cn.hkxj.platform.PlatformApplication 659 - No active profile set, falling back to default profiles: default
-2019-04-28 20:58:08.488 [][] INFO  org.apache.coyote.http11.Http11NioProtocol 180 - Initializing ProtocolHandler ["http-nio-80"]
-2019-04-28 20:58:08.573 [][] INFO  org.apache.catalina.core.StandardService 180 - Starting service [Tomcat]
-2019-04-28 20:58:08.574 [][] INFO  org.apache.catalina.core.StandardEngine 180 - Starting Servlet Engine: Apache Tomcat/8.5.31
-2019-04-28 20:58:08.593 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - Loaded APR based Apache Tomcat Native library [1.2.16] using APR version [1.6.3].
-2019-04-28 20:58:08.593 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR capabilities: IPv6 [true], sendfile [true], accept filters [false], random [true].
-2019-04-28 20:58:08.594 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR/OpenSSL configuration: useAprConnector [false], useOpenSSL [true]
-2019-04-28 20:58:09.652 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - OpenSSL successfully initialized [OpenSSL 1.0.2m  2 Nov 2017]
-2019-04-28 20:58:10.436 [][] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] 180 - Initializing Spring embedded WebApplicationContext
-2019-04-28 20:58:27.164 [][] INFO  org.apache.catalina.core.StandardService 180 - Stopping service [Tomcat]
-2019-04-28 21:07:51.546 [][] INFO  cn.hkxj.platform.PlatformApplication 50 - Starting PlatformApplication on LAPTOP-0P9MRN9T with PID 8288 (D:\Java\GithubRepository\hkxj\target\classes started by Yuki in D:\Java\GithubRepository\hkxj)
-2019-04-28 21:07:51.551 [][] INFO  cn.hkxj.platform.PlatformApplication 659 - No active profile set, falling back to default profiles: default
-2019-04-28 21:07:54.618 [][] INFO  org.apache.coyote.http11.Http11NioProtocol 180 - Initializing ProtocolHandler ["http-nio-80"]
-2019-04-28 21:07:54.632 [][] INFO  org.apache.catalina.core.StandardService 180 - Starting service [Tomcat]
-2019-04-28 21:07:54.632 [][] INFO  org.apache.catalina.core.StandardEngine 180 - Starting Servlet Engine: Apache Tomcat/8.5.31
-2019-04-28 21:07:54.638 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - Loaded APR based Apache Tomcat Native library [1.2.16] using APR version [1.6.3].
-2019-04-28 21:07:54.639 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR capabilities: IPv6 [true], sendfile [true], accept filters [false], random [true].
-2019-04-28 21:07:54.639 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR/OpenSSL configuration: useAprConnector [false], useOpenSSL [true]
-2019-04-28 21:07:55.712 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - OpenSSL successfully initialized [OpenSSL 1.0.2m  2 Nov 2017]
-2019-04-28 21:07:55.982 [][] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] 180 - Initializing Spring embedded WebApplicationContext
-2019-04-28 21:07:58.061 [][] INFO  org.apache.catalina.core.StandardService 180 - Stopping service [Tomcat]
-2019-04-28 21:09:36.187 [][] INFO  cn.hkxj.platform.PlatformApplication 50 - Starting PlatformApplication on LAPTOP-0P9MRN9T with PID 10776 (D:\Java\GithubRepository\hkxj\target\classes started by Yuki in D:\Java\GithubRepository\hkxj)
-2019-04-28 21:09:36.193 [][] INFO  cn.hkxj.platform.PlatformApplication 659 - No active profile set, falling back to default profiles: default
-2019-04-28 21:09:39.269 [][] INFO  org.apache.coyote.http11.Http11NioProtocol 180 - Initializing ProtocolHandler ["http-nio-80"]
-2019-04-28 21:09:39.283 [][] INFO  org.apache.catalina.core.StandardService 180 - Starting service [Tomcat]
-2019-04-28 21:09:39.283 [][] INFO  org.apache.catalina.core.StandardEngine 180 - Starting Servlet Engine: Apache Tomcat/8.5.31
-2019-04-28 21:09:39.289 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - Loaded APR based Apache Tomcat Native library [1.2.16] using APR version [1.6.3].
-2019-04-28 21:09:39.289 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR capabilities: IPv6 [true], sendfile [true], accept filters [false], random [true].
-2019-04-28 21:09:39.289 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR/OpenSSL configuration: useAprConnector [false], useOpenSSL [true]
-2019-04-28 21:09:40.348 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - OpenSSL successfully initialized [OpenSSL 1.0.2m  2 Nov 2017]
-2019-04-28 21:09:40.542 [][] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] 180 - Initializing Spring embedded WebApplicationContext
-2019-04-28 21:09:42.600 [][] INFO  org.apache.catalina.core.StandardService 180 - Stopping service [Tomcat]
-2019-04-28 21:12:19.966 [][] INFO  cn.hkxj.platform.PlatformApplication 50 - Starting PlatformApplication on LAPTOP-0P9MRN9T with PID 9312 (D:\Java\GithubRepository\hkxj\target\classes started by Yuki in D:\Java\GithubRepository\hkxj)
-2019-04-28 21:12:19.972 [][] INFO  cn.hkxj.platform.PlatformApplication 659 - No active profile set, falling back to default profiles: default
-2019-04-28 21:12:23.032 [][] INFO  org.apache.coyote.http11.Http11NioProtocol 180 - Initializing ProtocolHandler ["http-nio-80"]
-2019-04-28 21:12:23.048 [][] INFO  org.apache.catalina.core.StandardService 180 - Starting service [Tomcat]
-2019-04-28 21:12:23.049 [][] INFO  org.apache.catalina.core.StandardEngine 180 - Starting Servlet Engine: Apache Tomcat/8.5.31
-2019-04-28 21:12:23.055 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - Loaded APR based Apache Tomcat Native library [1.2.16] using APR version [1.6.3].
-2019-04-28 21:12:23.055 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR capabilities: IPv6 [true], sendfile [true], accept filters [false], random [true].
-2019-04-28 21:12:23.055 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR/OpenSSL configuration: useAprConnector [false], useOpenSSL [true]
-2019-04-28 21:12:24.109 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - OpenSSL successfully initialized [OpenSSL 1.0.2m  2 Nov 2017]
-2019-04-28 21:12:24.299 [][] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] 180 - Initializing Spring embedded WebApplicationContext
-2019-04-28 21:12:26.559 [][] INFO  org.apache.catalina.core.StandardService 180 - Stopping service [Tomcat]
-2019-04-28 21:18:00.914 [][] INFO  cn.hkxj.platform.PlatformApplication 50 - Starting PlatformApplication on LAPTOP-0P9MRN9T with PID 3560 (D:\Java\GithubRepository\hkxj\target\classes started by Yuki in D:\Java\GithubRepository\hkxj)
-2019-04-28 21:18:00.924 [][] INFO  cn.hkxj.platform.PlatformApplication 659 - No active profile set, falling back to default profiles: default
-2019-04-28 21:18:04.088 [][] INFO  org.apache.coyote.http11.Http11NioProtocol 180 - Initializing ProtocolHandler ["http-nio-80"]
-2019-04-28 21:18:04.100 [][] INFO  org.apache.catalina.core.StandardService 180 - Starting service [Tomcat]
-2019-04-28 21:18:04.100 [][] INFO  org.apache.catalina.core.StandardEngine 180 - Starting Servlet Engine: Apache Tomcat/8.5.31
-2019-04-28 21:18:04.106 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - Loaded APR based Apache Tomcat Native library [1.2.16] using APR version [1.6.3].
-2019-04-28 21:18:04.106 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR capabilities: IPv6 [true], sendfile [true], accept filters [false], random [true].
-2019-04-28 21:18:04.106 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR/OpenSSL configuration: useAprConnector [false], useOpenSSL [true]
-2019-04-28 21:18:05.168 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - OpenSSL successfully initialized [OpenSSL 1.0.2m  2 Nov 2017]
-2019-04-28 21:18:05.359 [][] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] 180 - Initializing Spring embedded WebApplicationContext
-2019-04-28 21:18:07.696 [][] INFO  org.apache.catalina.core.StandardService 180 - Stopping service [Tomcat]
-2019-04-28 21:18:49.910 [][] INFO  cn.hkxj.platform.PlatformApplication 50 - Starting PlatformApplication on LAPTOP-0P9MRN9T with PID 10572 (D:\Java\GithubRepository\hkxj\target\classes started by Yuki in D:\Java\GithubRepository\hkxj)
-2019-04-28 21:18:49.916 [][] INFO  cn.hkxj.platform.PlatformApplication 659 - No active profile set, falling back to default profiles: default
-2019-04-28 21:18:52.967 [][] INFO  org.apache.coyote.http11.Http11NioProtocol 180 - Initializing ProtocolHandler ["http-nio-80"]
-2019-04-28 21:18:52.987 [][] INFO  org.apache.catalina.core.StandardService 180 - Starting service [Tomcat]
-2019-04-28 21:18:52.987 [][] INFO  org.apache.catalina.core.StandardEngine 180 - Starting Servlet Engine: Apache Tomcat/8.5.31
-2019-04-28 21:18:52.994 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - Loaded APR based Apache Tomcat Native library [1.2.16] using APR version [1.6.3].
-2019-04-28 21:18:52.994 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR capabilities: IPv6 [true], sendfile [true], accept filters [false], random [true].
-2019-04-28 21:18:52.995 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR/OpenSSL configuration: useAprConnector [false], useOpenSSL [true]
-2019-04-28 21:18:54.073 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - OpenSSL successfully initialized [OpenSSL 1.0.2m  2 Nov 2017]
-2019-04-28 21:18:54.258 [][] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] 180 - Initializing Spring embedded WebApplicationContext
-2019-04-28 21:19:36.398 [][] INFO  org.apache.catalina.core.StandardService 180 - Stopping service [Tomcat]
-2019-04-28 21:20:12.036 [][] INFO  cn.hkxj.platform.PlatformApplication 50 - Starting PlatformApplication on LAPTOP-0P9MRN9T with PID 3216 (D:\Java\GithubRepository\hkxj\target\classes started by Yuki in D:\Java\GithubRepository\hkxj)
-2019-04-28 21:20:12.043 [][] INFO  cn.hkxj.platform.PlatformApplication 659 - No active profile set, falling back to default profiles: default
-2019-04-28 21:20:15.175 [][] INFO  org.apache.coyote.http11.Http11NioProtocol 180 - Initializing ProtocolHandler ["http-nio-80"]
-2019-04-28 21:20:15.187 [][] INFO  org.apache.catalina.core.StandardService 180 - Starting service [Tomcat]
-2019-04-28 21:20:15.187 [][] INFO  org.apache.catalina.core.StandardEngine 180 - Starting Servlet Engine: Apache Tomcat/8.5.31
-2019-04-28 21:20:15.193 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - Loaded APR based Apache Tomcat Native library [1.2.16] using APR version [1.6.3].
-2019-04-28 21:20:15.194 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR capabilities: IPv6 [true], sendfile [true], accept filters [false], random [true].
-2019-04-28 21:20:15.194 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR/OpenSSL configuration: useAprConnector [false], useOpenSSL [true]
-2019-04-28 21:20:16.256 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - OpenSSL successfully initialized [OpenSSL 1.0.2m  2 Nov 2017]
-2019-04-28 21:20:16.444 [][] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] 180 - Initializing Spring embedded WebApplicationContext
-2019-04-28 21:20:40.672 [][] INFO  org.apache.catalina.core.StandardService 180 - Stopping service [Tomcat]
-2019-04-28 21:23:54.587 [][] INFO  cn.hkxj.platform.PlatformApplication 50 - Starting PlatformApplication on LAPTOP-0P9MRN9T with PID 9300 (D:\Java\GithubRepository\hkxj\target\classes started by Yuki in D:\Java\GithubRepository\hkxj)
-2019-04-28 21:23:54.594 [][] INFO  cn.hkxj.platform.PlatformApplication 659 - No active profile set, falling back to default profiles: default
-2019-04-28 21:23:57.725 [][] INFO  org.apache.coyote.http11.Http11NioProtocol 180 - Initializing ProtocolHandler ["http-nio-80"]
-2019-04-28 21:23:57.736 [][] INFO  org.apache.catalina.core.StandardService 180 - Starting service [Tomcat]
-2019-04-28 21:23:57.737 [][] INFO  org.apache.catalina.core.StandardEngine 180 - Starting Servlet Engine: Apache Tomcat/8.5.31
-2019-04-28 21:23:57.743 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - Loaded APR based Apache Tomcat Native library [1.2.16] using APR version [1.6.3].
-2019-04-28 21:23:57.743 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR capabilities: IPv6 [true], sendfile [true], accept filters [false], random [true].
-2019-04-28 21:23:57.744 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR/OpenSSL configuration: useAprConnector [false], useOpenSSL [true]
-2019-04-28 21:23:58.803 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - OpenSSL successfully initialized [OpenSSL 1.0.2m  2 Nov 2017]
-2019-04-28 21:23:58.998 [][] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] 180 - Initializing Spring embedded WebApplicationContext
-2019-04-28 21:24:00.637 [][] INFO  org.apache.catalina.core.StandardService 180 - Stopping service [Tomcat]
-2019-04-28 21:24:50.965 [][] INFO  cn.hkxj.platform.PlatformApplication 50 - Starting PlatformApplication on LAPTOP-0P9MRN9T with PID 3204 (D:\Java\GithubRepository\hkxj\target\classes started by Yuki in D:\Java\GithubRepository\hkxj)
-2019-04-28 21:24:50.973 [][] INFO  cn.hkxj.platform.PlatformApplication 659 - No active profile set, falling back to default profiles: default
-2019-04-28 21:24:54.152 [][] INFO  org.apache.coyote.http11.Http11NioProtocol 180 - Initializing ProtocolHandler ["http-nio-80"]
-2019-04-28 21:24:54.164 [][] INFO  org.apache.catalina.core.StandardService 180 - Starting service [Tomcat]
-2019-04-28 21:24:54.164 [][] INFO  org.apache.catalina.core.StandardEngine 180 - Starting Servlet Engine: Apache Tomcat/8.5.31
-2019-04-28 21:24:54.170 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - Loaded APR based Apache Tomcat Native library [1.2.16] using APR version [1.6.3].
-2019-04-28 21:24:54.170 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR capabilities: IPv6 [true], sendfile [true], accept filters [false], random [true].
-2019-04-28 21:24:54.170 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR/OpenSSL configuration: useAprConnector [false], useOpenSSL [true]
-2019-04-28 21:24:55.238 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - OpenSSL successfully initialized [OpenSSL 1.0.2m  2 Nov 2017]
-2019-04-28 21:24:55.422 [][] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] 180 - Initializing Spring embedded WebApplicationContext
-2019-04-28 21:24:57.052 [][] INFO  org.apache.catalina.core.StandardService 180 - Stopping service [Tomcat]
-2019-04-28 21:25:24.515 [][] INFO  cn.hkxj.platform.PlatformApplication 50 - Starting PlatformApplication on LAPTOP-0P9MRN9T with PID 9928 (D:\Java\GithubRepository\hkxj\target\classes started by Yuki in D:\Java\GithubRepository\hkxj)
-2019-04-28 21:25:24.521 [][] INFO  cn.hkxj.platform.PlatformApplication 659 - No active profile set, falling back to default profiles: default
-2019-04-28 21:25:27.917 [][] INFO  org.apache.coyote.http11.Http11NioProtocol 180 - Initializing ProtocolHandler ["http-nio-80"]
-2019-04-28 21:25:27.928 [][] INFO  org.apache.catalina.core.StandardService 180 - Starting service [Tomcat]
-2019-04-28 21:25:27.928 [][] INFO  org.apache.catalina.core.StandardEngine 180 - Starting Servlet Engine: Apache Tomcat/8.5.31
-2019-04-28 21:25:27.934 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - Loaded APR based Apache Tomcat Native library [1.2.16] using APR version [1.6.3].
-2019-04-28 21:25:27.934 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR capabilities: IPv6 [true], sendfile [true], accept filters [false], random [true].
-2019-04-28 21:25:27.934 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR/OpenSSL configuration: useAprConnector [false], useOpenSSL [true]
-2019-04-28 21:25:29.002 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - OpenSSL successfully initialized [OpenSSL 1.0.2m  2 Nov 2017]
-2019-04-28 21:25:29.198 [][] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] 180 - Initializing Spring embedded WebApplicationContext
-2019-04-28 21:25:31.708 [][] INFO  org.apache.catalina.core.StandardService 180 - Stopping service [Tomcat]
-2019-04-28 21:30:49.132 [][] INFO  cn.hkxj.platform.PlatformApplication 50 - Starting PlatformApplication on LAPTOP-0P9MRN9T with PID 16080 (D:\Java\GithubRepository\hkxj\target\classes started by Yuki in D:\Java\GithubRepository\hkxj)
-2019-04-28 21:30:49.138 [][] INFO  cn.hkxj.platform.PlatformApplication 659 - No active profile set, falling back to default profiles: default
-2019-04-28 21:30:52.415 [][] INFO  org.apache.coyote.http11.Http11NioProtocol 180 - Initializing ProtocolHandler ["http-nio-80"]
-2019-04-28 21:30:52.428 [][] INFO  org.apache.catalina.core.StandardService 180 - Starting service [Tomcat]
-2019-04-28 21:30:52.429 [][] INFO  org.apache.catalina.core.StandardEngine 180 - Starting Servlet Engine: Apache Tomcat/8.5.31
-2019-04-28 21:30:52.435 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - Loaded APR based Apache Tomcat Native library [1.2.16] using APR version [1.6.3].
-2019-04-28 21:30:52.436 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR capabilities: IPv6 [true], sendfile [true], accept filters [false], random [true].
-2019-04-28 21:30:52.436 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR/OpenSSL configuration: useAprConnector [false], useOpenSSL [true]
-2019-04-28 21:30:53.519 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - OpenSSL successfully initialized [OpenSSL 1.0.2m  2 Nov 2017]
-2019-04-28 21:30:53.709 [][] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] 180 - Initializing Spring embedded WebApplicationContext
-2019-04-28 21:30:55.442 [][] INFO  org.apache.catalina.core.StandardService 180 - Stopping service [Tomcat]
-2019-04-28 21:32:24.529 [][] INFO  cn.hkxj.platform.PlatformApplication 50 - Starting PlatformApplication on LAPTOP-0P9MRN9T with PID 10776 (D:\Java\GithubRepository\hkxj\target\classes started by Yuki in D:\Java\GithubRepository\hkxj)
-2019-04-28 21:32:24.536 [][] INFO  cn.hkxj.platform.PlatformApplication 659 - No active profile set, falling back to default profiles: default
-2019-04-28 21:32:27.833 [][] INFO  org.apache.coyote.http11.Http11NioProtocol 180 - Initializing ProtocolHandler ["http-nio-80"]
-2019-04-28 21:32:27.846 [][] INFO  org.apache.catalina.core.StandardService 180 - Starting service [Tomcat]
-2019-04-28 21:32:27.846 [][] INFO  org.apache.catalina.core.StandardEngine 180 - Starting Servlet Engine: Apache Tomcat/8.5.31
-2019-04-28 21:32:27.853 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - Loaded APR based Apache Tomcat Native library [1.2.16] using APR version [1.6.3].
-2019-04-28 21:32:27.853 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR capabilities: IPv6 [true], sendfile [true], accept filters [false], random [true].
-2019-04-28 21:32:27.853 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR/OpenSSL configuration: useAprConnector [false], useOpenSSL [true]
-2019-04-28 21:32:28.912 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - OpenSSL successfully initialized [OpenSSL 1.0.2m  2 Nov 2017]
-2019-04-28 21:32:29.111 [][] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] 180 - Initializing Spring embedded WebApplicationContext
-2019-04-28 21:32:31.034 [][] INFO  org.apache.catalina.core.StandardService 180 - Stopping service [Tomcat]
-2019-04-28 21:33:07.445 [][] INFO  cn.hkxj.platform.PlatformApplication 50 - Starting PlatformApplication on LAPTOP-0P9MRN9T with PID 3844 (D:\Java\GithubRepository\hkxj\target\classes started by Yuki in D:\Java\GithubRepository\hkxj)
-2019-04-28 21:33:07.450 [][] INFO  cn.hkxj.platform.PlatformApplication 659 - No active profile set, falling back to default profiles: default
-2019-04-28 21:33:10.479 [][] INFO  org.apache.coyote.http11.Http11NioProtocol 180 - Initializing ProtocolHandler ["http-nio-80"]
-2019-04-28 21:33:10.494 [][] INFO  org.apache.catalina.core.StandardService 180 - Starting service [Tomcat]
-2019-04-28 21:33:10.494 [][] INFO  org.apache.catalina.core.StandardEngine 180 - Starting Servlet Engine: Apache Tomcat/8.5.31
-2019-04-28 21:33:10.500 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - Loaded APR based Apache Tomcat Native library [1.2.16] using APR version [1.6.3].
-2019-04-28 21:33:10.500 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR capabilities: IPv6 [true], sendfile [true], accept filters [false], random [true].
-2019-04-28 21:33:10.500 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR/OpenSSL configuration: useAprConnector [false], useOpenSSL [true]
-2019-04-28 21:33:11.571 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - OpenSSL successfully initialized [OpenSSL 1.0.2m  2 Nov 2017]
-2019-04-28 21:33:11.758 [][] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] 180 - Initializing Spring embedded WebApplicationContext
-2019-04-28 21:33:13.354 [][] INFO  org.apache.catalina.core.StandardService 180 - Stopping service [Tomcat]
-2019-04-28 21:33:29.174 [][] INFO  cn.hkxj.platform.PlatformApplication 50 - Starting PlatformApplication on LAPTOP-0P9MRN9T with PID 1380 (D:\Java\GithubRepository\hkxj\target\classes started by Yuki in D:\Java\GithubRepository\hkxj)
-2019-04-28 21:33:29.180 [][] INFO  cn.hkxj.platform.PlatformApplication 659 - No active profile set, falling back to default profiles: default
-2019-04-28 21:33:32.232 [][] INFO  org.apache.coyote.http11.Http11NioProtocol 180 - Initializing ProtocolHandler ["http-nio-80"]
-2019-04-28 21:33:32.244 [][] INFO  org.apache.catalina.core.StandardService 180 - Starting service [Tomcat]
-2019-04-28 21:33:32.244 [][] INFO  org.apache.catalina.core.StandardEngine 180 - Starting Servlet Engine: Apache Tomcat/8.5.31
-2019-04-28 21:33:32.249 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - Loaded APR based Apache Tomcat Native library [1.2.16] using APR version [1.6.3].
-2019-04-28 21:33:32.250 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR capabilities: IPv6 [true], sendfile [true], accept filters [false], random [true].
-2019-04-28 21:33:32.250 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR/OpenSSL configuration: useAprConnector [false], useOpenSSL [true]
-2019-04-28 21:33:33.316 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - OpenSSL successfully initialized [OpenSSL 1.0.2m  2 Nov 2017]
-2019-04-28 21:33:33.506 [][] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] 180 - Initializing Spring embedded WebApplicationContext
-2019-04-28 21:34:38.093 [][] INFO  org.apache.catalina.core.StandardService 180 - Stopping service [Tomcat]
-2019-04-28 21:35:25.728 [][] INFO  cn.hkxj.platform.PlatformApplication 50 - Starting PlatformApplication on LAPTOP-0P9MRN9T with PID 12404 (D:\Java\GithubRepository\hkxj\target\classes started by Yuki in D:\Java\GithubRepository\hkxj)
-2019-04-28 21:35:25.734 [][] INFO  cn.hkxj.platform.PlatformApplication 659 - No active profile set, falling back to default profiles: default
-2019-04-28 21:35:28.829 [][] INFO  org.apache.coyote.http11.Http11NioProtocol 180 - Initializing ProtocolHandler ["http-nio-80"]
-2019-04-28 21:35:28.841 [][] INFO  org.apache.catalina.core.StandardService 180 - Starting service [Tomcat]
-2019-04-28 21:35:28.841 [][] INFO  org.apache.catalina.core.StandardEngine 180 - Starting Servlet Engine: Apache Tomcat/8.5.31
-2019-04-28 21:35:28.846 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - Loaded APR based Apache Tomcat Native library [1.2.16] using APR version [1.6.3].
-2019-04-28 21:35:28.847 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR capabilities: IPv6 [true], sendfile [true], accept filters [false], random [true].
-2019-04-28 21:35:28.847 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR/OpenSSL configuration: useAprConnector [false], useOpenSSL [true]
-2019-04-28 21:35:29.911 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - OpenSSL successfully initialized [OpenSSL 1.0.2m  2 Nov 2017]
-2019-04-28 21:35:30.103 [][] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] 180 - Initializing Spring embedded WebApplicationContext
-2019-04-28 21:35:31.703 [][] INFO  org.apache.catalina.core.StandardService 180 - Stopping service [Tomcat]
-2019-04-28 21:35:47.754 [][] INFO  cn.hkxj.platform.PlatformApplication 50 - Starting PlatformApplication on LAPTOP-0P9MRN9T with PID 1060 (D:\Java\GithubRepository\hkxj\target\classes started by Yuki in D:\Java\GithubRepository\hkxj)
-2019-04-28 21:35:47.760 [][] INFO  cn.hkxj.platform.PlatformApplication 659 - No active profile set, falling back to default profiles: default
-2019-04-28 21:35:50.846 [][] INFO  org.apache.coyote.http11.Http11NioProtocol 180 - Initializing ProtocolHandler ["http-nio-80"]
-2019-04-28 21:35:50.858 [][] INFO  org.apache.catalina.core.StandardService 180 - Starting service [Tomcat]
-2019-04-28 21:35:50.859 [][] INFO  org.apache.catalina.core.StandardEngine 180 - Starting Servlet Engine: Apache Tomcat/8.5.31
-2019-04-28 21:35:50.864 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - Loaded APR based Apache Tomcat Native library [1.2.16] using APR version [1.6.3].
-2019-04-28 21:35:50.865 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR capabilities: IPv6 [true], sendfile [true], accept filters [false], random [true].
-2019-04-28 21:35:50.865 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR/OpenSSL configuration: useAprConnector [false], useOpenSSL [true]
-2019-04-28 21:35:51.936 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - OpenSSL successfully initialized [OpenSSL 1.0.2m  2 Nov 2017]
-2019-04-28 21:35:52.126 [][] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] 180 - Initializing Spring embedded WebApplicationContext
-2019-04-28 21:35:53.735 [][] INFO  org.apache.catalina.core.StandardService 180 - Stopping service [Tomcat]
-2019-04-28 21:37:18.173 [][] INFO  cn.hkxj.platform.PlatformApplication 50 - Starting PlatformApplication on LAPTOP-0P9MRN9T with PID 10752 (D:\Java\GithubRepository\hkxj\target\classes started by Yuki in D:\Java\GithubRepository\hkxj)
-2019-04-28 21:37:18.179 [][] INFO  cn.hkxj.platform.PlatformApplication 659 - No active profile set, falling back to default profiles: default
-2019-04-28 21:37:21.218 [][] INFO  org.apache.coyote.http11.Http11NioProtocol 180 - Initializing ProtocolHandler ["http-nio-80"]
-2019-04-28 21:37:21.231 [][] INFO  org.apache.catalina.core.StandardService 180 - Starting service [Tomcat]
-2019-04-28 21:37:21.231 [][] INFO  org.apache.catalina.core.StandardEngine 180 - Starting Servlet Engine: Apache Tomcat/8.5.31
-2019-04-28 21:37:21.236 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - Loaded APR based Apache Tomcat Native library [1.2.16] using APR version [1.6.3].
-2019-04-28 21:37:21.237 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR capabilities: IPv6 [true], sendfile [true], accept filters [false], random [true].
-2019-04-28 21:37:21.237 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR/OpenSSL configuration: useAprConnector [false], useOpenSSL [true]
-2019-04-28 21:37:22.306 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - OpenSSL successfully initialized [OpenSSL 1.0.2m  2 Nov 2017]
-2019-04-28 21:37:22.497 [][] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] 180 - Initializing Spring embedded WebApplicationContext
-2019-04-28 21:38:07.656 [][] INFO  cn.hkxj.platform.PlatformApplication 50 - Starting PlatformApplication on LAPTOP-0P9MRN9T with PID 1272 (D:\Java\GithubRepository\hkxj\target\classes started by Yuki in D:\Java\GithubRepository\hkxj)
-2019-04-28 21:38:07.662 [][] INFO  cn.hkxj.platform.PlatformApplication 659 - No active profile set, falling back to default profiles: default
-2019-04-28 21:38:10.712 [][] INFO  org.apache.coyote.http11.Http11NioProtocol 180 - Initializing ProtocolHandler ["http-nio-80"]
-2019-04-28 21:38:10.724 [][] INFO  org.apache.catalina.core.StandardService 180 - Starting service [Tomcat]
-2019-04-28 21:38:10.724 [][] INFO  org.apache.catalina.core.StandardEngine 180 - Starting Servlet Engine: Apache Tomcat/8.5.31
-2019-04-28 21:38:10.729 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - Loaded APR based Apache Tomcat Native library [1.2.16] using APR version [1.6.3].
-2019-04-28 21:38:10.730 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR capabilities: IPv6 [true], sendfile [true], accept filters [false], random [true].
-2019-04-28 21:38:10.730 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR/OpenSSL configuration: useAprConnector [false], useOpenSSL [true]
-2019-04-28 21:38:11.805 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - OpenSSL successfully initialized [OpenSSL 1.0.2m  2 Nov 2017]
-2019-04-28 21:38:11.987 [][] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] 180 - Initializing Spring embedded WebApplicationContext
-2019-04-28 21:39:08.214 [][] INFO  cn.hkxj.platform.PlatformApplication 50 - Starting PlatformApplication on LAPTOP-0P9MRN9T with PID 8652 (D:\Java\GithubRepository\hkxj\target\classes started by Yuki in D:\Java\GithubRepository\hkxj)
-2019-04-28 21:39:08.220 [][] INFO  cn.hkxj.platform.PlatformApplication 659 - No active profile set, falling back to default profiles: default
-2019-04-28 21:39:11.253 [][] INFO  org.apache.coyote.http11.Http11NioProtocol 180 - Initializing ProtocolHandler ["http-nio-80"]
-2019-04-28 21:39:11.266 [][] INFO  org.apache.catalina.core.StandardService 180 - Starting service [Tomcat]
-2019-04-28 21:39:11.266 [][] INFO  org.apache.catalina.core.StandardEngine 180 - Starting Servlet Engine: Apache Tomcat/8.5.31
-2019-04-28 21:39:11.272 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - Loaded APR based Apache Tomcat Native library [1.2.16] using APR version [1.6.3].
-2019-04-28 21:39:11.272 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR capabilities: IPv6 [true], sendfile [true], accept filters [false], random [true].
-2019-04-28 21:39:11.272 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR/OpenSSL configuration: useAprConnector [false], useOpenSSL [true]
-2019-04-28 21:39:12.338 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - OpenSSL successfully initialized [OpenSSL 1.0.2m  2 Nov 2017]
-2019-04-28 21:39:12.529 [][] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] 180 - Initializing Spring embedded WebApplicationContext
-2019-04-28 21:40:08.276 [][] INFO  org.apache.coyote.http11.Http11NioProtocol 180 - Starting ProtocolHandler ["http-nio-80"]
-2019-04-28 21:40:08.333 [][] INFO  cn.hkxj.platform.PlatformApplication 59 - Started PlatformApplication in 60.455 seconds (JVM running for 62.498)
-2019-04-28 21:40:08.898 [][] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] 180 - Initializing Spring FrameworkServlet 'dispatcherServlet'
-2019-04-28 21:40:08.911 [][] INFO  com.zaxxer.hikari.HikariDataSource 110 - HikariPool-1 - Starting...
-2019-04-28 21:40:09.201 [][] INFO  com.zaxxer.hikari.HikariDataSource 123 - HikariPool-1 - Start completed.
-2019-04-28 21:40:09.317 [][] INFO  io.lettuce.core.EpollProvider 101 - Starting without optional epoll library
-2019-04-28 21:40:09.319 [][] INFO  io.lettuce.core.KqueueProvider 101 - Starting without optional kqueue library
-2019-04-28 21:41:16.811 [][] INFO  cn.hkxj.platform.PlatformApplication 50 - Starting PlatformApplication on LAPTOP-0P9MRN9T with PID 14532 (D:\Java\GithubRepository\hkxj\target\classes started by Yuki in D:\Java\GithubRepository\hkxj)
-2019-04-28 21:41:16.817 [][] INFO  cn.hkxj.platform.PlatformApplication 659 - No active profile set, falling back to default profiles: default
-2019-04-28 21:41:19.922 [][] INFO  org.apache.coyote.http11.Http11NioProtocol 180 - Initializing ProtocolHandler ["http-nio-80"]
-2019-04-28 21:41:19.935 [][] INFO  org.apache.catalina.core.StandardService 180 - Starting service [Tomcat]
-2019-04-28 21:41:19.935 [][] INFO  org.apache.catalina.core.StandardEngine 180 - Starting Servlet Engine: Apache Tomcat/8.5.31
-2019-04-28 21:41:19.941 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - Loaded APR based Apache Tomcat Native library [1.2.16] using APR version [1.6.3].
-2019-04-28 21:41:19.942 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR capabilities: IPv6 [true], sendfile [true], accept filters [false], random [true].
-2019-04-28 21:41:19.942 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR/OpenSSL configuration: useAprConnector [false], useOpenSSL [true]
-2019-04-28 21:41:21.001 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - OpenSSL successfully initialized [OpenSSL 1.0.2m  2 Nov 2017]
-2019-04-28 21:41:21.188 [][] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] 180 - Initializing Spring embedded WebApplicationContext
-2019-04-28 21:41:25.720 [][] INFO  org.apache.coyote.http11.Http11NioProtocol 180 - Starting ProtocolHandler ["http-nio-80"]
-2019-04-28 21:41:25.756 [][] INFO  cn.hkxj.platform.PlatformApplication 59 - Started PlatformApplication in 9.381 seconds (JVM running for 11.373)
-2019-04-28 21:41:26.297 [][] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] 180 - Initializing Spring FrameworkServlet 'dispatcherServlet'
-2019-04-28 21:41:26.310 [][] INFO  com.zaxxer.hikari.HikariDataSource 110 - HikariPool-1 - Starting...
-2019-04-28 21:41:26.511 [][] INFO  com.zaxxer.hikari.HikariDataSource 123 - HikariPool-1 - Start completed.
-2019-04-28 21:41:26.637 [][] INFO  io.lettuce.core.EpollProvider 101 - Starting without optional epoll library
-2019-04-28 21:41:26.639 [][] INFO  io.lettuce.core.KqueueProvider 101 - Starting without optional kqueue library
-2019-04-28 21:44:41.165 [2bb0c33c-f57e-43f7-9881-ce025088783b][] INFO  c.hkxj.platform.controller.wechat.WechatController 58 - 
-接收到来自微信服务器的认证消息：[b93f754267ccd6ce6e2401d959094e33fb575ab6, 1556459079, 732487649, 8065696392145125343]
-2019-04-28 21:44:52.317 [766924be-568e-482f-832e-41320eef09aa][] INFO  c.hkxj.platform.controller.wechat.WechatController 58 - 
-接收到来自微信服务器的认证消息：[a2a2b9e8d1000c904f8977fcb9f6e00e7abe57ad, 1556459090, 845181683, 2087221693622628090]
-2019-04-28 21:45:19.455 [5d77d68f-5d18-4ae9-ab1d-4ce3bdd7eb0d][] INFO  c.hkxj.platform.controller.wechat.WechatController 82 - 
-接收微信请求：[signature=[cc19ccdf215a2c119eea1cd6a12064e1a95c4d5c], encType=[null], msgSignature=[null], timestamp=[1556459115], nonce=[109553270], requestBody=[
+2019-05-04 15:36:40.084 [][] INFO  cn.hkxj.platform.PlatformApplication 50 - Starting PlatformApplication on LAPTOP-0P9MRN9T with PID 15428 (D:\Java\GithubRepository\hkxj\target\classes started by Yuki in D:\Java\GithubRepository\hkxj)
+2019-05-04 15:36:40.097 [][] INFO  cn.hkxj.platform.PlatformApplication 659 - No active profile set, falling back to default profiles: default
+2019-05-04 15:36:44.347 [][] INFO  org.apache.coyote.http11.Http11NioProtocol 180 - Initializing ProtocolHandler ["http-nio-80"]
+2019-05-04 15:36:44.359 [][] INFO  org.apache.catalina.core.StandardService 180 - Starting service [Tomcat]
+2019-05-04 15:36:44.359 [][] INFO  org.apache.catalina.core.StandardEngine 180 - Starting Servlet Engine: Apache Tomcat/8.5.31
+2019-05-04 15:36:44.386 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - Loaded APR based Apache Tomcat Native library [1.2.16] using APR version [1.6.3].
+2019-05-04 15:36:44.387 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR capabilities: IPv6 [true], sendfile [true], accept filters [false], random [true].
+2019-05-04 15:36:44.387 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR/OpenSSL configuration: useAprConnector [false], useOpenSSL [true]
+2019-05-04 15:36:45.475 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - OpenSSL successfully initialized [OpenSSL 1.0.2m  2 Nov 2017]
+2019-05-04 15:36:45.681 [][] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] 180 - Initializing Spring embedded WebApplicationContext
+2019-05-04 15:36:47.976 [][] INFO  org.apache.catalina.core.StandardService 180 - Stopping service [Tomcat]
+2019-05-04 15:38:31.152 [][] INFO  cn.hkxj.platform.PlatformApplication 50 - Starting PlatformApplication on LAPTOP-0P9MRN9T with PID 12232 (D:\Java\GithubRepository\hkxj\target\classes started by Yuki in D:\Java\GithubRepository\hkxj)
+2019-05-04 15:38:31.159 [][] INFO  cn.hkxj.platform.PlatformApplication 659 - No active profile set, falling back to default profiles: default
+2019-05-04 15:38:34.349 [][] INFO  org.apache.coyote.http11.Http11NioProtocol 180 - Initializing ProtocolHandler ["http-nio-80"]
+2019-05-04 15:38:34.360 [][] INFO  org.apache.catalina.core.StandardService 180 - Starting service [Tomcat]
+2019-05-04 15:38:34.360 [][] INFO  org.apache.catalina.core.StandardEngine 180 - Starting Servlet Engine: Apache Tomcat/8.5.31
+2019-05-04 15:38:34.366 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - Loaded APR based Apache Tomcat Native library [1.2.16] using APR version [1.6.3].
+2019-05-04 15:38:34.366 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR capabilities: IPv6 [true], sendfile [true], accept filters [false], random [true].
+2019-05-04 15:38:34.366 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR/OpenSSL configuration: useAprConnector [false], useOpenSSL [true]
+2019-05-04 15:38:35.421 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - OpenSSL successfully initialized [OpenSSL 1.0.2m  2 Nov 2017]
+2019-05-04 15:38:35.612 [][] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] 180 - Initializing Spring embedded WebApplicationContext
+2019-05-04 15:38:37.578 [][] INFO  org.apache.catalina.core.StandardService 180 - Stopping service [Tomcat]
+2019-05-04 15:40:45.729 [][] INFO  cn.hkxj.platform.PlatformApplication 50 - Starting PlatformApplication on LAPTOP-0P9MRN9T with PID 7916 (D:\Java\GithubRepository\hkxj\target\classes started by Yuki in D:\Java\GithubRepository\hkxj)
+2019-05-04 15:40:45.734 [][] INFO  cn.hkxj.platform.PlatformApplication 659 - No active profile set, falling back to default profiles: default
+2019-05-04 15:40:48.840 [][] INFO  org.apache.coyote.http11.Http11NioProtocol 180 - Initializing ProtocolHandler ["http-nio-80"]
+2019-05-04 15:40:48.851 [][] INFO  org.apache.catalina.core.StandardService 180 - Starting service [Tomcat]
+2019-05-04 15:40:48.851 [][] INFO  org.apache.catalina.core.StandardEngine 180 - Starting Servlet Engine: Apache Tomcat/8.5.31
+2019-05-04 15:40:48.856 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - Loaded APR based Apache Tomcat Native library [1.2.16] using APR version [1.6.3].
+2019-05-04 15:40:48.857 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR capabilities: IPv6 [true], sendfile [true], accept filters [false], random [true].
+2019-05-04 15:40:48.857 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR/OpenSSL configuration: useAprConnector [false], useOpenSSL [true]
+2019-05-04 15:40:49.920 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - OpenSSL successfully initialized [OpenSSL 1.0.2m  2 Nov 2017]
+2019-05-04 15:40:50.114 [][] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] 180 - Initializing Spring embedded WebApplicationContext
+2019-05-04 15:40:52.062 [][] INFO  org.apache.catalina.core.StandardService 180 - Stopping service [Tomcat]
+2019-05-04 15:43:51.910 [][] INFO  cn.hkxj.platform.PlatformApplication 50 - Starting PlatformApplication on LAPTOP-0P9MRN9T with PID 1816 (D:\Java\GithubRepository\hkxj\target\classes started by Yuki in D:\Java\GithubRepository\hkxj)
+2019-05-04 15:43:51.916 [][] INFO  cn.hkxj.platform.PlatformApplication 659 - No active profile set, falling back to default profiles: default
+2019-05-04 15:43:55.119 [][] INFO  org.apache.coyote.http11.Http11NioProtocol 180 - Initializing ProtocolHandler ["http-nio-80"]
+2019-05-04 15:43:55.133 [][] INFO  org.apache.catalina.core.StandardService 180 - Starting service [Tomcat]
+2019-05-04 15:43:55.133 [][] INFO  org.apache.catalina.core.StandardEngine 180 - Starting Servlet Engine: Apache Tomcat/8.5.31
+2019-05-04 15:43:55.143 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - Loaded APR based Apache Tomcat Native library [1.2.16] using APR version [1.6.3].
+2019-05-04 15:43:55.143 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR capabilities: IPv6 [true], sendfile [true], accept filters [false], random [true].
+2019-05-04 15:43:55.143 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR/OpenSSL configuration: useAprConnector [false], useOpenSSL [true]
+2019-05-04 15:43:56.216 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - OpenSSL successfully initialized [OpenSSL 1.0.2m  2 Nov 2017]
+2019-05-04 15:43:56.414 [][] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] 180 - Initializing Spring embedded WebApplicationContext
+2019-05-04 15:44:01.262 [][] INFO  org.apache.coyote.http11.Http11NioProtocol 180 - Starting ProtocolHandler ["http-nio-80"]
+2019-05-04 15:44:01.302 [][] INFO  cn.hkxj.platform.PlatformApplication 59 - Started PlatformApplication in 9.782 seconds (JVM running for 12.002)
+2019-05-04 15:44:02.014 [][] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] 180 - Initializing Spring FrameworkServlet 'dispatcherServlet'
+2019-05-04 15:44:02.023 [][] INFO  com.zaxxer.hikari.HikariDataSource 110 - HikariPool-1 - Starting...
+2019-05-04 15:44:02.221 [][] INFO  com.zaxxer.hikari.HikariDataSource 123 - HikariPool-1 - Start completed.
+2019-05-04 15:44:02.347 [][] INFO  io.lettuce.core.EpollProvider 101 - Starting without optional epoll library
+2019-05-04 15:44:02.350 [][] INFO  io.lettuce.core.KqueueProvider 101 - Starting without optional kqueue library
+2019-05-04 15:44:26.944 [e6d4e6ec-12ad-44b5-8474-3ab5b7353644][] INFO  cn.hkxj.platform.controller.IndexController 22 - boom
+2019-05-04 15:47:28.391 [73c315f4-b978-441d-a187-21a288f392ed][] INFO  c.hkxj.platform.controller.wechat.WechatController 40 - 
+接收到来自微信服务器的认证消息：[null, null, null, null]
+2019-05-04 15:48:56.019 [30ea133b-0956-4421-aab2-f42a2efe05b2][] INFO  c.hkxj.platform.controller.wechat.WechatController 40 - 
+接收到来自微信服务器的认证消息：[1f65b8042560f49783610112c6e6f712e4d3b238, 1556956135, 1755854237, 877104548109348839]
+2019-05-04 15:49:51.889 [e35e946e-eeed-4f39-8e5e-8d6f96892308][] INFO  c.hkxj.platform.controller.wechat.WechatController 40 - 
+接收到来自微信服务器的认证消息：[ab39e319991afe6ea2ef377c3a9d18a9f43500c0, 1556956192, 2021309205, 2328894148029926523]
+2019-05-04 15:50:07.152 [76fcb14f-058f-498e-8672-520c18daab75][] INFO  c.hkxj.platform.controller.wechat.WechatController 40 - 
+接收到来自微信服务器的认证消息：[360310590dde5660027b77e6bdfee2fd74d202dd, 1556956206, 710025196, 2058741254333494895]
+2019-05-04 15:50:25.366 [ac2a5129-c493-45c2-8988-ac98579cafa1][] INFO  c.hkxj.platform.controller.wechat.WechatController 40 - 
+接收到来自微信服务器的认证消息：[6072d596df291e6f0a8c1a31077b63d899257236, 1556956225, 1675682995, 7546527110530068441]
+2019-05-04 15:51:51.032 [08228bb0-6bd4-426d-90cd-906b732f6600][] INFO  c.hkxj.platform.controller.wechat.WechatController 64 - 
+接收微信请求：[signature=[8cb43fe7c8a5bd5fc5382802c01448e0aa5c6035], encType=[null], msgSignature=[null], timestamp=[1556956311], nonce=[172346245], requestBody=[
 <xml><ToUserName><![CDATA[gh_e674ed60dcb2]]></ToUserName>
 <FromUserName><![CDATA[oWPfu0noOKkUHpTkmP8ExbUgfqUY]]></FromUserName>
-<CreateTime>1556459115</CreateTime>
+<CreateTime>1556956301</CreateTime>
 <MsgType><![CDATA[text]]></MsgType>
 <Content><![CDATA[课表]]></Content>
-<MsgId>22283137368708499</MsgId>
+<MsgId>22290254462654663</MsgId>
 </xml>
 ] 
-2019-04-28 21:45:19.824 [5d77d68f-5d18-4ae9-ab1d-4ce3bdd7eb0d][oWPfu0noOKkUHpTkmP8ExbUgfqUY] INFO  c.h.platform.interceptor.WechatOpenIdInterceptor 41 - content 课表 check openid oWPfu0noOKkUHpTkmP8ExbUgfqUY is not bind
-2019-04-28 21:45:19.842 [5d77d68f-5d18-4ae9-ab1d-4ce3bdd7eb0d][oWPfu0noOKkUHpTkmP8ExbUgfqUY] INFO  c.hkxj.platform.controller.wechat.WechatController 116 - wechat message out <xml>
-  <ToUserName><![CDATA[oWPfu0noOKkUHpTkmP8ExbUgfqUY]]></ToUserName>
-  <FromUserName><![CDATA[gh_e674ed60dcb2]]></FromUserName>
-  <CreateTime>1556459119</CreateTime>
-  <MsgType><![CDATA[text]]></MsgType>
-  <Content><![CDATA[<a href="https://7c8aab51.ngrok.io/bind?openid=oWPfu0noOKkUHpTkmP8ExbUgfqUY">点击我绑定</a>]]></Content>
-</xml>
-2019-04-28 21:45:50.329 [][] INFO  cn.hkxj.platform.PlatformApplication 50 - Starting PlatformApplication on LAPTOP-0P9MRN9T with PID 14608 (D:\Java\GithubRepository\hkxj\target\classes started by Yuki in D:\Java\GithubRepository\hkxj)
-2019-04-28 21:45:50.334 [][] INFO  cn.hkxj.platform.PlatformApplication 659 - No active profile set, falling back to default profiles: default
-2019-04-28 21:45:52.513 [][] INFO  org.apache.coyote.http11.Http11NioProtocol 180 - Initializing ProtocolHandler ["http-nio-80"]
-2019-04-28 21:45:52.524 [][] INFO  org.apache.catalina.core.StandardService 180 - Starting service [Tomcat]
-2019-04-28 21:45:52.525 [][] INFO  org.apache.catalina.core.StandardEngine 180 - Starting Servlet Engine: Apache Tomcat/8.5.31
-2019-04-28 21:45:52.528 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - Loaded APR based Apache Tomcat Native library [1.2.16] using APR version [1.6.3].
-2019-04-28 21:45:52.529 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR capabilities: IPv6 [true], sendfile [true], accept filters [false], random [true].
-2019-04-28 21:45:52.529 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR/OpenSSL configuration: useAprConnector [false], useOpenSSL [true]
-2019-04-28 21:45:53.598 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - OpenSSL successfully initialized [OpenSSL 1.0.2m  2 Nov 2017]
-2019-04-28 21:45:53.861 [][] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] 180 - Initializing Spring embedded WebApplicationContext
-2019-04-28 21:45:57.468 [][] INFO  org.apache.coyote.http11.Http11NioProtocol 180 - Starting ProtocolHandler ["http-nio-80"]
-2019-04-28 21:45:57.497 [][] INFO  cn.hkxj.platform.PlatformApplication 59 - Started PlatformApplication in 7.473 seconds (JVM running for 9.338)
-2019-04-28 21:45:58.048 [][] INFO  com.zaxxer.hikari.HikariDataSource 110 - HikariPool-1 - Starting...
-2019-04-28 21:45:58.057 [][] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] 180 - Initializing Spring FrameworkServlet 'dispatcherServlet'
-2019-04-28 21:45:58.227 [][] INFO  com.zaxxer.hikari.HikariDataSource 123 - HikariPool-1 - Start completed.
-2019-04-28 21:45:58.322 [][] INFO  io.lettuce.core.EpollProvider 101 - Starting without optional epoll library
-2019-04-28 21:45:58.323 [][] INFO  io.lettuce.core.KqueueProvider 101 - Starting without optional kqueue library
-2019-04-28 21:46:07.272 [159a0a23-1ba1-445a-b4de-02152040955c][] INFO  c.hkxj.platform.controller.wechat.WechatController 82 - 
-接收微信请求：[signature=[5bb09e40233802b104c733d7792bd115da9b00eb], encType=[null], msgSignature=[null], timestamp=[1556459165], nonce=[2038881934], requestBody=[
+2019-05-04 15:51:51.318 [08228bb0-6bd4-426d-90cd-906b732f6600][oWPfu0noOKkUHpTkmP8ExbUgfqUY] INFO  cn.hkxj.platform.service.impl.CourseServiceImpl 57 - query currentday course schedule --account 2016024170, academy 11 day6
+2019-05-04 15:51:54.968 [e471ed14-c00d-4179-b37d-09e7127ee1d9][] INFO  c.hkxj.platform.controller.wechat.WechatController 64 - 
+接收微信请求：[signature=[1cb32b6d8298cb6c26e1ab38cfb272eb6d715fa1], encType=[null], msgSignature=[null], timestamp=[1556956313], nonce=[1853409824], requestBody=[
 <xml><ToUserName><![CDATA[gh_e674ed60dcb2]]></ToUserName>
 <FromUserName><![CDATA[oWPfu0noOKkUHpTkmP8ExbUgfqUY]]></FromUserName>
-<CreateTime>1556459165</CreateTime>
-<MsgType><![CDATA[text]]></MsgType>
-<Content><![CDATA[课表]]></Content>
-<MsgId>22283139821222587</MsgId>
-</xml>
-] 
-2019-04-28 21:46:07.605 [159a0a23-1ba1-445a-b4de-02152040955c][oWPfu0noOKkUHpTkmP8ExbUgfqUY] INFO  c.hkxj.platform.controller.wechat.WechatController 116 - wechat message out <xml>
-  <ToUserName><![CDATA[oWPfu0noOKkUHpTkmP8ExbUgfqUY]]></ToUserName>
-  <FromUserName><![CDATA[gh_e674ed60dcb2]]></FromUserName>
-  <CreateTime>1556459167</CreateTime>
-  <MsgType><![CDATA[text]]></MsgType>
-  <Content><![CDATA[<a href=''>点击领取今日课表</a>]]></Content>
-</xml>
-2019-04-28 21:46:35.579 [][] INFO  cn.hkxj.platform.PlatformApplication 50 - Starting PlatformApplication on LAPTOP-0P9MRN9T with PID 14048 (D:\Java\GithubRepository\hkxj\target\classes started by Yuki in D:\Java\GithubRepository\hkxj)
-2019-04-28 21:46:35.584 [][] INFO  cn.hkxj.platform.PlatformApplication 659 - No active profile set, falling back to default profiles: default
-2019-04-28 21:46:37.817 [][] INFO  org.apache.coyote.http11.Http11NioProtocol 180 - Initializing ProtocolHandler ["http-nio-80"]
-2019-04-28 21:46:37.828 [][] INFO  org.apache.catalina.core.StandardService 180 - Starting service [Tomcat]
-2019-04-28 21:46:37.828 [][] INFO  org.apache.catalina.core.StandardEngine 180 - Starting Servlet Engine: Apache Tomcat/8.5.31
-2019-04-28 21:46:37.832 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - Loaded APR based Apache Tomcat Native library [1.2.16] using APR version [1.6.3].
-2019-04-28 21:46:37.832 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR capabilities: IPv6 [true], sendfile [true], accept filters [false], random [true].
-2019-04-28 21:46:37.832 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR/OpenSSL configuration: useAprConnector [false], useOpenSSL [true]
-2019-04-28 21:46:38.889 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - OpenSSL successfully initialized [OpenSSL 1.0.2m  2 Nov 2017]
-2019-04-28 21:46:39.158 [][] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] 180 - Initializing Spring embedded WebApplicationContext
-2019-04-28 21:46:42.706 [][] INFO  org.apache.coyote.http11.Http11NioProtocol 180 - Starting ProtocolHandler ["http-nio-80"]
-2019-04-28 21:46:42.736 [][] INFO  cn.hkxj.platform.PlatformApplication 59 - Started PlatformApplication in 7.466 seconds (JVM running for 9.115)
-2019-04-28 21:46:43.470 [][] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] 180 - Initializing Spring FrameworkServlet 'dispatcherServlet'
-2019-04-28 21:46:43.480 [][] INFO  com.zaxxer.hikari.HikariDataSource 110 - HikariPool-1 - Starting...
-2019-04-28 21:46:43.648 [][] INFO  com.zaxxer.hikari.HikariDataSource 123 - HikariPool-1 - Start completed.
-2019-04-28 21:46:43.742 [][] INFO  io.lettuce.core.EpollProvider 101 - Starting without optional epoll library
-2019-04-28 21:46:43.743 [][] INFO  io.lettuce.core.KqueueProvider 101 - Starting without optional kqueue library
-2019-04-28 21:46:52.345 [5ee508c1-1d27-4151-9962-4aced3fd8b81][] INFO  c.hkxj.platform.controller.wechat.WechatController 82 - 
-接收微信请求：[signature=[6a51ff883eb10b78666b4a8b2f839ba91297923c], encType=[null], msgSignature=[null], timestamp=[1556459210], nonce=[705886011], requestBody=[
-<xml><ToUserName><![CDATA[gh_e674ed60dcb2]]></ToUserName>
-<FromUserName><![CDATA[oWPfu0noOKkUHpTkmP8ExbUgfqUY]]></FromUserName>
-<CreateTime>1556459210</CreateTime>
-<MsgType><![CDATA[text]]></MsgType>
-<Content><![CDATA[课表]]></Content>
-<MsgId>22283138795051925</MsgId>
-</xml>
-] 
-2019-04-28 21:46:52.672 [5ee508c1-1d27-4151-9962-4aced3fd8b81][oWPfu0noOKkUHpTkmP8ExbUgfqUY] INFO  c.hkxj.platform.controller.wechat.WechatController 116 - wechat message out <xml>
-  <ToUserName><![CDATA[oWPfu0noOKkUHpTkmP8ExbUgfqUY]]></ToUserName>
-  <FromUserName><![CDATA[gh_e674ed60dcb2]]></FromUserName>
-  <CreateTime>1556459212</CreateTime>
-  <MsgType><![CDATA[text]]></MsgType>
-  <Content><![CDATA[我是第二个公众号啦啦啦啦]]></Content>
-</xml>
-2019-04-28 22:30:58.882 [][] INFO  cn.hkxj.platform.PlatformApplication 50 - Starting PlatformApplication on LAPTOP-0P9MRN9T with PID 9228 (D:\Java\GithubRepository\hkxj\target\classes started by Yuki in D:\Java\GithubRepository\hkxj)
-2019-04-28 22:30:58.888 [][] INFO  cn.hkxj.platform.PlatformApplication 659 - No active profile set, falling back to default profiles: default
-2019-04-28 22:31:02.055 [][] INFO  org.apache.coyote.http11.Http11NioProtocol 180 - Initializing ProtocolHandler ["http-nio-80"]
-2019-04-28 22:31:02.066 [][] INFO  org.apache.catalina.core.StandardService 180 - Starting service [Tomcat]
-2019-04-28 22:31:02.066 [][] INFO  org.apache.catalina.core.StandardEngine 180 - Starting Servlet Engine: Apache Tomcat/8.5.31
-2019-04-28 22:31:02.072 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - Loaded APR based Apache Tomcat Native library [1.2.16] using APR version [1.6.3].
-2019-04-28 22:31:02.072 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR capabilities: IPv6 [true], sendfile [true], accept filters [false], random [true].
-2019-04-28 22:31:02.072 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR/OpenSSL configuration: useAprConnector [false], useOpenSSL [true]
-2019-04-28 22:31:03.140 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - OpenSSL successfully initialized [OpenSSL 1.0.2m  2 Nov 2017]
-2019-04-28 22:31:03.335 [][] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] 180 - Initializing Spring embedded WebApplicationContext
-2019-04-28 22:31:07.851 [][] INFO  org.apache.coyote.http11.Http11NioProtocol 180 - Starting ProtocolHandler ["http-nio-80"]
-2019-04-28 22:31:07.887 [][] INFO  cn.hkxj.platform.PlatformApplication 59 - Started PlatformApplication in 9.449 seconds (JVM running for 11.399)
-2019-04-28 22:31:08.409 [][] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] 180 - Initializing Spring FrameworkServlet 'dispatcherServlet'
-2019-04-28 22:31:08.420 [][] INFO  com.zaxxer.hikari.HikariDataSource 110 - HikariPool-1 - Starting...
-2019-04-28 22:31:08.616 [][] INFO  com.zaxxer.hikari.HikariDataSource 123 - HikariPool-1 - Start completed.
-2019-04-28 22:31:08.734 [][] INFO  io.lettuce.core.EpollProvider 101 - Starting without optional epoll library
-2019-04-28 22:31:08.737 [][] INFO  io.lettuce.core.KqueueProvider 101 - Starting without optional kqueue library
-2019-04-28 22:31:54.038 [655b59f8-5c81-493d-994c-fe315d1ad1ff][] INFO  c.hkxj.platform.controller.wechat.WechatController 82 - 
-接收微信请求：[signature=[8c8dace69c674d18ddb197985c714c6ee548956a], encType=[null], msgSignature=[null], timestamp=[1556461908], nonce=[656488010], requestBody=[
-<xml><ToUserName><![CDATA[gh_e674ed60dcb2]]></ToUserName>
-<FromUserName><![CDATA[oWPfu0noOKkUHpTkmP8ExbUgfqUY]]></FromUserName>
-<CreateTime>1556461908</CreateTime>
-<MsgType><![CDATA[text]]></MsgType>
-<Content><![CDATA[课表]]></Content>
-<MsgId>22283177023864859</MsgId>
-</xml>
-] 
-2019-04-28 22:31:54.657 [655b59f8-5c81-493d-994c-fe315d1ad1ff][oWPfu0noOKkUHpTkmP8ExbUgfqUY] INFO  cn.hkxj.platform.service.impl.CourseServiceImpl 57 - query currentday course schedule --account 2016024170, academy 11 day0
-2019-04-28 22:32:41.155 [][] INFO  cn.hkxj.platform.PlatformApplication 50 - Starting PlatformApplication on LAPTOP-0P9MRN9T with PID 6540 (D:\Java\GithubRepository\hkxj\target\classes started by Yuki in D:\Java\GithubRepository\hkxj)
-2019-04-28 22:32:41.160 [][] INFO  cn.hkxj.platform.PlatformApplication 659 - No active profile set, falling back to default profiles: default
-2019-04-28 22:32:44.252 [][] INFO  org.apache.coyote.http11.Http11NioProtocol 180 - Initializing ProtocolHandler ["http-nio-80"]
-2019-04-28 22:32:44.265 [][] INFO  org.apache.catalina.core.StandardService 180 - Starting service [Tomcat]
-2019-04-28 22:32:44.265 [][] INFO  org.apache.catalina.core.StandardEngine 180 - Starting Servlet Engine: Apache Tomcat/8.5.31
-2019-04-28 22:32:44.271 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - Loaded APR based Apache Tomcat Native library [1.2.16] using APR version [1.6.3].
-2019-04-28 22:32:44.271 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR capabilities: IPv6 [true], sendfile [true], accept filters [false], random [true].
-2019-04-28 22:32:44.271 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR/OpenSSL configuration: useAprConnector [false], useOpenSSL [true]
-2019-04-28 22:32:45.322 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - OpenSSL successfully initialized [OpenSSL 1.0.2m  2 Nov 2017]
-2019-04-28 22:32:45.521 [][] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] 180 - Initializing Spring embedded WebApplicationContext
-2019-04-28 22:32:50.050 [][] INFO  org.apache.coyote.http11.Http11NioProtocol 180 - Starting ProtocolHandler ["http-nio-80"]
-2019-04-28 22:32:50.086 [][] INFO  cn.hkxj.platform.PlatformApplication 59 - Started PlatformApplication in 9.307 seconds (JVM running for 11.24)
-2019-04-28 22:32:50.356 [][] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] 180 - Initializing Spring FrameworkServlet 'dispatcherServlet'
-2019-04-28 22:32:50.368 [][] INFO  com.zaxxer.hikari.HikariDataSource 110 - HikariPool-1 - Starting...
-2019-04-28 22:32:50.564 [][] INFO  com.zaxxer.hikari.HikariDataSource 123 - HikariPool-1 - Start completed.
-2019-04-28 22:32:50.680 [][] INFO  io.lettuce.core.EpollProvider 101 - Starting without optional epoll library
-2019-04-28 22:32:50.684 [][] INFO  io.lettuce.core.KqueueProvider 101 - Starting without optional kqueue library
-2019-04-28 22:33:05.917 [c915bad3-cfe8-4387-a4a2-5e606834f8e4][] INFO  c.hkxj.platform.controller.wechat.WechatController 82 - 
-接收微信请求：[signature=[4458e265a8d5de31af1288fd1bcd04b0fe964ac3], encType=[null], msgSignature=[null], timestamp=[1556461982], nonce=[1589771114], requestBody=[
-<xml><ToUserName><![CDATA[gh_e674ed60dcb2]]></ToUserName>
-<FromUserName><![CDATA[oWPfu0noOKkUHpTkmP8ExbUgfqUY]]></FromUserName>
-<CreateTime>1556461982</CreateTime>
-<MsgType><![CDATA[text]]></MsgType>
-<Content><![CDATA[课表]]></Content>
-<MsgId>22283177511812040</MsgId>
-</xml>
-] 
-2019-04-28 22:33:06.218 [c915bad3-cfe8-4387-a4a2-5e606834f8e4][oWPfu0noOKkUHpTkmP8ExbUgfqUY] INFO  cn.hkxj.platform.service.impl.CourseServiceImpl 57 - query currentday course schedule --account 2016024170, academy 11 day0
-2019-04-28 22:33:10.728 [50acb06e-f2bd-44f7-ac17-65fcd01f66b2][] INFO  c.hkxj.platform.controller.wechat.WechatController 82 - 
-接收微信请求：[signature=[284d4b3638d405cd6be573d0980d7ddfc7a8ed29], encType=[null], msgSignature=[null], timestamp=[1556461987], nonce=[1629461019], requestBody=[
-<xml><ToUserName><![CDATA[gh_e674ed60dcb2]]></ToUserName>
-<FromUserName><![CDATA[oWPfu0noOKkUHpTkmP8ExbUgfqUY]]></FromUserName>
-<CreateTime>1556461987</CreateTime>
+<CreateTime>1556956313</CreateTime>
 <MsgType><![CDATA[event]]></MsgType>
 <Event><![CDATA[TEMPLATESENDJOBFINISH]]></Event>
-<MsgID>786343363451699200</MsgID>
+<MsgID>794636775481294852</MsgID>
 <Status><![CDATA[success]]></Status>
 </xml>
 ] 
-2019-04-28 22:33:11.418 [1505eddb-43c6-47e5-80f0-6f66b71dc4e5][] INFO  c.hkxj.platform.controller.wechat.WechatController 82 - 
-接收微信请求：[signature=[4458e265a8d5de31af1288fd1bcd04b0fe964ac3], encType=[null], msgSignature=[null], timestamp=[1556461982], nonce=[1589771114], requestBody=[
+2019-05-04 16:00:14.382 [1a8db0e1-d4a4-4b4e-a7a9-4c781ee7d061][] INFO  c.h.p.controller.wechat.WxSubscriptionController 63 - oWPfu0noOKkUHpTkmP8ExbUgfqUY,asdasdasd,cancel,1005
+2019-05-04 16:00:14.397 [1a8db0e1-d4a4-4b4e-a7a9-4c781ee7d061][] INFO  c.h.p.controller.wechat.WxSubscriptionController 99 - redirect to login
+2019-05-04 16:00:31.151 [fc874bef-f83a-490a-963a-7e650e456d6d][] INFO  c.h.p.controller.wechat.WxSubscriptionController 63 - oWPfu0noOKkUHpTkmP8ExbUgfqUY,asdasdasd,cancel,1005
+2019-05-04 16:00:31.157 [fc874bef-f83a-490a-963a-7e650e456d6d][] INFO  c.h.p.controller.wechat.WxSubscriptionController 99 - redirect to login
+2019-05-04 16:02:20.157 [][] INFO  cn.hkxj.platform.PlatformApplication 50 - Starting PlatformApplication on LAPTOP-0P9MRN9T with PID 1420 (D:\Java\GithubRepository\hkxj\target\classes started by Yuki in D:\Java\GithubRepository\hkxj)
+2019-05-04 16:02:20.162 [][] INFO  cn.hkxj.platform.PlatformApplication 659 - No active profile set, falling back to default profiles: default
+2019-05-04 16:02:22.509 [][] INFO  org.apache.coyote.http11.Http11NioProtocol 180 - Initializing ProtocolHandler ["http-nio-80"]
+2019-05-04 16:02:22.518 [][] INFO  org.apache.catalina.core.StandardService 180 - Starting service [Tomcat]
+2019-05-04 16:02:22.519 [][] INFO  org.apache.catalina.core.StandardEngine 180 - Starting Servlet Engine: Apache Tomcat/8.5.31
+2019-05-04 16:02:22.522 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - Loaded APR based Apache Tomcat Native library [1.2.16] using APR version [1.6.3].
+2019-05-04 16:02:22.523 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR capabilities: IPv6 [true], sendfile [true], accept filters [false], random [true].
+2019-05-04 16:02:22.523 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR/OpenSSL configuration: useAprConnector [false], useOpenSSL [true]
+2019-05-04 16:02:23.578 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - OpenSSL successfully initialized [OpenSSL 1.0.2m  2 Nov 2017]
+2019-05-04 16:02:23.757 [][] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] 180 - Initializing Spring embedded WebApplicationContext
+2019-05-04 16:02:27.491 [][] INFO  org.apache.coyote.http11.Http11NioProtocol 180 - Starting ProtocolHandler ["http-nio-80"]
+2019-05-04 16:02:27.518 [][] INFO  cn.hkxj.platform.PlatformApplication 59 - Started PlatformApplication in 7.732 seconds (JVM running for 9.67)
+2019-05-04 16:02:27.888 [][] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] 180 - Initializing Spring FrameworkServlet 'dispatcherServlet'
+2019-05-04 16:02:27.896 [][] INFO  com.zaxxer.hikari.HikariDataSource 110 - HikariPool-1 - Starting...
+2019-05-04 16:02:28.098 [][] INFO  com.zaxxer.hikari.HikariDataSource 123 - HikariPool-1 - Start completed.
+2019-05-04 16:02:28.198 [][] INFO  io.lettuce.core.EpollProvider 101 - Starting without optional epoll library
+2019-05-04 16:02:28.201 [][] INFO  io.lettuce.core.KqueueProvider 101 - Starting without optional kqueue library
+2019-05-04 16:02:47.089 [8c43ac5d-a018-4bd0-aeac-66c47e768841][] INFO  c.h.p.controller.wechat.WxSubscriptionController 63 - oWPfu0noOKkUHpTkmP8ExbUgfqUY,asdasdasd,cancel,1005
+2019-05-04 16:02:47.180 [8c43ac5d-a018-4bd0-aeac-66c47e768841][] INFO  c.h.p.controller.wechat.WxSubscriptionController 99 - redirect to login
+2019-05-04 16:03:22.182 [a43986fa-960b-45cf-a3ef-329a25740330][] INFO  cn.hkxj.platform.controller.UserBindingController 47 - student bind start account:2016024170 password:1
+2019-05-04 16:03:22.315 [a43986fa-960b-45cf-a3ef-329a25740330][] INFO  cn.hkxj.platform.service.impl.CourseServiceImpl 57 - query currentday course schedule --account 2016024170, academy 11 day6
+2019-05-04 16:03:24.633 [f900d2b5-dcb4-49d6-90e2-da90396e34c9][] INFO  c.h.p.controller.wechat.WxSubscriptionController 63 - oWPfu0noOKkUHpTkmP8ExbUgfqUY,asdasdasd,cancel,1005
+2019-05-04 16:03:24.637 [f900d2b5-dcb4-49d6-90e2-da90396e34c9][] INFO  c.h.p.controller.wechat.WxSubscriptionController 99 - redirect to login
+2019-05-04 16:03:30.858 [ecc40eae-c472-42bf-bf7b-d166d4b1cfd0][] INFO  cn.hkxj.platform.controller.UserBindingController 47 - student bind start account:2016024170 password:1
+2019-05-04 16:03:30.873 [ecc40eae-c472-42bf-bf7b-d166d4b1cfd0][] INFO  cn.hkxj.platform.controller.UserBindingController 62 - student bind fail openid is exist account:2016024170 password:1
+2019-05-04 16:03:45.887 [][] INFO  cn.hkxj.platform.PlatformApplication 50 - Starting PlatformApplication on LAPTOP-0P9MRN9T with PID 3820 (D:\Java\GithubRepository\hkxj\target\classes started by Yuki in D:\Java\GithubRepository\hkxj)
+2019-05-04 16:03:45.893 [][] INFO  cn.hkxj.platform.PlatformApplication 659 - No active profile set, falling back to default profiles: default
+2019-05-04 16:03:48.968 [][] INFO  org.apache.coyote.http11.Http11NioProtocol 180 - Initializing ProtocolHandler ["http-nio-80"]
+2019-05-04 16:03:48.980 [][] INFO  org.apache.catalina.core.StandardService 180 - Starting service [Tomcat]
+2019-05-04 16:03:48.981 [][] INFO  org.apache.catalina.core.StandardEngine 180 - Starting Servlet Engine: Apache Tomcat/8.5.31
+2019-05-04 16:03:48.986 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - Loaded APR based Apache Tomcat Native library [1.2.16] using APR version [1.6.3].
+2019-05-04 16:03:48.987 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR capabilities: IPv6 [true], sendfile [true], accept filters [false], random [true].
+2019-05-04 16:03:48.987 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR/OpenSSL configuration: useAprConnector [false], useOpenSSL [true]
+2019-05-04 16:03:50.066 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - OpenSSL successfully initialized [OpenSSL 1.0.2m  2 Nov 2017]
+2019-05-04 16:03:50.341 [][] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] 180 - Initializing Spring embedded WebApplicationContext
+2019-05-04 16:03:55.022 [][] INFO  org.apache.coyote.http11.Http11NioProtocol 180 - Starting ProtocolHandler ["http-nio-80"]
+2019-05-04 16:03:55.059 [][] INFO  cn.hkxj.platform.PlatformApplication 59 - Started PlatformApplication in 9.827 seconds (JVM running for 12.547)
+2019-05-04 16:03:55.768 [][] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] 180 - Initializing Spring FrameworkServlet 'dispatcherServlet'
+2019-05-04 16:03:55.809 [][] INFO  com.zaxxer.hikari.HikariDataSource 110 - HikariPool-1 - Starting...
+2019-05-04 16:03:56.012 [][] INFO  com.zaxxer.hikari.HikariDataSource 123 - HikariPool-1 - Start completed.
+2019-05-04 16:03:56.125 [][] INFO  io.lettuce.core.EpollProvider 101 - Starting without optional epoll library
+2019-05-04 16:03:56.129 [][] INFO  io.lettuce.core.KqueueProvider 101 - Starting without optional kqueue library
+2019-05-04 16:04:07.884 [32e99ed0-2f36-4bb5-832e-a63cd1d2ccc4][] INFO  cn.hkxj.platform.controller.UserBindingController 47 - student bind start account:2016024170 password:1
+2019-05-04 16:04:45.324 [32e99ed0-2f36-4bb5-832e-a63cd1d2ccc4][] INFO  cn.hkxj.platform.controller.UserBindingController 86 - student bind success account:2016024170 password:1 openidnull
+2019-05-04 16:04:52.422 [3b22f8d9-b9a3-4ce5-9de9-2c5b5d33d75b][] INFO  cn.hkxj.platform.controller.HtmlShowController 19 - request timetable html
+2019-05-04 16:06:31.706 [c890e197-c11b-4775-bb86-d2ee7c3652eb][] INFO  c.h.p.controller.wechat.WxSubscriptionController 63 - oWPfu0noOKkUHpTkmP8ExbUgfqUY,asdasdasd,cancel,1005
+2019-05-04 16:06:31.750 [c890e197-c11b-4775-bb86-d2ee7c3652eb][] INFO  c.h.p.controller.wechat.WxSubscriptionController 99 - redirect to login
+2019-05-04 16:06:43.725 [9bb58929-5a06-437a-9cf1-ff74550565a7][] INFO  cn.hkxj.platform.controller.UserBindingController 47 - student bind start account:2016024170 password:1
+2019-05-04 16:07:05.230 [9bb58929-5a06-437a-9cf1-ff74550565a7][] INFO  cn.hkxj.platform.controller.UserBindingController 62 - student bind fail openid is exist account:2016024170 password:1
+2019-05-04 16:12:55.137 [][] INFO  cn.hkxj.platform.PlatformApplication 50 - Starting PlatformApplication on LAPTOP-0P9MRN9T with PID 15168 (D:\Java\GithubRepository\hkxj\target\classes started by Yuki in D:\Java\GithubRepository\hkxj)
+2019-05-04 16:12:55.143 [][] INFO  cn.hkxj.platform.PlatformApplication 659 - No active profile set, falling back to default profiles: default
+2019-05-04 16:12:58.256 [][] INFO  org.apache.coyote.http11.Http11NioProtocol 180 - Initializing ProtocolHandler ["http-nio-80"]
+2019-05-04 16:12:58.267 [][] INFO  org.apache.catalina.core.StandardService 180 - Starting service [Tomcat]
+2019-05-04 16:12:58.268 [][] INFO  org.apache.catalina.core.StandardEngine 180 - Starting Servlet Engine: Apache Tomcat/8.5.31
+2019-05-04 16:12:58.273 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - Loaded APR based Apache Tomcat Native library [1.2.16] using APR version [1.6.3].
+2019-05-04 16:12:58.273 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR capabilities: IPv6 [true], sendfile [true], accept filters [false], random [true].
+2019-05-04 16:12:58.274 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR/OpenSSL configuration: useAprConnector [false], useOpenSSL [true]
+2019-05-04 16:12:59.342 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - OpenSSL successfully initialized [OpenSSL 1.0.2m  2 Nov 2017]
+2019-05-04 16:12:59.535 [][] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] 180 - Initializing Spring embedded WebApplicationContext
+2019-05-04 16:13:04.165 [][] INFO  org.apache.coyote.http11.Http11NioProtocol 180 - Starting ProtocolHandler ["http-nio-80"]
+2019-05-04 16:13:04.203 [][] INFO  cn.hkxj.platform.PlatformApplication 59 - Started PlatformApplication in 9.646 seconds (JVM running for 11.943)
+2019-05-04 16:13:04.840 [][] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] 180 - Initializing Spring FrameworkServlet 'dispatcherServlet'
+2019-05-04 16:13:04.850 [][] INFO  com.zaxxer.hikari.HikariDataSource 110 - HikariPool-1 - Starting...
+2019-05-04 16:13:05.044 [][] INFO  com.zaxxer.hikari.HikariDataSource 123 - HikariPool-1 - Start completed.
+2019-05-04 16:13:05.156 [][] INFO  io.lettuce.core.EpollProvider 101 - Starting without optional epoll library
+2019-05-04 16:13:05.159 [][] INFO  io.lettuce.core.KqueueProvider 101 - Starting without optional kqueue library
+2019-05-04 16:13:54.373 [86ab4130-f17c-49ea-986d-d19b859f5bf8][] INFO  c.h.p.controller.wechat.WxSubscriptionController 63 - oWPfu0noOKkUHpTkmP8ExbUgfqUY,asdasdasd,cancel,1005
+2019-05-04 16:13:54.468 [86ab4130-f17c-49ea-986d-d19b859f5bf8][] INFO  c.h.p.controller.wechat.WxSubscriptionController 101 - redirect to login
+2019-05-04 16:14:08.594 [5e4f65ad-118f-47a7-a4fc-d1a3d892d3d8][] INFO  cn.hkxj.platform.controller.UserBindingController 47 - student bind start account:2016024170 password:1
+2019-05-04 16:14:44.355 [5e4f65ad-118f-47a7-a4fc-d1a3d892d3d8][] INFO  cn.hkxj.platform.controller.UserBindingController 62 - student bind fail openid is exist account:2016024170 password:1
+2019-05-04 16:15:15.608 [1a023ad2-2d9f-48e2-b386-9420899537ec][] INFO  c.h.p.controller.wechat.WxSubscriptionController 63 - oWPfu0noOKkUHpTkmP8ExbUgfqUY,asdasdasd,cancel,1005
+2019-05-04 16:15:35.934 [1a023ad2-2d9f-48e2-b386-9420899537ec][] INFO  c.h.p.controller.wechat.WxSubscriptionController 101 - redirect to login
+2019-05-04 16:16:18.274 [][] INFO  cn.hkxj.platform.PlatformApplication 50 - Starting PlatformApplication on LAPTOP-0P9MRN9T with PID 12692 (D:\Java\GithubRepository\hkxj\target\classes started by Yuki in D:\Java\GithubRepository\hkxj)
+2019-05-04 16:16:18.279 [][] INFO  cn.hkxj.platform.PlatformApplication 659 - No active profile set, falling back to default profiles: default
+2019-05-04 16:16:22.430 [][] INFO  org.apache.coyote.http11.Http11NioProtocol 180 - Initializing ProtocolHandler ["http-nio-80"]
+2019-05-04 16:16:22.442 [][] INFO  org.apache.catalina.core.StandardService 180 - Starting service [Tomcat]
+2019-05-04 16:16:22.443 [][] INFO  org.apache.catalina.core.StandardEngine 180 - Starting Servlet Engine: Apache Tomcat/8.5.31
+2019-05-04 16:16:22.448 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - Loaded APR based Apache Tomcat Native library [1.2.16] using APR version [1.6.3].
+2019-05-04 16:16:22.449 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR capabilities: IPv6 [true], sendfile [true], accept filters [false], random [true].
+2019-05-04 16:16:22.449 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR/OpenSSL configuration: useAprConnector [false], useOpenSSL [true]
+2019-05-04 16:16:23.560 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - OpenSSL successfully initialized [OpenSSL 1.0.2m  2 Nov 2017]
+2019-05-04 16:16:23.781 [][] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] 180 - Initializing Spring embedded WebApplicationContext
+2019-05-04 16:16:28.918 [][] INFO  org.apache.coyote.http11.Http11NioProtocol 180 - Starting ProtocolHandler ["http-nio-80"]
+2019-05-04 16:16:28.957 [][] INFO  cn.hkxj.platform.PlatformApplication 59 - Started PlatformApplication in 11.14 seconds (JVM running for 13.854)
+2019-05-04 16:16:29.314 [][] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] 180 - Initializing Spring FrameworkServlet 'dispatcherServlet'
+2019-05-04 16:16:29.358 [][] INFO  com.zaxxer.hikari.HikariDataSource 110 - HikariPool-1 - Starting...
+2019-05-04 16:16:29.599 [][] INFO  com.zaxxer.hikari.HikariDataSource 123 - HikariPool-1 - Start completed.
+2019-05-04 16:16:29.749 [][] INFO  io.lettuce.core.EpollProvider 101 - Starting without optional epoll library
+2019-05-04 16:16:29.753 [][] INFO  io.lettuce.core.KqueueProvider 101 - Starting without optional kqueue library
+2019-05-04 16:16:48.753 [d640af72-8d76-409d-8bf9-83ca5533a057][] INFO  c.h.p.controller.wechat.WxSubscriptionController 63 - oWPfu0noOKkUHpTkmP8ExbUgfqUY,asdasdasd,cancel,1005
+2019-05-04 16:16:48.886 [d640af72-8d76-409d-8bf9-83ca5533a057][] INFO  c.h.p.controller.wechat.WxSubscriptionController 101 - redirect to login
+2019-05-04 16:17:08.500 [c4325842-945b-4366-8239-dad7ee712e0e][] INFO  cn.hkxj.platform.controller.UserBindingController 47 - student bind start account:2016024170 password:1
+2019-05-04 16:18:03.345 [][] INFO  cn.hkxj.platform.PlatformApplication 50 - Starting PlatformApplication on LAPTOP-0P9MRN9T with PID 9852 (D:\Java\GithubRepository\hkxj\target\classes started by Yuki in D:\Java\GithubRepository\hkxj)
+2019-05-04 16:18:03.351 [][] INFO  cn.hkxj.platform.PlatformApplication 659 - No active profile set, falling back to default profiles: default
+2019-05-04 16:18:06.952 [][] INFO  org.apache.coyote.http11.Http11NioProtocol 180 - Initializing ProtocolHandler ["http-nio-80"]
+2019-05-04 16:18:06.966 [][] INFO  org.apache.catalina.core.StandardService 180 - Starting service [Tomcat]
+2019-05-04 16:18:06.966 [][] INFO  org.apache.catalina.core.StandardEngine 180 - Starting Servlet Engine: Apache Tomcat/8.5.31
+2019-05-04 16:18:06.971 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - Loaded APR based Apache Tomcat Native library [1.2.16] using APR version [1.6.3].
+2019-05-04 16:18:06.972 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR capabilities: IPv6 [true], sendfile [true], accept filters [false], random [true].
+2019-05-04 16:18:06.972 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR/OpenSSL configuration: useAprConnector [false], useOpenSSL [true]
+2019-05-04 16:18:08.034 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - OpenSSL successfully initialized [OpenSSL 1.0.2m  2 Nov 2017]
+2019-05-04 16:18:08.249 [][] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] 180 - Initializing Spring embedded WebApplicationContext
+2019-05-04 16:18:13.472 [][] INFO  org.apache.coyote.http11.Http11NioProtocol 180 - Starting ProtocolHandler ["http-nio-80"]
+2019-05-04 16:18:13.518 [][] INFO  cn.hkxj.platform.PlatformApplication 59 - Started PlatformApplication in 10.801 seconds (JVM running for 13.581)
+2019-05-04 16:18:14.148 [][] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] 180 - Initializing Spring FrameworkServlet 'dispatcherServlet'
+2019-05-04 16:18:14.158 [][] INFO  com.zaxxer.hikari.HikariDataSource 110 - HikariPool-1 - Starting...
+2019-05-04 16:18:14.384 [][] INFO  com.zaxxer.hikari.HikariDataSource 123 - HikariPool-1 - Start completed.
+2019-05-04 16:18:14.526 [][] INFO  io.lettuce.core.EpollProvider 101 - Starting without optional epoll library
+2019-05-04 16:18:14.528 [][] INFO  io.lettuce.core.KqueueProvider 101 - Starting without optional kqueue library
+2019-05-04 16:18:23.327 [d87f2aae-78ba-4e03-92d8-bf2ad19cc819][] INFO  c.h.p.controller.wechat.WxSubscriptionController 63 - oWPfu0noOKkUHpTkmP8ExbUgfqUY,asdasdasd,cancel,1005
+2019-05-04 16:18:23.473 [d87f2aae-78ba-4e03-92d8-bf2ad19cc819][] INFO  c.h.p.controller.wechat.WxSubscriptionController 101 - redirect to login
+2019-05-04 16:18:26.972 [0b5e655d-93df-461f-b362-f4fbd7c340ad][] INFO  c.h.p.controller.wechat.WxSubscriptionController 63 - oWPfu0noOKkUHpTkmP8ExbUgfqUY,asdasdasd,cancel,1005
+2019-05-04 16:18:26.979 [0b5e655d-93df-461f-b362-f4fbd7c340ad][] INFO  c.h.p.controller.wechat.WxSubscriptionController 101 - redirect to login
+2019-05-04 16:18:36.186 [95e42e72-ce7c-4396-9e77-29517670b27b][] INFO  cn.hkxj.platform.controller.UserBindingController 47 - student bind start account:2016024170 password:1
+2019-05-04 16:18:36.261 [95e42e72-ce7c-4396-9e77-29517670b27b][] INFO  cn.hkxj.platform.service.impl.CourseServiceImpl 57 - query currentday course schedule --account 2016024170, academy 11 day6
+2019-05-04 16:18:37.368 [95e42e72-ce7c-4396-9e77-29517670b27b][] INFO  cn.hkxj.platform.controller.UserBindingController 79 - send kefuMessage about course success openid:oWPfu0noOKkUHpTkmP8ExbUgfqUY appid:wx342acff3b65da191
+2019-05-04 16:18:37.368 [95e42e72-ce7c-4396-9e77-29517670b27b][] INFO  cn.hkxj.platform.controller.UserBindingController 86 - student bind success account:2016024170 password:1 openidoWPfu0noOKkUHpTkmP8ExbUgfqUY
+2019-05-04 16:18:39.212 [d0fecef8-d568-45f8-b85d-3f0ee9a82549][] INFO  cn.hkxj.platform.controller.HtmlShowController 19 - request timetable html
+2019-05-04 16:29:22.628 [][] INFO  cn.hkxj.platform.PlatformApplication 50 - Starting PlatformApplication on LAPTOP-0P9MRN9T with PID 5852 (D:\Java\GithubRepository\hkxj\target\classes started by Yuki in D:\Java\GithubRepository\hkxj)
+2019-05-04 16:29:22.637 [][] INFO  cn.hkxj.platform.PlatformApplication 659 - No active profile set, falling back to default profiles: default
+2019-05-04 16:29:26.388 [][] INFO  org.apache.coyote.http11.Http11NioProtocol 180 - Initializing ProtocolHandler ["http-nio-80"]
+2019-05-04 16:29:26.402 [][] INFO  org.apache.catalina.core.StandardService 180 - Starting service [Tomcat]
+2019-05-04 16:29:26.402 [][] INFO  org.apache.catalina.core.StandardEngine 180 - Starting Servlet Engine: Apache Tomcat/8.5.31
+2019-05-04 16:29:26.408 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - Loaded APR based Apache Tomcat Native library [1.2.16] using APR version [1.6.3].
+2019-05-04 16:29:26.408 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR capabilities: IPv6 [true], sendfile [true], accept filters [false], random [true].
+2019-05-04 16:29:26.409 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR/OpenSSL configuration: useAprConnector [false], useOpenSSL [true]
+2019-05-04 16:29:27.481 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - OpenSSL successfully initialized [OpenSSL 1.0.2m  2 Nov 2017]
+2019-05-04 16:29:27.698 [][] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] 180 - Initializing Spring embedded WebApplicationContext
+2019-05-04 16:29:32.907 [][] INFO  org.apache.coyote.http11.Http11NioProtocol 180 - Starting ProtocolHandler ["http-nio-80"]
+2019-05-04 16:29:32.948 [][] INFO  cn.hkxj.platform.PlatformApplication 59 - Started PlatformApplication in 11.005 seconds (JVM running for 13.538)
+2019-05-04 16:29:33.395 [][] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] 180 - Initializing Spring FrameworkServlet 'dispatcherServlet'
+2019-05-04 16:29:33.406 [][] INFO  com.zaxxer.hikari.HikariDataSource 110 - HikariPool-1 - Starting...
+2019-05-04 16:29:33.619 [][] INFO  com.zaxxer.hikari.HikariDataSource 123 - HikariPool-1 - Start completed.
+2019-05-04 16:29:33.748 [][] INFO  io.lettuce.core.EpollProvider 101 - Starting without optional epoll library
+2019-05-04 16:29:33.751 [][] INFO  io.lettuce.core.KqueueProvider 101 - Starting without optional kqueue library
+2019-05-04 16:30:53.987 [257f5923-1268-42b2-8902-8583ea4178d2][] INFO  c.hkxj.platform.controller.wechat.WechatController 64 - 
+接收微信请求：[signature=[f8e15bb3894e20f61111d26b437709f86b1c5315], encType=[null], msgSignature=[null], timestamp=[1556958654], nonce=[1648323272], requestBody=[
 <xml><ToUserName><![CDATA[gh_e674ed60dcb2]]></ToUserName>
 <FromUserName><![CDATA[oWPfu0noOKkUHpTkmP8ExbUgfqUY]]></FromUserName>
-<CreateTime>1556461982</CreateTime>
+<CreateTime>1556958654</CreateTime>
+<MsgType><![CDATA[text]]></MsgType>
+<Content><![CDATA[解绑]]></Content>
+<MsgId>22290288828641413</MsgId>
+</xml>
+] 
+2019-05-04 16:30:54.348 [257f5923-1268-42b2-8902-8583ea4178d2][oWPfu0noOKkUHpTkmP8ExbUgfqUY] INFO  c.hkxj.platform.controller.wechat.WechatController 100 - wechat message out <xml>
+  <ToUserName><![CDATA[oWPfu0noOKkUHpTkmP8ExbUgfqUY]]></ToUserName>
+  <FromUserName><![CDATA[gh_e674ed60dcb2]]></FromUserName>
+  <CreateTime>1556958654</CreateTime>
+  <MsgType><![CDATA[text]]></MsgType>
+  <Content><![CDATA[你的账号已解绑成功
+]]></Content>
+</xml>
+2019-05-04 16:31:13.009 [dbe97597-40d1-4cfe-a983-579fc4c55cbe][] INFO  c.hkxj.platform.controller.wechat.WechatController 64 - 
+接收微信请求：[signature=[e17e75a8a5f7b47583dbc70bcfc2cef6e79a8b06], encType=[null], msgSignature=[null], timestamp=[1556958673], nonce=[280916903], requestBody=[
+<xml><ToUserName><![CDATA[gh_e674ed60dcb2]]></ToUserName>
+<FromUserName><![CDATA[oWPfu0noOKkUHpTkmP8ExbUgfqUY]]></FromUserName>
+<CreateTime>1556958672</CreateTime>
+<MsgType><![CDATA[text]]></MsgType>
+<Content><![CDATA[绑定]]></Content>
+<MsgId>22290290704325134</MsgId>
+</xml>
+] 
+2019-05-04 16:31:42.576 [d91f4ca7-6f58-4432-a090-c8f58a0fb914][] INFO  c.hkxj.platform.controller.wechat.WechatController 64 - 
+接收微信请求：[signature=[00d1bfa9b7b2cddc1d9d073e7b8dddee17b005ec], encType=[null], msgSignature=[null], timestamp=[1556958703], nonce=[326046494], requestBody=[
+<xml><ToUserName><![CDATA[gh_e674ed60dcb2]]></ToUserName>
+<FromUserName><![CDATA[oWPfu0noOKkUHpTkmP8ExbUgfqUY]]></FromUserName>
+<CreateTime>1556958702</CreateTime>
+<MsgType><![CDATA[text]]></MsgType>
+<Content><![CDATA[openid]]></Content>
+<MsgId>22290290689581458</MsgId>
+</xml>
+] 
+2019-05-04 16:31:42.585 [d91f4ca7-6f58-4432-a090-c8f58a0fb914][oWPfu0noOKkUHpTkmP8ExbUgfqUY] INFO  c.hkxj.platform.controller.wechat.WechatController 100 - wechat message out <xml>
+  <ToUserName><![CDATA[oWPfu0noOKkUHpTkmP8ExbUgfqUY]]></ToUserName>
+  <FromUserName><![CDATA[gh_e674ed60dcb2]]></FromUserName>
+  <CreateTime>1556958702</CreateTime>
+  <MsgType><![CDATA[text]]></MsgType>
+  <Content><![CDATA[你的openid为:
+oWPfu0noOKkUHpTkmP8ExbUgfqUY]]></Content>
+</xml>
+2019-05-04 16:32:48.749 [de5871ba-96e4-4722-bee7-373dd5df696c][] INFO  c.hkxj.platform.controller.wechat.WechatController 64 - 
+接收微信请求：[signature=[92a710d1e0a572948f741ccf0673c5d147dba956], encType=[null], msgSignature=[null], timestamp=[1556958769], nonce=[1598560756], requestBody=[
+<xml><ToUserName><![CDATA[gh_e674ed60dcb2]]></ToUserName>
+<FromUserName><![CDATA[oWPfu0noOKkUHpTkmP8ExbUgfqUY]]></FromUserName>
+<CreateTime>1556958769</CreateTime>
 <MsgType><![CDATA[text]]></MsgType>
 <Content><![CDATA[课表]]></Content>
-<MsgId>22283177511812040</MsgId>
+<MsgId>22290288447568631</MsgId>
+</xml>
+] 
+2019-05-04 16:32:48.774 [de5871ba-96e4-4722-bee7-373dd5df696c][oWPfu0noOKkUHpTkmP8ExbUgfqUY] INFO  cn.hkxj.platform.service.impl.CourseServiceImpl 57 - query currentday course schedule --account 2016024170, academy 11 day6
+2019-05-04 16:32:52.551 [57bb3109-4ed7-4118-ab63-f2cf1a76ec91][] INFO  c.hkxj.platform.controller.wechat.WechatController 64 - 
+接收微信请求：[signature=[a589fc6543ccb835ed84b2259bc50d45ce1fb5a9], encType=[null], msgSignature=[null], timestamp=[1556958772], nonce=[243879781], requestBody=[
+<xml><ToUserName><![CDATA[gh_e674ed60dcb2]]></ToUserName>
+<FromUserName><![CDATA[oWPfu0noOKkUHpTkmP8ExbUgfqUY]]></FromUserName>
+<CreateTime>1556958772</CreateTime>
+<MsgType><![CDATA[event]]></MsgType>
+<Event><![CDATA[TEMPLATESENDJOBFINISH]]></Event>
+<MsgID>794678023021805568</MsgID>
+<Status><![CDATA[success]]></Status>
+</xml>
+] 
+2019-05-04 16:33:56.382 [c6c9f451-5c8e-4cf1-9e5e-369426f7c4fd][] INFO  c.hkxj.platform.controller.wechat.WechatController 64 - 
+接收微信请求：[signature=[46b11663be970f8835c7021d6eb531d438a6d08e], encType=[null], msgSignature=[null], timestamp=[1556958836], nonce=[1212405809], requestBody=[
+<xml><ToUserName><![CDATA[gh_e674ed60dcb2]]></ToUserName>
+<FromUserName><![CDATA[oWPfu0noOKkUHpTkmP8ExbUgfqUY]]></FromUserName>
+<CreateTime>1556958836</CreateTime>
+<MsgType><![CDATA[text]]></MsgType>
+<Content><![CDATA[课表]]></Content>
+<MsgId>22290289698414982</MsgId>
+</xml>
+] 
+2019-05-04 16:34:00.017 [c6c9f451-5c8e-4cf1-9e5e-369426f7c4fd][oWPfu0noOKkUHpTkmP8ExbUgfqUY] INFO  cn.hkxj.platform.service.impl.CourseServiceImpl 57 - query currentday course schedule --account 2016024170, academy 11 day6
+2019-05-04 16:34:02.078 [f5133b58-35f3-4f6c-bb44-7b977db113cc][] INFO  c.hkxj.platform.controller.wechat.WechatController 64 - 
+接收微信请求：[signature=[46b11663be970f8835c7021d6eb531d438a6d08e], encType=[null], msgSignature=[null], timestamp=[1556958836], nonce=[1212405809], requestBody=[
+<xml><ToUserName><![CDATA[gh_e674ed60dcb2]]></ToUserName>
+<FromUserName><![CDATA[oWPfu0noOKkUHpTkmP8ExbUgfqUY]]></FromUserName>
+<CreateTime>1556958836</CreateTime>
+<MsgType><![CDATA[text]]></MsgType>
+<Content><![CDATA[课表]]></Content>
+<MsgId>22290289698414982</MsgId>
+</xml>
+] 
+2019-05-04 16:36:27.808 [][] INFO  cn.hkxj.platform.PlatformApplication 50 - Starting PlatformApplication on LAPTOP-0P9MRN9T with PID 1668 (D:\Java\GithubRepository\hkxj\target\classes started by Yuki in D:\Java\GithubRepository\hkxj)
+2019-05-04 16:36:27.823 [][] INFO  cn.hkxj.platform.PlatformApplication 659 - No active profile set, falling back to default profiles: default
+2019-05-04 16:36:31.863 [][] INFO  org.apache.coyote.http11.Http11NioProtocol 180 - Initializing ProtocolHandler ["http-nio-80"]
+2019-05-04 16:36:31.877 [][] INFO  org.apache.catalina.core.StandardService 180 - Starting service [Tomcat]
+2019-05-04 16:36:31.877 [][] INFO  org.apache.catalina.core.StandardEngine 180 - Starting Servlet Engine: Apache Tomcat/8.5.31
+2019-05-04 16:36:31.882 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - Loaded APR based Apache Tomcat Native library [1.2.16] using APR version [1.6.3].
+2019-05-04 16:36:31.883 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR capabilities: IPv6 [true], sendfile [true], accept filters [false], random [true].
+2019-05-04 16:36:31.883 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR/OpenSSL configuration: useAprConnector [false], useOpenSSL [true]
+2019-05-04 16:36:32.961 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - OpenSSL successfully initialized [OpenSSL 1.0.2m  2 Nov 2017]
+2019-05-04 16:36:33.187 [][] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] 180 - Initializing Spring embedded WebApplicationContext
+2019-05-04 16:36:38.562 [][] INFO  org.apache.coyote.http11.Http11NioProtocol 180 - Starting ProtocolHandler ["http-nio-80"]
+2019-05-04 16:36:38.603 [][] INFO  cn.hkxj.platform.PlatformApplication 59 - Started PlatformApplication in 11.302 seconds (JVM running for 14.101)
+2019-05-04 16:36:39.268 [][] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] 180 - Initializing Spring FrameworkServlet 'dispatcherServlet'
+2019-05-04 16:36:39.281 [][] INFO  com.zaxxer.hikari.HikariDataSource 110 - HikariPool-1 - Starting...
+2019-05-04 16:36:39.493 [][] INFO  com.zaxxer.hikari.HikariDataSource 123 - HikariPool-1 - Start completed.
+2019-05-04 16:36:39.625 [][] INFO  io.lettuce.core.EpollProvider 101 - Starting without optional epoll library
+2019-05-04 16:36:39.629 [][] INFO  io.lettuce.core.KqueueProvider 101 - Starting without optional kqueue library
+2019-05-04 16:36:46.240 [b0fe5221-dac5-4431-be39-77b1a071bf5f][] INFO  c.hkxj.platform.controller.wechat.WechatController 64 - 
+接收微信请求：[signature=[2bf5e272c898790e21b7cac20a2aa5952c6bbe4f], encType=[null], msgSignature=[null], timestamp=[1556959006], nonce=[313744030], requestBody=[
+<xml><ToUserName><![CDATA[gh_e674ed60dcb2]]></ToUserName>
+<FromUserName><![CDATA[oWPfu0noOKkUHpTkmP8ExbUgfqUY]]></FromUserName>
+<CreateTime>1556959006</CreateTime>
+<MsgType><![CDATA[text]]></MsgType>
+<Content><![CDATA[课表]]></Content>
+<MsgId>22290293085025689</MsgId>
+</xml>
+] 
+2019-05-04 16:37:01.872 [348d6507-40f3-4ee0-8fcd-b435d1f7543d][] INFO  c.hkxj.platform.controller.wechat.WechatController 64 - 
+接收微信请求：[signature=[2bf5e272c898790e21b7cac20a2aa5952c6bbe4f], encType=[null], msgSignature=[null], timestamp=[1556959006], nonce=[313744030], requestBody=[
+<xml><ToUserName><![CDATA[gh_e674ed60dcb2]]></ToUserName>
+<FromUserName><![CDATA[oWPfu0noOKkUHpTkmP8ExbUgfqUY]]></FromUserName>
+<CreateTime>1556959006</CreateTime>
+<MsgType><![CDATA[text]]></MsgType>
+<Content><![CDATA[课表]]></Content>
+<MsgId>22290293085025689</MsgId>
+</xml>
+] 
+2019-05-04 16:37:01.875 [40d1fbe2-5a4f-4d41-be75-35fe38d116be][] INFO  c.hkxj.platform.controller.wechat.WechatController 64 - 
+接收微信请求：[signature=[2bf5e272c898790e21b7cac20a2aa5952c6bbe4f], encType=[null], msgSignature=[null], timestamp=[1556959006], nonce=[313744030], requestBody=[
+<xml><ToUserName><![CDATA[gh_e674ed60dcb2]]></ToUserName>
+<FromUserName><![CDATA[oWPfu0noOKkUHpTkmP8ExbUgfqUY]]></FromUserName>
+<CreateTime>1556959006</CreateTime>
+<MsgType><![CDATA[text]]></MsgType>
+<Content><![CDATA[课表]]></Content>
+<MsgId>22290293085025689</MsgId>
+</xml>
+] 
+2019-05-04 16:37:11.439 [348d6507-40f3-4ee0-8fcd-b435d1f7543d][oWPfu0noOKkUHpTkmP8ExbUgfqUY] INFO  cn.hkxj.platform.service.impl.CourseServiceImpl 57 - query currentday course schedule --account 2016024170, academy 11 day6
+2019-05-04 16:37:38.685 [b0fe5221-dac5-4431-be39-77b1a071bf5f][oWPfu0noOKkUHpTkmP8ExbUgfqUY] INFO  cn.hkxj.platform.service.impl.CourseServiceImpl 57 - query currentday course schedule --account 2016024170, academy 11 day6
+2019-05-04 16:37:40.330 [124486c7-c70c-4206-8ee3-a42334a43571][] INFO  c.hkxj.platform.controller.wechat.WechatController 64 - 
+接收微信请求：[signature=[5cc3174844db2ee4e6f019ea09c04eefd6497160], encType=[null], msgSignature=[null], timestamp=[1556959061], nonce=[16290480], requestBody=[
+<xml><ToUserName><![CDATA[gh_e674ed60dcb2]]></ToUserName>
+<FromUserName><![CDATA[oWPfu0noOKkUHpTkmP8ExbUgfqUY]]></FromUserName>
+<CreateTime>1556959061</CreateTime>
+<MsgType><![CDATA[event]]></MsgType>
+<Event><![CDATA[TEMPLATESENDJOBFINISH]]></Event>
+<MsgID>794682868533444608</MsgID>
+<Status><![CDATA[success]]></Status>
+</xml>
+] 
+2019-05-04 16:37:40.597 [ec6ca397-f050-4d74-a369-644173acafdf][] INFO  c.hkxj.platform.controller.wechat.WechatController 64 - 
+接收微信请求：[signature=[62d4f7354212816f6eb0b9adc72c5f1370c72437], encType=[null], msgSignature=[null], timestamp=[1556959061], nonce=[1209270972], requestBody=[
+<xml><ToUserName><![CDATA[gh_e674ed60dcb2]]></ToUserName>
+<FromUserName><![CDATA[oWPfu0noOKkUHpTkmP8ExbUgfqUY]]></FromUserName>
+<CreateTime>1556959061</CreateTime>
+<MsgType><![CDATA[event]]></MsgType>
+<Event><![CDATA[TEMPLATESENDJOBFINISH]]></Event>
+<MsgID>794682873499500545</MsgID>
+<Status><![CDATA[success]]></Status>
+</xml>
+] 
+2019-05-04 16:37:55.177 [][] INFO  cn.hkxj.platform.PlatformApplication 50 - Starting PlatformApplication on LAPTOP-0P9MRN9T with PID 15264 (D:\Java\GithubRepository\hkxj\target\classes started by Yuki in D:\Java\GithubRepository\hkxj)
+2019-05-04 16:37:55.184 [][] INFO  cn.hkxj.platform.PlatformApplication 659 - No active profile set, falling back to default profiles: default
+2019-05-04 16:37:58.929 [][] INFO  org.apache.coyote.http11.Http11NioProtocol 180 - Initializing ProtocolHandler ["http-nio-80"]
+2019-05-04 16:37:58.942 [][] INFO  org.apache.catalina.core.StandardService 180 - Starting service [Tomcat]
+2019-05-04 16:37:58.942 [][] INFO  org.apache.catalina.core.StandardEngine 180 - Starting Servlet Engine: Apache Tomcat/8.5.31
+2019-05-04 16:37:58.948 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - Loaded APR based Apache Tomcat Native library [1.2.16] using APR version [1.6.3].
+2019-05-04 16:37:58.949 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR capabilities: IPv6 [true], sendfile [true], accept filters [false], random [true].
+2019-05-04 16:37:58.949 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR/OpenSSL configuration: useAprConnector [false], useOpenSSL [true]
+2019-05-04 16:38:00.044 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - OpenSSL successfully initialized [OpenSSL 1.0.2m  2 Nov 2017]
+2019-05-04 16:38:00.270 [][] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] 180 - Initializing Spring embedded WebApplicationContext
+2019-05-04 16:38:05.717 [][] INFO  org.apache.coyote.http11.Http11NioProtocol 180 - Starting ProtocolHandler ["http-nio-80"]
+2019-05-04 16:38:05.758 [][] INFO  cn.hkxj.platform.PlatformApplication 59 - Started PlatformApplication in 11.269 seconds (JVM running for 14.263)
+2019-05-04 16:38:06.104 [][] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] 180 - Initializing Spring FrameworkServlet 'dispatcherServlet'
+2019-05-04 16:38:06.116 [][] INFO  com.zaxxer.hikari.HikariDataSource 110 - HikariPool-1 - Starting...
+2019-05-04 16:38:06.334 [][] INFO  com.zaxxer.hikari.HikariDataSource 123 - HikariPool-1 - Start completed.
+2019-05-04 16:38:06.465 [][] INFO  io.lettuce.core.EpollProvider 101 - Starting without optional epoll library
+2019-05-04 16:38:06.468 [][] INFO  io.lettuce.core.KqueueProvider 101 - Starting without optional kqueue library
+2019-05-04 16:38:20.408 [599ddaa6-aaf1-49eb-8af8-57a793a06e47][] INFO  c.hkxj.platform.controller.wechat.WechatController 64 - 
+接收微信请求：[signature=[3c9dd6e8e278c661b8b977214d72f9f0e71e5d9f], encType=[null], msgSignature=[null], timestamp=[1556959100], nonce=[1778202423], requestBody=[
+<xml><ToUserName><![CDATA[gh_e674ed60dcb2]]></ToUserName>
+<FromUserName><![CDATA[oWPfu0noOKkUHpTkmP8ExbUgfqUY]]></FromUserName>
+<CreateTime>1556959100</CreateTime>
+<MsgType><![CDATA[text]]></MsgType>
+<Content><![CDATA[课表]]></Content>
+<MsgId>22290294237177603</MsgId>
+</xml>
+] 
+2019-05-04 16:38:28.658 [ab99a86f-5f1e-40ad-9515-05963fd48d22][] INFO  c.hkxj.platform.controller.wechat.WechatController 64 - 
+接收微信请求：[signature=[3c9dd6e8e278c661b8b977214d72f9f0e71e5d9f], encType=[null], msgSignature=[null], timestamp=[1556959100], nonce=[1778202423], requestBody=[
+<xml><ToUserName><![CDATA[gh_e674ed60dcb2]]></ToUserName>
+<FromUserName><![CDATA[oWPfu0noOKkUHpTkmP8ExbUgfqUY]]></FromUserName>
+<CreateTime>1556959100</CreateTime>
+<MsgType><![CDATA[text]]></MsgType>
+<Content><![CDATA[课表]]></Content>
+<MsgId>22290294237177603</MsgId>
+</xml>
+] 
+2019-05-04 16:38:54.442 [599ddaa6-aaf1-49eb-8af8-57a793a06e47][oWPfu0noOKkUHpTkmP8ExbUgfqUY] INFO  c.h.platform.interceptor.WechatOpenIdInterceptor 41 - content 课表 check openid oWPfu0noOKkUHpTkmP8ExbUgfqUY is not bind
+2019-05-04 16:39:03.630 [599ddaa6-aaf1-49eb-8af8-57a793a06e47][oWPfu0noOKkUHpTkmP8ExbUgfqUY] INFO  c.hkxj.platform.controller.wechat.WechatController 100 - wechat message out <xml>
+  <ToUserName><![CDATA[oWPfu0noOKkUHpTkmP8ExbUgfqUY]]></ToUserName>
+  <FromUserName><![CDATA[gh_e674ed60dcb2]]></FromUserName>
+  <CreateTime>1556959134</CreateTime>
+  <MsgType><![CDATA[text]]></MsgType>
+  <Content><![CDATA[<a href="https://abdbcf6f.ngrok.io/bind?openid=oWPfu0noOKkUHpTkmP8ExbUgfqUY">点击我绑定</a>]]></Content>
+</xml>
+2019-05-04 16:40:04.205 [cc21062a-3f4e-4194-9243-07501af50fe1][] INFO  c.hkxj.platform.controller.wechat.WechatController 64 - 
+接收微信请求：[signature=[ff4c83fe4173d2b601a3446fb213c5640fe940df], encType=[null], msgSignature=[null], timestamp=[1556959205], nonce=[612583318], requestBody=[
+<xml><ToUserName><![CDATA[gh_e674ed60dcb2]]></ToUserName>
+<FromUserName><![CDATA[oWPfu0noOKkUHpTkmP8ExbUgfqUY]]></FromUserName>
+<CreateTime>1556959204</CreateTime>
+<MsgType><![CDATA[text]]></MsgType>
+<Content><![CDATA[课表]]></Content>
+<MsgId>22290296253025869</MsgId>
+</xml>
+] 
+2019-05-04 16:40:04.214 [cc21062a-3f4e-4194-9243-07501af50fe1][oWPfu0noOKkUHpTkmP8ExbUgfqUY] INFO  c.h.platform.interceptor.WechatOpenIdInterceptor 41 - content 课表 check openid oWPfu0noOKkUHpTkmP8ExbUgfqUY is not bind
+2019-05-04 16:40:04.216 [cc21062a-3f4e-4194-9243-07501af50fe1][oWPfu0noOKkUHpTkmP8ExbUgfqUY] INFO  c.hkxj.platform.controller.wechat.WechatController 100 - wechat message out <xml>
+  <ToUserName><![CDATA[oWPfu0noOKkUHpTkmP8ExbUgfqUY]]></ToUserName>
+  <FromUserName><![CDATA[gh_e674ed60dcb2]]></FromUserName>
+  <CreateTime>1556959204</CreateTime>
+  <MsgType><![CDATA[text]]></MsgType>
+  <Content><![CDATA[<a href="https://abdbcf6f.ngrok.io/bind?openid=oWPfu0noOKkUHpTkmP8ExbUgfqUY">点击我绑定</a>]]></Content>
+</xml>
+2019-05-04 16:40:38.717 [fb29cdd2-81d7-405f-a67b-808c71417c47][] INFO  cn.hkxj.platform.controller.UserBindingController 47 - student bind start account:2016024170 password:1
+2019-05-04 16:40:38.723 [fb29cdd2-81d7-405f-a67b-808c71417c47][] INFO  cn.hkxj.platform.controller.UserBindingController 62 - student bind fail openid is exist account:2016024170 password:1
+2019-05-04 16:41:07.928 [b1156c0f-175c-4b22-b8b9-5566d57cefd3][] INFO  cn.hkxj.platform.controller.UserBindingController 47 - student bind start account:2016024170 password:1
+2019-05-04 16:41:45.243 [b1156c0f-175c-4b22-b8b9-5566d57cefd3][] INFO  cn.hkxj.platform.controller.UserBindingController 62 - student bind fail openid is exist account:2016024170 password:1
+2019-05-04 16:45:09.270 [][] INFO  cn.hkxj.platform.PlatformApplication 50 - Starting PlatformApplication on LAPTOP-0P9MRN9T with PID 15208 (D:\Java\GithubRepository\hkxj\target\classes started by Yuki in D:\Java\GithubRepository\hkxj)
+2019-05-04 16:45:09.280 [][] INFO  cn.hkxj.platform.PlatformApplication 659 - No active profile set, falling back to default profiles: default
+2019-05-04 16:45:13.116 [][] INFO  org.apache.coyote.http11.Http11NioProtocol 180 - Initializing ProtocolHandler ["http-nio-80"]
+2019-05-04 16:45:13.129 [][] INFO  org.apache.catalina.core.StandardService 180 - Starting service [Tomcat]
+2019-05-04 16:45:13.129 [][] INFO  org.apache.catalina.core.StandardEngine 180 - Starting Servlet Engine: Apache Tomcat/8.5.31
+2019-05-04 16:45:13.135 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - Loaded APR based Apache Tomcat Native library [1.2.16] using APR version [1.6.3].
+2019-05-04 16:45:13.136 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR capabilities: IPv6 [true], sendfile [true], accept filters [false], random [true].
+2019-05-04 16:45:13.136 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR/OpenSSL configuration: useAprConnector [false], useOpenSSL [true]
+2019-05-04 16:45:14.211 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - OpenSSL successfully initialized [OpenSSL 1.0.2m  2 Nov 2017]
+2019-05-04 16:45:49.322 [][] INFO  cn.hkxj.platform.PlatformApplication 50 - Starting PlatformApplication on LAPTOP-0P9MRN9T with PID 15260 (D:\Java\GithubRepository\hkxj\target\classes started by Yuki in D:\Java\GithubRepository\hkxj)
+2019-05-04 16:45:49.329 [][] INFO  cn.hkxj.platform.PlatformApplication 659 - No active profile set, falling back to default profiles: default
+2019-05-04 16:45:53.104 [][] INFO  org.apache.coyote.http11.Http11NioProtocol 180 - Initializing ProtocolHandler ["http-nio-80"]
+2019-05-04 16:45:53.117 [][] INFO  org.apache.catalina.core.StandardService 180 - Starting service [Tomcat]
+2019-05-04 16:45:53.117 [][] INFO  org.apache.catalina.core.StandardEngine 180 - Starting Servlet Engine: Apache Tomcat/8.5.31
+2019-05-04 16:45:53.123 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - Loaded APR based Apache Tomcat Native library [1.2.16] using APR version [1.6.3].
+2019-05-04 16:45:53.123 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR capabilities: IPv6 [true], sendfile [true], accept filters [false], random [true].
+2019-05-04 16:45:53.123 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - APR/OpenSSL configuration: useAprConnector [false], useOpenSSL [true]
+2019-05-04 16:45:54.215 [][] INFO  org.apache.catalina.core.AprLifecycleListener 180 - OpenSSL successfully initialized [OpenSSL 1.0.2m  2 Nov 2017]
+2019-05-04 16:45:54.436 [][] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] 180 - Initializing Spring embedded WebApplicationContext
+2019-05-04 16:45:59.745 [][] INFO  org.apache.coyote.http11.Http11NioProtocol 180 - Starting ProtocolHandler ["http-nio-80"]
+2019-05-04 16:45:59.787 [][] INFO  cn.hkxj.platform.PlatformApplication 59 - Started PlatformApplication in 10.963 seconds (JVM running for 13.559)
+2019-05-04 16:46:00.098 [][] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] 180 - Initializing Spring FrameworkServlet 'dispatcherServlet'
+2019-05-04 16:46:00.125 [][] INFO  com.zaxxer.hikari.HikariDataSource 110 - HikariPool-1 - Starting...
+2019-05-04 16:46:00.344 [][] INFO  com.zaxxer.hikari.HikariDataSource 123 - HikariPool-1 - Start completed.
+2019-05-04 16:46:00.479 [][] INFO  io.lettuce.core.EpollProvider 101 - Starting without optional epoll library
+2019-05-04 16:46:00.482 [][] INFO  io.lettuce.core.KqueueProvider 101 - Starting without optional kqueue library
+2019-05-04 16:46:09.831 [61d1bc6b-6d9e-4d93-861a-b8c3c84a527d][] INFO  c.hkxj.platform.controller.wechat.WechatController 64 - 
+接收微信请求：[signature=[1510e9d3be861d9d05c9ee77001d761b3e60649f], encType=[null], msgSignature=[null], timestamp=[1556959570], nonce=[795126485], requestBody=[
+<xml><ToUserName><![CDATA[gh_e674ed60dcb2]]></ToUserName>
+<FromUserName><![CDATA[oWPfu0noOKkUHpTkmP8ExbUgfqUY]]></FromUserName>
+<CreateTime>1556959570</CreateTime>
+<MsgType><![CDATA[text]]></MsgType>
+<Content><![CDATA[课表]]></Content>
+<MsgId>22290303712672368</MsgId>
+</xml>
+] 
+2019-05-04 16:46:24.392 [61d1bc6b-6d9e-4d93-861a-b8c3c84a527d][oWPfu0noOKkUHpTkmP8ExbUgfqUY] INFO  c.h.platform.interceptor.WechatOpenIdInterceptor 42 - appid:wx342acff3b65da191 content 课表 check openid oWPfu0noOKkUHpTkmP8ExbUgfqUY is not bind
+2019-05-04 16:46:24.402 [700902fa-4a14-4d6e-9ca0-80912060b42a][] INFO  c.hkxj.platform.controller.wechat.WechatController 64 - 
+接收微信请求：[signature=[1510e9d3be861d9d05c9ee77001d761b3e60649f], encType=[null], msgSignature=[null], timestamp=[1556959570], nonce=[795126485], requestBody=[
+<xml><ToUserName><![CDATA[gh_e674ed60dcb2]]></ToUserName>
+<FromUserName><![CDATA[oWPfu0noOKkUHpTkmP8ExbUgfqUY]]></FromUserName>
+<CreateTime>1556959570</CreateTime>
+<MsgType><![CDATA[text]]></MsgType>
+<Content><![CDATA[课表]]></Content>
+<MsgId>22290303712672368</MsgId>
+</xml>
+] 
+2019-05-04 16:46:24.406 [9daa22dc-c55b-47f1-9256-62ff80b2eaad][] INFO  c.hkxj.platform.controller.wechat.WechatController 64 - 
+接收微信请求：[signature=[1510e9d3be861d9d05c9ee77001d761b3e60649f], encType=[null], msgSignature=[null], timestamp=[1556959570], nonce=[795126485], requestBody=[
+<xml><ToUserName><![CDATA[gh_e674ed60dcb2]]></ToUserName>
+<FromUserName><![CDATA[oWPfu0noOKkUHpTkmP8ExbUgfqUY]]></FromUserName>
+<CreateTime>1556959570</CreateTime>
+<MsgType><![CDATA[text]]></MsgType>
+<Content><![CDATA[课表]]></Content>
+<MsgId>22290303712672368</MsgId>
+</xml>
+] 
+2019-05-04 16:46:24.423 [61d1bc6b-6d9e-4d93-861a-b8c3c84a527d][oWPfu0noOKkUHpTkmP8ExbUgfqUY] INFO  c.hkxj.platform.controller.wechat.WechatController 100 - wechat message out <xml>
+  <ToUserName><![CDATA[oWPfu0noOKkUHpTkmP8ExbUgfqUY]]></ToUserName>
+  <FromUserName><![CDATA[gh_e674ed60dcb2]]></FromUserName>
+  <CreateTime>1556959584</CreateTime>
+  <MsgType><![CDATA[text]]></MsgType>
+  <Content><![CDATA[<a href="https://abdbcf6f.ngrok.io/bind?openid=oWPfu0noOKkUHpTkmP8ExbUgfqUY&appid=wx342acff3b65da191">点击我绑定</a>]]></Content>
+</xml>
+2019-05-04 16:46:33.675 [5eabd7f6-8682-4db0-87e8-c630f353f7b6][] INFO  c.hkxj.platform.controller.wechat.WechatController 64 - 
+接收微信请求：[signature=[d28a3a5a9c2a5390180ad1dee8e6cd821f887300], encType=[null], msgSignature=[null], timestamp=[1556959594], nonce=[1020238211], requestBody=[
+<xml><ToUserName><![CDATA[gh_e674ed60dcb2]]></ToUserName>
+<FromUserName><![CDATA[oWPfu0noOKkUHpTkmP8ExbUgfqUY]]></FromUserName>
+<CreateTime>1556959594</CreateTime>
+<MsgType><![CDATA[text]]></MsgType>
+<Content><![CDATA[课表]]></Content>
+<MsgId>22290303416723667</MsgId>
+</xml>
+] 
+2019-05-04 16:46:37.495 [5eabd7f6-8682-4db0-87e8-c630f353f7b6][oWPfu0noOKkUHpTkmP8ExbUgfqUY] INFO  c.h.platform.interceptor.WechatOpenIdInterceptor 42 - appid:wx342acff3b65da191 content 课表 check openid oWPfu0noOKkUHpTkmP8ExbUgfqUY is not bind
+2019-05-04 16:46:37.496 [5eabd7f6-8682-4db0-87e8-c630f353f7b6][oWPfu0noOKkUHpTkmP8ExbUgfqUY] INFO  c.hkxj.platform.controller.wechat.WechatController 100 - wechat message out <xml>
+  <ToUserName><![CDATA[oWPfu0noOKkUHpTkmP8ExbUgfqUY]]></ToUserName>
+  <FromUserName><![CDATA[gh_e674ed60dcb2]]></FromUserName>
+  <CreateTime>1556959597</CreateTime>
+  <MsgType><![CDATA[text]]></MsgType>
+  <Content><![CDATA[<a href="https://abdbcf6f.ngrok.io/bind?openid=oWPfu0noOKkUHpTkmP8ExbUgfqUY&appid=wx342acff3b65da191">点击我绑定</a>]]></Content>
+</xml>
+2019-05-04 16:47:06.337 [12f754f6-eb39-4eea-9dc2-4b0d1960cdaa][] INFO  cn.hkxj.platform.controller.UserBindingController 49 - student bind start account:2016024170 password:1
+2019-05-04 16:47:34.971 [12f754f6-eb39-4eea-9dc2-4b0d1960cdaa][] INFO  cn.hkxj.platform.controller.UserBindingController 88 - student bind success account:2016024170 password:1 openidoWPfu0noOKkUHpTkmP8ExbUgfqUY
+2019-05-04 16:47:37.494 [387cd2cd-c0b9-4de7-b440-ff05d408be91][] INFO  cn.hkxj.platform.controller.HtmlShowController 19 - request timetable html
+2019-05-04 16:48:28.074 [621aaeb9-bc36-4d8f-a334-0cb7898a3fd7][] INFO  c.hkxj.platform.controller.wechat.WechatController 64 - 
+接收微信请求：[signature=[8ecd45223a7e73008e8c962a9c58c19f47c66433], encType=[null], msgSignature=[null], timestamp=[1556959708], nonce=[1822342066], requestBody=[
+<xml><ToUserName><![CDATA[gh_e674ed60dcb2]]></ToUserName>
+<FromUserName><![CDATA[oWPfu0noOKkUHpTkmP8ExbUgfqUY]]></FromUserName>
+<CreateTime>1556959708</CreateTime>
+<MsgType><![CDATA[text]]></MsgType>
+<Content><![CDATA[课表]]></Content>
+<MsgId>22290303924530177</MsgId>
+</xml>
+] 
+2019-05-04 16:48:28.120 [621aaeb9-bc36-4d8f-a334-0cb7898a3fd7][oWPfu0noOKkUHpTkmP8ExbUgfqUY] INFO  cn.hkxj.platform.service.impl.CourseServiceImpl 57 - query currentday course schedule --account 2016024170, academy 11 day6
+2019-05-04 16:48:29.837 [a0f728d6-fa16-40df-a63b-e9e26b9d17cb][] INFO  c.hkxj.platform.controller.wechat.WechatController 64 - 
+接收微信请求：[signature=[fc1a21f43aba4a3916f6febcbaf001259be2903a], encType=[null], msgSignature=[null], timestamp=[1556959710], nonce=[156914074], requestBody=[
+<xml><ToUserName><![CDATA[gh_e674ed60dcb2]]></ToUserName>
+<FromUserName><![CDATA[oWPfu0noOKkUHpTkmP8ExbUgfqUY]]></FromUserName>
+<CreateTime>1556959710</CreateTime>
+<MsgType><![CDATA[event]]></MsgType>
+<Event><![CDATA[TEMPLATESENDJOBFINISH]]></Event>
+<MsgID>794693765385568257</MsgID>
+<Status><![CDATA[success]]></Status>
 </xml>
 ] 

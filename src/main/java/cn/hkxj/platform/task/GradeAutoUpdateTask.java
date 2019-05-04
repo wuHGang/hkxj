@@ -111,9 +111,9 @@ public class GradeAutoUpdateTask {
 
     /**
      * 获取回复文本
-     * @param student
-     * @param content
-     * @return
+     * @param student 学生实体
+     * @param content 客服消息内容
+     * @return  客服消息实体
      */
     private WxMpKefuMessage getKefuMessage(Student student, String content) {
 

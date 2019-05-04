@@ -59,7 +59,7 @@ public class OneOffSubcriptionUtilTest {
         });
 
 
-        System.out.println( OneOffSubcriptionUtil.getHyperlinks("点击领取课表", "1005"));
+//        System.out.println( OneOffSubcriptionUtil.getHyperlinks("点击领取课表", "1005"));
     }
 }
 
