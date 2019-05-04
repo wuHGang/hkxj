@@ -12,6 +12,7 @@ public enum Academy {
     /**
      * 学院枚举与数据库相关code的映射
      */
+    Unknown("未知", "未知", -1),
     Mining("矿业工程学院", "矿业学院", 0),
     Environmental("环境与化工学院", "环化学院", 1),
 	Safe("安全工程学院", "安全学院", 2),
@@ -84,7 +85,7 @@ public enum Academy {
                 return aca;
             }
         }
-        throw new IllegalArgumentException("illegal academy code: "+code);
+        return Unknown;
     }
 
     public static Integer getAcademyCodeByName(String name){
@@ -102,7 +103,7 @@ public enum Academy {
                 return academy;
             }
         }
-        throw new IllegalArgumentException("illegal academy name: " + academyName);
+        return Unknown;
     }
 
     public static Academy getAcademyBySimpleName(String academySimpleName) {

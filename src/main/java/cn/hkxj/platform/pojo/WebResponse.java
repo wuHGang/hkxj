@@ -15,6 +15,11 @@ public class WebResponse<T> {
 	public WebResponse() {
 	}
 
+	public WebResponse(T t) {
+		status = SUCCESS_CODE;
+		data = t;
+	}
+
 	public static WebResponse<Void> success() {
 		return new WebResponse<Void>().setStatus(SUCCESS_CODE).setMessage("");
 	}

@@ -40,10 +40,23 @@ public class GradeSearchServiceTest {
         student.setAccount(2016023726);
         student.setPassword("1");
         long start = System.currentTimeMillis();
-        List<GradeAndCourse> currentTermGrade = gradeSearchService.getGradeFromSpiderAsync(student);
+        List<GradeAndCourse> currentTermGrade = gradeSearchService.getCurrentGradeFromSpider(student);
         long end = System.currentTimeMillis();
         long costtime = end - start;
         System.out.println(CollectionUtils.isEmpty(currentTermGrade));
+        for (GradeAndCourse gradeAndCourse : currentTermGrade) {
+
+            log.info(gradeAndCourse.toString());
+        }
+
+    }
+
+    @Test
+    public void getEverTermGrade() {
+        Student student = new Student();
+        student.setAccount(2016023726);
+        student.setPassword("1");
+        List<GradeAndCourse> currentTermGrade = gradeSearchService.getEverGradeFromSpider(student);
         for (GradeAndCourse gradeAndCourse : currentTermGrade) {
 
             log.info(gradeAndCourse.toString());

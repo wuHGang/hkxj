@@ -69,6 +69,7 @@ public class UrpSpider {
 
     public UrpResult<EverGrade> getEverGrade() {
 		String result = getResult(TEMP_EVER_GRADE_URL);
+
         return JSON.parseObject(result, everTypeReference);
     }
 

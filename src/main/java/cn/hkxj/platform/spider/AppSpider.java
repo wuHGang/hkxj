@@ -6,9 +6,9 @@ import cn.hkxj.platform.exceptions.PasswordUncorrectException;
 import cn.hkxj.platform.exceptions.ReadTimeoutException;
 import cn.hkxj.platform.pojo.AllGradeAndCourse;
 import cn.hkxj.platform.pojo.Course;
-import cn.hkxj.platform.pojo.constant.CourseType;
 import cn.hkxj.platform.pojo.Grade;
 import cn.hkxj.platform.pojo.GradeAndCourse;
+import cn.hkxj.platform.pojo.constant.CourseType;
 import cn.hkxj.platform.utils.ReadProperties;
 import cn.hkxj.platform.utils.TypeUtil;
 import com.google.common.base.Splitter;
@@ -64,8 +64,8 @@ public class AppSpider {
 	private final static String SCHEDULE = URL_ROOT + "//university-facade/Schedule/ScheduleList";
 	private final static String EXAM = URL_ROOT + "//university-facade/MyUniversity/Exam";
 	private final static OkHttpClient CLIENT = new OkHttpClient.Builder()
-            .readTimeout(4, TimeUnit.SECONDS)
-            .writeTimeout(4, TimeUnit.SECONDS)
+            .readTimeout(3, TimeUnit.SECONDS)
+            .writeTimeout(3, TimeUnit.SECONDS)
             .connectTimeout(3, TimeUnit.SECONDS)
 			.build();
 
