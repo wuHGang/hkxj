@@ -2,24 +2,26 @@ package cn.hkxj.platform.config.wechat;
 
 import cn.hkxj.platform.interceptor.WechatOpenIdInterceptor;
 import cn.hkxj.platform.service.wechat.WxMessageRouter;
-import cn.hkxj.platform.service.wechat.handler.LogHandler;
-import cn.hkxj.platform.service.wechat.handler.messageHandler.*;
+import cn.hkxj.platform.service.wechat.handler.messageHandler.CETSearchHandler;
+import cn.hkxj.platform.service.wechat.handler.messageHandler.CourseMessageHandler;
+import cn.hkxj.platform.service.wechat.handler.messageHandler.ElectiveCourseMessageHandler;
+import cn.hkxj.platform.service.wechat.handler.messageHandler.EmptyRoomHandler;
+import cn.hkxj.platform.service.wechat.handler.messageHandler.ExamMessageHandler;
+import cn.hkxj.platform.service.wechat.handler.messageHandler.GradeMessageHandler;
+import cn.hkxj.platform.service.wechat.handler.messageHandler.OpenidMessageHandler;
+import cn.hkxj.platform.service.wechat.handler.messageHandler.UnbindMessageHandler;
 import com.google.common.collect.Maps;
-import me.chanjar.weixin.mp.api.WxMpConfigStorage;
 import me.chanjar.weixin.mp.api.WxMpInMemoryConfigStorage;
 import me.chanjar.weixin.mp.api.WxMpMessageRouter;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.api.impl.WxMpServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.Resource;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -32,9 +34,6 @@ import java.util.stream.Collectors;
 @ComponentScan(basePackages = "cn.hkxj.platform.*")
 @EnableConfigurationProperties(WechatMpProperties.class)
 public class WechatMpConfiguration {
-
-	@Resource
-	private LogHandler logHandler;
 
 	@Resource
 	private WechatMpProperties wechatMpProperties;
