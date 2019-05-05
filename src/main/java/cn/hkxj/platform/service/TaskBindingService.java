@@ -5,7 +5,6 @@ import cn.hkxj.platform.mapper.TaskMapper;
 import cn.hkxj.platform.pojo.wechat.SubscribeGradeUpdate;
 import cn.hkxj.platform.pojo.wechat.Task;
 import lombok.extern.slf4j.Slf4j;
-import me.chanjar.weixin.common.exception.WxErrorException;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.kefu.WxMpKefuMessage;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,12 +39,6 @@ public class TaskBindingService {
             subscribeUser.setOpenid(openid);
             subscribeGradeUpdateMapper.insert(subscribeUser);
             log.info("new subscribeGradeUpdate binding ");
-        }
-        try {
-            wxMpService.getKefuService().sendKefuMessage(getKefuMessage(openid));
-            log.info("send message ok");
-        }catch (WxErrorException e) {
-            log.error(e.getMessage());
         }
 
     }
