@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.exception.WxErrorException;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.kefu.WxMpKefuMessage;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -18,28 +17,17 @@ import javax.annotation.Resource;
 @Service
 public class TaskBindingService {
 
-    @Autowired
-    TaskMapper taskMapper;
+    @Resource
+    private TaskMapper taskMapper;
 
-    @Autowired
-    SubscribeGradeUpdateMapper subscribeGradeUpdateMapper;
-    //TODO 配置多个公众号时的修改，取消注入改为通过set方法设置
-//    @Resource
-    private WxMpService wxMpService;
-
-    public WxMpService getWxMpService() {
-        return wxMpService;
-    }
-
-    public void setWxMpService(WxMpService wxMpService) {
-        this.wxMpService = wxMpService;
-    }
+    @Resource
+    private SubscribeGradeUpdateMapper subscribeGradeUpdateMapper;
 
     /***
      *记录哪些用户在后台回复过查询成绩
      * @param openid 用户的openid
      */
-    public void subscribeGradeUpdateBinding(String openid){
+    public void subscribeGradeUpdateBinding(String openid, WxMpService wxMpService){
         if(subscribeGradeUpdateMapper.isOpenidSubscribed(openid)==null){
             Task task=new Task();
             task.setOpenid(openid).setUpdateType(1).setCount(0);

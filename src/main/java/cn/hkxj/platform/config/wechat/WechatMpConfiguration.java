@@ -5,23 +5,18 @@ import cn.hkxj.platform.service.wechat.WxMessageRouter;
 import cn.hkxj.platform.service.wechat.handler.LogHandler;
 import cn.hkxj.platform.service.wechat.handler.messageHandler.*;
 import com.google.common.collect.Maps;
-import me.chanjar.weixin.mp.api.WxMpConfigStorage;
 import me.chanjar.weixin.mp.api.WxMpInMemoryConfigStorage;
 import me.chanjar.weixin.mp.api.WxMpMessageRouter;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.api.impl.WxMpServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.Resource;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * wechat mp configuration
@@ -30,14 +25,17 @@ import java.util.stream.Collectors;
  */
 @Configuration
 @ComponentScan(basePackages = "cn.hkxj.platform.*")
-@EnableConfigurationProperties(WechatMpProperties.class)
+@EnableConfigurationProperties(value = {WechatMpProProperties.class, WechatMpPlusProperties.class})
 public class WechatMpConfiguration {
 
 	@Resource
 	private LogHandler logHandler;
 
 	@Resource
-	private WechatMpProperties wechatMpProperties;
+	private WechatMpProProperties wechatMpProProperties;
+
+	@Resource
+	private WechatMpPlusProperties wechatMpPlusProperties;
 
 	@Resource
 	private CourseMessageHandler courseMessageHandler;
@@ -71,19 +69,20 @@ public class WechatMpConfiguration {
 
 	@Bean
 	public Object services(){
-		mpServices = this.wechatMpProperties.getConfigs()
-				.stream()
-				.map(appConfig ->{
-					WxMpInMemoryConfigStorage configStorage = new WxMpInMemoryConfigStorage();
-					configStorage.setAppId(appConfig.getAppId());
-					configStorage.setSecret(appConfig.getSecret());
-					configStorage.setToken(appConfig.getToken());
-					configStorage.setAesKey(appConfig.getAesKey());
-					WxMpService wxMpService = new WxMpServiceImpl();
-					wxMpService.setWxMpConfigStorage(configStorage);
-					routers.put(appConfig.getAppId(), this.newRouter(wxMpService));
-					return wxMpService;
-				}).collect(Collectors.toMap(wxMpService -> wxMpService.getWxMpConfigStorage().getAppId(), wxMpService -> wxMpService));
+		//plus的配置
+		WxMpInMemoryConfigStorage proConfig = wechatMpPlusProperties.getWxMpInMemoryConfigStorage();
+		WxMpService wxPlusMpService = new WxMpServiceImpl();
+		wxPlusMpService.setWxMpConfigStorage(proConfig);
+		routers.put(wechatMpPlusProperties.getAppId(), this.newRouter(wxPlusMpService));
+		mpServices.put(wechatMpPlusProperties.getAppId(), wxPlusMpService);
+
+		//pro的配置
+		WxMpInMemoryConfigStorage plusConfig = wechatMpProProperties.getWxMpInMemoryConfigStorage();
+		WxMpService wxProMpService = new WxMpServiceImpl();
+		wxProMpService.setWxMpConfigStorage(plusConfig);
+		routers.put(wechatMpProProperties.getAppId(), this.newRouter(wxProMpService));
+		mpServices.put(wechatMpProProperties.getAppId(), wxProMpService);
+		WxMessageRouter wxMessageRouter = new WxMessageRouter(wxPlusMpService);
 		return Boolean.TRUE;
 	}
 

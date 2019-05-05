@@ -40,7 +40,7 @@ public class GradeMessageHandler implements WxMpMessageHandler {
     private OpenIdService openIdService;
 
     @Resource
-    TaskBindingService taskBindingService;
+    private TaskBindingService taskBindingService;
 
 	public WxMpXmlOutMessage handle(WxMpXmlMessage wxMpXmlMessage,
                                     Map<String, Object> map,
@@ -49,11 +49,8 @@ public class GradeMessageHandler implements WxMpMessageHandler {
 		try {
 		    String appid = wxMpService.getWxMpConfigStorage().getAppId();
             Student student = openIdService.getStudentByOpenId(wxMpXmlMessage.getFromUser(), appid);
-            //通过设置方法设置相应WxMpService对象
-            taskBindingService.setWxMpService(wxMpService);
-
             ExecutorService singleThreadPool = Executors.newSingleThreadExecutor();
-            singleThreadPool.execute(() -> taskBindingService.subscribeGradeUpdateBinding(wxMpXmlMessage.getFromUser()));
+            singleThreadPool.execute(() -> taskBindingService.subscribeGradeUpdateBinding(wxMpXmlMessage.getFromUser(), wxMpService));
             List<GradeAndCourse> currentTermGrade = gradeSearchService.getCurrentTermGradeAsync(student);
             if (CollectionUtils.isEmpty(currentTermGrade)) {
                 singleThreadPool.execute(() -> {

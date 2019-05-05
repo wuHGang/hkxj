@@ -26,6 +26,12 @@ public class OneOffSubcriptionUtil {
     private static final String TEMPLATE_ID = "5TgQ5wk_3q01xfdqAqPDgAJDiT4YfmYOoIP6cnAhOKc";
     private static final String REPLY_URL = "https://api.weixin.qq.com/cgi-bin/message/template/subscribe?access_token=";
 
+    private static OkHttpClient okHttpClient = new OkHttpClient().newBuilder()
+            .connectTimeout(4, TimeUnit.SECONDS)
+            .writeTimeout(4, TimeUnit.SECONDS)
+            .readTimeout(3, TimeUnit.SECONDS)
+            .build();
+
     /**
      * 获取带有一次性订阅链接的超链接
      * @param content 超链接的文字内容
@@ -63,11 +69,6 @@ public class OneOffSubcriptionUtil {
     }
 
     private static void replyOneOffSubscribeRequest(OneOffSubscription oneOffSubscription, WxMpService wxMpService) throws WxErrorException{
-        OkHttpClient okHttpClient = new OkHttpClient().newBuilder()
-                .connectTimeout(10, TimeUnit.SECONDS)
-                .writeTimeout(10, TimeUnit.SECONDS)
-                .readTimeout(20, TimeUnit.SECONDS)
-                .build();
 
         String json = JsonUtils.wxToJson(oneOffSubscription);
         RequestBody requestBody = FormBody.create(MediaType.parse("appliaction/json;charset=UTF-8"), json);
@@ -92,7 +93,6 @@ public class OneOffSubcriptionUtil {
     }
 
     private static String getReplyUrl(WxMpService wxMpService) throws WxErrorException {
-        //TODO 配置多个公众号的修改,修改了获取WxMpService的方式，不再通过自动注入，而且通过appid手动获取
         return REPLY_URL + wxMpService.getAccessToken();
     }
 

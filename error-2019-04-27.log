@@ -1,5 +1,5 @@
 2019-04-27 22:26:16.941 [][] ERROR org.springframework.boot.SpringApplication 842 - Application run failed
-org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'wechatMpConfiguration': Unsatisfied dependency expressed through field 'properties'; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'wechat.mp-cn.hkxj.platform.config.wechat.WechatMpProperties': Injection of autowired dependencies failed; nested exception is java.lang.IllegalArgumentException: Could not resolve placeholder 'wechat.appid' in value "${wechat.appid}"
+org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'wechatMpConfiguration': Unsatisfied dependency expressed through field 'properties'; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'wechat.mp-cn.hkxj.platform.config.wechat.WechatMpProProperties': Injection of autowired dependencies failed; nested exception is java.lang.IllegalArgumentException: Could not resolve placeholder 'wechat.appid' in value "${wechat.appid}"
 	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.inject(AutowiredAnnotationBeanPostProcessor.java:587)
 	at org.springframework.beans.factory.annotation.InjectionMetadata.inject(InjectionMetadata.java:91)
 	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.postProcessPropertyValues(AutowiredAnnotationBeanPostProcessor.java:373)
@@ -25,7 +25,7 @@ org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating
 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
 	at java.lang.reflect.Method.invoke(Method.java:498)
 	at org.springframework.boot.devtools.restart.RestartLauncher.run(RestartLauncher.java:49)
-Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'wechat.mp-cn.hkxj.platform.config.wechat.WechatMpProperties': Injection of autowired dependencies failed; nested exception is java.lang.IllegalArgumentException: Could not resolve placeholder 'wechat.appid' in value "${wechat.appid}"
+Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'wechat.mp-cn.hkxj.platform.config.wechat.WechatMpProProperties': Injection of autowired dependencies failed; nested exception is java.lang.IllegalArgumentException: Could not resolve placeholder 'wechat.appid' in value "${wechat.appid}"
 	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.postProcessPropertyValues(AutowiredAnnotationBeanPostProcessor.java:379)
 	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.populateBean(AbstractAutowireCapableBeanFactory.java:1348)
 	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:578)
@@ -53,7 +53,7 @@ Caused by: java.lang.IllegalArgumentException: Could not resolve placeholder 'we
 	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.postProcessPropertyValues(AutowiredAnnotationBeanPostProcessor.java:373)
 	... 35 common frames omitted
 2019-04-27 22:29:06.824 [][] ERROR org.springframework.boot.SpringApplication 842 - Application run failed
-org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'wechatMpConfiguration': Unsatisfied dependency expressed through field 'properties'; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'wechat.mp-cn.hkxj.platform.config.wechat.WechatMpProperties': Injection of autowired dependencies failed; nested exception is java.lang.IllegalArgumentException: Could not resolve placeholder 'wechat.appid' in value "${wechat.appid}"
+org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'wechatMpConfiguration': Unsatisfied dependency expressed through field 'properties'; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'wechat.mp-cn.hkxj.platform.config.wechat.WechatMpProProperties': Injection of autowired dependencies failed; nested exception is java.lang.IllegalArgumentException: Could not resolve placeholder 'wechat.appid' in value "${wechat.appid}"
 	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.inject(AutowiredAnnotationBeanPostProcessor.java:587)
 	at org.springframework.beans.factory.annotation.InjectionMetadata.inject(InjectionMetadata.java:91)
 	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.postProcessPropertyValues(AutowiredAnnotationBeanPostProcessor.java:373)
@@ -79,7 +79,7 @@ org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating
 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
 	at java.lang.reflect.Method.invoke(Method.java:498)
 	at org.springframework.boot.devtools.restart.RestartLauncher.run(RestartLauncher.java:49)
-Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'wechat.mp-cn.hkxj.platform.config.wechat.WechatMpProperties': Injection of autowired dependencies failed; nested exception is java.lang.IllegalArgumentException: Could not resolve placeholder 'wechat.appid' in value "${wechat.appid}"
+Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'wechat.mp-cn.hkxj.platform.config.wechat.WechatMpProProperties': Injection of autowired dependencies failed; nested exception is java.lang.IllegalArgumentException: Could not resolve placeholder 'wechat.appid' in value "${wechat.appid}"
 	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.postProcessPropertyValues(AutowiredAnnotationBeanPostProcessor.java:379)
 	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.populateBean(AbstractAutowireCapableBeanFactory.java:1348)
 	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:578)

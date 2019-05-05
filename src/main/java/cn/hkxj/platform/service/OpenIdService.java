@@ -1,5 +1,6 @@
 package cn.hkxj.platform.service;
 
+import cn.hkxj.platform.config.wechat.WechatMpPlusProperties;
 import cn.hkxj.platform.mapper.OpenidMapper;
 import cn.hkxj.platform.mapper.OpenidPlusMapper;
 import cn.hkxj.platform.mapper.StudentMapper;
@@ -24,13 +25,15 @@ public class OpenIdService {
     private StudentMapper studentMapper;
 	@Resource
 	private OpenidPlusMapper openidPlusMapper;
+	@Resource
+	private WechatMpPlusProperties wechatMpPlusProperties;
 
 	public boolean openidIsExist(String openid, String appid) {
 		return getOpenid(openid, appid).size() == 1;
 	}
 
 	public boolean openidIsBind(String openid, String appid) {
-		if(Objects.equals("wx342acff3b65da191", appid)){
+		if(Objects.equals(wechatMpPlusProperties.getAppId(), appid)){
 			return openidPlusMapper.isOpenidBind(openid)==1;
 		}
 		return openidMapper.isOpenidBind(openid)==1;
@@ -41,7 +44,7 @@ public class OpenIdService {
 		openidExample
 				.createCriteria()
 				.andOpenidEqualTo(openid);
-		if(Objects.equals("wx342acff3b65da191", openid)){
+		if(Objects.equals(wechatMpPlusProperties.getAppId(), appid)){
 			return openidPlusMapper.selectByExample(openidExample);
 		}
 		return openidMapper.selectByExample(openidExample);
@@ -57,7 +60,7 @@ public class OpenIdService {
     }
 
     public void openIdUnbind(String openid, String appid){
-		if(Objects.equals("wx342acff3b65da191", appid)){
+		if(Objects.equals(wechatMpPlusProperties.getAppId(), appid)){
 			openidPlusMapper.openidUnbind(openid);
 		} else {
 			openidMapper.openidUnbind(openid);

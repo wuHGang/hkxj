@@ -1,5 +1,6 @@
 package cn.hkxj.platform.service.wechat;
 
+import cn.hkxj.platform.config.wechat.WechatMpPlusProperties;
 import cn.hkxj.platform.exceptions.OpenidExistException;
 import cn.hkxj.platform.exceptions.PasswordUncorrectException;
 import cn.hkxj.platform.exceptions.ReadTimeoutException;
@@ -33,6 +34,8 @@ public class StudentBindService {
 	private OpenidPlusMapper openidPlusMapper;
     @Resource
     private UrpSpiderService urpSpiderService;
+    @Resource
+	private WechatMpPlusProperties wechatMpPlusProperties;
 
 	/**
 	 * 学号与微信公众平台openID关联
@@ -55,7 +58,7 @@ public class StudentBindService {
 		//1:数据库存在openid,is_bind=0
 		//2:数据库不存在openid
 		boolean result;
-		if(Objects.equals("wx342acff3b65da191", appid)){
+		if(Objects.equals(wechatMpPlusProperties.getAppId(), appid)){
 			result = openidPlusMapper.isOpenidExist(openid)!=null&&openidPlusMapper.isOpenidBind(openid)==0;
 		} else {
 			result = openidMapper.isOpenidExist(openid)!=null&&openidMapper.isOpenidBind(openid)==0;
@@ -147,7 +150,7 @@ public class StudentBindService {
 		openidExample
 				.createCriteria()
 				.andOpenidEqualTo(openid);
-		if(Objects.equals("wx342acff3b65da191", appid)){
+		if(Objects.equals(wechatMpPlusProperties.getAppId(), appid)){
 			return openidPlusMapper.selectByExample(openidExample);
 		}
 		return openidMapper.selectByExample(openidExample);
@@ -162,7 +165,7 @@ public class StudentBindService {
         save.setOpenid(openid);
         save.setAccount(Integer.parseInt(account));
         save.setIsBind(true);
-        if(Objects.equals("wx342acff3b65da191", appid)){
+        if(Objects.equals(wechatMpPlusProperties.getAppId(), appid)){
         	return openidPlusMapper.insertSelective(save);
 		}
         return openidMapper.insertSelective(save);
@@ -172,7 +175,7 @@ public class StudentBindService {
 		Openid update=getOpenID(openid, appid).get(0);
 		update.setAccount(Integer.parseInt(account));
 		update.setIsBind(true);
-		if(Objects.equals("wx342acff3b65da191", appid)){
+		if(Objects.equals(wechatMpPlusProperties.getAppId(), appid)){
 			return openidPlusMapper.updateByPrimaryKey(update);
 		}
 		return openidMapper.updateByPrimaryKey(update);
