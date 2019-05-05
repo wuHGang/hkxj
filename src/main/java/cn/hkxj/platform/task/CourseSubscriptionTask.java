@@ -24,7 +24,7 @@ import java.util.Objects;
 public class CourseSubscriptionTask {
 
     private CourseSubscribeService courseSubscribeService;
-    private WxMpService wxMpService;
+//    private WxMpService wxMpService;
     private SubscribeService subscribeService;
 
     private static final Byte SEND_SUCCESS = 1;
@@ -46,16 +46,16 @@ public class CourseSubscriptionTask {
             //获取一个并行流，添加监视messagePeek,设置过滤条件，然后每一个都进行消息发送
             msg.getOpenIds().stream().parallel().peek(this::messagePeek).filter(openid -> !Objects.isNull(openid)).forEach(openid -> {
                 //尝试三次，如果成功就跳出循环发送下一个
-                for (int i = 1; i <= 3; i++) {
-                    try {
-                        wxMpService.getKefuService().sendKefuMessage(getKufuMessage(openid, msg.getCourseContent()));
-                        log.info("{} time send course push to user {} success", i, openid);
-                        subscribeService.updateCourseSubscribeMsgState(openid, SEND_SUCCESS);
-                        break;
-                    } catch (WxErrorException e) {
-                        log.error("{} time send course push to user{} fail, error messasge {}", i, openid, e.getMessage());
-                        subscribeService.updateCourseSubscribeMsgState(openid, SEND_FAILED);
-                    }
+                for (int i = 1; i <= 3; i++) {//TODO 配置多个公众号时的修改
+//                    try {
+//                        wxMpService.getKefuService().sendKefuMessage(getKufuMessage(openid, msg.getCourseContent()));
+//                        log.info("{} time send course push to user {} success", i, openid);
+//                        subscribeService.updateCourseSubscribeMsgState(openid, SEND_SUCCESS);
+//                        break;
+//                    } catch (WxErrorException e) {
+//                        log.error("{} time send course push to user{} fail, error messasge {}", i, openid, e.getMessage());
+//                        subscribeService.updateCourseSubscribeMsgState(openid, SEND_FAILED);
+//                    }
                 }
 
             });

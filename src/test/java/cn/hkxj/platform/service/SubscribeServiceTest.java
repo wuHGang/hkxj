@@ -26,10 +26,10 @@ public class SubscribeServiceTest {
         System.out.println( subscribeService.isSubscribe("asdassdasdasda"));
     }
 
-    @Test
-    public void insertOneSubOpenid() {
-        subscribeService.insertOneSubOpenid("asd", "1000");
-    }
+//    @Test
+//    public void insertOneSubOpenid() {
+//        subscribeService.insertOneSubOpenid("asd", "1000");
+//    }
 
     @Test
     public void updateCourseSubscribeMsgState() {

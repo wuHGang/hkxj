@@ -40,7 +40,8 @@ public class ExamMessageHandler implements WxMpMessageHandler {
     public WxMpXmlOutMessage handle(WxMpXmlMessage wxMpXmlMessage, Map<String, Object> map, WxMpService wxMpService, WxSessionManager wxSessionManager) throws WxErrorException {
         String content;
         try {
-            Student student = openIdService.getStudentByOpenId(wxMpXmlMessage.getFromUser());
+            String appid = wxMpService.getWxMpConfigStorage().getAppId();
+            Student student = openIdService.getStudentByOpenId(wxMpXmlMessage.getFromUser(), appid);
             List<ExamTimeTable> examTimeTables = examTimeTableService.getExamTimeTableByStudent(student);
             if (CollectionUtils.isEmpty(examTimeTables)) {
                 content = DATA_NOT_FOUND;

@@ -25,13 +25,13 @@ import java.util.List;
 public class GradeSearchServiceTest {
 	@Resource(name = "gradeSearchService")
 	private GradeSearchService gradeSearchService;
-	@Autowired
-	private WxMpService wxMpService;
+//	@Autowired
+//	private WxMpService wxMpService;
 
 	@Test
 	public void getAccess_token() throws WxErrorException {
-		String accessToken = wxMpService.getAccessToken();
-		System.out.println(accessToken);
+//		String accessToken = wxMpService.getAccessToken();
+//		System.out.println(accessToken);
 	}
 
     @Test
