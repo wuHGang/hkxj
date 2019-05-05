@@ -3,8 +3,11 @@ package cn.hkxj.platform.utils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -80,5 +83,22 @@ public class DateUtils {
     public static String getTimeOfPattern(LocalDateTime localDateTime,String pattern) {
         return DateTimeFormatter.ofPattern(pattern).format(localDateTime);
     }
+
+
+    public static LocalDateTime timestampToLocalDateTime(Long timestamp) {
+        if (timestamp == null) {
+            return null;
+        }
+
+        Instant instant = Instant.ofEpochSecond(timestamp);
+
+        return LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
+    }
+
+    public static LocalDateTime string2LocalDateTime(String time,String pattern) {
+        return LocalDate.parse(time, DateTimeFormatter.ofPattern(pattern)).atStartOfDay();
+    }
+
+
 
 }
