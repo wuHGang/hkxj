@@ -1,12 +1,11 @@
 package cn.hkxj.platform.controller;
 
-import cn.hkxj.platform.pojo.timetable.CourseTimeTable;
-import cn.hkxj.platform.pojo.constant.ErrorCode;
 import cn.hkxj.platform.pojo.WebResponse;
+import cn.hkxj.platform.pojo.constant.ErrorCode;
+import cn.hkxj.platform.pojo.timetable.CourseTimeTable;
 import cn.hkxj.platform.service.CourseService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.cache.CacheProperties;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -63,9 +62,7 @@ public class CourseController {
 	}
 
 	private boolean isAccountValid(String account){
-		if(Objects.isNull(account) || account.length() != ACCOUNT_LENGTH || !account.startsWith(ACCOUNT_PREFIX))
-			return false;
-		return true;
-	}
+        return !Objects.isNull(account) && account.length() == ACCOUNT_LENGTH && account.startsWith(ACCOUNT_PREFIX);
+    }
 
 }
