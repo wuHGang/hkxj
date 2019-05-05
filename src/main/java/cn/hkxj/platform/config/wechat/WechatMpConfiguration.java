@@ -2,8 +2,14 @@ package cn.hkxj.platform.config.wechat;
 
 import cn.hkxj.platform.interceptor.WechatOpenIdInterceptor;
 import cn.hkxj.platform.service.wechat.WxMessageRouter;
-import cn.hkxj.platform.service.wechat.handler.LogHandler;
-import cn.hkxj.platform.service.wechat.handler.messageHandler.*;
+import cn.hkxj.platform.service.wechat.handler.messageHandler.CETSearchHandler;
+import cn.hkxj.platform.service.wechat.handler.messageHandler.CourseMessageHandler;
+import cn.hkxj.platform.service.wechat.handler.messageHandler.ElectiveCourseMessageHandler;
+import cn.hkxj.platform.service.wechat.handler.messageHandler.EmptyRoomHandler;
+import cn.hkxj.platform.service.wechat.handler.messageHandler.ExamMessageHandler;
+import cn.hkxj.platform.service.wechat.handler.messageHandler.GradeMessageHandler;
+import cn.hkxj.platform.service.wechat.handler.messageHandler.OpenidMessageHandler;
+import cn.hkxj.platform.service.wechat.handler.messageHandler.UnbindMessageHandler;
 import com.google.common.collect.Maps;
 import me.chanjar.weixin.mp.api.WxMpInMemoryConfigStorage;
 import me.chanjar.weixin.mp.api.WxMpMessageRouter;
@@ -14,6 +20,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import sun.rmi.log.LogHandler;
 
 import javax.annotation.Resource;
 import java.util.Map;

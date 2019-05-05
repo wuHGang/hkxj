@@ -39,40 +39,19 @@ public class ElectiveCourseMessageHandler implements WxMpMessageHandler {
                                     WxMpService wxMpService,
                                     WxSessionManager wxSessionManager) {
         ExecutorService singleThreadPool = Executors.newSingleThreadExecutor();
-        try {
-            singleThreadPool.execute(()->asynKefuMessage(wxMpXmlMessage,wxMpService));
-            return textBuilder.build("正在查询成绩", wxMpXmlMessage, wxMpService);
-        } catch (Exception e) {
-            log.error("在组装返回信息时出现错误", e);
-        }
-        return textBuilder.build("没有查询到相关成绩，晚点再来查吧~" , wxMpXmlMessage, wxMpService);
+        Student student = openIdService.getStudentByOpenId(wxMpXmlMessage.getFromUser(), appid);
+
+        Future<String> future = singleThreadPool.submit(() -> getResult(student));
+
+        CustomerMessageService messageService = new CustomerMessageService(wxMpXmlMessage, wxMpService);
+        return messageService.sendMessage(future, student);
     }
 
-    private void asynKefuMessage(WxMpXmlMessage wxMpXmlMessage,WxMpService wxMpService){
-        String gradesMsg;
-        try {
-            String appid = wxMpService.getWxMpConfigStorage().getAppId();
-            Student student = openIdService.getStudentByOpenId(wxMpXmlMessage.getFromUser(), appid);
-            List<GradeAndCourse> electiveCourseAsyncGrade = gradeSearchService.getElectiveCourseGradeAsync(student);
-            if (CollectionUtils.isEmpty(electiveCourseAsyncGrade)) {
-                List<GradeAndCourse> electiveCourseSyncGrade = gradeSearchService.getElectiveCourseGradeSync(student);
-                gradesMsg = gradeSearchService.getElectiveCourseText(electiveCourseSyncGrade);
-            }
-            else {
-                gradesMsg = gradeSearchService.getElectiveCourseText(electiveCourseAsyncGrade);
-            }
-            WxMpKefuMessage wxMpKefuMessage = new WxMpKefuMessage();
-            wxMpKefuMessage.setContent(gradesMsg);
-            wxMpKefuMessage.setMsgType("text");
-            wxMpKefuMessage.setToUser(wxMpXmlMessage.getFromUser());
-            log.info("send student {} grade kefu message {}", student.getAccount(), gradesMsg);
-            try {
-                wxMpService.getKefuService().sendKefuMessage(wxMpKefuMessage);
-            } catch (WxErrorException e) {
-                log.error("send grade customer message error", e);
-            }
-        } catch (Exception e) {
-            throw e;
-        }
+
+    private String getResult(Student student) {
+        List<GradeAndCourse> electiveCourse = gradeSearchService.getEverGradeFromSpider(student).stream()
+                .filter(gradeAndCourse -> gradeAndCourse.getCourse().getAcademy() == Academy.Web)
+                .collect(Collectors.toList());
+        return gradeSearchService.getElectiveCourseText(electiveCourse);
     }
 }

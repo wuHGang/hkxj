@@ -51,7 +51,7 @@ public class AppSpiderTest {
 	}
 
 	@Test
-	public void getGrade() throws IOException {
+    public void getGrade() {
 		AllGradeAndCourse gradeAndCourse = spider.getGradeAndCourse();
         for (GradeAndCourse andCourse : gradeAndCourse.getCurrentTermGrade()) {
 

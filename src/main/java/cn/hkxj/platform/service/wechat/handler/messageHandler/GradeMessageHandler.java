@@ -6,6 +6,7 @@ import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.service.GradeSearchService;
 import cn.hkxj.platform.service.OpenIdService;
 import cn.hkxj.platform.service.TaskBindingService;
+import cn.hkxj.platform.service.wechat.CustomerMessageService;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.exception.WxErrorException;
 import me.chanjar.weixin.common.session.WxSessionManager;
@@ -22,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 /**
  * @author Yuki
@@ -31,10 +33,10 @@ import java.util.concurrent.Executors;
 @Component
 public class GradeMessageHandler implements WxMpMessageHandler {
     @Resource
-	private TextBuilder textBuilder;
+    private TextBuilder textBuilder;
 
     @Resource
-	private GradeSearchService gradeSearchService;
+    private GradeSearchService gradeSearchService;
 
     @Resource
     private OpenIdService openIdService;
@@ -42,43 +44,24 @@ public class GradeMessageHandler implements WxMpMessageHandler {
     @Resource
     private TaskBindingService taskBindingService;
 
-	public WxMpXmlOutMessage handle(WxMpXmlMessage wxMpXmlMessage,
+    private ExecutorService cacheThreadPool = Executors.newCachedThreadPool();
+
+    public WxMpXmlOutMessage handle(WxMpXmlMessage wxMpXmlMessage,
                                     Map<String, Object> map,
                                     WxMpService wxMpService,
                                     WxSessionManager wxSessionManager) {
-		try {
-		    String appid = wxMpService.getWxMpConfigStorage().getAppId();
-            Student student = openIdService.getStudentByOpenId(wxMpXmlMessage.getFromUser(), appid);
-            ExecutorService singleThreadPool = Executors.newSingleThreadExecutor();
-            singleThreadPool.execute(() -> taskBindingService.subscribeGradeUpdateBinding(wxMpXmlMessage.getFromUser(), wxMpService));
-            List<GradeAndCourse> currentTermGrade = gradeSearchService.getCurrentTermGradeAsync(student);
-            if (CollectionUtils.isEmpty(currentTermGrade)) {
-                singleThreadPool.execute(() -> {
-                    List<GradeAndCourse> gradeFromSpiderSync = gradeSearchService.getCurrentTermGradeSync(student);
-                    String gradeListToText = gradeSearchService.gradeListToText(gradeFromSpiderSync);
-                    WxMpKefuMessage wxMpKefuMessage = new WxMpKefuMessage();
-                    wxMpKefuMessage.setContent(gradeListToText);
-                    wxMpKefuMessage.setMsgType("text");
-                    wxMpKefuMessage.setToUser(wxMpXmlMessage.getFromUser());
-                    log.info("send student {} grade kefu message {}", student.getAccount(), gradeListToText);
-                    try {
-                        wxMpService.getKefuService().sendKefuMessage(wxMpKefuMessage);
-                    } catch (WxErrorException e) {
-                        log.error("send grade customer message error", e);
-                    }
-                });
-                return textBuilder.build("服务器正在努力查询中", wxMpXmlMessage, wxMpService);
-            }
-            String gradesMsg = gradeSearchService.gradeListToText(currentTermGrade);
+        String appid = wxMpService.getWxMpConfigStorage().getAppId();
+        Student student = openIdService.getStudentByOpenId(wxMpXmlMessage.getFromUser(), appid);
+        cacheThreadPool.execute(() -> taskBindingService.subscribeGradeUpdateBinding(wxMpXmlMessage.getFromUser(), wxMpService));
 
+        Future<String> future = cacheThreadPool.submit(() -> {
+            List<GradeAndCourse> gradeFromSpiderSync = gradeSearchService.getCurrentGradeFromSpider(student);
+            return gradeSearchService.gradeListToText(gradeFromSpiderSync);
+        });
+        CustomerMessageService messageService = new CustomerMessageService(wxMpXmlMessage, wxMpService);
 
-            return textBuilder.build(gradesMsg, wxMpXmlMessage, wxMpService);
-		} catch (Exception e) {
-            log.error("在组装返回信息时出现错误", e);
-		}
-
-		return textBuilder.build("没有查询到相关成绩，晚点再来查吧~" , wxMpXmlMessage, wxMpService);
-	}
+        return messageService.sendMessage(future, student);
+    }
 
 
 

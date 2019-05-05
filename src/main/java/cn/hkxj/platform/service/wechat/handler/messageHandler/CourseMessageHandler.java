@@ -10,6 +10,7 @@ import cn.hkxj.platform.utils.OneOffSubcriptionUtil;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.exception.WxErrorException;
 import me.chanjar.weixin.common.session.WxSessionManager;
+import me.chanjar.weixin.mp.api.WxMpMessageHandler;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
@@ -29,7 +30,7 @@ import java.util.Objects;
  */
 @Slf4j
 @Component
-public class CourseMessageHandler extends AbstractHandler{
+public class CourseMessageHandler implements WxMpMessageHandler {
 
 	private static final String URL = "https://7c8aab51.ngrok.io/login";
 
