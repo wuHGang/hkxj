@@ -20,7 +20,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import sun.rmi.log.LogHandler;
 
 import javax.annotation.Resource;
 import java.util.Map;
@@ -34,9 +33,6 @@ import java.util.Map;
 @ComponentScan(basePackages = "cn.hkxj.platform.*")
 @EnableConfigurationProperties(value = {WechatMpProProperties.class, WechatMpPlusProperties.class})
 public class WechatMpConfiguration {
-
-	@Resource
-	private LogHandler logHandler;
 
 	@Resource
 	private WechatMpProProperties wechatMpProProperties;
