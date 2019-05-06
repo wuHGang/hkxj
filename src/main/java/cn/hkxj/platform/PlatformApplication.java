@@ -1,14 +1,18 @@
 package cn.hkxj.platform;
 
 
+import cn.hkxj.platform.config.wechat.WechatMpConfiguration;
 import cn.hkxj.platform.utils.ApplicationUtil;
 import de.codecentric.boot.admin.server.config.EnableAdminServer;
 
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.scheduling.annotation.EnableScheduling;
 

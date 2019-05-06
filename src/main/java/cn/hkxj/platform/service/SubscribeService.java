@@ -30,7 +30,7 @@ public class SubscribeService {
         return subscribeOpenidMapper.selectByExample(example).size() == 1;
     }
 
-    public void insertOneSubOpenid(String openid, String scene){
+    public void insertOneSubOpenid(String openid, String scene, String appid){
         if(Objects.isNull(openidMapper.isOpenidExist(openid))){
             log.warn("openid that try to subscribe do not exists in table openid --openid {}", openid);
             return;

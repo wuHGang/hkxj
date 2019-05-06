@@ -25,20 +25,21 @@ public class WechatOpenIdInterceptor implements WxMessageInterceptor {
 	private OpenIdService openIdService;
 	@Value("${domain}")
 	private String domain;
-	private static final String PATTERN = "<a href=\"%s/bind?openid=%s\">点击我绑定</a>";
+	private static final String PATTERN = "<a href=\"%s/bind?openid=%s&appid=%s\">点击我绑定</a>";
 
 
 	@Override
 	public boolean intercept(WxMpXmlMessage wxMessage, Map<String, Object> context, WxMpService wxMpService, WxSessionManager sessionManager) {
-
-		return openIdService.openidIsExist(wxMessage.getFromUser()) && openIdService.openidIsBind(wxMessage.getFromUser());
+		String appid = wxMpService.getWxMpConfigStorage().getAppId();
+		return openIdService.openidIsExist(wxMessage.getFromUser(), appid) && openIdService.openidIsBind(wxMessage.getFromUser(), appid);
 
 	}
 
 	@Override
 	public WxMpXmlOutMessage handle(WxMpXmlMessage wxMessage, Map<String, Object> context, WxMpService wxMpService, WxSessionManager sessionManager) {
-		String content = String.format(PATTERN, domain, wxMessage.getFromUser());
-		log.info("content {} check openid {} is not bind", wxMessage.getContent(), wxMessage.getFromUser());
+		String appid = wxMpService.getWxMpConfigStorage().getAppId();
+		String content = String.format(PATTERN, domain, wxMessage.getFromUser(), appid);
+		log.info("appid:{} content {} check openid {} is not bind", appid, wxMessage.getContent(), wxMessage.getFromUser());
 		return new TextBuilder().build(content, wxMessage, wxMpService);
 	}
 

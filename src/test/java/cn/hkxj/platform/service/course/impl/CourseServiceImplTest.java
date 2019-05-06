@@ -32,14 +32,14 @@ public class CourseServiceImplTest {
 
     @Test
     public void getCoursesByAccount() {
-        List<CourseTimeTable> courseTimeTables = courseService.getCoursesByAccount(2016024255);
-        System.out.println(courseService.getCoursesByAccount(2016024170));
+        List<CourseTimeTable> courseTimeTables = courseService.getCoursesByAccount(2016025067);
+        System.out.println(courseService.getCoursesByAccount(2016025067));
     }
 
     @Test
     public void test(){
         System.out.println(courseService.getCoursesCurrentDay(2016024170));
-//        System.out.println(courseService.toText(courseService.getCoursesCurrentDay(2016024170)));
+        System.out.println(courseService.toText(courseService.getCoursesCurrentDay(2016024170)));
     }
 
     @Test

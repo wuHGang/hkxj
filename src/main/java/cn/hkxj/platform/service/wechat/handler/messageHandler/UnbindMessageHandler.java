@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.util.Map;
+import java.util.Objects;
 
 @Slf4j
 @Component
@@ -32,7 +33,8 @@ public class UnbindMessageHandler implements WxMpMessageHandler {
                                     WxMpService wxMpService,
                                     WxSessionManager wxSessionManager) throws WxErrorException {
         try {
-            openIdService.openIdUnbind(wxMpXmlMessage.getFromUser());
+            String appid = wxMpService.getWxMpConfigStorage().getAppId();
+            openIdService.openIdUnbind(wxMpXmlMessage.getFromUser(), appid);
             String gradesMsg=("你的账号已解绑成功\n");
             return textBuilder.build(gradesMsg, wxMpXmlMessage, wxMpService);
         } catch (Exception e) {

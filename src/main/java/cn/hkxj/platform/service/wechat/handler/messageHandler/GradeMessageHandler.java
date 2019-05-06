@@ -1,5 +1,6 @@
 package cn.hkxj.platform.service.wechat.handler.messageHandler;
 
+import cn.hkxj.platform.builder.TextBuilder;
 import cn.hkxj.platform.pojo.GradeAndCourse;
 import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.service.GradeSearchService;
@@ -7,12 +8,15 @@ import cn.hkxj.platform.service.OpenIdService;
 import cn.hkxj.platform.service.TaskBindingService;
 import cn.hkxj.platform.service.wechat.CustomerMessageService;
 import lombok.extern.slf4j.Slf4j;
+import me.chanjar.weixin.common.exception.WxErrorException;
 import me.chanjar.weixin.common.session.WxSessionManager;
 import me.chanjar.weixin.mp.api.WxMpMessageHandler;
 import me.chanjar.weixin.mp.api.WxMpService;
+import me.chanjar.weixin.mp.bean.kefu.WxMpKefuMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -29,22 +33,26 @@ import java.util.concurrent.Future;
 @Component
 public class GradeMessageHandler implements WxMpMessageHandler {
     @Resource
-	private GradeSearchService gradeSearchService;
+    private TextBuilder textBuilder;
+
+    @Resource
+    private GradeSearchService gradeSearchService;
 
     @Resource
     private OpenIdService openIdService;
 
     @Resource
-    TaskBindingService taskBindingService;
+    private TaskBindingService taskBindingService;
 
     private ExecutorService cacheThreadPool = Executors.newCachedThreadPool();
 
-	public WxMpXmlOutMessage handle(WxMpXmlMessage wxMpXmlMessage,
+    public WxMpXmlOutMessage handle(WxMpXmlMessage wxMpXmlMessage,
                                     Map<String, Object> map,
                                     WxMpService wxMpService,
                                     WxSessionManager wxSessionManager) {
-        Student student = openIdService.getStudentByOpenId(wxMpXmlMessage.getFromUser());
-        cacheThreadPool.execute(() -> taskBindingService.subscribeGradeUpdateBinding(wxMpXmlMessage.getFromUser()));
+        String appid = wxMpService.getWxMpConfigStorage().getAppId();
+        Student student = openIdService.getStudentByOpenId(wxMpXmlMessage.getFromUser(), appid);
+        cacheThreadPool.execute(() -> taskBindingService.subscribeGradeUpdateBinding(wxMpXmlMessage.getFromUser(), wxMpService));
 
         Future<String> future = cacheThreadPool.submit(() -> {
             List<GradeAndCourse> gradeFromSpiderSync = gradeSearchService.getCurrentGradeFromSpider(student);
@@ -53,7 +61,8 @@ public class GradeMessageHandler implements WxMpMessageHandler {
         CustomerMessageService messageService = new CustomerMessageService(wxMpXmlMessage, wxMpService);
 
         return messageService.sendMessage(future, student);
-	}
+    }
+
 
 
 }

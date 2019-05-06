@@ -1,6 +1,10 @@
 package cn.hkxj.platform.utils;
 
 import cn.hkxj.platform.PlatformApplication;
+import cn.hkxj.platform.config.wechat.WechatMpConfiguration;
+import cn.hkxj.platform.config.wechat.WechatMpPlusProperties;
+import cn.hkxj.platform.config.wechat.WechatMpProProperties;
+import me.chanjar.weixin.mp.api.WxMpService;
 import okhttp3.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,49 +31,14 @@ import static org.junit.Assert.*;
 @TestPropertySource(value = "classpath:application-prod.properties")
 public class OneOffSubcriptionUtilTest {
 
+    @Resource
+    private WechatMpProProperties wechatMpProProperties;
+    @Resource
+    private WechatMpPlusProperties wechatMpPlusProperties;
 
     @Test
     public void getOneOffSubscriptionUrl() throws UnsupportedEncodingException, FileNotFoundException {
-        OkHttpClient okHttpClient = new OkHttpClient().newBuilder()
-                .connectTimeout(10, TimeUnit.SECONDS)
-                .writeTimeout(10, TimeUnit.SECONDS)
-                .readTimeout(20, TimeUnit.SECONDS)
-                .build();
-
-        Student student = new Student(2016024170, "1");
-
-
-        RequestBody requestBody = FormBody.create(MediaType.parse("appliaction/json;charset=UTF-8"), JsonUtils.wxToJson(student));
-
-        Request request = new Request.Builder()
-                .url("http://localhost:8080/login/student")
-                .post(requestBody)
-                .build();
-        Call call = okHttpClient.newCall(request);
-        call.enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                System.err.println("fail");
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                System.out.println(response.body().string());
-            }
-        });
-
-
-//        System.out.println( OneOffSubcriptionUtil.getHyperlinks("点击领取课表", "1005",null));
-    }
-}
-
-class Student{
-
-    int account;
-    String password;
-
-    Student(int account, String password){
-        this.account = account;
-        this.password = password;
+        WxMpService wxMpService = WechatMpConfiguration.getMpServices().get(wechatMpProProperties.getAppId());
+        System.out.println( OneOffSubcriptionUtil.getHyperlinks("点击领取课表", "1005", wxMpService));
     }
 }

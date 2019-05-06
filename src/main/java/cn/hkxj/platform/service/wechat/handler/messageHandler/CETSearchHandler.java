@@ -32,7 +32,7 @@ public class CETSearchHandler implements WxMpMessageHandler {
                                     WxMpService wxMpService,
                                     WxSessionManager wxSessionManager) {
         try {
-            Student student = openIdService.getStudentByOpenId(wxMpXmlMessage.getFromUser());
+            Student student = openIdService.getStudentByOpenId(wxMpXmlMessage.getFromUser(), wxMpService.getWxMpConfigStorage().getAppId());
             String examinee = cetService.getCETExaminee(student);
             if(StringUtils.isEmpty(examinee)){
                 return textBuilder.build("没有查询到准考证号~" , wxMpXmlMessage, wxMpService);
