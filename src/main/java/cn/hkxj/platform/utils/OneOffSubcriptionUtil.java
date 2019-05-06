@@ -45,7 +45,7 @@ public class OneOffSubcriptionUtil {
     public static String getOneOffSubscriptionUrl(String scene, WxMpService wxMpService) {
         String appid = wxMpService.getWxMpConfigStorage().getAppId();
         String templateId = wxMpService.getWxMpConfigStorage().getTemplateId();
-        String redirect_url = domain + "/platform/wechat/sub/" + appid + "/test";
+        String redirect_url = domain + "/wechat/sub/" + appid + "/test";
         StringBuilder builder = new StringBuilder();
         builder.append(BASE_URL).append("&")
                 .append("appid=").append(appid).append("&")
