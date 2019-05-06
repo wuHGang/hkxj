@@ -46,6 +46,7 @@ public class ElectiveCourseMessageHandler implements WxMpMessageHandler {
                                     WxSessionManager wxSessionManager) {
 
         String appid = wxMpService.getWxMpConfigStorage().getAppId();
+        ExecutorService singleThreadPool = Executors.newSingleThreadExecutor();
         Student student = openIdService.getStudentByOpenId(wxMpXmlMessage.getFromUser(), appid);
 
         Future<String> future = singleThreadPool.submit(() -> getResult(student));

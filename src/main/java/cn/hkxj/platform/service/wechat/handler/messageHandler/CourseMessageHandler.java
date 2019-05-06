@@ -2,6 +2,8 @@ package cn.hkxj.platform.service.wechat.handler.messageHandler;
 
 import cn.hkxj.platform.builder.TemplateBuilder;
 import cn.hkxj.platform.builder.TextBuilder;
+import cn.hkxj.platform.config.wechat.WechatMpPlusProperties;
+import cn.hkxj.platform.pojo.Course;
 import cn.hkxj.platform.pojo.timetable.CourseTimeTable;
 import cn.hkxj.platform.service.CourseService;
 import cn.hkxj.platform.utils.OneOffSubcriptionUtil;
@@ -10,6 +12,7 @@ import me.chanjar.weixin.common.exception.WxErrorException;
 import me.chanjar.weixin.common.session.WxSessionManager;
 import me.chanjar.weixin.mp.api.WxMpMessageHandler;
 import me.chanjar.weixin.mp.api.WxMpService;
+import me.chanjar.weixin.mp.bean.kefu.WxMpKefuMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
 import me.chanjar.weixin.mp.bean.template.WxMpTemplateData;
@@ -30,38 +33,44 @@ import java.util.Objects;
 @Component
 public class CourseMessageHandler implements WxMpMessageHandler {
 
-	private static final String URL = "https://7c8aab51.ngrok.io/login";
+	private static final String URL = "http://platform.hackerda.com/platform/course/timetable";
 
 	@Resource
 	private TemplateBuilder templateBuilder;
-
 	@Resource
 	private CourseService courseService;
+	@Resource
+	private WechatMpPlusProperties wechatMpPlusProperties;
 
 	@Override
 	public WxMpXmlOutMessage handle(WxMpXmlMessage wxMpXmlMessage, Map<String, Object> map, WxMpService wxMpService, WxSessionManager wxSessionManager) {
-		if(Objects.equals("wx342acff3b65da191", wxMpService.getWxMpConfigStorage().getAppId())){
-			List<CourseTimeTable> courseTimeTables = courseService.getCoursesCurrentDay(2016024170);
-			List<WxMpTemplateData> templateData = new ArrayList<>();
-			WxMpTemplateData first = new WxMpTemplateData();
-			first.setName("first");
-			first.setValue(courseService.toText(courseTimeTables));
-			WxMpTemplateData second = new WxMpTemplateData();
-			second.setName("second");
-			second.setValue("啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦");
-			templateData.add(first);
-			templateData.add(second);
-			WxMpTemplateMessage wxMpTemplateMessage = templateBuilder.build(wxMpXmlMessage, templateData, URL);
-			wxMpTemplateMessage.setToUser(wxMpXmlMessage.getFromUser());
-			try {
-				wxMpService.getTemplateMsgService().sendTemplateMsg(wxMpTemplateMessage);
-			} catch (WxErrorException e) {
-				e.printStackTrace();
-			}
-			return null;
-//			return new TextBuilder().build("我是第二个公众号啦啦啦啦", wxMpXmlMessage, wxMpService);
+		if(Objects.equals(wechatMpPlusProperties.getAppId(), wxMpService.getWxMpConfigStorage().getAppId())){
+				return new TextBuilder().build(getCurrentDayCourseData(), wxMpXmlMessage, wxMpService);
+//				wxMpService.getTemplateMsgService().sendTemplateMsg(getTemplateMessage(wxMpXmlMessage));
 		}
 		String examMsg = OneOffSubcriptionUtil.getHyperlinks("点击领取今日课表", "1005", wxMpService);
 		return new TextBuilder().build(examMsg, wxMpXmlMessage, wxMpService);
 	}
+
+	private String getCurrentDayCourseData(){
+		List<CourseTimeTable> courseTimeTables = courseService.getCoursesCurrentDay(2016024170);
+		return courseService.toText(courseTimeTables);
+	}
+
+	private WxMpTemplateMessage getTemplateMessage(WxMpXmlMessage wxMpXmlMessage){
+		String content = getCurrentDayCourseData();
+		List<WxMpTemplateData> templateData = new ArrayList<>();
+		WxMpTemplateData first = new WxMpTemplateData();
+		first.setName("first");
+		first.setValue(content);
+		WxMpTemplateData second = new WxMpTemplateData();
+		second.setName("second");
+		second.setValue("啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦");
+		templateData.add(first);
+		templateData.add(second);
+		WxMpTemplateMessage wxMpTemplateMessage = templateBuilder.build(wxMpXmlMessage, templateData, URL);
+		wxMpTemplateMessage.setToUser(wxMpXmlMessage.getFromUser());
+		return wxMpTemplateMessage;
+	}
+
 }

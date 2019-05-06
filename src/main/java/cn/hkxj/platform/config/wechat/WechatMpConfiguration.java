@@ -85,7 +85,6 @@ public class WechatMpConfiguration {
 		wxProMpService.setWxMpConfigStorage(plusConfig);
 		routers.put(wechatMpProProperties.getAppId(), this.newRouter(wxProMpService));
 		mpServices.put(wechatMpProProperties.getAppId(), wxProMpService);
-		WxMessageRouter wxMessageRouter = new WxMessageRouter(wxPlusMpService);
 		return Boolean.TRUE;
 	}
 
