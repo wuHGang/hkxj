@@ -13,8 +13,8 @@ import javax.annotation.Resource;
  */
 @Service
 public class HandlerRouteService {
-	@Resource
-	private WxMessageRouter router;
+//	@Resource
+//	private WxMessageRouter router;
 
 	@Resource
     private CourseMessageHandler courseMessageHandler;
@@ -44,54 +44,54 @@ public class HandlerRouteService {
 	private ElectiveCourseMessageHandler electiveCourseMessageHandler;
 
 	public void handlerRegister() {
-		router
-				.rule()
-					.async(false)
-					.rContent("(课表|课程|今日课表)")
-					.interceptor(wechatOpenIdInterceptor)
-					.handler(courseMessageHandler)
-				.end()
-				.rule()
-					.async(false)
-					.interceptor(wechatOpenIdInterceptor)
-					.rContent(".*?成绩.*?")
-					.handler(gradeMessageHandler)
-				.end()
-				.rule()
-				.async(false)
-				.interceptor(wechatOpenIdInterceptor)
-				.rContent("准考证号|四级|六级|准考证|四六级")
-				.handler(cetSearchHandler)
-				.end()
-				.rule()
-					.async(false)
-					.interceptor(wechatOpenIdInterceptor)
-					.content("openid")
-					.handler(openidMessageHandler)
-				.end()
-				.rule()
-					.async(false)
-					.interceptor(wechatOpenIdInterceptor)
-					.content("解绑")
-					.handler(unbindMessageHandler)
-				.end()
-                .rule()
-                    .async(false)
-                    .rContent(".*?考试.*?")
-                .interceptor(wechatOpenIdInterceptor)
-                    .handler(examMessageHandler)
-                .end()
-				.rule()
-				.async(false)
-				.rContent(".*?选修.*?")
-				.interceptor(wechatOpenIdInterceptor)
-				.handler(electiveCourseMessageHandler)
-				.end()
-                .rule()
-                    .async(false)
-                    .rContent("空教室.*?")
-                    .handler(emptyRoomHandler)
-                .end();
+//		router
+//				.rule()
+//					.async(false)
+//					.rContent("(课表|课程|今日课表)")
+//					.interceptor(wechatOpenIdInterceptor)
+//					.handler(courseMessageHandler)
+//				.end()
+//				.rule()
+//					.async(false)
+//					.interceptor(wechatOpenIdInterceptor)
+//					.rContent(".*?成绩.*?")
+//					.handler(gradeMessageHandler)
+//				.end()
+//				.rule()
+//				.async(false)
+//				.interceptor(wechatOpenIdInterceptor)
+//				.rContent("准考证号|四级|六级|准考证|四六级")
+//				.handler(cetSearchHandler)
+//				.end()
+//				.rule()
+//					.async(false)
+//					.interceptor(wechatOpenIdInterceptor)
+//					.content("openid")
+//					.handler(openidMessageHandler)
+//				.end()
+//				.rule()
+//					.async(false)
+//					.interceptor(wechatOpenIdInterceptor)
+//					.content("解绑")
+//					.handler(unbindMessageHandler)
+//				.end()
+//                .rule()
+//                    .async(false)
+//                    .rContent(".*?考试.*?")
+//                .interceptor(wechatOpenIdInterceptor)
+//                    .handler(examMessageHandler)
+//                .end()
+//				.rule()
+//				.async(false)
+//				.rContent(".*?选修.*?")
+//				.interceptor(wechatOpenIdInterceptor)
+//				.handler(electiveCourseMessageHandler)
+//				.end()
+//                .rule()
+//                    .async(false)
+//                    .rContent("空教室.*?")
+//                    .handler(emptyRoomHandler)
+//                .end();
 
 	}
 }

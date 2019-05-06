@@ -17,7 +17,7 @@ public class TemplateBuilder {
 	public WxMpTemplateMessage build(WxMpXmlMessage wxMessage, List<WxMpTemplateData> list, String url) {
 		WxMpTemplateMessage m = WxMpTemplateMessage.builder()
 				.toUser(wxMessage.getFromUser())
-				.templateId("GaeZamuWQde7U67l0AznX8UOgqIWceK-mwXLUrVTDRs")
+				.templateId("zJXOQMw1pnkk7oZpcUoWYVML7NfzwQRe-0BDS7wZDRU")
 				.data(list)
 				.url(url)
 				.build();
