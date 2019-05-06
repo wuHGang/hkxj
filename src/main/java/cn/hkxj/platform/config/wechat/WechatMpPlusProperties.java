@@ -34,6 +34,9 @@ public class WechatMpPlusProperties {
     @Value("${wechat.mp.plus.aesKey}")
     private String aesKey;
 
+    @Value("${wechat.mp.plus.templateId}")
+    private String templateId;
+
     private WxMpInMemoryConfigStorage wxMpInMemoryConfigStorage;
 
     @PostConstruct
@@ -43,6 +46,7 @@ public class WechatMpPlusProperties {
         wxMpInMemoryConfigStorage.setSecret(secret);
         wxMpInMemoryConfigStorage.setToken(token);
         wxMpInMemoryConfigStorage.setAesKey(aesKey);
+        wxMpInMemoryConfigStorage.setTemplateId(templateId);
     }
 
     @Override
