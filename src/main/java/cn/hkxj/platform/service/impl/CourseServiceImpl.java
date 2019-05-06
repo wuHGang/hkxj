@@ -105,14 +105,13 @@ public class CourseServiceImpl implements CourseService{
         for(CourseTimeTable courseTimeTable : courseTimeTables){
             if(courseTimeTable == null) continue;
             count++;
-            builder.append("第").append(courseTimeTable.getOrder()).append("节").append("\\n")
-                    .append(courseTimeTable.getCourse().getName()).append("  ")
+            builder.append("第").append(courseTimeTable.getOrder()).append("节").append("\n")
+                    .append(courseTimeTable.getCourse().getName()).append("\n")
                     .append(courseTimeTable.getRoom().getName());
             if(count != length){
-                builder.append("\\n\\n");
+                builder.append("\n\n");
             }
         }
-        builder.append("点击查看更多");
         return builder.toString();
     }
 

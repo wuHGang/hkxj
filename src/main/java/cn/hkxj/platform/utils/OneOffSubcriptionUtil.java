@@ -8,6 +8,7 @@ import okhttp3.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.io.*;
 import java.net.*;
 import java.util.concurrent.TimeUnit;
@@ -23,7 +24,6 @@ public class OneOffSubcriptionUtil {
     private static String domain;
 
     private static final String BASE_URL = "https://mp.weixin.qq.com/mp/subscribemsg?action=get_confirm";
-    private static final String TEMPLATE_ID = "5TgQ5wk_3q01xfdqAqPDgAJDiT4YfmYOoIP6cnAhOKc";
     private static final String REPLY_URL = "https://api.weixin.qq.com/cgi-bin/message/template/subscribe?access_token=";
 
     private static OkHttpClient okHttpClient = new OkHttpClient().newBuilder()
@@ -44,13 +44,13 @@ public class OneOffSubcriptionUtil {
 
     public static String getOneOffSubscriptionUrl(String scene, WxMpService wxMpService) {
         String appid = wxMpService.getWxMpConfigStorage().getAppId();
-        String redirect_url = domain + "/wechat/sub/" + appid + "test";
+        String templateId = wxMpService.getWxMpConfigStorage().getTemplateId();
+        String redirect_url = domain + "/platform/wechat/sub/" + appid + "/test";
         StringBuilder builder = new StringBuilder();
-        //TODO 配置多个公众号时的修改
         builder.append(BASE_URL).append("&")
                 .append("appid=").append(appid).append("&")
                 .append("scene=").append(scene).append("&")
-                .append("template_id=").append(TEMPLATE_ID).append("&");
+                .append("template_id=").append(templateId).append("&");
         try {
             builder.append("redirect_url=").append(URLEncoder.encode(redirect_url, "UTF-8"));
         } catch (UnsupportedEncodingException e) {

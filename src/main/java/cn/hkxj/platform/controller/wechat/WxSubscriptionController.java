@@ -1,6 +1,7 @@
 package cn.hkxj.platform.controller.wechat;
 
 import cn.hkxj.platform.config.wechat.WechatMpConfiguration;
+import cn.hkxj.platform.config.wechat.WechatMpPlusProperties;
 import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.pojo.timetable.CourseTimeTable;
 import cn.hkxj.platform.service.CourseService;
@@ -43,6 +44,8 @@ public class WxSubscriptionController {
 	private CourseService courseService;
 	@Resource
 	private HttpSession httpSession;
+	@Resource
+	private WechatMpPlusProperties wechatMpPlusProperties;
 
 	/**
 	 * @param openid     微信平台用户唯一标识
@@ -63,36 +66,23 @@ public class WxSubscriptionController {
 		log.info("{},{},{},{}", openid, templateId, action, scene);
 
 		httpSession.setAttribute(openid+"_subscribe_scene", scene);
+		httpSession.setAttribute("appid", appid);
 
 		if (Objects.isNull(openid)) {
 			log.info("redirect to login");
 			return "LoginWeb/Login";
 		}
 
-		httpSession.setAttribute("appid", appid);
-
 		if (studentBindService.isStudentBind(openid, appid)) {
 			Student student = studentBindService.getStudentByOpenID(openid, appid);
-			String account = student.getAccount().toString();
 			httpSession.setAttribute("student", student);
-			log.info("redirect to timetable account：{}", account);
-			WxMpService wxMpService = WechatMpConfiguration.getMpServices().get(appid);
-			//判断该openId是否已经订阅过，没有插入一条数据
-			if(Objects.equals("confirm", action) && !subscribeService.isSubscribe(openid)){
-				subscribeService.insertOneSubOpenid(openid, scene, appid);
-			}
-			if(Objects.equals("1005", scene)){
-				List<CourseTimeTable> courseTimeTableList = courseService.getCoursesCurrentDay(student.getAccount());
-				WxMpKefuMessage wxMpKefuMessage = new WxMpKefuMessage();
-				wxMpKefuMessage.setMsgType("text");
-				wxMpKefuMessage.setContent(courseService.toText(courseTimeTableList));
-				wxMpKefuMessage.setToUser(openid);
-				try {
-					wxMpService.getKefuService().sendKefuMessage(wxMpKefuMessage);
-					log.info("send kefuMessage about course success openid:{} appid:{}", openid, appid);
-				} catch (WxErrorException e) {
-					log.info("send kefuMessage about course failed openid:{} appid:{}", openid, appid);
-				}
+			httpSession.setAttribute("account", student.getAccount().toString());
+			log.info("redirect to timetable account：{}", student.getAccount());
+			if(Objects.equals(wechatMpPlusProperties.getAppId(), appid)){
+				//如果appid和plus的配置相等，执行plus的处理过程
+				wxMpPlusToProcessing(action, appid, openid, scene, student);
+			} else {
+				wxMpProToProcessing(action, appid, openid, scene, student);
 			}
 			return "new";
 
@@ -103,4 +93,46 @@ public class WxSubscriptionController {
 		}
 	}
 
+	private void wxMpProToProcessing(String action, String appid, String openid, String scene, Student student) {
+		WxMpService wxMpService = WechatMpConfiguration.getMpServices().get(appid);
+		//判断该openId是否已经订阅过且一次性订阅的动作是否为confirm，没有插入一条数据
+		if(Objects.equals("confirm", action) && !subscribeService.isSubscribe(openid)){
+			subscribeService.insertOneSubOpenid(openid, scene, appid);
+		}
+		if(Objects.equals("1005", scene)) {
+			List<CourseTimeTable> courseTimeTableList = courseService.getCoursesCurrentDay(student.getAccount());
+			WxMpKefuMessage wxMpKefuMessage = new WxMpKefuMessage();
+			wxMpKefuMessage.setMsgType("text");
+			wxMpKefuMessage.setContent(courseService.toText(courseTimeTableList));
+			wxMpKefuMessage.setToUser(openid);
+			try {
+				wxMpService.getKefuService().sendKefuMessage(wxMpKefuMessage);
+				log.info("send kefuMessage about course success openid:{} appid:{}", openid, appid);
+			} catch (WxErrorException e) {
+				log.info("send kefuMessage about course failed openid:{} appid:{}", openid, appid);
+			}
+		}
+	}
+
+
+	private void wxMpPlusToProcessing(String action, String appid, String openid, String scene, Student student) {
+		WxMpService wxMpService = WechatMpConfiguration.getMpServices().get(appid);
+		//判断该openId是否已经订阅过且一次性订阅的动作是否为confirm，没有插入一条数据
+		if(Objects.equals("confirm", action) && !subscribeService.isSubscribe(openid)){
+			subscribeService.insertOneSubOpenid(openid, scene, appid);
+		}
+		if(Objects.equals("1005", scene)) {
+			List<CourseTimeTable> courseTimeTableList = courseService.getCoursesCurrentDay(student.getAccount());
+			WxMpKefuMessage wxMpKefuMessage = new WxMpKefuMessage();
+			wxMpKefuMessage.setMsgType("text");
+			wxMpKefuMessage.setContent(courseService.toText(courseTimeTableList));
+			wxMpKefuMessage.setToUser(openid);
+			try {
+				wxMpService.getKefuService().sendKefuMessage(wxMpKefuMessage);
+				log.info("send kefuMessage about course success openid:{} appid:{}", openid, appid);
+			} catch (WxErrorException e) {
+				log.info("send kefuMessage about course failed openid:{} appid:{}", openid, appid);
+			}
+		}
+	}
 }
