@@ -2,6 +2,8 @@ package cn.hkxj.platform;
 
 
 import cn.hkxj.platform.utils.ApplicationUtil;
+import de.codecentric.boot.admin.server.config.EnableAdminServer;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
@@ -15,6 +17,7 @@ import javax.annotation.Resource;
 @PropertySource(value = "classpath:application-local.properties", ignoreResourceNotFound = true)
 @EnableScheduling
 @SpringBootApplication
+@EnableAdminServer
 public class PlatformApplication {
 
 	public static void main(String[] args) {
