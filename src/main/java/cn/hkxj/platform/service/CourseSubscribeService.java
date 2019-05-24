@@ -1,5 +1,6 @@
 package cn.hkxj.platform.service;
 
+import cn.hkxj.platform.config.wechat.WechatMpPlusProperties;
 import cn.hkxj.platform.mapper.*;
 import cn.hkxj.platform.pojo.*;
 import cn.hkxj.platform.pojo.example.CourseTimeTableExample;
@@ -10,10 +11,14 @@ import cn.hkxj.platform.pojo.timetable.CourseTimeTable;
 import cn.hkxj.platform.pojo.wechat.CourseGroupMsg;
 import cn.hkxj.platform.pojo.wechat.Openid;
 import cn.hkxj.platform.utils.DateUtils;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -25,24 +30,25 @@ import java.util.stream.Collectors;
 @Service
 public class CourseSubscribeService {
 
+    @Resource
     private StudentMapper studentMapper;
+    @Resource
     private ClassesMapper classesMapper;
+    @Resource
     private CourseTimeTableMapper courseTimeTableMapper;
+    @Resource
     private OpenidMapper openidMapper;
+    @Resource
     private SubscribeOpenidMapper subscribeOpenidMapper;
+    @Resource
+    private ScheduleTaskService scheduleTaskService;
+    @Resource
+    private WechatMpPlusProperties wechatMpPlusProperties;
+    @Resource
+    private OpenidPlusMapper openidPlusMapper;
 
-    @Autowired
-    private CourseSubscribeService(StudentMapper studentMapper, ClassesMapper classesMapper, CourseTimeTableMapper courseTimeTableMapper,
-                                   OpenidMapper openidMapper, SubscribeOpenidMapper subscribeOpenidMapper){
-        this.studentMapper = studentMapper;
-        this.classesMapper = classesMapper;
-        this.courseTimeTableMapper = courseTimeTableMapper;
-        this.openidMapper = openidMapper;
-        this.subscribeOpenidMapper = subscribeOpenidMapper;
-    }
 
-    public List<CourseGroupMsg> getCoursesSubscribeForCurrentDay() {
-
+    public Map<String, Set<CourseGroupMsg>> getCoursesSubscribeForCurrentDay() {
         if(!isValidDay()) {
             log.error("calling function on an illegal date");
             return null;
@@ -51,14 +57,13 @@ public class CourseSubscribeService {
         //获取所有有课班级的信息
         List<Classes> classesList = getClassList(courseTimeTables);
         //装填要群发的消息的班级名称和课程信息
-        List<CourseGroupMsg> courseGroupMsgs = getCourseGroupMsgs(courseTimeTables, classesList);
+        Map<Integer, CourseGroupMsg> courseGroupMsgMap = getCourseGroupMsgs(courseTimeTables, classesList);
         //和学生还有openId的数据
         Map<String, Student> openIdMap = getOpenIdMap();
-        if(Objects.isNull(openIdMap)){ return null; }
+        Map<String, List<Map<ScheduleTask, Student>>> scheduleTaskStudentMap = getStudentMappingMap();
+//        if(Objects.isNull(openIdMap)){ return null; }
         //将每一个班级对应的openid放进courseGroupMsgs中
-        setIdsIntoCourseGroupMsgs(courseGroupMsgs, openIdMap);
-
-        return courseGroupMsgs;
+        return setTaskIntoCourseGroupMsgs(courseGroupMsgMap, scheduleTaskStudentMap);
     }
 
     /**
@@ -67,8 +72,9 @@ public class CourseSubscribeService {
      * @param classesList 班级列表
      * @return 课程推送信息
      */
-    private List<CourseGroupMsg> getCourseGroupMsgs(List<CourseTimeTable> courseTimeTables, List<Classes> classesList){
-        List<CourseGroupMsg> courseGroupMsgs = new ArrayList<>(600);
+    private Map<Integer, CourseGroupMsg> getCourseGroupMsgs(List<CourseTimeTable> courseTimeTables, List<Classes> classesList){
+//        List<CourseGroupMsg> courseGroupMsgs = new ArrayList<>(600);
+        Map<Integer, CourseGroupMsg> courseGroupMsgMap = new HashMap<>(600);
         classesList.forEach(classes -> {
             CourseGroupMsg msg = new CourseGroupMsg();
             List<CourseTimeTable> targetList = new ArrayList<>();
@@ -78,9 +84,48 @@ public class CourseSubscribeService {
             );
             msg.setClasses(classes);
             msg.setCourseTimeTables(targetList);
-            courseGroupMsgs.add(msg);
+//            courseGroupMsgs.add(msg);
+            courseGroupMsgMap.put(classes.getId(), msg);
         });
-        return courseGroupMsgs;
+        return courseGroupMsgMap;
+    }
+
+    private Map<String, List<Map<ScheduleTask, Student>>> getStudentMappingMap(){
+        Map<String, List<ScheduleTask>> scheduleMap =
+                scheduleTaskService.getSubscribeData(1005, ScheduleTaskService.FUNCTION_ENABLE);
+        Map<String, List<Map<ScheduleTask, Student>>>  mappingMap = Maps.newHashMap();
+        scheduleMap.forEach((appid, taskList) ->{
+            if(taskList.size() == 0){
+                mappingMap.put(appid, null);
+            } else {
+                List<String> openIds = taskList.stream().map(ScheduleTask::getOpenid).collect(Collectors.toList());
+                List<Openid> openidList = getOpenIdList(openIds, appid);
+                Map<Integer, Student> studentMap = getAllStudentByOpenids(openidList);
+                List<Map<ScheduleTask, Student>> mappingList = Lists.newArrayList();
+                taskList.forEach(task -> {
+                    Map<ScheduleTask, Student> scheduleTaskStudentMap = Maps.newHashMap();
+                    openidList.forEach(openid -> {
+                        if(Objects.equals(task.getOpenid(), openid.getOpenid())){
+                            scheduleTaskStudentMap.put(task, studentMap.get(openid.getAccount()));
+                            mappingList.add(scheduleTaskStudentMap);
+                        }
+                    });
+                });
+                mappingMap.put(appid, mappingList);
+            }
+        });
+
+        return mappingMap;
+    }
+
+    private List<Openid> getOpenIdList(List<String> openIds, String appid){
+        OpenidExample openidExample = new OpenidExample();
+        openidExample.createCriteria()
+                .andOpenidIn(openIds);
+        if(Objects.equals(wechatMpPlusProperties.getAppId(), appid)){
+            return openidPlusMapper.selectByExample(openidExample);
+        }
+        return openidMapper.selectByExample(openidExample);
     }
 
     /**
@@ -103,11 +148,32 @@ public class CourseSubscribeService {
         return openIdMap;
     }
 
-    /**
-     * openIdMap中学生的对应的openid一一对应，将相同班级的学生的openId放进courseGroupMsgs
-     * @param courseGroupMsgs 课程提醒
-     * @param openIdMap 学生和openId一一对应的Map
-     */
+
+    private Map<String, Set<CourseGroupMsg>> setTaskIntoCourseGroupMsgs(Map<Integer, CourseGroupMsg> courseGroupMsgMap, Map<String, List<Map<ScheduleTask, Student>>> mappingMap){
+        Map<String, Set<CourseGroupMsg>> coursePushMap = Maps.newHashMap();
+        mappingMap.forEach((appid, mappingList) -> {
+            Set<CourseGroupMsg> courseGroupMsgs = Sets.newHashSet();
+            if(Objects.isNull(mappingList)){
+                coursePushMap.put(appid, courseGroupMsgs);
+            } else {
+                mappingList.stream().filter(taskMap -> !Objects.isNull(taskMap)).forEach(taskMap -> {
+                    taskMap.forEach((task, student) -> {
+                        CourseGroupMsg courseGroupMsg = courseGroupMsgMap.get(student.getClasses().getId());
+                        Set<ScheduleTask> scheduleTasks = courseGroupMsg.getScheduleTasks();
+                        if(scheduleTasks == null){
+                            scheduleTasks = Sets.newHashSet();
+                            courseGroupMsg.setScheduleTasks(scheduleTasks);
+                        }
+                        scheduleTasks.add(task);
+                        courseGroupMsgs.add(courseGroupMsg);
+                    });
+                });
+                coursePushMap.put(appid, courseGroupMsgs);
+            }
+        });
+        return coursePushMap;
+    }
+
     private void setIdsIntoCourseGroupMsgs(List<CourseGroupMsg> courseGroupMsgs, Map<String, Student> openIdMap){
         courseGroupMsgs.forEach(courseGroupMsg -> {
             List<String> openIdList = new ArrayList<>(40);
@@ -116,7 +182,7 @@ public class CourseSubscribeService {
                     openIdList.add(openid);
                 }
             });
-            courseGroupMsg.setOpenIds(openIdList);
+//            courseGroupMsg.setOpenIds(openIdList);
         });
     }
 
@@ -166,6 +232,19 @@ public class CourseSubscribeService {
         studentExample.createCriteria()
                 .andAccountIn(accounts);
         return studentMapper.selectByExample(studentExample);
+
+    }
+
+    private Map<Integer, Student> getAllStudentByOpenids(List<Openid> openIds){
+        if(openIds.size() == 0){
+            return null;
+        }
+        List<Integer> accounts = openIds.stream().map(Openid::getAccount).collect(Collectors.toList());
+        StudentExample studentExample = new StudentExample();
+        studentExample.createCriteria()
+                .andAccountIn(accounts);
+        List<Student> students = studentMapper.selectByExample(studentExample);
+        return students.stream().collect(Collectors.toMap(Student::getAccount, student -> student));
     }
 
     public List<CourseTimeTable> getCourseTimeTables(){
@@ -182,6 +261,8 @@ public class CourseSubscribeService {
                 .andWeekEqualTo(day);
         return courseTimeTableMapper.selectByExample(example);
     }
+
+
 
     private boolean isValidDay(){
         int day = DateUtils.getCurrentDay();

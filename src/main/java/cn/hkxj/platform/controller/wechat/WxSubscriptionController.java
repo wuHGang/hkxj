@@ -96,6 +96,7 @@ public class WxSubscriptionController {
 	private void wxMpProToProcessing(String action, String appid, String openid, String scene, Student student) {
 		WxMpService wxMpService = WechatMpConfiguration.getMpServices().get(appid);
 		//判断该openId是否已经订阅过且一次性订阅的动作是否为confirm，没有插入一条数据
+		//TODO 修改订阅的方法
 		if(Objects.equals("confirm", action) && !subscribeService.isSubscribe(openid)){
 			subscribeService.insertOneSubOpenid(openid, scene, appid);
 		}

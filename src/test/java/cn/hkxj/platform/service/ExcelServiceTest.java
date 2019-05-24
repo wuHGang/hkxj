@@ -9,9 +9,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 
 import javax.annotation.Resource;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 import static org.junit.Assert.*;
 
@@ -35,10 +33,25 @@ public class ExcelServiceTest {
 
     @Test
     public void readExcel() {
-        System.out.println(excelService.parseBuilding("科401（高层）"));
-        System.out.println(excelService.parseBuilding("科N302"));
-        System.out.println(excelService.parseBuilding("图书馆S4004"));
-        System.out.println(excelService.parseBuilding("N10播放室"));
-//        excelService.readExcel();
+//        System.out.println(excelService.parseBuilding("科401（高层）"));
+//        System.out.println(excelService.parseBuilding("科N302"));
+//        System.out.println(excelService.parseBuilding("图书馆S4004"));
+//        System.out.println(excelService.parseBuilding("N10播放室"));
+        List<ExcelResult> excelResults = excelService.readExcel();
+        excelService.insertDb(excelResults);
+    }
+
+    public static void main(String[] args) {
+        Set<Integer> set = new HashSet<>();
+        set.add(1);
+        Set<Integer> set1 = new HashSet<>();
+        set1.add(2);
+        set1.add(3);
+        set.addAll(set1);
+        Set<Integer> set2 = new HashSet<>();
+        set2.add(4);
+        set2.add(5);
+        set.addAll(set2);
+        System.out.println(set);
     }
 }

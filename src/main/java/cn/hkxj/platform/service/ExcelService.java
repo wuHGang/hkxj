@@ -8,8 +8,10 @@ import cn.hkxj.platform.pojo.constant.CourseType;
 import cn.hkxj.platform.pojo.constant.Direction;
 import cn.hkxj.platform.pojo.example.ClassesExample;
 import cn.hkxj.platform.pojo.example.CourseExample;
+import cn.hkxj.platform.pojo.example.CourseTimeTableExample;
 import cn.hkxj.platform.pojo.example.RoomExample;
 import cn.hkxj.platform.pojo.timetable.CourseTimeTable;
+import com.google.common.collect.Maps;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -18,6 +20,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.io.FileInputStream;
@@ -43,9 +46,9 @@ public class ExcelService {
     private ClassTimeTableMapper classTimeTableMapper;
 
     //班级和相关的课程时间表的映射
-    private Map<Integer, Set<Integer>> classes_timetable = new HashMap<>();
+    private static Map<Integer, Set<Integer>> classes_timetable = new HashMap<>();
     //包含专业对应的专业号和学院号
-    private Map<String, int[]> subjectAndAcademy = new HashMap<>();
+    private static Map<String, int[]> subjectAndAcademy = new HashMap<>();
 
     /**
      * 初始化classes_timetable和subjectAndAcademy
@@ -58,6 +61,26 @@ public class ExcelService {
         for (Classes classes : classesList) {
             subjectAndAcademy.put(classes.getName(), new int[]{classes.getSubject(), classes.getAcademy()});
         }
+    }
+
+    public CourseTimeTable getOppositeCourseTimetable(CourseTimeTable courseTimeTable){
+        CourseTimeTableExample courseTimeTableExample = new CourseTimeTableExample();
+        courseTimeTableExample.createCriteria()
+                .andCourseEqualTo(courseTimeTable.getCourse())
+                .andTermEqualTo(courseTimeTable.getTerm())
+                .andYearEqualTo(courseTimeTable.getYear())
+                .andStartEqualTo(courseTimeTable.getStart())
+                .andEndEqualTo(courseTimeTable.getEnd())
+                .andOrderEqualTo(courseTimeTable.getOrder())
+                .andWeekEqualTo(courseTimeTable.getWeek())
+                .andDistinctEqualTo(courseTimeTable.getDistinct())
+                .andRoomEqualTo(courseTimeTable.getRoom());
+        List<CourseTimeTable> courseTimeTables = courseTimeTableMapper.selectByExample(courseTimeTableExample);
+        if(!CollectionUtils.isEmpty(courseTimeTables)){
+            return courseTimeTables.get(0);
+        }
+        courseTimeTableMapper.insertSelective(courseTimeTable);
+        return courseTimeTable;
     }
 
     /**
@@ -220,11 +243,12 @@ public class ExcelService {
      * @param course 相应的课程信息
      * @param room 相应的教室信息
      * @param excelResult 对应的excel行数据
-     * @param timetableIds 课程时刻表集合
+     * @return 返回插入完之后的课表时间表的id集合
      */
-    private void insertCourseTimetable(Course course, Room room, ExcelResult excelResult, Set<Integer> timetableIds){
+    private Set<Integer> insertCourseTimetable(Course course, Room room, ExcelResult excelResult){
+        Set<Integer> timetableIds = new HashSet<>();
         Map<String, Integer> startAndStopMap = excelResult.getStartAndStopTime();
-        int count = startAndStopMap.size() / 3;
+        int count = startAndStopMap.size() / 2;
         for(int i = 1; i <= count; i++){
             CourseTimeTable courseTimeTable = new CourseTimeTable();
             courseTimeTable.setTerm(2);
@@ -237,10 +261,12 @@ public class ExcelService {
             courseTimeTable.setStart(excelResult.getStartAndStopTime().get("start" + i));
             courseTimeTable.setEnd(excelResult.getStartAndStopTime().get("end" + i));
             System.out.println("courseTimetable     " + courseTimeTable);
-            courseTimeTableMapper.insertSelective(courseTimeTable);
+            courseTimeTable = getOppositeCourseTimetable(courseTimeTable);
+//            courseTimeTableMapper.insertSelective(courseTimeTable);
             timetableIds.add(courseTimeTable.getId());
 
         }
+        return timetableIds;
     }
 
     /**
@@ -269,7 +295,7 @@ public class ExcelService {
             Set<Integer> set = entry.getValue();
             for(Integer id : set){
                 if(Objects.isNull(entry.getKey())) { continue; }
-                log.info("class_timetable   clas_id" + entry.getKey() + "      timetable_id" + id);
+                log.info("class_timetable   class_id" + entry.getKey() + "      timetable_id" + id);
                 classTimeTableMapper.insert(entry.getKey(), id);
             }
         }
@@ -289,26 +315,35 @@ public class ExcelService {
             Course course = getOppositeCourse(excelResult, map.get("distinct"));
             //处理教室信息
             Room room = getOppositeRoom(excelResult);
-            Set<Integer> timetableIds = new HashSet<>();
             //插入相应的课程时间表，没有和数据库做比对
-            insertCourseTimetable(course, room, excelResult, timetableIds);
-            //处理班级信息
-            for(Classes classes : classesList){
-                if(StringUtils.isEmpty(classes.getClassname())){ continue; }
-                //将班级信息在数据库中查找，没有找到就插入数据
-                isNeedInsertClasses(classes);
-                //建立班级和课程时刻表的映射
-                Set<Integer> ids = classes_timetable.get(classes.getId());
-                if(ids == null){
-                    classes_timetable.put(classes.getId(), timetableIds);
-                } else {
-                    ids.addAll(timetableIds);
-                    classes_timetable.put(classes.getId(), ids);
+            Set<Integer> timetableIds = insertCourseTimetable(course, room, excelResult);
+            for(Integer id : timetableIds){
+                if(id == 5899 || id == 5900){
+                    System.out.println("5899  ||| 5900");
                 }
             }
+            //处理班级信息
+            processClassesAndCourseTimetableMapping(classesList, timetableIds);
         }
         //在class_timetable表中查询相应数据
         insertClassIdAndTimetableId();
+    }
+
+    private void processClassesAndCourseTimetableMapping(List<Classes> classesList, Set<Integer> timetableIds){
+        for(Classes classes : classesList){
+            if(StringUtils.isEmpty(classes.getClassname())){ continue; }
+            //将班级信息在数据库中查找，没有找到就插入数据
+            isNeedInsertClasses(classes);
+            //建立班级和课程时刻表的映射
+            Set<Integer> ids = classes_timetable.get(classes.getId());
+            if(ids == null || ids.size() == 0){
+                ids = new HashSet<>(timetableIds);
+                classes_timetable.put(classes.getId(), ids);
+            } else {
+                ids.addAll(timetableIds);
+                classes_timetable.put(classes.getId(), ids);
+            }
+        }
     }
 
     /**
@@ -319,13 +354,17 @@ public class ExcelService {
         FileInputStream fis;
         Workbook workbook;
         try {
-            fis=new FileInputStream("C:\\Users\\Yuki\\Desktop\\18-19-2全校大课表 - 副本.xls");
+            fis=new FileInputStream("C:\\Users\\Yuki\\Desktop\\course\\18-19-2全校大课表 - 副本.xls");
             workbook = new HSSFWorkbook(fis);
             Sheet sheet=workbook.getSheetAt(0);
             int rowNum=sheet.getLastRowNum();
             List<ExcelResult> excelResults = new ArrayList<>();
-            for(int i =1;i<rowNum;i++){
+            for(int i = 1; i < rowNum; i++){
                 Row row=sheet.getRow(i);
+                if(i == 1884){
+                    Map map = new HashMap();
+                }
+                log.info("current excel row number {}", i);
                 ExcelResult excelResult = new ExcelResult();
                 excelResult.setId((int) Double.parseDouble(String.valueOf(row.getCell(0)).trim()));
                 excelResult.setCourse_id(String.valueOf(row.getCell(1)).trim());
@@ -343,6 +382,7 @@ public class ExcelService {
             }
             return excelResults;
         }catch (Exception e) {
+            e.printStackTrace();
             log.error(e.getMessage());
         }
         return null;
@@ -350,7 +390,7 @@ public class ExcelService {
 
     /**
      * 将传入的字符串解析开始时间、结束时间和单双周
-     * @param str 要解析的字符床
+     * @param str 要解析的字符串
      * @return map
      */
     private Map<String, Integer> getStartAndStopTime(String str){
@@ -425,8 +465,7 @@ public class ExcelService {
      * @return 班级列表
      */
     private List<Classes> parseClassname(String name){
-        List<Classes> checkResult = isSpecialName(name);
-        if(checkResult.size() <= 0) { return checkResult; }
+        if(isUndesiredSpecialName(name)) { return new ArrayList<>(); }
         String[] classes = name.split(" ");
         List<Classes> classesList = new ArrayList<>();
         for(String classname : classes){
@@ -504,30 +543,42 @@ public class ExcelService {
      * @param name 班级名称
      * @return 是否特殊
      */
-    private List<Classes> isSpecialName(String name){
-        List<Classes> result = new ArrayList<>();
-        if(StringUtils.isEmpty(name)){
-            return result;
-        }
-        if(name.startsWith("全校")){
-            return new ArrayList<>();
-        }
-        if(isNumber(name.charAt(0))){
-            return result;
-        }
-        if(name.startsWith("财会S")){
-            //String year = name.substring(3, name.length());
-            ClassesExample example = new ClassesExample();
-            example.createCriteria()
-                    .andNameEqualTo(name);
-            List<Classes> classesList = classesMapper.selectByExample(example);
-            if(classesList.size() > 0){
-                result = new ArrayList<>();
-                result.add(classesList.get(0));
-                return result;
-            }
-        }
-        return result;
+//    private List<Classes> isSpecialName(String name){
+//        List<Classes> result = new ArrayList<>();
+//        if(StringUtils.isEmpty(name)){
+//            return result;
+//        }
+//        if(name.startsWith("全校")){
+//            return result;
+//        }
+//        if(isNumber(name.charAt(0))){
+//            return result;
+//        }
+//        if(name.startsWith("财会S")){
+//            //String year = name.substring(3, name.length());
+//            ClassesExample example = new ClassesExample();
+//            example.createCriteria()
+//                    .andNameEqualTo(name);
+//            List<Classes> classesList = classesMapper.selectByExample(example);
+//            if(classesList.size() > 0){
+//                result = new ArrayList<>();
+//                result.add(classesList.get(0));
+//                return result;
+//            }
+//        }
+//        return result;
+//    }
+
+    /**
+     * 判断是否不需要进行处理的特殊班级名
+     * @param name
+     * @return
+     */
+    private boolean isUndesiredSpecialName(String name){
+        //1.班级名称为空
+        //2.全校开头
+        //3.数字开头
+        return StringUtils.isEmpty(name) || name.startsWith("全校") || isNumber(name.charAt(0));
     }
 
     /**
@@ -541,6 +592,7 @@ public class ExcelService {
         for(int i = 0; i < str.length(); i++){
             if(isNumber(str.charAt(i))) {
                 strs = new String[]{str.substring(0, i), str.substring(i, str.length())};
+                break;
             }
         }
         classes.setName(strs[0]);

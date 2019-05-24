@@ -5,12 +5,14 @@ import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.exception.WxErrorException;
 import me.chanjar.weixin.mp.api.WxMpService;
 import okhttp3.*;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.io.*;
 import java.net.*;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -33,12 +35,15 @@ public class OneOffSubcriptionUtil {
             .build();
 
     /**
-     * 获取带有一次性订阅链接的超链接
+     * 获取带有一次性订阅链接的超链接,当content为null直接返回链接
      * @param content 超链接的文字内容
      * @param scene 要生成的一次性订阅连接中的场景值
      * @return  返回一个带有一次性订阅链接的超链接
      */
     public static String getHyperlinks(String content, String scene, WxMpService wxMpService){
+        if(Objects.isNull(content)){
+            return getOneOffSubscriptionUrl(scene, wxMpService);
+        }
         return "<a href='" + getOneOffSubscriptionUrl(scene, wxMpService) + "'>" + content + "</a>";
     }
 
@@ -60,18 +65,14 @@ public class OneOffSubcriptionUtil {
         return builder.toString();
     }
 
-    public static void sendTemplateMessageToUser(OneOffSubscription oneOffSubscription, WxMpService wxMpService) {
-        try {
+    public static void sendTemplateMessageToUser(OneOffSubscription oneOffSubscription, WxMpService wxMpService) throws WxErrorException {
             replyOneOffSubscribeRequest(oneOffSubscription, wxMpService);
-        } catch (WxErrorException e) {
-            log.warn("can not get the wechat token appid:{} message:{}", wxMpService.getWxMpConfigStorage().getAppId(), e);
-        }
     }
 
     private static void replyOneOffSubscribeRequest(OneOffSubscription oneOffSubscription, WxMpService wxMpService) throws WxErrorException{
 
         String json = JsonUtils.wxToJson(oneOffSubscription);
-        RequestBody requestBody = FormBody.create(MediaType.parse("appliaction/json;charset=UTF-8"), json);
+        RequestBody requestBody = FormBody.create(MediaType.parse("application/json;charset=UTF-8"), json);
 
         Request request = new Request.Builder()
                 .url(getReplyUrl(wxMpService))
