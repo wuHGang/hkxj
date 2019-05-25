@@ -30,7 +30,7 @@ public class TemplateBuilder {
 	public WxMpTemplateMessage buildCourseMessage(String openid, List<WxMpTemplateData> list, String url){
 		return WxMpTemplateMessage.builder()
 				.toUser(openid)
-				.templateId(TEST_COURSE_TEMPLATE_ID)
+				.templateId(PLUS_COURSE_TEMPLATE_ID)
 				.data(list)
 				.url(url)
 				.build();
@@ -39,7 +39,7 @@ public class TemplateBuilder {
 	public WxMpTemplateMessage buildCourseMessage(WxMpXmlMessage wxMpXmlMessage, List<WxMpTemplateData> list, String url){
 		return WxMpTemplateMessage.builder()
 				.toUser(wxMpXmlMessage.getFromUser())
-				.templateId(TEST_COURSE_TEMPLATE_ID)
+				.templateId(PLUS_COURSE_TEMPLATE_ID)
 				.data(list)
 				.url(url)
 				.build();
