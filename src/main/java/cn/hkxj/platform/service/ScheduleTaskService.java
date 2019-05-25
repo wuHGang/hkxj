@@ -6,7 +6,6 @@ import cn.hkxj.platform.mapper.ScheduleTaskMapper;
 import cn.hkxj.platform.pojo.ScheduleTask;
 import cn.hkxj.platform.pojo.example.ScheduleTaskExample;
 import com.google.common.collect.Maps;
-import com.sun.org.apache.regexp.internal.RE;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -26,8 +25,6 @@ public class ScheduleTaskService {
     public static final Byte SEND_FAIL = 0;
     public static final Byte FUNCTION_ENABLE = 1;
     public static final Byte FUNCTION_DISABLE = 0;
-    private static final Byte SEND_INIT_VALUE = 0;
-    private static final Byte FUNCTION_INIT_VALUE = 0;
 
     @Resource
     private ScheduleTaskMapper scheduleTaskMapper;
@@ -36,32 +33,14 @@ public class ScheduleTaskService {
     @Resource
     private WechatMpProProperties wechatMpProProperties;
 
-    public int addScheduleTaskRecord(String openid, String appid, int scene) {
+    public int addScheduleTaskRecord(String appid, String openid, String scene) {
         ScheduleTask scheduleTask = new ScheduleTask();
         scheduleTask.setOpenid(openid);
         scheduleTask.setAppid(appid);
-        scheduleTask.setScene(scene);
-        scheduleTask.setSendStatus(SEND_INIT_VALUE);
-        scheduleTask.setIsSubscribe(FUNCTION_INIT_VALUE);
-        scheduleTask.setScene(scene);
+        scheduleTask.setScene(Integer.parseInt(scene));
+        scheduleTask.setSendStatus(SEND_SUCCESS);
+        scheduleTask.setIsSubscribe(FUNCTION_ENABLE);
         return scheduleTaskMapper.insertSelective(scheduleTask);
-    }
-
-    public Map<String, List<Map<String, ScheduleTask>>> getSubcribeData(int scene, Byte is_enable) {
-        if (is_enable == null) {
-            is_enable = FUNCTION_ENABLE;
-        }
-        Map<String, List<Map<String, ScheduleTask>>> resultMap = Maps.newHashMap();
-        ScheduleTaskExample scheduleTaskExample = new ScheduleTaskExample();
-        scheduleTaskExample.createCriteria()
-                .andIsSubscribeEqualTo(is_enable)
-                .andSceneEqualTo(scene);
-        String plusAppid = wechatMpPlusProperties.getAppId();
-        String proAppid = wechatMpProProperties.getAppId();
-        List<ScheduleTask> scheduleTasks = scheduleTaskMapper.selectByExample(scheduleTaskExample);
-        resultMap.put(plusAppid, getMappingList(scheduleTasks, wechatMpPlusProperties.getAppId()));
-        resultMap.put(proAppid, getMappingList(scheduleTasks, wechatMpProProperties.getAppId()));
-        return resultMap;
     }
 
     public Map<String, List<ScheduleTask>> getSubscribeData(int scene, Byte is_enable) {
@@ -91,6 +70,23 @@ public class ScheduleTaskService {
         return scheduleTaskMapper.updateByPrimaryKey(scheduleTask);
     }
 
+    public int updateSubscribeStatus(ScheduleTask scheduleTask, Byte subscribe_status) {
+        scheduleTask.setIsSubscribe(subscribe_status);
+        scheduleTask.setTaskCount(scheduleTask.getTaskCount() + 1);
+        return scheduleTaskMapper.updateByPrimaryKey(scheduleTask);
+    }
+
+    public int updateSubscribeStatus(String appid, String openid, String scene, Byte subscribe_status) {
+        ScheduleTaskExample example = new ScheduleTaskExample();
+        example.createCriteria()
+                .andAppidEqualTo(appid)
+                .andOpenidEqualTo(openid)
+                .andSceneEqualTo(Integer.parseInt(scene));
+        ScheduleTask scheduleTask = new ScheduleTask();
+        scheduleTask.setIsSubscribe(subscribe_status);
+        return scheduleTaskMapper.updateByExampleSelective(scheduleTask, example);
+    }
+
     private  List<Map<String, ScheduleTask>> getMappingList(List<ScheduleTask> scheduleTasks, String appid){
         List<Map<String, ScheduleTask>> mappingList = new ArrayList<>();
         scheduleTasks.stream().filter(task -> Objects.equals(task.getAppid(), appid))
@@ -100,5 +96,13 @@ public class ScheduleTaskService {
                     mappingList.add(map);
                 });
         return mappingList;
+    }
+
+    public boolean isExistSubscribeRecode(String appid, String openid, String scene){
+        ScheduleTask scheduleTask = new ScheduleTask();
+        scheduleTask.setOpenid(openid);
+        scheduleTask.setScene(Integer.parseInt(scene));
+        scheduleTask.setAppid(appid);
+        return scheduleTaskMapper.isExistSubscribeRecode(scheduleTask);
     }
 }

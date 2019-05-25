@@ -3,6 +3,7 @@ package cn.hkxj.platform.pojo.wechat;
 import cn.hkxj.platform.pojo.Classes;
 import cn.hkxj.platform.pojo.ScheduleTask;
 import cn.hkxj.platform.pojo.timetable.CourseTimeTable;
+import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 
@@ -16,27 +17,28 @@ public class CourseGroupMsg {
 
     private List<CourseTimeTable> courseTimeTables;
 
-    private Set<ScheduleTask> scheduleTasks;
+    private List<ScheduleTask> scheduleTasks;
 
     public CourseGroupMsg() {
         courseTimeTables = new ArrayList<>();
-        scheduleTasks = new HashSet<>();
+        scheduleTasks = new ArrayList<>();
     }
 
     public String getCourseContent(){
-        if(!Objects.equals(courseTimeTables, null)){
-            StringBuffer buffer = new StringBuffer();
+        StringBuilder builder = new StringBuilder();
+        if(CollectionUtils.isEmpty(courseTimeTables)){
+            builder.append("今天没有课呐，可以出去浪了~\n");
+        } else {
             courseTimeTables.sort(Comparator.comparing(CourseTimeTable::getOrder));
             for(CourseTimeTable courseTimeTable : courseTimeTables){
                 if(!Objects.equals(courseTimeTable, null)){
-                    buffer.append("第").append(courseTimeTable.getOrder()).append("节")
+                    builder.append("第").append(courseTimeTable.getOrder()).append("节")
                             .append("\n").append(courseTimeTable.getCourse().getName()).append("\n").append(courseTimeTable.getRoom().getName())
                             .append("\n").append("\n");
                 }
             }
-            return buffer.toString();
         }
-        return null;
+        return builder.toString();
     }
 
 
@@ -56,11 +58,11 @@ public class CourseGroupMsg {
         this.courseTimeTables = courseTimeTables;
     }
 
-    public Set<ScheduleTask> getScheduleTasks() {
+    public List<ScheduleTask> getScheduleTasks() {
         return scheduleTasks;
     }
 
-    public void setScheduleTasks(Set<ScheduleTask> scheduleTasks) {
+    public void setScheduleTasks(List<ScheduleTask> scheduleTasks) {
         this.scheduleTasks = scheduleTasks;
     }
 

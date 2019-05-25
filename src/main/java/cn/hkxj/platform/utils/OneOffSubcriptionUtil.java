@@ -87,7 +87,6 @@ public class OneOffSubcriptionUtil {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                System.out.println(response.body().string());
                 log.info("send oneOffSubscription message success oneOffSubscription:{} response:{}", json, response.body().string());
             }
         });

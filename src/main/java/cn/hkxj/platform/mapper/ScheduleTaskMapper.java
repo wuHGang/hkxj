@@ -32,4 +32,6 @@ public interface ScheduleTaskMapper {
     int updateByPrimaryKeySelective(ScheduleTask record);
 
     int updateByPrimaryKey(ScheduleTask record);
+
+    boolean isExistSubscribeRecode(ScheduleTask scheduleTask);
 }

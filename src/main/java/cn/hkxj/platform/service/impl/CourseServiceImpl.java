@@ -97,7 +97,7 @@ public class CourseServiceImpl implements CourseService{
 
     @Override
     public String toText(List<CourseTimeTable> courseTimeTables){
-        if(courseTimeTables == null || courseTimeTables.size() == 0) return "课表空空如也";
+        if(courseTimeTables == null || courseTimeTables.size() == 0) return "今天没有课呐，可以出去浪了~\n";
         StringBuilder builder = new StringBuilder();
         courseTimeTables.sort(Comparator.comparing(CourseTimeTable::getOrder));
         int count = 0;

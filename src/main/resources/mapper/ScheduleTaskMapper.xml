@@ -272,4 +272,10 @@
       gmt_modify = #{gmtModify,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
   </update>
+  <select id="isExistSubscribeRecode" parameterType="cn.hkxj.platform.pojo.ScheduleTask" resultType="boolean">
+    select exists(
+    select
+    <include refid="Base_Column_List"/>
+    from schedule_task where appid = #{appid} and scene = #{scene} and openid = #{openid})
+  </select>
 </mapper>

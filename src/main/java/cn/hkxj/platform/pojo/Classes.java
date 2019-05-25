@@ -1,6 +1,7 @@
 package cn.hkxj.platform.pojo;
 
 import com.google.common.base.MoreObjects;
+import com.google.common.base.Objects;
 import lombok.Data;
 
 import java.util.List;
@@ -24,6 +25,26 @@ public class Classes {
 
     public String getClassname(){
         return this.getName() + this.getYear() + "-" + this.getNum();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        Classes classes = (Classes) o;
+        return Objects.equal(id, classes.id) &&
+                Objects.equal(name, classes.name) &&
+                Objects.equal(academy, classes.academy) &&
+                Objects.equal(subject, classes.subject) &&
+                Objects.equal(year, classes.year) &&
+                Objects.equal(num, classes.num) &&
+                Objects.equal(courseTimeTableIds, classes.courseTimeTableIds);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(super.hashCode(), id, name, academy, subject, year, num, courseTimeTableIds);
     }
 
     @Override

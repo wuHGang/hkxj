@@ -2,14 +2,7 @@ package cn.hkxj.platform.config.wechat;
 
 import cn.hkxj.platform.interceptor.WechatOpenIdInterceptor;
 import cn.hkxj.platform.service.wechat.WxMessageRouter;
-import cn.hkxj.platform.service.wechat.handler.messageHandler.CETSearchHandler;
-import cn.hkxj.platform.service.wechat.handler.messageHandler.CourseMessageHandler;
-import cn.hkxj.platform.service.wechat.handler.messageHandler.ElectiveCourseMessageHandler;
-import cn.hkxj.platform.service.wechat.handler.messageHandler.EmptyRoomHandler;
-import cn.hkxj.platform.service.wechat.handler.messageHandler.ExamMessageHandler;
-import cn.hkxj.platform.service.wechat.handler.messageHandler.GradeMessageHandler;
-import cn.hkxj.platform.service.wechat.handler.messageHandler.OpenidMessageHandler;
-import cn.hkxj.platform.service.wechat.handler.messageHandler.UnbindMessageHandler;
+import cn.hkxj.platform.service.wechat.handler.messageHandler.*;
 import com.google.common.collect.Maps;
 import me.chanjar.weixin.mp.api.WxMpInMemoryConfigStorage;
 import me.chanjar.weixin.mp.api.WxMpMessageRouter;
@@ -67,6 +60,12 @@ public class WechatMpConfiguration {
 	@Resource
 	private ElectiveCourseMessageHandler electiveCourseMessageHandler;
 
+	@Resource
+	private UnsubscribeMessageHandler unsubscribeMessageHandler;
+
+	@Resource
+	private SubscribeMessageHandler subscribeMessageHandler;
+
 	private static Map<String, WxMpMessageRouter> routers = Maps.newHashMap();
 	private static Map<String, WxMpService> mpServices = Maps.newHashMap();
 
@@ -122,6 +121,12 @@ public class WechatMpConfiguration {
 				.end()
 				.rule()
 				.async(false)
+				.content("课表推送")
+				.interceptor(wechatOpenIdInterceptor)
+				.handler(subscribeMessageHandler)
+				.end()
+				.rule()
+				.async(false)
 				.rContent(".*?考试.*?")
 				.interceptor(wechatOpenIdInterceptor)
 				.handler(examMessageHandler)
@@ -136,6 +141,12 @@ public class WechatMpConfiguration {
 				.async(false)
 				.rContent("空教室.*?")
 				.handler(emptyRoomHandler)
+				.end()
+				.rule()
+				.async(false)
+				.rContent("退订.*?")
+				.interceptor(wechatOpenIdInterceptor)
+				.handler(unsubscribeMessageHandler)
 				.end();
 		return newRouter;
 	}
