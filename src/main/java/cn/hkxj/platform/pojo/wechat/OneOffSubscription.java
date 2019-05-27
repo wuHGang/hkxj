@@ -28,7 +28,7 @@ public class OneOffSubscription {
 
     public static class Builder{
         private final String touser;
-        private final String template_id = "5TgQ5wk_3q01xfdqAqPDgAJDiT4YfmYOoIP6cnAhOKc";
+        private final String template_id;
         private final String scene;
         private final String title;
 
@@ -36,10 +36,11 @@ public class OneOffSubscription {
         private String url;
         private Miniprogram miniprogram;
 
-        public Builder(String touser, String scene, String title){
+        public Builder(String touser, String scene, String title, String template_id){
             this.touser = touser;
             this.scene = scene;
             this.title = title;
+            this.template_id = template_id;
         }
 
         public Builder url(String url){

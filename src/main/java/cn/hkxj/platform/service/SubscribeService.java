@@ -2,6 +2,7 @@ package cn.hkxj.platform.service;
 
 import cn.hkxj.platform.mapper.OpenidMapper;
 import cn.hkxj.platform.mapper.SubscribeOpenidMapper;
+import cn.hkxj.platform.pojo.ScheduleTask;
 import cn.hkxj.platform.pojo.wechat.SubscribeOpenid;
 import cn.hkxj.platform.pojo.example.SubscribeOpenidExample;
 import lombok.AllArgsConstructor;
@@ -69,4 +70,5 @@ public class SubscribeService {
         }
         log.info("update msgState success --openid {} is_send {}", openid, sub_type);
     }
+
 }

@@ -38,7 +38,7 @@ public class CourseServiceImplTest {
 
     @Test
     public void test(){
-        System.out.println(courseService.getCoursesCurrentDay(2016024170));
+        System.out.println(courseService.getCoursesByAccount(2016024170));
         System.out.println(courseService.toText(courseService.getCoursesCurrentDay(2016024170)));
     }
 
@@ -61,8 +61,8 @@ public class CourseServiceImplTest {
 
     @Test
     public void builderTest(){
-        OneOffSubscription oneOffSubscription = new OneOffSubscription.Builder("123123", "1005", "今日课表")
-                .build();
-        System.out.println(JsonUtils.wxToJson(oneOffSubscription));
+//        OneOffSubscription oneOffSubscription = new OneOffSubscription.Builder("123123", "1005", "今日课表")
+//                .build();
+//        System.out.println(JsonUtils.wxToJson(oneOffSubscription));
     }
 }

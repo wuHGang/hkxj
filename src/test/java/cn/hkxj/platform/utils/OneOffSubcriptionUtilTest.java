@@ -4,6 +4,7 @@ import cn.hkxj.platform.PlatformApplication;
 import cn.hkxj.platform.config.wechat.WechatMpConfiguration;
 import cn.hkxj.platform.config.wechat.WechatMpPlusProperties;
 import cn.hkxj.platform.config.wechat.WechatMpProProperties;
+import cn.hkxj.platform.pojo.wechat.OneOffSubscription;
 import me.chanjar.weixin.mp.api.WxMpService;
 import okhttp3.*;
 import org.junit.Test;
@@ -33,12 +34,14 @@ public class OneOffSubcriptionUtilTest {
 
     @Resource
     private WechatMpProProperties wechatMpProProperties;
-    @Resource
-    private WechatMpPlusProperties wechatMpPlusProperties;
 
     @Test
     public void getOneOffSubscriptionUrl() throws UnsupportedEncodingException, FileNotFoundException {
         WxMpService wxMpService = WechatMpConfiguration.getMpServices().get(wechatMpProProperties.getAppId());
-        System.out.println( OneOffSubcriptionUtil.getHyperlinks("点击领取课表", "1005", wxMpService));
+        System.out.println(OneOffSubcriptionUtil.getOneOffSubscriptionUrl("1005", wxMpService));
+        OneOffSubscription oneOffSubscription =
+                new OneOffSubscription.Builder("o6393wvS20PqldHQzhSngkd9SkHw", "1005", "今日课表", wechatMpProProperties.getTemplateId())
+                        .data("随便来点内容").url(OneOffSubcriptionUtil.getHyperlinks("点击领取今日课表", "1005", wxMpService)).build();
+        System.out.println(JsonUtils.wxToJson(oneOffSubscription));
     }
 }
