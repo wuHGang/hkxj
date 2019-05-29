@@ -21,10 +21,10 @@ import java.util.stream.Collectors;
 @Service
 public class ScheduleTaskService {
 
-    public static final Byte SEND_SUCCESS = 1;
-    public static final Byte SEND_FAIL = 0;
-    public static final Byte FUNCTION_ENABLE = 1;
-    public static final Byte FUNCTION_DISABLE = 0;
+    public static final byte SEND_SUCCESS = 1;
+    public static final byte SEND_FAIL = 0;
+    public static final byte FUNCTION_ENABLE = 1;
+    public static final byte FUNCTION_DISABLE = 0;
 
     @Resource
     private ScheduleTaskMapper scheduleTaskMapper;
@@ -33,7 +33,15 @@ public class ScheduleTaskService {
     @Resource
     private WechatMpProProperties wechatMpProProperties;
 
+    /**
+     * 添加一条新的ScheduleTask的记录
+     * @param appid appid
+     * @param openid 用户的openid
+     * @param scene 订阅场景值
+     * @return 受影响的行数
+     */
     public int addScheduleTaskRecord(String appid, String openid, String scene) {
+        //发送状态和订阅状态初始值都是1，表示可用
         ScheduleTask scheduleTask = new ScheduleTask();
         scheduleTask.setOpenid(openid);
         scheduleTask.setAppid(appid);
@@ -43,66 +51,111 @@ public class ScheduleTaskService {
         return scheduleTaskMapper.insertSelective(scheduleTask);
     }
 
-    public Map<String, List<ScheduleTask>> getSubscribeData(int scene, Byte is_enable) {
-        if (is_enable == null) {
-            is_enable = FUNCTION_ENABLE;
-        }
-        Map<String, List<ScheduleTask>> resultMap = Maps.newHashMap();
-        ScheduleTaskExample scheduleTaskExample = new ScheduleTaskExample();
-        scheduleTaskExample.createCriteria()
-                .andIsSubscribeEqualTo(is_enable)
-                .andSceneEqualTo(scene);
+    /**
+     * 获取一个appid和定时任务列表的映射，返回的是订阅状态可用的用户
+     * @param scene 订阅场景值
+     * @return 映射关系
+     */
+    public Map<String, List<ScheduleTask>> getSubscribeData(int scene) {
+       return getSubscribeData(scene, true);
+    }
+
+    /**
+     * 获取一个appid和定时任务列表的映射
+     * isEnable = true，对应的订阅状态是可用。
+     * isEnable = false，对应的订阅状态是不可用
+     * @param scene 订阅场景值
+     * @param isEnable 是否订阅
+     * @return 映射关系
+     */
+    public Map<String, List<ScheduleTask>> getSubscribeData(int scene, boolean isEnable) {
         String plusAppid = wechatMpPlusProperties.getAppId();
         String proAppid = wechatMpProProperties.getAppId();
-        List<ScheduleTask> scheduleTasks = scheduleTaskMapper.selectByExample(scheduleTaskExample);
+        Map<String, List<ScheduleTask>> resultMap = Maps.newHashMap();
+        //先根据isEnable的值来获取订阅用户的数据
+        List<ScheduleTask> scheduleTasks = getScheduleTasks(scene, isEnable ? FUNCTION_ENABLE : FUNCTION_DISABLE);
+        //获取所有appid为plus的appid的用户列表
         List<ScheduleTask> plusScheduleTasks = scheduleTasks.stream()
                 .filter(task -> Objects.equals(task.getAppid(), plusAppid)).collect(Collectors.toList());
+        //获取所有appid为pro的appid的用户列表
         List<ScheduleTask> proScheduleTasks = scheduleTasks.stream()
                 .filter(task -> Objects.equals(task.getAppid(), proAppid)).collect(Collectors.toList());
+        //建立映射关系
         resultMap.put(plusAppid, plusScheduleTasks);
         resultMap.put(proAppid, proScheduleTasks);
         return resultMap;
     }
 
-    public int updateSendStatus(ScheduleTask scheduleTask, Byte send_status) {
-        scheduleTask.setSendStatus(send_status);
+    /**
+     * 更新发送状态。默认调用后任务计数会加一
+     * @param scheduleTask 对应的定时任务的实体
+     * @param sendStatus 发送状态
+     * @return 受影响行数
+     */
+    public int updateSendStatus(ScheduleTask scheduleTask, byte sendStatus) {
+        scheduleTask.setSendStatus(sendStatus);
         scheduleTask.setTaskCount(scheduleTask.getTaskCount() + 1);
         return scheduleTaskMapper.updateByPrimaryKey(scheduleTask);
     }
 
-    public int updateSubscribeStatus(ScheduleTask scheduleTask, Byte subscribe_status) {
-        scheduleTask.setIsSubscribe(subscribe_status);
-        scheduleTask.setTaskCount(scheduleTask.getTaskCount() + 1);
+    /**
+     * 更新订阅状态，需要实体id有具体的值
+     * @param scheduleTask 对应的定时任务的实体
+     * @param subscribeStatus 订阅状态
+     * @return 受影响行数
+     */
+    public int updateSubscribeStatus(ScheduleTask scheduleTask, Byte subscribeStatus) {
+        scheduleTask.setIsSubscribe(subscribeStatus);
         return scheduleTaskMapper.updateByPrimaryKey(scheduleTask);
     }
 
-    public int updateSubscribeStatus(String appid, String openid, String scene, Byte subscribe_status) {
+    /**
+     * 更新订阅状态
+     * @param appid appid
+     * @param openid 用户的openid
+     * @param scene 订阅场景值
+     * @param subscribeStatus 订阅状态
+     * @return 受影响行数
+     */
+    public int updateSubscribeStatus(String appid, String openid, String scene, byte subscribeStatus) {
         ScheduleTaskExample example = new ScheduleTaskExample();
+        //设置查找相应记录的条件
         example.createCriteria()
                 .andAppidEqualTo(appid)
                 .andOpenidEqualTo(openid)
                 .andSceneEqualTo(Integer.parseInt(scene));
         ScheduleTask scheduleTask = new ScheduleTask();
-        scheduleTask.setIsSubscribe(subscribe_status);
+        //设置要更新的列
+        scheduleTask.setIsSubscribe(subscribeStatus);
         return scheduleTaskMapper.updateByExampleSelective(scheduleTask, example);
     }
 
-    private  List<Map<String, ScheduleTask>> getMappingList(List<ScheduleTask> scheduleTasks, String appid){
-        List<Map<String, ScheduleTask>> mappingList = new ArrayList<>();
-        scheduleTasks.stream().filter(task -> Objects.equals(task.getAppid(), appid))
-                .forEach(task -> {
-                    Map<String, ScheduleTask> map = new HashMap<>();
-                    map.put(task.getAppid(), task);
-                    mappingList.add(map);
-                });
-        return mappingList;
-    }
-
+    /**
+     * 是否存在相应的记录
+     * @param appid appid
+     * @param openid 用户的openid
+     * @param scene 订阅场景值
+     * @return true为存在，false为不存在
+     */
     public boolean isExistSubscribeRecode(String appid, String openid, String scene){
         ScheduleTask scheduleTask = new ScheduleTask();
         scheduleTask.setOpenid(openid);
         scheduleTask.setScene(Integer.parseInt(scene));
         scheduleTask.setAppid(appid);
         return scheduleTaskMapper.isExistSubscribeRecode(scheduleTask);
+    }
+
+    /**
+     * 根据订阅场景值和订阅状态来获取相应的用户列表
+     * @param scene 订阅场景值
+     * @param enable 订阅状态
+     * @return 用户列表
+     */
+    private List<ScheduleTask> getScheduleTasks(int scene, byte enable){
+        ScheduleTaskExample scheduleTaskExample = new ScheduleTaskExample();
+        scheduleTaskExample.createCriteria()
+                .andIsSubscribeEqualTo(enable)
+                .andSceneEqualTo(scene);
+        return scheduleTaskMapper.selectByExample(scheduleTaskExample);
     }
 }
