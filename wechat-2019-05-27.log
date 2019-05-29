@@ -1,0 +1,20 @@
+2019-05-27 23:32:12.075 [][] INFO  c.hkxj.platform.service.CourseSubscribeServiceTest 50 - Starting CourseSubscribeServiceTest on LAPTOP-0P9MRN9T with PID 19204 (started by Yuki in D:\Java\GithubRepository\hkxj)
+2019-05-27 23:32:12.079 [][] INFO  c.hkxj.platform.service.CourseSubscribeServiceTest 663 - The following profiles are active: @local@
+2019-05-27 23:32:27.516 [][] INFO  c.hkxj.platform.service.CourseSubscribeServiceTest 59 - Started CourseSubscribeServiceTest in 16.046 seconds (JVM running for 20.039)
+2019-05-27 23:32:27.872 [][] INFO  com.zaxxer.hikari.HikariDataSource 110 - HikariPool-1 - Starting...
+2019-05-27 23:32:28.604 [][] INFO  com.zaxxer.hikari.HikariDataSource 123 - HikariPool-1 - Start completed.
+2019-05-27 23:32:29.238 [][] INFO  com.zaxxer.hikari.HikariDataSource 381 - HikariPool-1 - Shutdown initiated...
+2019-05-27 23:32:29.283 [][] INFO  com.zaxxer.hikari.HikariDataSource 383 - HikariPool-1 - Shutdown completed.
+2019-05-27 23:34:48.576 [][] INFO  c.hkxj.platform.service.CourseSubscribeServiceTest 50 - Starting CourseSubscribeServiceTest on LAPTOP-0P9MRN9T with PID 19676 (started by Yuki in D:\Java\GithubRepository\hkxj)
+2019-05-27 23:34:48.580 [][] INFO  c.hkxj.platform.service.CourseSubscribeServiceTest 663 - The following profiles are active: @local@
+2019-05-27 23:34:57.959 [][] INFO  c.hkxj.platform.service.CourseSubscribeServiceTest 59 - Started CourseSubscribeServiceTest in 9.806 seconds (JVM running for 14.651)
+2019-05-27 23:35:17.353 [][] INFO  com.zaxxer.hikari.HikariDataSource 110 - HikariPool-1 - Starting...
+2019-05-27 23:35:18.437 [][] INFO  com.zaxxer.hikari.HikariDataSource 123 - HikariPool-1 - Start completed.
+2019-05-27 23:35:40.946 [][] INFO  com.zaxxer.hikari.HikariDataSource 381 - HikariPool-1 - Shutdown initiated...
+2019-05-27 23:35:40.961 [][] INFO  com.zaxxer.hikari.HikariDataSource 383 - HikariPool-1 - Shutdown completed.
+2019-05-27 23:42:49.293 [][] INFO  cn.hkxj.platform.service.ScheduleTaskServiceTest 50 - Starting ScheduleTaskServiceTest on LAPTOP-0P9MRN9T with PID 13252 (started by Yuki in D:\Java\GithubRepository\hkxj)
+2019-05-27 23:42:49.301 [][] INFO  cn.hkxj.platform.service.ScheduleTaskServiceTest 659 - No active profile set, falling back to default profiles: default
+2019-05-27 23:42:57.331 [][] INFO  cn.hkxj.platform.service.ScheduleTaskServiceTest 59 - Started ScheduleTaskServiceTest in 8.399 seconds (JVM running for 10.639)
+2019-05-27 23:43:31.475 [][] INFO  cn.hkxj.platform.service.ScheduleTaskServiceTest 50 - Starting ScheduleTaskServiceTest on LAPTOP-0P9MRN9T with PID 2976 (started by Yuki in D:\Java\GithubRepository\hkxj)
+2019-05-27 23:43:31.478 [][] INFO  cn.hkxj.platform.service.ScheduleTaskServiceTest 659 - No active profile set, falling back to default profiles: default
+2019-05-27 23:43:38.725 [][] INFO  cn.hkxj.platform.service.ScheduleTaskServiceTest 59 - Started ScheduleTaskServiceTest in 7.606 seconds (JVM running for 9.727)

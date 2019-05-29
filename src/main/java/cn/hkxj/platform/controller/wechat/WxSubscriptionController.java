@@ -78,12 +78,15 @@ public class WxSubscriptionController {
             httpSession.setAttribute("student", student);
             httpSession.setAttribute("account", student.getAccount().toString());
             log.info("redirect to timetable account：{}", student.getAccount());
+            //只有当action等于确认的时候才进入处理
             if (Objects.equals("confirm", action)) {
                 WxMpService wxMpService = WechatMpConfiguration.getMpServices().get(appid);
                 //没有订阅的话，进行插入
                 if (Objects.equals(wechatMpPlusProperties.getAppId(), appid)) {
+                    //plus的处理过程
                     wxMpPlusToProcessing(wxMpService, openid, scene, student);
                 } else {
+                    //pro的处理过程
                     wxMpProToProcessing(wxMpService, openid, scene, student);
                 }
             }
@@ -97,15 +100,19 @@ public class WxSubscriptionController {
     }
 
     private void wxMpProToProcessing(WxMpService wxMpService, String openid, String scene, Student student) {
-        //判断该openId是否已经订阅过且一次性订阅的动作是否为confirm，没有插入一条数据
         String appid = wxMpService.getWxMpConfigStorage().getAppId();
+        //判断是否存在相应的记录
         if (!scheduleTaskService.isExistSubscribeRecode(appid, openid, scene)) {
+            //没有就插入一条新的数据
             scheduleTaskService.addScheduleTaskRecord(appid, openid, scene);
         } else {
+            //否则更新订阅信息
             scheduleTaskService.updateSubscribeStatus(appid, openid, scene, ScheduleTaskService.FUNCTION_ENABLE);
         }
+        //判断场景值来决定更具体的处理
         if (Objects.equals("1005", scene)) {
             List<CourseTimeTable> courseTimeTableList = courseService.getCoursesCurrentDay(student.getAccount());
+            //发送一条客服消息
             WxMpKefuMessage wxMpKefuMessage = new WxMpKefuMessage();
             wxMpKefuMessage.setMsgType("text");
             wxMpKefuMessage.setContent(courseService.toText(courseTimeTableList));
@@ -114,25 +121,32 @@ public class WxSubscriptionController {
                 wxMpService.getKefuService().sendKefuMessage(wxMpKefuMessage);
                 log.info("send kefuMessage about course success openid:{} appid:{}", openid, appid);
             } catch (WxErrorException e) {
-                log.info("send kefuMessage about course failed openid:{} appid:{}", openid, appid);
+                log.info("send kefuMessage about course failed openid:{} appid:{} message:{}", openid, appid, e.getMessage());
             }
         }
     }
 
 
     private void wxMpPlusToProcessing(WxMpService wxMpService, String openid, String scene, Student student) {
-        //判断该openId是否已经订阅过且一次性订阅的动作是否为confirm，没有插入一条数据
         String appid = wxMpService.getWxMpConfigStorage().getAppId();
+        //因为plus是服务号，所以直接通过一次性订阅接口来返回模板消息，无需发送客服消息
+        //根据scene来决定更具体的查理过程
         if (Objects.equals("1005", scene)) {
             List<CourseTimeTable> courseTimeTables = courseService.getCoursesCurrentDay(student.getAccount());
+            //通过wxMpConfigStorage来获取一次性订阅的模板消息id
             String templateId = wxMpService.getWxMpConfigStorage().getTemplateId();
-            OneOffSubscription oneOffSubscription = new OneOffSubscription.Builder(openid, scene, "今日课表", templateId)
-                    .data(courseService.toText(courseTimeTables)).build();
+            OneOffSubscription oneOffSubscription = new OneOffSubscription.Builder()
+                                .touser(openid)
+                                .scene(scene)
+                                .title("今日课表")
+                                .templateId(templateId)
+                                .data(courseService.toText(courseTimeTables))
+                                .build();
             try {
                 OneOffSubcriptionUtil.sendTemplateMessageToUser(oneOffSubscription, wxMpService);
                 log.info("send templateMessage about course success appid:{} openid:{}", appid, openid);
             } catch (WxErrorException e) {
-                log.info("send templateMessage about course failed appid:{} openid:{}", appid, openid);
+                log.info("send templateMessage about course failed appid:{} openid:{} message:{}", appid, openid, e.getMessage());
             }
         }
     }

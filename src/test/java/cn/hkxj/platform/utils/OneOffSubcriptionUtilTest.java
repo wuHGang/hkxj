@@ -2,25 +2,17 @@ package cn.hkxj.platform.utils;
 
 import cn.hkxj.platform.PlatformApplication;
 import cn.hkxj.platform.config.wechat.WechatMpConfiguration;
-import cn.hkxj.platform.config.wechat.WechatMpPlusProperties;
 import cn.hkxj.platform.config.wechat.WechatMpProProperties;
 import cn.hkxj.platform.pojo.wechat.OneOffSubscription;
 import me.chanjar.weixin.mp.api.WxMpService;
-import okhttp3.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
-
 import javax.annotation.Resource;
-import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.concurrent.TimeUnit;
 
-import static org.junit.Assert.*;
 
 /**
  * @author Yuki
@@ -36,12 +28,16 @@ public class OneOffSubcriptionUtilTest {
     private WechatMpProProperties wechatMpProProperties;
 
     @Test
-    public void getOneOffSubscriptionUrl() throws UnsupportedEncodingException, FileNotFoundException {
+    public void getOneOffSubscriptionUrl() {
         WxMpService wxMpService = WechatMpConfiguration.getMpServices().get(wechatMpProProperties.getAppId());
         System.out.println(OneOffSubcriptionUtil.getOneOffSubscriptionUrl("1005", wxMpService));
-        OneOffSubscription oneOffSubscription =
-                new OneOffSubscription.Builder("o6393wvS20PqldHQzhSngkd9SkHw", "1005", "今日课表", wechatMpProProperties.getTemplateId())
-                        .data("随便来点内容").url(OneOffSubcriptionUtil.getHyperlinks("点击领取今日课表", "1005", wxMpService)).build();
+        OneOffSubscription oneOffSubscription = new OneOffSubscription.Builder()
+                .touser("asdasda")
+                .scene("1005")
+                .title("今日课表asdasdasddddsadasdasdasdasdasd")
+                .templateId("templateId")
+                .data("今天没有课啊")
+                .build();
         System.out.println(JsonUtils.wxToJson(oneOffSubscription));
     }
 }

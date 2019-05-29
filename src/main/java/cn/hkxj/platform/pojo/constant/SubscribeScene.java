@@ -6,6 +6,7 @@ import com.google.common.base.Objects;
 /**
  * @author Yuki
  * @date 2019/5/25 12:52
+ * 订阅的场景值
  */
 public enum SubscribeScene {
 

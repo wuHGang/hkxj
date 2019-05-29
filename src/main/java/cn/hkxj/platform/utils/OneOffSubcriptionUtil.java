@@ -5,11 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.exception.WxErrorException;
 import me.chanjar.weixin.mp.api.WxMpService;
 import okhttp3.*;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-import javax.annotation.Resource;
 import java.io.*;
 import java.net.*;
 import java.util.Objects;
@@ -24,10 +21,12 @@ import java.util.concurrent.TimeUnit;
 public class OneOffSubcriptionUtil {
 
     private static String domain;
+    //发送一次性订阅信息链接的基础url
+    private static final String SEND_BASE_URL = "https://mp.weixin.qq.com/mp/subscribemsg?action=get_confirm";
+    //回复一次性订阅信息的基础url
+    private static final String REPLY_BASE_URL = "https://api.weixin.qq.com/cgi-bin/message/template/subscribe?access_token=";
 
-    private static final String BASE_URL = "https://mp.weixin.qq.com/mp/subscribemsg?action=get_confirm";
-    private static final String REPLY_URL = "https://api.weixin.qq.com/cgi-bin/message/template/subscribe?access_token=";
-
+    //创建一个okHttpClient
     private static OkHttpClient okHttpClient = new OkHttpClient().newBuilder()
             .connectTimeout(4, TimeUnit.SECONDS)
             .writeTimeout(4, TimeUnit.SECONDS)
@@ -47,12 +46,19 @@ public class OneOffSubcriptionUtil {
         return "<a href='" + getOneOffSubscriptionUrl(scene, wxMpService) + "'>" + content + "</a>";
     }
 
+    /**
+     * 获取发送一次性订阅链接
+     * @param scene 创建值
+     * @param wxMpService wxMpService
+     * @return 一次性订阅链接
+     */
     public static String getOneOffSubscriptionUrl(String scene, WxMpService wxMpService) {
         String appid = wxMpService.getWxMpConfigStorage().getAppId();
         String templateId = wxMpService.getWxMpConfigStorage().getTemplateId();
         String redirect_url = domain + "/wechat/sub/" + appid + "/test";
         StringBuilder builder = new StringBuilder();
-        builder.append(BASE_URL).append("&")
+        //组装一次性订阅链接
+        builder.append(SEND_BASE_URL).append("&")
                 .append("appid=").append(appid).append("&")
                 .append("scene=").append(scene).append("&")
                 .append("template_id=").append(templateId).append("&");
@@ -65,19 +71,33 @@ public class OneOffSubcriptionUtil {
         return builder.toString();
     }
 
+    /**
+     * 回复一次性订阅的模板信息给用户
+     * @param oneOffSubscription 回复信息
+     * @param wxMpService wxMpService
+     * @throws WxErrorException 微信错误异常
+     */
     public static void sendTemplateMessageToUser(OneOffSubscription oneOffSubscription, WxMpService wxMpService) throws WxErrorException {
             replyOneOffSubscribeRequest(oneOffSubscription, wxMpService);
     }
 
+    /**
+     * 建立与微信服务器的post链接，并发送模板消息给微信服务器
+     * @param oneOffSubscription 回复信息
+     * @param wxMpService wxMpService
+     * @throws WxErrorException 微信错误异常
+     */
     private static void replyOneOffSubscribeRequest(OneOffSubscription oneOffSubscription, WxMpService wxMpService) throws WxErrorException{
-
+        //将回复信息转换成json
         String json = JsonUtils.wxToJson(oneOffSubscription);
+        //设置mediaType
         RequestBody requestBody = FormBody.create(MediaType.parse("application/json;charset=UTF-8"), json);
-
+        //建立一个request请求
         Request request = new Request.Builder()
                 .url(getReplyUrl(wxMpService))
                 .post(requestBody)
                 .build();
+        //异步队列
         Call call = okHttpClient.newCall(request);
         call.enqueue(new Callback() {
             @Override
@@ -92,8 +112,14 @@ public class OneOffSubcriptionUtil {
         });
     }
 
+    /**
+     * 获取回复信息与微信建立连接所需的url
+     * @param wxMpService wxMpService
+     * @return 与微信建立连接所需的url
+     * @throws WxErrorException 微信错误异常
+     */
     private static String getReplyUrl(WxMpService wxMpService) throws WxErrorException {
-        return REPLY_URL + wxMpService.getAccessToken();
+        return REPLY_BASE_URL+ wxMpService.getAccessToken();
     }
 
     @Value("${domain}")

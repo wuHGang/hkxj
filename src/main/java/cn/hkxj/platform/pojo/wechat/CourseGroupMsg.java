@@ -20,8 +20,7 @@ public class CourseGroupMsg {
     private List<ScheduleTask> scheduleTasks;
 
     public CourseGroupMsg() {
-        courseTimeTables = new ArrayList<>();
-        scheduleTasks = new ArrayList<>();
+
     }
 
     public String getCourseContent(){
