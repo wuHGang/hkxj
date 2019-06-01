@@ -2,6 +2,7 @@ package cn.hkxj.platform.pojo;
 
 import cn.hkxj.platform.pojo.constant.Academy;
 import com.google.common.base.MoreObjects;
+import cn.hkxj.platform.pojo.constant.SubjectFirstProperty;
 
 public class Subject {
     private Integer id;
@@ -59,7 +60,7 @@ public class Subject {
     }
 
     public String getPropertyFirst() {
-        return propertyFirst;
+        return SubjectFirstProperty.getPropertyByPropertyFirst(propertyFirst);
     }
 
     public void setPropertyFirst(String propertyFirst) {
