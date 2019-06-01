@@ -33,4 +33,17 @@ public class TimeTableService {
 				.andEndGreaterThanOrEqualTo(schoolWeek);
 		return courseTimeTableMapper.selectByExample(courseTimeTableExample);
 	}
+
+	public List<CourseTimeTable> getTimeTableFromDB(int schoolWeek,int dayOfWeek){
+
+		CourseTimeTableExample courseTimeTableExample = new CourseTimeTableExample();
+		courseTimeTableExample.createCriteria()
+				.andWeekEqualTo(dayOfWeek)
+				.andYearEqualTo(2019)
+				.andTermEqualTo(2)
+				.andDistinctIn(Arrays.asList(0, SchoolTimeUtil.getWeekDistinct()))
+				.andStartLessThanOrEqualTo(schoolWeek)
+				.andEndGreaterThanOrEqualTo(schoolWeek);
+		return courseTimeTableMapper.selectByExample(courseTimeTableExample);
+	}
 }

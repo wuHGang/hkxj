@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -80,6 +81,67 @@ public class EmptyRoomService {
 		return roomTimeTableList;
 	}
 
+	/**
+	 * 根据具体的时间获取具体教学楼教室的课程情况
+	 * @param schoolWeek 教学周
+	 * @param dayOfWeek 星期
+	 * @param order 节次
+	 * @param building 教学楼
+	 * @param floor 楼层
+	 * @return
+	 */
+	public List<RoomTimeTable> getRoomTimeTableByTime(int schoolWeek,int dayOfWeek, int order, Building building, int floor) {
+		ArrayList<RoomTimeTable> roomTimeTableList = new ArrayList<>();
+		HashMultimap<Room, CourseTimeTable> tableMap = getRoomTimeTableMapByTime(schoolWeek, dayOfWeek, building);
+
+		for (Room room : floor==0?roomService.getRoomByBuilding(building):roomService.getRoomByBuildingAndFloor(building, floor)) {
+			RoomTimeTable roomTimeTable = new RoomTimeTable();
+			LinkedList<CourseTimeTable> courseTimeTables = new LinkedList<>(tableMap.get(room));
+
+			//将教室对应的上课时间按顺序排序
+			courseTimeTables.sort(Comparator.comparing(CourseTimeTable::getOrder));
+
+			//在对节次有要求的查询情况下，对在该节次时有课的教室和课程进行筛选并进行移除
+			int roomInOrder=0;
+			if(order!=0){
+				for(CourseTimeTable courseTimeTable:courseTimeTables){
+					if (courseTimeTable.getOrder()==order){
+						roomInOrder=1;break;
+					}
+				}
+			}
+			if(roomInOrder==0){
+				roomTimeTable.setRoom(room);
+				roomTimeTable.setCourseTimeTable(courseTimeTables);
+				roomTimeTableList.add(roomTimeTable);
+			}
+		}
+		//将教室按名称排序
+		roomTimeTableList.sort(Comparator.comparing(o -> o.getRoom().getName()));
+		return roomTimeTableList;
+	}
+
+	/**
+	 * 根据具体的时间获取具体教学楼的教室时间表
+	 * @param schoolWeek 教学周
+	 * @param dayOfWeek 星期
+	 * @param building 教学楼
+	 * @return
+	 */
+	public HashMultimap<Room, CourseTimeTable> getRoomTimeTableMapByTime(int schoolWeek,int dayOfWeek, Building building){
+
+		generateMapByTime(schoolWeek,dayOfWeek);
+		if (building == Building.SCIENCE){
+			return scienceRoomTimeTable;
+		}
+		if (building == Building.MAIN){
+			return mainRoomTimeTable;
+		}
+
+		throw new IllegalArgumentException("illegal building "+building.getChinese());
+
+	}
+
 	private HashMultimap<Room, CourseTimeTable> getTodayRoomTimeTableMap(Building building) {
 		int week = SchoolTimeUtil.getDayOfWeek();
 		if(dayOfWeek != week){
@@ -110,6 +172,22 @@ public class EmptyRoomService {
 				}
 				if (room.getArea() == Building.MAIN){
 
+					mainRoomTimeTable.put(room, timeTable);
+				}
+			}
+		}
+	}
+
+	private void generateMapByTime(int schoolWeek,int dayOfWeek){
+		scienceRoomTimeTable = HashMultimap.create();
+		mainRoomTimeTable = HashMultimap.create();
+		for (CourseTimeTable timeTable : timeTableService.getTimeTableFromDB(schoolWeek,dayOfWeek)) {
+			if (checkDistinct(timeTable.getDistinct())){
+				Room room = roomService.getRoomByName(timeTable.getRoom().getName());
+				if (room.getArea() == Building.SCIENCE){
+					scienceRoomTimeTable.put(room, timeTable);
+				}
+				if (room.getArea() == Building.MAIN){
 					mainRoomTimeTable.put(room, timeTable);
 				}
 			}
