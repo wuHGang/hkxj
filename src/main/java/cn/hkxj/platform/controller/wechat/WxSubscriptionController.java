@@ -2,8 +2,8 @@ package cn.hkxj.platform.controller.wechat;
 
 import cn.hkxj.platform.config.wechat.WechatMpConfiguration;
 import cn.hkxj.platform.config.wechat.WechatMpPlusProperties;
+import cn.hkxj.platform.pojo.ScheduleTask;
 import cn.hkxj.platform.pojo.Student;
-import cn.hkxj.platform.pojo.timetable.CourseTimeTable;
 import cn.hkxj.platform.pojo.wechat.OneOffSubscription;
 import cn.hkxj.platform.service.CourseService;
 import cn.hkxj.platform.service.ScheduleTaskService;
@@ -24,7 +24,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -101,54 +100,73 @@ public class WxSubscriptionController {
 
     private void wxMpProToProcessing(WxMpService wxMpService, String openid, String scene, Student student) {
         String appid = wxMpService.getWxMpConfigStorage().getAppId();
-        //判断是否存在相应的记录
-        if (!scheduleTaskService.isExistSubscribeRecode(appid, openid, scene)) {
-            //没有就插入一条新的数据
-            scheduleTaskService.addScheduleTaskRecord(appid, openid, scene);
-        } else {
-            //否则更新订阅信息
-            scheduleTaskService.updateSubscribeStatus(appid, openid, scene, ScheduleTaskService.FUNCTION_ENABLE);
-        }
+        ScheduleTask scheduleTask = new ScheduleTask(appid, openid, scene);
+        //使用该接口时自动将订阅状态置为可用
+        scheduleTaskService.checkAndSetSubscribeStatus(scheduleTask, true);
         //判断场景值来决定更具体的处理
         if (Objects.equals("1005", scene)) {
-            List<CourseTimeTable> courseTimeTableList = courseService.getCoursesCurrentDay(student.getAccount());
+            //场景为1005时
+            //发送一条包含当天课表信息的客服信息给指定的用户
+            String messageContent = courseService.getCurrentDayCoursesForString(student.getAccount());
             //发送一条客服消息
-            WxMpKefuMessage wxMpKefuMessage = new WxMpKefuMessage();
-            wxMpKefuMessage.setMsgType("text");
-            wxMpKefuMessage.setContent(courseService.toText(courseTimeTableList));
-            wxMpKefuMessage.setToUser(openid);
-            try {
-                wxMpService.getKefuService().sendKefuMessage(wxMpKefuMessage);
-                log.info("send kefuMessage about course success openid:{} appid:{}", openid, appid);
-            } catch (WxErrorException e) {
-                log.info("send kefuMessage about course failed openid:{} appid:{} message:{}", openid, appid, e.getMessage());
-            }
+            sendKefuMessageForPro(wxMpService, scheduleTask, messageContent);
         }
     }
 
 
     private void wxMpPlusToProcessing(WxMpService wxMpService, String openid, String scene, Student student) {
-        String appid = wxMpService.getWxMpConfigStorage().getAppId();
         //因为plus是服务号，所以直接通过一次性订阅接口来返回模板消息，无需发送客服消息
         //根据scene来决定更具体的查理过程
         if (Objects.equals("1005", scene)) {
-            List<CourseTimeTable> courseTimeTables = courseService.getCoursesCurrentDay(student.getAccount());
-            //通过wxMpConfigStorage来获取一次性订阅的模板消息id
-            String templateId = wxMpService.getWxMpConfigStorage().getTemplateId();
-            OneOffSubscription oneOffSubscription = new OneOffSubscription.Builder()
-                                .touser(openid)
-                                .scene(scene)
-                                .title("今日课表")
-                                .templateId(templateId)
-                                .data(courseService.toText(courseTimeTables))
-                                .build();
-            try {
-                OneOffSubcriptionUtil.sendTemplateMessageToUser(oneOffSubscription, wxMpService);
-                log.info("send templateMessage about course success appid:{} openid:{}", appid, openid);
-            } catch (WxErrorException e) {
-                log.info("send templateMessage about course failed appid:{} openid:{} message:{}", appid, openid, e.getMessage());
-            }
+            //直接返回包含课表消息的模板消息
+            String messageContent = courseService.getCurrentDayCoursesForString(student.getAccount());
+            sendTemplateMessageForPlus(wxMpService, openid, scene, messageContent);
         }
     }
 
+    /**
+     * 给plus发送一条模板消息
+     * @param wxMpService wxMpService
+     * @param openid 发送者openid
+     * @param scene 订阅场景值
+     * @param content 消息内容
+     */
+    private void sendTemplateMessageForPlus(WxMpService wxMpService, String openid, String scene, String content){
+        String appid = wxMpService.getWxMpConfigStorage().getAppId();
+        //通过wxMpConfigStorage来获取一次性订阅的模板消息id
+        String templateId = wxMpService.getWxMpConfigStorage().getTemplateId();
+        OneOffSubscription oneOffSubscription = new OneOffSubscription.Builder()
+                .touser(openid)
+                .scene(scene)
+                .title("今日课表")
+                .templateId(templateId)
+                .data(content)
+                .build();
+        try {
+            OneOffSubcriptionUtil.sendTemplateMessageToUser(oneOffSubscription, wxMpService);
+            log.info("send templateMessage about course success appid:{} openid:{}", appid, openid);
+        } catch (WxErrorException e) {
+            log.info("send templateMessage about course failed appid:{} openid:{} message:{}", appid, openid, e.getMessage());
+        }
+    }
+
+    /**
+     * 为pro发送一条客服消息
+     * @param wxMpService wxMpService
+     * @param scheduleTask 这里用这个参数，是因为这个实体内刚好含有openid,appid等属性
+     * @param content 客服消息的内容
+     */
+    private void sendKefuMessageForPro(WxMpService wxMpService, ScheduleTask scheduleTask, String content){
+        WxMpKefuMessage wxMpKefuMessage = new WxMpKefuMessage();
+        wxMpKefuMessage.setMsgType("text");
+        wxMpKefuMessage.setContent(content);
+        wxMpKefuMessage.setToUser(scheduleTask.getOpenid());
+        try {
+            wxMpService.getKefuService().sendKefuMessage(wxMpKefuMessage);
+            log.info("send kefuMessage about course success openid:{} appid:{}", scheduleTask.getOpenid(), scheduleTask.getAppid());
+        } catch (WxErrorException e) {
+            log.error("send kefuMessage about course failed openid:{} appid:{} message:{}",
+                    scheduleTask.getOpenid(), scheduleTask.getAppid(), e.getMessage());
+        }
+    }
 }

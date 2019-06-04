@@ -25,4 +25,6 @@ public interface CourseService {
     String toText(List<CourseTimeTable> courseTimeTables);
 
     Course getCourseById(Integer course);
+
+    String getCurrentDayCoursesForString(Integer account);
 }

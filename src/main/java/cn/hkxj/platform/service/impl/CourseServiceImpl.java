@@ -136,4 +136,10 @@ public class CourseServiceImpl implements CourseService{
         }
         return false;
     }
+
+    @Override
+    public String getCurrentDayCoursesForString(Integer account) {
+        List<CourseTimeTable> courseTimeTables = getCoursesCurrentDay(account);
+        return toText(courseTimeTables);
+    }
 }

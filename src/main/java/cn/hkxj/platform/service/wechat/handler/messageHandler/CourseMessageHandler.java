@@ -6,10 +6,13 @@ import cn.hkxj.platform.config.wechat.WechatMpPlusProperties;
 import cn.hkxj.platform.mapper.OpenidMapper;
 import cn.hkxj.platform.mapper.OpenidPlusMapper;
 import cn.hkxj.platform.pojo.Course;
+import cn.hkxj.platform.pojo.ScheduleTask;
 import cn.hkxj.platform.pojo.example.OpenidExample;
 import cn.hkxj.platform.pojo.timetable.CourseTimeTable;
 import cn.hkxj.platform.pojo.wechat.Openid;
 import cn.hkxj.platform.service.CourseService;
+import cn.hkxj.platform.service.OpenIdService;
+import cn.hkxj.platform.service.ScheduleTaskService;
 import cn.hkxj.platform.utils.OneOffSubcriptionUtil;
 import cn.hkxj.platform.utils.SchoolTimeUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -38,8 +41,11 @@ import java.util.Objects;
 @Component
 public class CourseMessageHandler implements WxMpMessageHandler {
 
-    private static final String URL = "http://platform.hackerda.com/platform/course/timetable";
+    private static final String TEMPLATE_REDIRECT_URL = "https://platform.hackerda.com/platform/course/timetable";
+    private static final String OPPOSITE_SCENE = "1005";
 
+    @Resource
+    private ScheduleTaskService scheduleTaskService;
     @Resource
     private TemplateBuilder templateBuilder;
     @Resource
@@ -47,36 +53,41 @@ public class CourseMessageHandler implements WxMpMessageHandler {
     @Resource
     private WechatMpPlusProperties wechatMpPlusProperties;
     @Resource
-    private OpenidMapper openidMapper;
-    @Resource
-    private OpenidPlusMapper openidPlusMapper;
+    private OpenIdService openIdService;
 
     @Override
     public WxMpXmlOutMessage handle(WxMpXmlMessage wxMpXmlMessage, Map<String, Object> map, WxMpService wxMpService, WxSessionManager wxSessionManager) {
-        if (Objects.equals(wechatMpPlusProperties.getAppId(), wxMpService.getWxMpConfigStorage().getAppId())) {
-            OpenidExample openidExample = new OpenidExample();
-            openidExample.createCriteria()
-                    .andOpenidEqualTo(wxMpXmlMessage.getFromUser());
-            Openid openid = openidPlusMapper.selectByExample(openidExample).get(0);
-            List<WxMpTemplateData> templateData = assemblyTemplateContent(openid.getAccount());
-            String url = "http://platform.hackerda.com/platform/course/timetable";
-            WxMpTemplateMessage templateMessage = templateBuilder.buildCourseMessage(wxMpXmlMessage, templateData, url);
-            try {
-                wxMpService.getTemplateMsgService().sendTemplateMsg(templateMessage);
-            } catch (WxErrorException e) {
-                e.printStackTrace();
-            }
+        ScheduleTask scheduleTask = new ScheduleTask(wxMpService, wxMpXmlMessage, OPPOSITE_SCENE);
+        //所有使用该接口的人，将其订阅状态都置为可用
+        scheduleTaskService.checkAndSetSubscribeStatus(scheduleTask, true);
+        if (isPlus(wxMpService)) {
+            plusProcessing(wxMpXmlMessage, wxMpService);
+            //这里返回null，是因为plus发送模板消息后，不需要发送文本消息。
             return null;
         }
-        String examMsg = OneOffSubcriptionUtil.getHyperlinks("点击领取今日课表", "1005", wxMpService);
-        return new TextBuilder().build(examMsg, wxMpXmlMessage, wxMpService);
+        //pro的话，直接返回一个包含一次性订阅连接的文本消息
+        String hyperlink = OneOffSubcriptionUtil.getHyperlinks("点击领取今日课表", "1005", wxMpService);
+        return new TextBuilder().build(hyperlink, wxMpXmlMessage, wxMpService);
     }
 
-    private String getCurrentDayCourseData() {
-        List<CourseTimeTable> courseTimeTables = courseService.getCoursesCurrentDay(2016024170);
-        return courseService.toText(courseTimeTables);
+    private boolean isPlus(WxMpService wxMpService){
+        return Objects.equals(wechatMpPlusProperties.getAppId(), wxMpService.getWxMpConfigStorage().getAppId());
     }
 
+    //plus的处理逻辑
+    private void plusProcessing(WxMpXmlMessage wxMpXmlMessage, WxMpService wxMpService){
+        Openid openid = openIdService.getOpenid(wxMpXmlMessage.getFromUser(), wxMpService.getWxMpConfigStorage().getAppId()).get(0);
+        List<WxMpTemplateData> templateData = assemblyTemplateContent(openid.getAccount());
+        WxMpTemplateMessage templateMessage = templateBuilder.buildCourseMessage(wxMpXmlMessage, templateData, TEMPLATE_REDIRECT_URL);
+        try {
+            wxMpService.getTemplateMsgService().sendTemplateMsg(templateMessage);
+        } catch (WxErrorException e) {
+            log.error("course keyword reply occurred error message:{}", e.getMessage());
+        }
+
+    }
+
+    //为模板消息的发送组装信息
     private List<WxMpTemplateData> assemblyTemplateContent(int account) {
         List<CourseTimeTable> courseTimeTableList = courseService.getCoursesCurrentDay(account);
         List<WxMpTemplateData> templateDatas = new ArrayList<>();
