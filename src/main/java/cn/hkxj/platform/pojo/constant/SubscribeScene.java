@@ -10,7 +10,7 @@ import com.google.common.base.Objects;
  */
 public enum SubscribeScene {
 
-    COURSE_PUSH("课表推送", "1005");
+    COURSE_PUSH("明日课表", "1005");
 
 
     private String chinese;
@@ -24,10 +24,10 @@ public enum SubscribeScene {
 
     public static SubscribeScene getSubscribeSceneByChinese(String chinese){
         switch (chinese){
-            case "课表推送":
+            case "明日课表":
                 return COURSE_PUSH;
             default:
-                throw new IllegalArgumentException("no subscribe scene match:" + chinese);
+                return null;
         }
     }
 

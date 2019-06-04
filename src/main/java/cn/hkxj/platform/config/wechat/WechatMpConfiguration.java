@@ -121,7 +121,7 @@ public class WechatMpConfiguration {
 				.end()
 				.rule()
 				.async(false)
-				.content("课表推送")
+				.rContent("订阅.*?")
 				.interceptor(wechatOpenIdInterceptor)
 				.handler(subscribeMessageHandler)
 				.end()

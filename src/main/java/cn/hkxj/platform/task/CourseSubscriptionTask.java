@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.*;
-import java.util.concurrent.ThreadFactory;
 
 /**
  * @author Yuki
@@ -41,10 +40,10 @@ public class CourseSubscriptionTask {
 
     private static final String MSG_TITLE = "今日课表";
 
-    @Scheduled(cron = "0 0 8 ? * MON-FRI")      //这个cron表达式的意思是星期一到星期五的早上8点执行一次
-//    @Scheduled(cron = "0/30 * * * * ?")
+//    @Scheduled(cron = "0 0 8 ? * MON-FRI")      //这个cron表达式的意思是星期一到星期五的早上8点执行一次
+    @Scheduled(cron = "0/30 * * * * ?")
     public void sendCourseRemindMsg() {
-        log.info("Course Push Task is start....");
+        log.info("--------------------------course push task is start--------------------------");
         Map<String, Set<CourseGroupMsg>> courseGroupMsgMap = courseSubscribeService.getCoursesSubscribeForCurrentDay();
         courseGroupMsgMap.forEach((appid, courseGroupMsgSet) -> {
             //如果courseGroupMsgSet为空时，说明没有可用的订阅，直接跳过当前循环
@@ -65,7 +64,7 @@ public class CourseSubscriptionTask {
                 });
             }
         });
-        log.info("course push task is end");
+        log.info("--------------------------course push task is end--------------------------");
     }
 
     /**
@@ -76,7 +75,7 @@ public class CourseSubscriptionTask {
      */
     private void plusMpProcess(ScheduleTask task, CourseGroupMsg msg, WxMpService wxMpService){
         List<WxMpTemplateData> templateData = assemblyTemplateContent(msg);
-        String url = "http://platform.hackerda.com/platform/course/timetable";
+        String url = "https://platform.hackerda.com/platform/course/timetable";
         //构建一个课程推送的模板消息
         WxMpTemplateMessage templateMessage = templateBuilder.buildCourseMessage(task.getOpenid(), templateData, url);
         try {
@@ -85,7 +84,7 @@ public class CourseSubscriptionTask {
             scheduleTaskService.updateSendStatus(task, ScheduleTaskService.SEND_SUCCESS);
             log.info("send Message to appid:{} openid:{} success", wxMpService.getWxMpConfigStorage().getAppId(), task.getOpenid());
         } catch (WxErrorException e) {
-            log.info("send kefu Message to appid:{} openid:{} failed message:{}",
+            log.error("send kefu Message to appid:{} openid:{} failed message:{}",
                     wxMpService.getWxMpConfigStorage().getAppId(), task.getOpenid(), e.getMessage());
         }
     }
@@ -115,7 +114,8 @@ public class CourseSubscriptionTask {
             scheduleTaskService.updateSubscribeStatus(task, ScheduleTaskService.FUNCTION_DISABLE);
             log.info("send course push to user:{} appid:{} success", task.getOpenid(), wxMpService.getWxMpConfigStorage().getAppId());
         } catch (WxErrorException e) {
-            log.info("send course push to user:{} appid:{} fail message:{}",
+            scheduleTaskService.updateSubscribeStatus(task, ScheduleTaskService.SEND_FAIL);
+            log.error("send course push to user:{} appid:{} fail message:{}",
                     task.getOpenid(), wxMpService.getWxMpConfigStorage().getAppId(), e.getMessage());
         }
     }

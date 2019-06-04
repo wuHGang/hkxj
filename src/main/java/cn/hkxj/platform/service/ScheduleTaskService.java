@@ -33,6 +33,14 @@ public class ScheduleTaskService {
     @Resource
     private WechatMpProProperties wechatMpProProperties;
 
+    public void checkAndSetSubscribeStatus(ScheduleTask scheduleTask, boolean isEnable){
+        if(isExistSubscribeRecord(scheduleTask)){
+            updateSubscribeStatus(scheduleTask, isEnable ? FUNCTION_ENABLE : FUNCTION_DISABLE);
+            return;
+        }
+        addScheduleTaskRecord(scheduleTask);
+    }
+
     /**
      * 添加一条新的ScheduleTask的记录
      * @param appid appid
@@ -46,6 +54,11 @@ public class ScheduleTaskService {
         scheduleTask.setOpenid(openid);
         scheduleTask.setAppid(appid);
         scheduleTask.setScene(Integer.parseInt(scene));
+        return addScheduleTaskRecord(scheduleTask);
+    }
+
+    public int addScheduleTaskRecord(ScheduleTask scheduleTask) {
+        //发送状态和订阅状态初始值都是1，表示可用
         scheduleTask.setSendStatus(SEND_SUCCESS);
         scheduleTask.setIsSubscribe(FUNCTION_ENABLE);
         return scheduleTaskMapper.insertSelective(scheduleTask);
@@ -104,7 +117,10 @@ public class ScheduleTaskService {
      * @param subscribeStatus 订阅状态
      * @return 受影响行数
      */
-    public int updateSubscribeStatus(ScheduleTask scheduleTask, Byte subscribeStatus) {
+    public int updateSubscribeStatus(ScheduleTask scheduleTask, byte subscribeStatus) {
+        if(Objects.isNull(scheduleTask.getId())){
+            return updateSubscribeStatus(scheduleTask.getAppid(), scheduleTask.getOpenid(), scheduleTask.getScene(), subscribeStatus);
+        }
         scheduleTask.setIsSubscribe(subscribeStatus);
         return scheduleTaskMapper.updateByPrimaryKey(scheduleTask);
     }
@@ -117,13 +133,13 @@ public class ScheduleTaskService {
      * @param subscribeStatus 订阅状态
      * @return 受影响行数
      */
-    public int updateSubscribeStatus(String appid, String openid, String scene, byte subscribeStatus) {
+    public int updateSubscribeStatus(String appid, String openid, Integer scene, byte subscribeStatus) {
         ScheduleTaskExample example = new ScheduleTaskExample();
         //设置查找相应记录的条件
         example.createCriteria()
                 .andAppidEqualTo(appid)
                 .andOpenidEqualTo(openid)
-                .andSceneEqualTo(Integer.parseInt(scene));
+                .andSceneEqualTo(scene);
         ScheduleTask scheduleTask = new ScheduleTask();
         //设置要更新的列
         scheduleTask.setIsSubscribe(subscribeStatus);
@@ -137,12 +153,21 @@ public class ScheduleTaskService {
      * @param scene 订阅场景值
      * @return true为存在，false为不存在
      */
-    public boolean isExistSubscribeRecode(String appid, String openid, String scene){
+    public boolean isExistSubscribeRecord(String appid, String openid, String scene){
         ScheduleTask scheduleTask = new ScheduleTask();
         scheduleTask.setOpenid(openid);
         scheduleTask.setScene(Integer.parseInt(scene));
         scheduleTask.setAppid(appid);
-        return scheduleTaskMapper.isExistSubscribeRecode(scheduleTask);
+        return isExistSubscribeRecord(scheduleTask);
+    }
+
+    /**
+     * 是否存在相应的记录
+     * @param scheduleTask 定时任务的实体
+     * @return true为存在，false为不存在
+     */
+    public boolean isExistSubscribeRecord(ScheduleTask scheduleTask){
+        return scheduleTaskMapper.isExistSubscribeRecord(scheduleTask);
     }
 
     /**
