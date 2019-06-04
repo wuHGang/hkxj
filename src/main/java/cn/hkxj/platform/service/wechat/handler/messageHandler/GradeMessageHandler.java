@@ -8,22 +8,19 @@ import cn.hkxj.platform.service.OpenIdService;
 import cn.hkxj.platform.service.TaskBindingService;
 import cn.hkxj.platform.service.wechat.CustomerMessageService;
 import lombok.extern.slf4j.Slf4j;
-import me.chanjar.weixin.common.exception.WxErrorException;
 import me.chanjar.weixin.common.session.WxSessionManager;
 import me.chanjar.weixin.mp.api.WxMpMessageHandler;
 import me.chanjar.weixin.mp.api.WxMpService;
-import me.chanjar.weixin.mp.bean.kefu.WxMpKefuMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 /**
  * @author Yuki
@@ -54,13 +51,14 @@ public class GradeMessageHandler implements WxMpMessageHandler {
         Student student = openIdService.getStudentByOpenId(wxMpXmlMessage.getFromUser(), appid);
         cacheThreadPool.execute(() -> taskBindingService.subscribeGradeUpdateBinding(wxMpXmlMessage.getFromUser(), wxMpService));
 
-        Future<String> future = cacheThreadPool.submit(() -> {
+        CompletableFuture<String> completableFuture = CompletableFuture.supplyAsync(() -> {
             List<GradeAndCourse> gradeFromSpiderSync = gradeSearchService.getCurrentGradeFromSpider(student);
             return gradeSearchService.gradeListToText(gradeFromSpiderSync);
-        });
+        }, cacheThreadPool);
+
         CustomerMessageService messageService = new CustomerMessageService(wxMpXmlMessage, wxMpService);
 
-        return messageService.sendMessage(future, student);
+        return messageService.sendMessage(completableFuture, student);
     }
 
 
