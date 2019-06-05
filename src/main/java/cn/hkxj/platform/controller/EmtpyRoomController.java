@@ -1,5 +1,6 @@
 package cn.hkxj.platform.controller;
 
+import cn.hkxj.platform.pojo.EmptyRoom;
 import cn.hkxj.platform.pojo.Room;
 import cn.hkxj.platform.pojo.WebResponse;
 import cn.hkxj.platform.pojo.constant.Building;
@@ -11,6 +12,7 @@ import cn.hkxj.platform.utils.SchoolTimeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.LocalTime;
+import org.springframework.context.annotation.Scope;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -37,36 +39,8 @@ public class EmtpyRoomController {
                                     @RequestParam("building")String buildingName,
                                     @RequestParam("floor")int floor){
 
-            Building building=Building.getBuildingByName(buildingName);
-            List<RoomTimeTable> roomTimeTable = emptyRoomService.getRoomTimeTableByTime(schoolWeek,dayOfWeek,order,building,floor);
-
-            return WebResponse.success(getReply(roomTimeTable));
+            return WebResponse.success(emptyRoomService.getEmptyRoomReply(emptyRoomService.getRoomTimeTableByTime(schoolWeek,dayOfWeek,order,Building.getBuildingByName(buildingName),floor)));
         }
 
-    private List<Map> getReply(List<RoomTimeTable> roomTimeTableList){
-        List<Map> replayList=new ArrayList<>();
-        for (RoomTimeTable table : roomTimeTableList) {
-            replayList.add(tableToMap(table));
-        }
-        return replayList;
-    }
 
-    private Map tableToMap(RoomTimeTable roomTimeTable) {
-        Map map = new HashMap();
-        List<Integer> orderList = new LinkedList();
-        Room room = roomTimeTable.getRoom();
-        List<CourseTimeTable> courseTimeTable = roomTimeTable.getCourseTimeTable();
-        if (Objects.isNull(courseTimeTable) || courseTimeTable.size() == 0){
-            orderList.add(-1);
-        }
-       else {
-            for (CourseTimeTable table : courseTimeTable) {
-                orderList.add(table.getOrder());
-            }
-        }
-        map.put("roomOrder", orderList);
-        map.put("roomName", room.getName());
-
-        return map;
-    }
 }
