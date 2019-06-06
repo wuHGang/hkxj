@@ -3,6 +3,7 @@ package cn.hkxj.platform.service;
 import cn.hkxj.platform.config.wechat.WechatMpPlusProperties;
 import cn.hkxj.platform.mapper.*;
 import cn.hkxj.platform.pojo.*;
+import cn.hkxj.platform.pojo.constant.SubscribeScene;
 import cn.hkxj.platform.pojo.example.CourseTimeTableExample;
 import cn.hkxj.platform.pojo.example.OpenidExample;
 import cn.hkxj.platform.pojo.example.StudentExample;
@@ -29,6 +30,8 @@ import java.util.stream.Collectors;
 @Service
 public class CourseSubscribeService {
 
+    private static final int SUBSCRIBE_SCENE = 1005;
+
     @Resource
     private StudentMapper studentMapper;
     @Resource
@@ -50,7 +53,7 @@ public class CourseSubscribeService {
      */
     public Map<String, Set<CourseGroupMsg>> getCoursesSubscribeForCurrentDay() {
         //获取appid和scheduleTask的映射关系
-        Map<String, List<ScheduleTask>> scheduleTaskMap = scheduleTaskService.getSubscribeData(1005);
+        Map<String, List<ScheduleTask>> scheduleTaskMap = scheduleTaskService.getSubscribeData(Integer.parseInt(SubscribeScene.COURSE_PUSH.getScene()));
         Map<String, Set<CourseGroupMsg>> courseGroupMsgMap = Maps.newHashMap();
         //组装映射关系
         scheduleTaskMap.forEach((appid, scheduleTasks) -> {

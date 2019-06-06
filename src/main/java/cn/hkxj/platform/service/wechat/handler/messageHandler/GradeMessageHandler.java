@@ -2,9 +2,12 @@ package cn.hkxj.platform.service.wechat.handler.messageHandler;
 
 import cn.hkxj.platform.builder.TextBuilder;
 import cn.hkxj.platform.pojo.GradeAndCourse;
+import cn.hkxj.platform.pojo.ScheduleTask;
 import cn.hkxj.platform.pojo.Student;
+import cn.hkxj.platform.pojo.constant.SubscribeScene;
 import cn.hkxj.platform.service.GradeSearchService;
 import cn.hkxj.platform.service.OpenIdService;
+import cn.hkxj.platform.service.ScheduleTaskService;
 import cn.hkxj.platform.service.TaskBindingService;
 import cn.hkxj.platform.service.wechat.CustomerMessageService;
 import lombok.extern.slf4j.Slf4j;
@@ -29,17 +32,17 @@ import java.util.concurrent.Executors;
 @Slf4j
 @Component
 public class GradeMessageHandler implements WxMpMessageHandler {
+
     @Resource
     private TextBuilder textBuilder;
-
     @Resource
     private GradeSearchService gradeSearchService;
-
     @Resource
     private OpenIdService openIdService;
-
     @Resource
     private TaskBindingService taskBindingService;
+    @Resource
+    private ScheduleTaskService scheduleTaskService;
 
     private ExecutorService cacheThreadPool = Executors.newCachedThreadPool();
 
@@ -48,8 +51,10 @@ public class GradeMessageHandler implements WxMpMessageHandler {
                                     WxMpService wxMpService,
                                     WxSessionManager wxSessionManager) {
         String appid = wxMpService.getWxMpConfigStorage().getAppId();
-        Student student = openIdService.getStudentByOpenId(wxMpXmlMessage.getFromUser(), appid);
-        cacheThreadPool.execute(() -> taskBindingService.subscribeGradeUpdateBinding(wxMpXmlMessage.getFromUser(), wxMpService));
+        String openid = wxMpXmlMessage.getFromUser();
+        Student student = openIdService.getStudentByOpenId(openid, appid);
+        ScheduleTask scheduleTask = new ScheduleTask(appid, openid, SubscribeScene.GRADE_AUTO_UPDATE.getScene());
+        cacheThreadPool.execute(() -> scheduleTaskService.checkAndSetSubscribeStatus(scheduleTask, true));
 
         CompletableFuture<String> completableFuture = CompletableFuture.supplyAsync(() -> {
             List<GradeAndCourse> gradeFromSpiderSync = gradeSearchService.getCurrentGradeFromSpider(student);
