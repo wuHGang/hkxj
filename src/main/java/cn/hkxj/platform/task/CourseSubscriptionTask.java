@@ -15,6 +15,7 @@ import me.chanjar.weixin.common.exception.WxErrorException;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.template.WxMpTemplateData;
 import me.chanjar.weixin.mp.bean.template.WxMpTemplateMessage;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -40,9 +41,10 @@ public class CourseSubscriptionTask {
 
     private static final String MSG_TITLE = "今日课表";
 
+    @Async
 //    @Scheduled(cron = "0 0 8 ? * MON-FRI")      //这个cron表达式的意思是星期一到星期五的早上8点执行一次
     @Scheduled(cron = "0/30 * * * * ?")
-    public void sendCourseRemindMsg() {
+    void sendCourseRemindMsg() {
         log.info("--------------------------course push task is start--------------------------");
         Map<String, Set<CourseGroupMsg>> courseGroupMsgMap = courseSubscribeService.getCoursesSubscribeForCurrentDay();
         courseGroupMsgMap.forEach((appid, courseGroupMsgSet) -> {

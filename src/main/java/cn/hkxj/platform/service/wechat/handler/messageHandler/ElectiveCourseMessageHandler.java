@@ -51,8 +51,10 @@ public class ElectiveCourseMessageHandler implements WxMpMessageHandler {
 
         Future<String> future = singleThreadPool.submit(() -> getResult(student));
 
-        CustomerMessageService messageService = new CustomerMessageService(wxMpXmlMessage, wxMpService);
-        return messageService.sendMessage(future, student);
+        //FIXME 有Bug
+//        CustomerMessageService messageService = new CustomerMessageService(wxMpXmlMessage, wxMpService);
+//        return messageService.sendMessage(future, student);
+        return null;
     }
 
 
