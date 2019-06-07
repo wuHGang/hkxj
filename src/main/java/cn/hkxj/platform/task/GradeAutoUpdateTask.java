@@ -45,7 +45,7 @@ public class GradeAutoUpdateTask {
     private String updateSwitch;
 
     @Async
-    @Scheduled(cron = "0 0/20 * * * ?", fixedDelay = 20L)
+    @Scheduled(cron = "0 0/20 * * * ?") //每20分钟执行一次
     void autoUpdateGrade() {
         //执行前，检查定时任务的可用性
         if (isTaskEnable()) {

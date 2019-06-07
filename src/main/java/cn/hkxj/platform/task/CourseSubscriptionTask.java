@@ -56,7 +56,8 @@ public class CourseSubscriptionTask {
             log.info("appid:{} data size:{}", appid, courseGroupMsgMap.size());
             for (CourseGroupMsg msg : courseGroupMsgSet) {
                 //获取一个并行流，添加监视messagePeek,设置过滤条件，然后每一个都进行消息发送
-                msg.getScheduleTasks().stream().filter(cgm -> !Objects.isNull(cgm)).parallel().peek(this::messagePeek).forEach(task -> {
+                //parallelStream不是线程安全的
+                msg.getScheduleTasks().parallelStream().filter(cgm -> !Objects.isNull(cgm)).peek(this::messagePeek).forEach(task -> {
                     //根据appid来选择不同的处理过程
                     if(Objects.equals(appid, wechatMpPlusProperties.getAppId())){
                         plusMpProcess(task, msg, wxMpService);
