@@ -21,6 +21,7 @@ import org.springframework.util.CollectionUtils;
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -49,12 +50,10 @@ public class ElectiveCourseMessageHandler implements WxMpMessageHandler {
         ExecutorService singleThreadPool = Executors.newSingleThreadExecutor();
         Student student = openIdService.getStudentByOpenId(wxMpXmlMessage.getFromUser(), appid);
 
-        Future<String> future = singleThreadPool.submit(() -> getResult(student));
+        CompletableFuture<String> completableFuture = CompletableFuture.supplyAsync(() -> getResult(student), singleThreadPool);
 
-        //FIXME 有Bug
-//        CustomerMessageService messageService = new CustomerMessageService(wxMpXmlMessage, wxMpService);
-//        return messageService.sendMessage(future, student);
-        return null;
+        CustomerMessageService messageService = new CustomerMessageService(wxMpXmlMessage, wxMpService);
+        return messageService.sendMessage(completableFuture, student);
     }
 
 
