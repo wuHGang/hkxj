@@ -11,25 +11,6 @@
         </encoder>
     </appender>
 
-    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${LOG_PATH}/localhost.log</file>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <!-- 文件名称 -->
-            <fileNamePattern>localhost-%d{yyyy-MM-dd}.log
-            </fileNamePattern>
-            <!-- 文件最大保存历史数量 -->
-            <MaxHistory>15</MaxHistory>
-        </rollingPolicy>
-        <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{traceId}][%X{openid}] %-5level %logger{50} %line - %m%n</pattern>
-        </encoder>
-        <filter class="ch.qos.logback.classic.filter.LevelFilter">
-            <level>INFO</level>
-            <onMatch>ACCEPT</onMatch>
-            <onMismatch>DENY</onMismatch>
-        </filter>
-    </appender>
-
     <!-- INFO -->
     <appender name="wechatAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <!-- 文件路径 ，注意LOG_PATH是默认值，
@@ -77,14 +58,12 @@
     <logger name="cn.hkxj.platform.controller.wechat.*" additivity="fales">
         <level value="INFO"/>
         <appender-ref ref="STDOUT"/>
-        <appender-ref ref="FILE"/>
         <appender-ref ref="wechatAppender"/>
     </logger>
 
     <logger name="org.springframework" additivity="false">
         <level value="INFO"/>
         <appender-ref ref="STDOUT"/>
-        <appender-ref ref="FILE"/>
         <appender-ref ref="errorAppender"/>
     </logger>
 
@@ -92,7 +71,6 @@
     <logger name="org.apache.tomcat.util" additivity="false">
         <level value="ERROR"/>
         <appender-ref ref="STDOUT"/>
-        <appender-ref ref="FILE"/>
         <appender-ref ref="errorAppender"/>
     </logger>
 
@@ -100,12 +78,10 @@
     <logger name="org.hibernate.validator" additivity="false">
         <level value="ERROR"/>
         <appender-ref ref="STDOUT"/>
-        <appender-ref ref="FILE"/>
         <appender-ref ref="errorAppender"/>
     </logger>
     <root level="DEBUG">
         <appender-ref ref="STDOUT"/>
-        <appender-ref ref="FILE"/>
         <appender-ref ref="errorAppender"/>
         <appender-ref ref="wechatAppender"/>
     </root>

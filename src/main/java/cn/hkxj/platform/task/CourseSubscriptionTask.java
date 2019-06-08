@@ -40,10 +40,9 @@ public class CourseSubscriptionTask {
 
     private static final String MSG_TITLE = "今日课表";
 
-//    @Scheduled(cron = "0 0 8 ? * MON-FRI")      //这个cron表达式的意思是星期一到星期五的早上8点执行一次
-    @Scheduled(cron = "0/30 * * * * ?")
+    @Scheduled(cron = "0 0 8 ? * MON-FRI")      //这个cron表达式的意思是星期一到星期五的早上8点执行一次
+//    @Scheduled(cron = "0/30 * * * * ?")
     public void sendCourseRemindMsg() {
-        log.info("--------------------------course push task is start--------------------------");
         Map<String, Set<CourseGroupMsg>> courseGroupMsgMap = courseSubscribeService.getCoursesSubscribeForCurrentDay();
         courseGroupMsgMap.forEach((appid, courseGroupMsgSet) -> {
             //如果courseGroupMsgSet为空时，说明没有可用的订阅，直接跳过当前循环
@@ -64,7 +63,6 @@ public class CourseSubscriptionTask {
                 });
             }
         });
-        log.info("--------------------------course push task is end--------------------------");
     }
 
     /**
