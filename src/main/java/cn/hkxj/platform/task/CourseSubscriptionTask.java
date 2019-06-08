@@ -15,6 +15,7 @@ import me.chanjar.weixin.common.exception.WxErrorException;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.template.WxMpTemplateData;
 import me.chanjar.weixin.mp.bean.template.WxMpTemplateMessage;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -40,9 +41,11 @@ public class CourseSubscriptionTask {
 
     private static final String MSG_TITLE = "今日课表";
 
+    @Async
     @Scheduled(cron = "0 0 8 ? * MON-FRI")      //这个cron表达式的意思是星期一到星期五的早上8点执行一次
 //    @Scheduled(cron = "0/30 * * * * ?")
-    public void sendCourseRemindMsg() {
+    void sendCourseRemindMsg() {
+        log.info("--------------------------course push task is start--------------------------");
         Map<String, Set<CourseGroupMsg>> courseGroupMsgMap = courseSubscribeService.getCoursesSubscribeForCurrentDay();
         courseGroupMsgMap.forEach((appid, courseGroupMsgSet) -> {
             //如果courseGroupMsgSet为空时，说明没有可用的订阅，直接跳过当前循环
@@ -53,7 +56,8 @@ public class CourseSubscriptionTask {
             log.info("appid:{} data size:{}", appid, courseGroupMsgMap.size());
             for (CourseGroupMsg msg : courseGroupMsgSet) {
                 //获取一个并行流，添加监视messagePeek,设置过滤条件，然后每一个都进行消息发送
-                msg.getScheduleTasks().stream().filter(cgm -> !Objects.isNull(cgm)).parallel().peek(this::messagePeek).forEach(task -> {
+                //parallelStream不是线程安全的
+                msg.getScheduleTasks().parallelStream().filter(cgm -> !Objects.isNull(cgm)).peek(this::messagePeek).forEach(task -> {
                     //根据appid来选择不同的处理过程
                     if(Objects.equals(appid, wechatMpPlusProperties.getAppId())){
                         plusMpProcess(task, msg, wxMpService);

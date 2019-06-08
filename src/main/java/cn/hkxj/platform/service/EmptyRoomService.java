@@ -1,20 +1,17 @@
 package cn.hkxj.platform.service;
 
+import cn.hkxj.platform.pojo.EmptyRoom;
 import cn.hkxj.platform.pojo.constant.Building;
 import cn.hkxj.platform.pojo.timetable.CourseTimeTable;
 import cn.hkxj.platform.pojo.Room;
 import cn.hkxj.platform.pojo.timetable.RoomTimeTable;
 import cn.hkxj.platform.utils.SchoolTimeUtil;
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author junrong.chen
@@ -102,15 +99,15 @@ public class EmptyRoomService {
 			courseTimeTables.sort(Comparator.comparing(CourseTimeTable::getOrder));
 
 			//在对节次有要求的查询情况下，对在该节次时有课的教室和课程进行筛选并进行移除
-			int roomInOrder=0;
+			boolean roomInOrder=false;
 			if(order!=0){
 				for(CourseTimeTable courseTimeTable:courseTimeTables){
 					if (courseTimeTable.getOrder()==order){
-						roomInOrder=1;break;
+						roomInOrder=true;break;
 					}
 				}
 			}
-			if(roomInOrder==0){
+			if(roomInOrder==false){
 				roomTimeTable.setRoom(room);
 				roomTimeTable.setCourseTimeTable(courseTimeTables);
 				roomTimeTableList.add(roomTimeTable);
@@ -123,23 +120,27 @@ public class EmptyRoomService {
 
 	/**
 	 * 根据具体的时间获取具体教学楼的教室时间表
+	 * 对指定了具体时间进行查询的情况下，用局部变量进行存储来确保线程安全性
 	 * @param schoolWeek 教学周
 	 * @param dayOfWeek 星期
 	 * @param building 教学楼
 	 * @return
 	 */
 	public HashMultimap<Room, CourseTimeTable> getRoomTimeTableMapByTime(int schoolWeek,int dayOfWeek, Building building){
-
-		generateMapByTime(schoolWeek,dayOfWeek);
-		if (building == Building.SCIENCE){
-			return scienceRoomTimeTable;
+		try {
+			HashMultimap roomTimeTable = HashMultimap.create();
+			for (CourseTimeTable timeTable : timeTableService.getTimeTableFromDB(schoolWeek,dayOfWeek)) {
+				if (checkDistinct(timeTable.getDistinct())){
+					Room room = roomService.getRoomByName(timeTable.getRoom().getName());
+					if (room.getArea() == building){
+						roomTimeTable.put(room, timeTable);
+					}
+				}
+			}
+			return roomTimeTable;
+		}catch (IllegalArgumentException e){
+			throw new IllegalArgumentException("illegal building "+building.getChinese());
 		}
-		if (building == Building.MAIN){
-			return mainRoomTimeTable;
-		}
-
-		throw new IllegalArgumentException("illegal building "+building.getChinese());
-
 	}
 
 	private HashMultimap<Room, CourseTimeTable> getTodayRoomTimeTableMap(Building building) {
@@ -178,22 +179,6 @@ public class EmptyRoomService {
 		}
 	}
 
-	private void generateMapByTime(int schoolWeek,int dayOfWeek){
-		scienceRoomTimeTable = HashMultimap.create();
-		mainRoomTimeTable = HashMultimap.create();
-		for (CourseTimeTable timeTable : timeTableService.getTimeTableFromDB(schoolWeek,dayOfWeek)) {
-			if (checkDistinct(timeTable.getDistinct())){
-				Room room = roomService.getRoomByName(timeTable.getRoom().getName());
-				if (room.getArea() == Building.SCIENCE){
-					scienceRoomTimeTable.put(room, timeTable);
-				}
-				if (room.getArea() == Building.MAIN){
-					mainRoomTimeTable.put(room, timeTable);
-				}
-			}
-		}
-	}
-
 	/**
 	 * 根据教室名称查询当天教室的上课情况
 	 * @param name 教室名
@@ -218,5 +203,29 @@ public class EmptyRoomService {
 
 	private boolean checkDistinct(int distinct){
 		return (distinct == 0) || (distinct == SchoolTimeUtil.getWeekDistinct());
+	}
+
+	public List<EmptyRoom> getEmptyRoomReply(List<RoomTimeTable> roomTimeTableList){
+		List<EmptyRoom> replayList=new ArrayList<>();
+		for (RoomTimeTable table : roomTimeTableList) {
+			replayList.add(tableToEmptyRoomPojo(table));
+		}
+		return replayList;
+	}
+
+	private EmptyRoom tableToEmptyRoomPojo(RoomTimeTable roomTimeTable) {
+		EmptyRoom emptyRoom = new EmptyRoom();
+		List<Integer> orderList = new LinkedList();
+
+		List<CourseTimeTable> courseTimeTable = roomTimeTable.getCourseTimeTable();
+
+		if (!(Objects.isNull(courseTimeTable) || courseTimeTable.size() == 0)) {
+			for (CourseTimeTable table : courseTimeTable) {
+				orderList.add(table.getOrder());
+			}
+		}
+		emptyRoom.setName(roomTimeTable.getRoom().getName());
+		emptyRoom.setOrderList(orderList);
+		return emptyRoom;
 	}
 }

@@ -10,7 +10,8 @@ import com.google.common.base.Objects;
  */
 public enum SubscribeScene {
 
-    COURSE_PUSH("明日课表", "1005");
+    COURSE_PUSH("明日课表", "1005"),
+    GRADE_AUTO_UPDATE("成绩推送", "1010");
 
 
     private String chinese;
@@ -26,6 +27,8 @@ public enum SubscribeScene {
         switch (chinese){
             case "明日课表":
                 return COURSE_PUSH;
+            case "成绩推送":
+                return GRADE_AUTO_UPDATE;
             default:
                 return null;
         }

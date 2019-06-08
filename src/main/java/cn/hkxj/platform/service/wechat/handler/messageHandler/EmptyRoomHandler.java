@@ -40,7 +40,7 @@ public class EmptyRoomHandler implements WxMpMessageHandler {
 	private static final int CONTENT_SIZE_2 = 2;
 	private static final int CONTENT_SIZE_1 = 1;
 	private static final String SINGLE_ROOM = "教室";
-	private static final String emptyRoomUrl="<a href=\"http://platform.hackerda.com/platform/emptyRoom\">【空教室查询】</a>";
+	private static final String EMPTY_ROOM_URL="<a href=\"http://platform.hackerda.com/platform/emptyRoom\">【空教室查询】</a>";
 	@Resource(name = "emptyRoomService")
 	private EmptyRoomService emptyRoomService;
 	@Resource
@@ -69,8 +69,8 @@ public class EmptyRoomHandler implements WxMpMessageHandler {
 	String parseContent(String content){
 		String[] strings = StreamSupport.stream(SPLITTER.split(content).spliterator(), false).toArray(String[]::new);
 
-		if ((strings.length == CONTENT_SIZE_1)){
-			return emptyRoomUrl;
+		if (content.equals("空教室")){
+			return EMPTY_ROOM_URL;
 		}
 
 		if ((strings.length == CONTENT_SIZE_2)){

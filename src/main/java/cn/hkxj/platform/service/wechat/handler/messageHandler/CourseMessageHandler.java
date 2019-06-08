@@ -7,6 +7,7 @@ import cn.hkxj.platform.mapper.OpenidMapper;
 import cn.hkxj.platform.mapper.OpenidPlusMapper;
 import cn.hkxj.platform.pojo.Course;
 import cn.hkxj.platform.pojo.ScheduleTask;
+import cn.hkxj.platform.pojo.constant.SubscribeScene;
 import cn.hkxj.platform.pojo.example.OpenidExample;
 import cn.hkxj.platform.pojo.timetable.CourseTimeTable;
 import cn.hkxj.platform.pojo.wechat.Openid;
@@ -42,7 +43,6 @@ import java.util.Objects;
 public class CourseMessageHandler implements WxMpMessageHandler {
 
     private static final String TEMPLATE_REDIRECT_URL = "https://platform.hackerda.com/platform/course/timetable";
-    private static final String OPPOSITE_SCENE = "1005";
 
     @Resource
     private ScheduleTaskService scheduleTaskService;
@@ -57,10 +57,10 @@ public class CourseMessageHandler implements WxMpMessageHandler {
 
     @Override
     public WxMpXmlOutMessage handle(WxMpXmlMessage wxMpXmlMessage, Map<String, Object> map, WxMpService wxMpService, WxSessionManager wxSessionManager) {
-        ScheduleTask scheduleTask = new ScheduleTask(wxMpService, wxMpXmlMessage, OPPOSITE_SCENE);
-        //所有使用该接口的人，将其订阅状态都置为可用
-        scheduleTaskService.checkAndSetSubscribeStatus(scheduleTask, true);
         if (isPlus(wxMpService)) {
+            ScheduleTask scheduleTask = new ScheduleTask(wxMpService, wxMpXmlMessage, SubscribeScene.COURSE_PUSH.getScene());
+            //所有使用该接口的人，将其订阅状态都置为可用
+            scheduleTaskService.checkAndSetSubscribeStatus(scheduleTask, true);
             plusProcessing(wxMpXmlMessage, wxMpService);
             //这里返回null，是因为plus发送模板消息后，不需要发送文本消息。
             return null;

@@ -1,131 +1,99 @@
 package cn.hkxj.platform.task;
 
-import cn.hkxj.platform.mapper.OpenidMapper;
-import cn.hkxj.platform.mapper.StudentMapper;
-import cn.hkxj.platform.mapper.SubscribeGradeUpdateMapper;
-import cn.hkxj.platform.mapper.TaskMapper;
+import cn.hkxj.platform.config.wechat.WechatMpConfiguration;
 import cn.hkxj.platform.pojo.GradeAndCourse;
+import cn.hkxj.platform.pojo.ScheduleTask;
 import cn.hkxj.platform.pojo.Student;
-import cn.hkxj.platform.pojo.wechat.Openid;
-import cn.hkxj.platform.pojo.wechat.SubscribeGradeUpdate;
+import cn.hkxj.platform.pojo.constant.SubscribeScene;
 import cn.hkxj.platform.service.GradeSearchService;
+import cn.hkxj.platform.service.OpenIdService;
+import cn.hkxj.platform.service.ScheduleTaskService;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.exception.WxErrorException;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.kefu.WxMpKefuMessage;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Queue;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.concurrent.locks.LockSupport;
 
+/**
+ * @author Yuki
+ * @date 2019/6/6 10:55
+ */
 @Slf4j
 @Service
 public class GradeAutoUpdateTask {
-    /**
-     * 存放学生查询记录的队列
-     */
-    private static Queue<Student> ACCOUNT_QUEUE = new LinkedList<>();
-    /**
-     * 用于过滤没有被消费的学号
-     */
-    private static HashSet<Student> ACCOUNT_SET = new HashSet<>();
+    //这里设置拒绝策略为调用者运行，这样可以降低产生任务的速率
+    private ExecutorService gradeAutoUpdatePool = new ThreadPoolExecutor(10, 10,
+            0L, TimeUnit.MILLISECONDS, new LinkedBlockingDeque<>(20), new ThreadPoolExecutor.CallerRunsPolicy());
 
-    private HashMap<Integer,String> openidMap=new HashMap<>();
+    @Resource
+    private ScheduleTaskService scheduleTaskService;
     @Resource
     private GradeSearchService gradeSearchService;
     @Resource
-    private SubscribeGradeUpdateMapper subscribeGradeUpdateMapper;
-    @Resource
-    private OpenidMapper openidMapper;
-    @Resource
-    private StudentMapper studentMapper;
-//    @Resource
-//    private WxMpService wxMpService;
-    @Resource
-    private TaskMapper taskMapper;
+    private OpenIdService openIdService;
+
     @Value("scheduled.gradeUpdate")
     private String updateSwitch;
 
-    public static void addStudentToQueue(Student student) {
-        if (ACCOUNT_SET.contains(student)) {
+    @Async
+    @Scheduled(cron = "0 0/20 * * * ?") //每20分钟执行一次
+    void autoUpdateGrade() {
+        //执行前，检查定时任务的可用性
+        if (isTaskEnable()) {
             return;
         }
-        ACCOUNT_SET.add(student);
-        ACCOUNT_QUEUE.offer(student);
-    }
-
-    @Scheduled(cron = "0 0/20 * * * ?")
-    private void autoUpdateGrade() {
-        if(!BooleanUtils.toBoolean(updateSwitch)){
-            return;
-        }
-        getStudentQueue();
-        Student student = ACCOUNT_QUEUE.poll();
-        while (Objects.nonNull(student)) {
-            try {
-                taskMapper.taskCountUpdate(openidMap.get(student.getAccount()),1);
-                List<GradeAndCourse> gradeFromSpider = gradeSearchService.getCurrentGradeFromSpider(student);
-                List<GradeAndCourse> studentGrades=gradeSearchService.saveGradeAndCourse(student, gradeFromSpider);
-                if (!CollectionUtils.isEmpty(studentGrades)) {
-                    String result = gradeSearchService.gradeListToText(studentGrades);
-                    WxMpKefuMessage kefuMessage = getKefuMessage(student, result);
-//                    wxMpService.getKefuService().sendKefuMessage(kefuMessage);
-                }
-                //FIXME 配置多个公众号时的修改
-//            } catch (WxErrorException e) {
-//                log.warn("account {} send grade update message error {}", e.getMessage());
-            } catch (Exception e) {
-                log.error("grade update task error", e);
+        Map<String, List<ScheduleTask>> appMappingScheduleTask =
+                scheduleTaskService.getSubscribeData(Integer.parseInt(SubscribeScene.GRADE_AUTO_UPDATE.getScene()));
+        appMappingScheduleTask.forEach((appid, tasks) -> tasks.forEach(task -> {
+            Student student = openIdService.getStudentByOpenId(task.getOpenid(), task.getAppid());
+            //通过appid和openid如果没找到相应的学生信息，跳出循环并记录日志
+            if (Objects.isNull(student)) {
+                log.info("appid:{} openid:{} grade update failed. no opposite student info", task.getAppid(), task.getOpenid());
+                return;
             }
-            ACCOUNT_SET.remove(student);
-            student = ACCOUNT_QUEUE.poll();
-        }
+            //创建一个CompletableFuture来获取成绩
+            CompletableFuture.supplyAsync(() -> {
+                List<GradeAndCourse> gradeFromSpiderSync = gradeSearchService.getCurrentGradeFromSpider(student);
+                return gradeSearchService.gradeListToText(gradeFromSpiderSync);
+            }, gradeAutoUpdatePool).whenComplete((value, error) -> {
+                //完成时发送客服信息
+                WxMpService currentMpService = getWxMpService(appid);
+                try {
+                    currentMpService.getKefuService().sendKefuMessage(getKefuMessage(task, value));
+                } catch (WxErrorException e) {
+                    log.error("grade update task error", e);
+                }
+            });
+
+        }));
     }
 
-    /**
-     * 从订阅成绩更新的表中获取更新队列
-     */
-    private void getStudentQueue(){
-        List<SubscribeGradeUpdate> list=subscribeGradeUpdateMapper.getSubscribedList();
-        List<String> openidStringList=new ArrayList<>();
-        for(SubscribeGradeUpdate o:list){
-            openidStringList.add(o.getOpenid());
-        }
-        List<Openid> openidList=openidMapper.getOpenIdsByOpenIds(openidStringList);
-        openidMap.clear();
-        for(Openid openid:openidList){
-            openidMap.put(openid.getAccount(),openid.getOpenid());
-            addStudentToQueue(studentMapper.selectByAccount(openid.getAccount()));
-        }
+    private boolean isTaskEnable() {
+        return BooleanUtils.toBoolean(updateSwitch);
     }
 
-    /**
-     * 获取回复文本
-     * @param student 学生实体
-     * @param content 客服消息内容
-     * @return  客服消息实体
-     */
-    private WxMpKefuMessage getKefuMessage(Student student, String content) {
+    private WxMpService getWxMpService(String appid) {
+        return WechatMpConfiguration.getMpServices().get(appid);
+    }
 
+    private WxMpKefuMessage getKefuMessage(ScheduleTask scheduleTask, String content) {
         WxMpKefuMessage wxMpKefuMessage = new WxMpKefuMessage();
-        wxMpKefuMessage.setContent("成绩更新\n"+content );
-        wxMpKefuMessage.setToUser(openidMap.get(student.getAccount()));
+        wxMpKefuMessage.setContent("成绩更新\n" + content);
+        wxMpKefuMessage.setToUser(scheduleTask.getOpenid());
         wxMpKefuMessage.setMsgType("text");
 
-        log.info("student account {} grade update {}", student.getAccount(), content);
+        log.info("appid:{} openid:{} grade update {}", scheduleTask.getAppid(), scheduleTask.getOpenid(), content);
 
         return wxMpKefuMessage;
     }
-
 
 }

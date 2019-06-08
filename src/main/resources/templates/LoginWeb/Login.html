@@ -67,25 +67,25 @@
                     "password": password
                 };
 
-                if(isCommitted) { //当表单被成功提交过一次后isCommitted将变为true,根据判断将无法进行提交。
+                if (!isCommitted) { //当表单被成功提交过一次后isCommitted将变为true,根据判断将无法进行提交。
                     isCommitted = true;//提交表单后，将表单是否已经提交标识设置为true
                     $.ajax({
                         type: "post",
                         url: "/platform/bind/wechat",
                         data: data,
                         success : function (data) {
-                            if (data.status==200){
-                                alert("绑定成功")
+                            if (data.status === 200) {
+                                alert("绑定成功");
                                 isCommitted = false;//提交完成，可以继续提交
                                 window.location="/platform/show/timetable";
                             }
-                            else if (data.status==402){
+                            else if (data.status === 402) {
                                 alert("账号密码错误");
                                 isCommitted = false;//提交完成，可以继续提交
                                 window.location.reload();
                             }
-                            else if (data.status==403){
-                                alert("账号已经绑定")
+                            else if (data.status === 403) {
+                                alert("账号已经绑定");
                                 isCommitted = false;//提交完成，可以继续提交
                             }
                             else {
@@ -95,6 +95,8 @@
                             }
                         }
                     });
+                } else {
+                    alert("让服务喘口气吧");
                 }
 
             });
