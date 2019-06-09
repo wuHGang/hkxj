@@ -91,6 +91,7 @@ public class EmptyRoomService {
 		ArrayList<RoomTimeTable> roomTimeTableList = new ArrayList<>();
 		HashMultimap<Room, CourseTimeTable> tableMap = getRoomTimeTableMapByTime(schoolWeek, dayOfWeek, building);
 
+		//想查询所有楼层时floor设为0
 		for (Room room : floor==0?roomService.getRoomByBuilding(building):roomService.getRoomByBuildingAndFloor(building, floor)) {
 			RoomTimeTable roomTimeTable = new RoomTimeTable();
 			LinkedList<CourseTimeTable> courseTimeTables = new LinkedList<>(tableMap.get(room));
@@ -107,7 +108,7 @@ public class EmptyRoomService {
 					}
 				}
 			}
-			if(roomInOrder==false){
+			if(!roomInOrder){
 				roomTimeTable.setRoom(room);
 				roomTimeTable.setCourseTimeTable(courseTimeTables);
 				roomTimeTableList.add(roomTimeTable);
@@ -127,8 +128,10 @@ public class EmptyRoomService {
 	 * @return
 	 */
 	public HashMultimap<Room, CourseTimeTable> getRoomTimeTableMapByTime(int schoolWeek,int dayOfWeek, Building building){
+
+
 		try {
-			HashMultimap roomTimeTable = HashMultimap.create();
+			HashMultimap<Room, CourseTimeTable> roomTimeTable = HashMultimap.create();
 			for (CourseTimeTable timeTable : timeTableService.getTimeTableFromDB(schoolWeek,dayOfWeek)) {
 				if (checkDistinct(timeTable.getDistinct())){
 					Room room = roomService.getRoomByName(timeTable.getRoom().getName());
@@ -137,6 +140,7 @@ public class EmptyRoomService {
 					}
 				}
 			}
+
 			return roomTimeTable;
 		}catch (IllegalArgumentException e){
 			throw new IllegalArgumentException("illegal building "+building.getChinese());
@@ -215,7 +219,7 @@ public class EmptyRoomService {
 
 	private EmptyRoom tableToEmptyRoomPojo(RoomTimeTable roomTimeTable) {
 		EmptyRoom emptyRoom = new EmptyRoom();
-		List<Integer> orderList = new LinkedList();
+		LinkedList orderList = new LinkedList();
 
 		List<CourseTimeTable> courseTimeTable = roomTimeTable.getCourseTimeTable();
 
