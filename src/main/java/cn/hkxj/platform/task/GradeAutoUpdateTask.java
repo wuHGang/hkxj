@@ -61,39 +61,12 @@ public class GradeAutoUpdateTask {
                 return;
             }
             //创建一个CompletableFuture来获取成绩
-            CompletableFuture.supplyAsync(() -> {
-                List<GradeAndCourse> gradeFromSpiderSync = gradeSearchService.getCurrentGradeFromSpider(student);
-                return gradeSearchService.gradeListToText(gradeFromSpiderSync);
-            }, gradeAutoUpdatePool).whenComplete((value, error) -> {
-                //完成时发送客服信息
-                WxMpService currentMpService = getWxMpService(appid);
-                try {
-                    currentMpService.getKefuService().sendKefuMessage(getKefuMessage(task, value));
-                } catch (WxErrorException e) {
-                    log.error("grade update task error", e);
-                }
-            });
-
+            gradeAutoUpdatePool.execute(() -> gradeSearchService.getCurrentGradeFromSpider(student));
         }));
     }
 
     private boolean isTaskEnable() {
         return BooleanUtils.toBoolean(updateSwitch);
-    }
-
-    private WxMpService getWxMpService(String appid) {
-        return WechatMpConfiguration.getMpServices().get(appid);
-    }
-
-    private WxMpKefuMessage getKefuMessage(ScheduleTask scheduleTask, String content) {
-        WxMpKefuMessage wxMpKefuMessage = new WxMpKefuMessage();
-        wxMpKefuMessage.setContent("成绩更新\n" + content);
-        wxMpKefuMessage.setToUser(scheduleTask.getOpenid());
-        wxMpKefuMessage.setMsgType("text");
-
-        log.info("appid:{} openid:{} grade update {}", scheduleTask.getAppid(), scheduleTask.getOpenid(), content);
-
-        return wxMpKefuMessage;
     }
 
 }
