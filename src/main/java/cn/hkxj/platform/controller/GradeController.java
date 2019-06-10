@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -44,6 +45,7 @@ public class GradeController {
             throw e;
         }
         List<GradeAndCourse> currentGradeFromSpider = gradeSearchService.getCurrentGradeFromSpider(student);
+        currentGradeFromSpider.sort(Comparator.comparing(o -> o.getCourse().getType()));
         return WebResponse.success(currentGradeFromSpider);
     }
 }
