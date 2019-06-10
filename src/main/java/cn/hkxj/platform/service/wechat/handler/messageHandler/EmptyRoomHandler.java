@@ -38,9 +38,8 @@ public class EmptyRoomHandler implements WxMpMessageHandler {
 	private static Splitter SPLITTER = Splitter.on(" ").trimResults().omitEmptyStrings();
 	private static final int CONTENT_SIZE_3 = 3;
 	private static final int CONTENT_SIZE_2 = 2;
-	private static final int CONTENT_SIZE_1 = 1;
 	private static final String SINGLE_ROOM = "教室";
-	private static final String EMPTY_ROOM_URL="<a href=\"http://platform.hackerda.com/platform/emptyRoom\">【空教室查询】</a>";
+	private static final String EMPTY_ROOM_URL="<a href=\"http://platform.hackerda.com/platform/emptyRoomSearch\">【空教室查询】</a>";
 	@Resource(name = "emptyRoomService")
 	private EmptyRoomService emptyRoomService;
 	@Resource

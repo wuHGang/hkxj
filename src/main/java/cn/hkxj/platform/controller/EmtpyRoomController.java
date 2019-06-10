@@ -16,6 +16,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.io.IOException;
 import java.util.*;
 
 
@@ -38,8 +39,13 @@ public class EmtpyRoomController {
                                     @RequestParam("order")int order,
                                     @RequestParam("building")String buildingName,
                                     @RequestParam("floor")int floor){
-
-            return WebResponse.success(emptyRoomService.getEmptyRoomReply(emptyRoomService.getRoomTimeTableByTime(schoolWeek,dayOfWeek,order,Building.getBuildingByName(buildingName),floor)));
+        log.info("emptyRoom search{},{},{},{},{}", schoolWeek, dayOfWeek,order,buildingName,floor);
+            try {
+                return WebResponse.success(emptyRoomService.getEmptyRoomReply(emptyRoomService.getRoomTimeTableByTime(schoolWeek,dayOfWeek,order,Building.getBuildingByName(buildingName),floor)));
+            }catch (IOException e){
+                log.info("fail to Serialization emptyRoom {},{},{},{},{}", schoolWeek, dayOfWeek,order,buildingName,floor);
+            }
+            return WebResponse.fail(500,"fail to get emptyRoom Data");
         }
 
 

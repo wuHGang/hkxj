@@ -6,12 +6,22 @@ import cn.hkxj.platform.pojo.timetable.CourseTimeTable;
 import cn.hkxj.platform.pojo.Room;
 import cn.hkxj.platform.pojo.timetable.RoomTimeTable;
 import cn.hkxj.platform.utils.SchoolTimeUtil;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.datatype.guava.GuavaModule;
 import com.google.common.collect.HashMultimap;
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.io.IOException;
+import java.io.StringWriter;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author junrong.chen
@@ -24,6 +34,8 @@ public class EmptyRoomService {
 	private RoomService roomService;
 	@Resource
 	private TimeTableService timeTableService;
+	@Resource
+    private RedisTemplate<String,String> redisTemplate;
 	/**
 	 * 缓存当天有课教室和课程的映射
 	 */
@@ -80,6 +92,7 @@ public class EmptyRoomService {
 
 	/**
 	 * 根据具体的时间获取具体教学楼教室的课程情况
+	 * 对已经查询过的日期的课表进行序列化存储到缓存中
 	 * @param schoolWeek 教学周
 	 * @param dayOfWeek 星期
 	 * @param order 节次
@@ -87,18 +100,40 @@ public class EmptyRoomService {
 	 * @param floor 楼层
 	 * @return
 	 */
-	public List<RoomTimeTable> getRoomTimeTableByTime(int schoolWeek,int dayOfWeek, int order, Building building, int floor) {
+	@SuppressWarnings(value = {"unchecked"})
+	public List<RoomTimeTable> getRoomTimeTableByTime(int schoolWeek,int dayOfWeek, int order, Building building, int floor) throws java.io.IOException{
 		ArrayList<RoomTimeTable> roomTimeTableList = new ArrayList<>();
-		HashMultimap<Room, CourseTimeTable> tableMap = getRoomTimeTableMapByTime(schoolWeek, dayOfWeek, building);
+
+		SimpleModule sm = new SimpleModule();
+		//注册序列化，反序列化类。因为Jackson在序列化Map时，会把Map的Key对应的对象默认解析成字符串；但是这个字符串格式不是Json的格式
+		// 通过添加自定义Map的键的序列化解析类和反序列化解析类，可以实现对Room对象Json序列化／反序列化
+		sm.addKeySerializer(Room.class,new KeySerializer());
+		sm.addKeyDeserializer(Room.class,new KeyDeSerializer());
+		//注册到ObjectMapper中。
+		ObjectMapper objectMapper=new ObjectMapper().registerModule(sm).registerModule(new GuavaModule());
+		//具体时间设为redis的key
+		String key=Integer.toString(schoolWeek)+Integer.toString(dayOfWeek);
+		//教学楼的名字作为设为redis存储的map的hashKey
+		String hashKey=building.name();
+
+		//如果缓存中不存在查询日期的结果，就进行缓存,对于查询频繁的数据，更新他的过期时间
+		if(!redisTemplate.opsForHash().hasKey(key,hashKey)){
+			redisTemplate.opsForHash().put(key, hashKey, objectMapper.writeValueAsString(getRoomTimeTableMapByTime(schoolWeek, dayOfWeek, building)));
+			redisTemplate.expire(key, 30,TimeUnit.MINUTES);
+		}
+		else {
+			redisTemplate.expire(key, 30,TimeUnit.MINUTES);
+		}
+
+		HashMultimap<Room, CourseTimeTable> tableMap=objectMapper.readValue((String)redisTemplate.opsForHash().get(key,hashKey),new TypeReference<HashMultimap<Room, CourseTimeTable>>(){});
 
 		//想查询所有楼层时floor设为0
 		for (Room room : floor==0?roomService.getRoomByBuilding(building):roomService.getRoomByBuildingAndFloor(building, floor)) {
 			RoomTimeTable roomTimeTable = new RoomTimeTable();
-			LinkedList<CourseTimeTable> courseTimeTables = new LinkedList<>(tableMap.get(room));
-
+			LinkedList<CourseTimeTable> courseTimeTables = new LinkedList<>();
+			courseTimeTables.addAll(tableMap.get(room));
 			//将教室对应的上课时间按顺序排序
 			courseTimeTables.sort(Comparator.comparing(CourseTimeTable::getOrder));
-
 			//在对节次有要求的查询情况下，对在该节次时有课的教室和课程进行筛选并进行移除
 			boolean roomInOrder=false;
 			if(order!=0){
@@ -209,6 +244,11 @@ public class EmptyRoomService {
 		return (distinct == 0) || (distinct == SchoolTimeUtil.getWeekDistinct());
 	}
 
+	/**
+	 * 获取组装后的空教室查询的结果列表
+	 * @param roomTimeTableList
+	 * @return
+	 */
 	public List<EmptyRoom> getEmptyRoomReply(List<RoomTimeTable> roomTimeTableList){
 		List<EmptyRoom> replayList=new ArrayList<>();
 		for (RoomTimeTable table : roomTimeTableList) {
@@ -217,9 +257,14 @@ public class EmptyRoomService {
 		return replayList;
 	}
 
+	/**
+	 * 对空教室的结果进行组装
+	 * @param roomTimeTable
+	 * @return
+	 */
 	private EmptyRoom tableToEmptyRoomPojo(RoomTimeTable roomTimeTable) {
 		EmptyRoom emptyRoom = new EmptyRoom();
-		LinkedList orderList = new LinkedList();
+		LinkedList<Integer> orderList = new LinkedList<>();
 
 		List<CourseTimeTable> courseTimeTable = roomTimeTable.getCourseTimeTable();
 
@@ -233,3 +278,23 @@ public class EmptyRoomService {
 		return emptyRoom;
 	}
 }
+
+//Key的序列化类
+class KeySerializer extends JsonSerializer<Room> {
+	private final  ObjectMapper objectMapper = new ObjectMapper();
+	@Override
+	public void serialize(Room historicTaskInstance, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
+		StringWriter writer = new StringWriter();
+		objectMapper.writeValue(writer, historicTaskInstance);
+		jsonGenerator.writeFieldName(writer.toString());
+	}
+}
+//Key的反序列化类
+class KeyDeSerializer extends KeyDeserializer {
+	private final  ObjectMapper objectMapper = new ObjectMapper();
+	@Override
+	public Room deserializeKey(String key, DeserializationContext deserializationContext) throws IOException {
+		return objectMapper.readValue(key, Room.class);
+	}
+}
+
