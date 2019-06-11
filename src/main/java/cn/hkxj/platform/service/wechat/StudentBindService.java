@@ -127,8 +127,6 @@ public class StudentBindService {
     }
 
     private Student getStudentBySpider(String account, String password) throws ReadTimeoutException {
-		log.info("urpSpider start");
-
         return urpSpiderService.getInformation(Integer.parseInt(account), password);
     }
 
