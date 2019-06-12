@@ -2,6 +2,7 @@ package cn.hkxj.platform.service;
 
 import cn.hkxj.platform.pojo.EmptyRoom;
 import cn.hkxj.platform.pojo.constant.Building;
+import cn.hkxj.platform.pojo.constant.RedisKeys;
 import cn.hkxj.platform.pojo.timetable.CourseTimeTable;
 import cn.hkxj.platform.pojo.Room;
 import cn.hkxj.platform.pojo.timetable.RoomTimeTable;
@@ -42,7 +43,17 @@ public class EmptyRoomService {
     private static HashMultimap<Room, CourseTimeTable> scienceRoomTimeTable;
     private static HashMultimap<Room, CourseTimeTable> mainRoomTimeTable;
     private static int dayOfWeek;
+    private static ObjectMapper objectMapper;
 
+    static {
+        SimpleModule sm = new SimpleModule();
+        //注册序列化，反序列化类。因为Jackson在序列化Map时，会把Map的Key对应的对象默认解析成字符串；但是这个字符串格式不是Json的格式
+        // 通过添加自定义Map的键的序列化解析类和反序列化解析类，可以实现对Room对象Json序列化／反序列化
+        sm.addKeySerializer(Room.class, new KeySerializer());
+        sm.addKeyDeserializer(Room.class, new KeyDeSerializer());
+        //注册到ObjectMapper中。
+        objectMapper = new ObjectMapper().registerModule(sm).registerModule(new GuavaModule());
+    }
 
     /**
      * 该方法为获取当天具体教学楼所有教室的课程情况
@@ -104,29 +115,12 @@ public class EmptyRoomService {
     @SuppressWarnings(value = {"unchecked"})
     public List<RoomTimeTable> getRoomTimeTableByTime(int schoolWeek, int dayOfWeek, int order, Building building, int floor) throws java.io.IOException {
         ArrayList<RoomTimeTable> roomTimeTableList = new ArrayList<>();
-
-        SimpleModule sm = new SimpleModule();
-        //注册序列化，反序列化类。因为Jackson在序列化Map时，会把Map的Key对应的对象默认解析成字符串；但是这个字符串格式不是Json的格式
-        // 通过添加自定义Map的键的序列化解析类和反序列化解析类，可以实现对Room对象Json序列化／反序列化
-        sm.addKeySerializer(Room.class, new KeySerializer());
-        sm.addKeyDeserializer(Room.class, new KeyDeSerializer());
-        //注册到ObjectMapper中。
-        ObjectMapper objectMapper = new ObjectMapper().registerModule(sm).registerModule(new GuavaModule());
-        //具体时间设为redis的key
-        String key = Integer.toString(schoolWeek) + Integer.toString(dayOfWeek);
+        //业务类型加具体时间设为redis的key
+        String key =RedisKeys.EMPTY_ROOM_KEY .getName()+ Integer.toString(schoolWeek) + Integer.toString(dayOfWeek);
         //教学楼的名字作为设为redis存储的map的hashKey
         String hashKey = building.name();
 
-        //如果缓存中不存在查询日期的结果，就进行缓存,对于查询频繁的数据，更新他的过期时间
-        if (!redisTemplate.opsForHash().hasKey(key, hashKey)) {
-            redisTemplate.opsForHash().put(key, hashKey, objectMapper.writeValueAsString(getRoomTimeTableMapByTime(schoolWeek, dayOfWeek, building)));
-            redisTemplate.expire(key, 30, TimeUnit.MINUTES);
-        } else {
-            redisTemplate.expire(key, 30, TimeUnit.MINUTES);
-        }
-
-        HashMultimap<Room, CourseTimeTable> tableMap = objectMapper.readValue((String) redisTemplate.opsForHash().get(key, hashKey), new TypeReference<HashMultimap<Room, CourseTimeTable>>() {
-        });
+        HashMultimap<Room, CourseTimeTable> tableMap = getRoomTimeTableMapByRedis(key, hashKey, schoolWeek, dayOfWeek, building);
 
         //想查询所有楼层时floor设为0
         for (Room room : floor == 0 ? roomService.getRoomByBuilding(building) : roomService.getRoomByBuildingAndFloor(building, floor)) {
@@ -157,6 +151,27 @@ public class EmptyRoomService {
     }
 
     /**
+     *从缓存中拿教室信息，如果缓存中不存在查询日期的结果，就进行缓存，对于查询频繁的数据，更新他的过期时间
+     * @param key 业务类型加具体时间设为redis的key
+     * @param hashKey 教学楼的名字作为设为redis存储的map的hashKey
+     * @param schoolWeek 教学周
+     * @param dayOfWeek 星期
+     * @param building 教学楼
+     * @return
+     * @throws IOException 序列化失败
+     */
+    public HashMultimap<Room, CourseTimeTable> getRoomTimeTableMapByRedis(String key,String hashKey,int schoolWeek, int dayOfWeek, Building building) throws IOException{
+        //如果缓存中不存在查询日期的结果，就进行缓存，对于查询频繁的数据，更新他的过期时间
+        if (!redisTemplate.opsForHash().hasKey(key, hashKey)) {
+            redisTemplate.opsForHash().put(key, hashKey, objectMapper.writeValueAsString(getRoomTimeTableMapByTime(schoolWeek, dayOfWeek, building)));
+        }
+        redisTemplate.expire(key, 30, TimeUnit.HOURS);
+
+        return objectMapper.readValue((String) redisTemplate.opsForHash().get(key, hashKey), new TypeReference<HashMultimap<Room, CourseTimeTable>>() {
+        });
+    }
+
+    /**
      * 根据具体的时间获取具体教学楼的教室时间表
      * 对指定了具体时间进行查询的情况下，用局部变量进行存储来确保线程安全性
      *
@@ -166,7 +181,6 @@ public class EmptyRoomService {
      * @return
      */
     public HashMultimap<Room, CourseTimeTable> getRoomTimeTableMapByTime(int schoolWeek, int dayOfWeek, Building building) {
-
 
         try {
             HashMultimap<Room, CourseTimeTable> roomTimeTable = HashMultimap.create();
@@ -289,9 +303,9 @@ class KeySerializer extends JsonSerializer<Room> {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    public void serialize(Room historicTaskInstance, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
+    public void serialize(Room keyInstance, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
         StringWriter writer = new StringWriter();
-        objectMapper.writeValue(writer, historicTaskInstance);
+        objectMapper.writeValue(writer, keyInstance);
         jsonGenerator.writeFieldName(writer.toString());
     }
 }
