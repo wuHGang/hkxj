@@ -1,15 +1,12 @@
 package cn.hkxj.platform.pojo.timetable;
 
 import cn.hkxj.platform.pojo.Room;
-import cn.hkxj.platform.pojo.timetable.CourseTimeTable;
 import com.google.common.base.MoreObjects;
-import com.google.common.collect.Sets;
+import com.google.common.collect.Lists;
 import lombok.NonNull;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 /**
  * @author junrong.chen
@@ -21,7 +18,7 @@ public class RoomTimeTable {
 
 	private List<CourseTimeTable> courseTimeTable;
 
-	private Set<Integer> emptyOrder;
+    private List<Integer> emptyOrder = Lists.newArrayList(1, 3, 5, 7, 9);
 
 	public Room getRoom() {
 		return room;
@@ -43,16 +40,14 @@ public class RoomTimeTable {
 	 * 获取该教室当天没课的节次的集合
 	 * @return
 	 */
-	public Set<Integer> getEmptyOrder(){
-		if (!Objects.isNull(emptyOrder)){
-			return emptyOrder;
+    public List<Integer> getEmptyOrder() {
+        if (Objects.isNull(emptyOrder)) {
+            return Lists.newArrayListWithExpectedSize(0);
 		}
-		HashSet<Integer> orderSet = Sets.newHashSet(1,3,5,7,9);
 		for (CourseTimeTable timeTable : courseTimeTable) {
-			orderSet.remove(timeTable.getOrder());
-		}
-		emptyOrder = orderSet;
-		return orderSet;
+            emptyOrder.remove(timeTable.getOrder());
+        }
+        return emptyOrder;
 	}
 
 	public boolean isEmptyByOrder(int order){

@@ -1,27 +1,34 @@
 package cn.hkxj.platform.service;
 
 import cn.hkxj.platform.pojo.EmptyRoom;
+import cn.hkxj.platform.pojo.Room;
 import cn.hkxj.platform.pojo.constant.Building;
 import cn.hkxj.platform.pojo.constant.RedisKeys;
 import cn.hkxj.platform.pojo.timetable.CourseTimeTable;
-import cn.hkxj.platform.pojo.Room;
 import cn.hkxj.platform.pojo.timetable.RoomTimeTable;
 import cn.hkxj.platform.utils.SchoolTimeUtil;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.KeyDeserializer;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.guava.GuavaModule;
 import com.google.common.collect.HashMultimap;
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -113,7 +120,7 @@ public class EmptyRoomService {
      * @return
      */
     @SuppressWarnings(value = {"unchecked"})
-    public List<RoomTimeTable> getRoomTimeTableByTime(int schoolWeek, int dayOfWeek, int order, Building building, int floor) throws java.io.IOException {
+    public List<RoomTimeTable> getRoomTimeTableByTime(int schoolWeek, int dayOfWeek, int order, Building building, int floor) throws IOException {
         ArrayList<RoomTimeTable> roomTimeTableList = new ArrayList<>();
         //业务类型加具体时间设为redis的key
         String key =RedisKeys.EMPTY_ROOM_KEY .getName()+ Integer.toString(schoolWeek) + Integer.toString(dayOfWeek);
@@ -125,8 +132,7 @@ public class EmptyRoomService {
         //想查询所有楼层时floor设为0
         for (Room room : floor == 0 ? roomService.getRoomByBuilding(building) : roomService.getRoomByBuildingAndFloor(building, floor)) {
             RoomTimeTable roomTimeTable = new RoomTimeTable();
-            LinkedList<CourseTimeTable> courseTimeTables = new LinkedList<>();
-            courseTimeTables.addAll(tableMap.get(room));
+            LinkedList<CourseTimeTable> courseTimeTables = new LinkedList<>(tableMap.get(room));
             //将教室对应的上课时间按顺序排序
             courseTimeTables.sort(Comparator.comparing(CourseTimeTable::getOrder));
             //在对节次有要求的查询情况下，对在该节次时有课的教室和课程进行筛选并进行移除
