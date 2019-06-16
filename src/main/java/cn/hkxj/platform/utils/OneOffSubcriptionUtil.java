@@ -2,7 +2,7 @@ package cn.hkxj.platform.utils;
 
 import cn.hkxj.platform.pojo.wechat.OneOffSubscription;
 import lombok.extern.slf4j.Slf4j;
-import me.chanjar.weixin.common.exception.WxErrorException;
+import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.mp.api.WxMpService;
 import okhttp3.*;
 import org.springframework.beans.factory.annotation.Value;
@@ -87,7 +87,7 @@ public class OneOffSubcriptionUtil {
      * @param wxMpService wxMpService
      * @throws WxErrorException 微信错误异常
      */
-    private static void replyOneOffSubscribeRequest(OneOffSubscription oneOffSubscription, WxMpService wxMpService) throws WxErrorException{
+    private static void replyOneOffSubscribeRequest(OneOffSubscription oneOffSubscription, WxMpService wxMpService) throws WxErrorException {
         //将回复信息转换成json
         String json = JsonUtils.wxToJson(oneOffSubscription);
         //设置mediaType

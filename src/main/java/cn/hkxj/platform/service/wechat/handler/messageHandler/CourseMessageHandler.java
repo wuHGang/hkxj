@@ -3,12 +3,8 @@ package cn.hkxj.platform.service.wechat.handler.messageHandler;
 import cn.hkxj.platform.builder.TemplateBuilder;
 import cn.hkxj.platform.builder.TextBuilder;
 import cn.hkxj.platform.config.wechat.WechatMpPlusProperties;
-import cn.hkxj.platform.mapper.OpenidMapper;
-import cn.hkxj.platform.mapper.OpenidPlusMapper;
-import cn.hkxj.platform.pojo.Course;
 import cn.hkxj.platform.pojo.ScheduleTask;
 import cn.hkxj.platform.pojo.constant.SubscribeScene;
-import cn.hkxj.platform.pojo.example.OpenidExample;
 import cn.hkxj.platform.pojo.timetable.CourseTimeTable;
 import cn.hkxj.platform.pojo.wechat.Openid;
 import cn.hkxj.platform.service.CourseService;
@@ -17,11 +13,10 @@ import cn.hkxj.platform.service.ScheduleTaskService;
 import cn.hkxj.platform.utils.OneOffSubcriptionUtil;
 import cn.hkxj.platform.utils.SchoolTimeUtil;
 import lombok.extern.slf4j.Slf4j;
-import me.chanjar.weixin.common.exception.WxErrorException;
+import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.common.session.WxSessionManager;
 import me.chanjar.weixin.mp.api.WxMpMessageHandler;
 import me.chanjar.weixin.mp.api.WxMpService;
-import me.chanjar.weixin.mp.bean.kefu.WxMpKefuMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
 import me.chanjar.weixin.mp.bean.template.WxMpTemplateData;
@@ -77,7 +72,8 @@ public class CourseMessageHandler implements WxMpMessageHandler {
     //plus的处理逻辑
     private void plusProcessing(WxMpXmlMessage wxMpXmlMessage, WxMpService wxMpService){
         Openid openid = openIdService.getOpenid(wxMpXmlMessage.getFromUser(), wxMpService.getWxMpConfigStorage().getAppId()).get(0);
-        List<WxMpTemplateData> templateData = assemblyTemplateContent(openid.getAccount());
+        List<CourseTimeTable> courseTimeTables = courseService.getCoursesCurrentDay(openid.getAccount());
+        List<WxMpTemplateData> templateData = templateBuilder.assemblyTemplateContentForCourse(courseService.toText(courseTimeTables));
         WxMpTemplateMessage templateMessage = templateBuilder.buildCourseMessage(wxMpXmlMessage, templateData, TEMPLATE_REDIRECT_URL);
         try {
             wxMpService.getTemplateMsgService().sendTemplateMsg(templateMessage);
@@ -85,31 +81,6 @@ public class CourseMessageHandler implements WxMpMessageHandler {
             log.error("course keyword reply occurred error message:{}", e.getMessage());
         }
 
-    }
-
-    //为模板消息的发送组装信息
-    private List<WxMpTemplateData> assemblyTemplateContent(int account) {
-        List<CourseTimeTable> courseTimeTableList = courseService.getCoursesCurrentDay(account);
-        List<WxMpTemplateData> templateDatas = new ArrayList<>();
-        WxMpTemplateData first = new WxMpTemplateData();
-        first.setName("first");
-        first.setValue("当日课表\n");
-        WxMpTemplateData course = new WxMpTemplateData();
-        course.setName("keyword1");
-        course.setValue("\n" + courseService.toText(courseTimeTableList));
-        WxMpTemplateData date = new WxMpTemplateData();
-        date.setName("keyword2");
-        date.setValue("\n第" + SchoolTimeUtil.getSchoolWeek() + "周   " + SchoolTimeUtil.getDayOfWeekChinese());
-        WxMpTemplateData remark = new WxMpTemplateData();
-        remark.setName("remark");
-        remark.setValue("查询仅供参考，以学校下发的课表为准，如有疑问微信添加吴彦祖【hkdhd666】");
-
-        templateDatas.add(first);
-        templateDatas.add(course);
-        templateDatas.add(date);
-        templateDatas.add(remark);
-
-        return templateDatas;
     }
 
 }

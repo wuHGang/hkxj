@@ -1,22 +1,15 @@
 package cn.hkxj.platform.service.wechat.handler.messageHandler;
 
 import cn.hkxj.platform.builder.TextBuilder;
-import cn.hkxj.platform.mapper.OpenidMapper;
-import cn.hkxj.platform.pojo.GradeAndCourse;
-import cn.hkxj.platform.pojo.Student;
 import lombok.extern.slf4j.Slf4j;
-import me.chanjar.weixin.common.exception.WxErrorException;
 import me.chanjar.weixin.common.session.WxSessionManager;
 import me.chanjar.weixin.mp.api.WxMpMessageHandler;
 import me.chanjar.weixin.mp.api.WxMpService;
-import me.chanjar.weixin.mp.bean.kefu.WxMpKefuMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
-import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -29,7 +22,7 @@ public class OpenidMessageHandler implements WxMpMessageHandler {
     public WxMpXmlOutMessage handle(WxMpXmlMessage wxMpXmlMessage,
                                     Map<String, Object> map,
                                     WxMpService wxMpService,
-                                    WxSessionManager wxSessionManager) throws WxErrorException {
+                                    WxSessionManager wxSessionManager) {
         try {
             String gradesMsg=("你的openid为:\n"+wxMpXmlMessage.getFromUser());
             return textBuilder.build(gradesMsg, wxMpXmlMessage, wxMpService);

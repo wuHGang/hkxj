@@ -30,6 +30,8 @@ public class DateUtils {
 
     public final static String YYYY_MM_PATTERN = "yyyyMM";
 
+    public final static String HH_MM_SS_PATTERN = "hh:mm:ss";
+
     public static Integer getCurrentYear(){
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date());

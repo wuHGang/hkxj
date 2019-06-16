@@ -3,8 +3,6 @@
     <!-- 都说spring boot使用日志需要引入这个，但是我引入了之后总是打印两份日志，所以我去除了，并不影响使用 -->
     <!--<include resource="org/springframework/boot/logging/logback/base.xml"/>-->
     <!-- 控制台设置 -->
-    <springProperty name="LOG_PATH" source="logging.path" defaultValue="C:/Users/Yuki/Desktop/users"/>
-    <!--<springProperty scope="context" name="LOG_PATH" source="logging.path"/>-->
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{traceId}][%X{openid}] %-5level %logger{50} %line - %m%n</pattern>

@@ -6,13 +6,12 @@ import cn.hkxj.platform.pojo.constant.SubscribeScene;
 import cn.hkxj.platform.service.ScheduleTaskService;
 import com.google.common.base.Splitter;
 import lombok.extern.slf4j.Slf4j;
-import me.chanjar.weixin.common.exception.WxErrorException;
+import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.common.session.WxSessionManager;
 import me.chanjar.weixin.mp.api.WxMpMessageHandler;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
-import org.apache.poi.ss.formula.functions.LinearRegressionFunction;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -38,7 +37,7 @@ public class SubscribeMessageHandler implements WxMpMessageHandler{
     private TextBuilder textBuilder;
 
     @Override
-    public WxMpXmlOutMessage handle(WxMpXmlMessage wxMessage, Map<String, Object> context, WxMpService wxMpService, WxSessionManager sessionManager) throws WxErrorException {
+    public WxMpXmlOutMessage handle(WxMpXmlMessage wxMessage, Map<String, Object> context, WxMpService wxMpService, WxSessionManager sessionManager) {
         String scene = parseContent(wxMessage.getContent());
         if(!Objects.isNull(scene)){
             String openid = wxMessage.getFromUser();

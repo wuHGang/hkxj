@@ -2,11 +2,7 @@ package cn.hkxj.platform.service;
 
 import cn.hkxj.platform.mapper.CourseMapper;
 import cn.hkxj.platform.mapper.GradeMapper;
-import cn.hkxj.platform.pojo.AllGradeAndCourse;
-import cn.hkxj.platform.pojo.Course;
-import cn.hkxj.platform.pojo.Grade;
-import cn.hkxj.platform.pojo.GradeAndCourse;
-import cn.hkxj.platform.pojo.Student;
+import cn.hkxj.platform.pojo.*;
 import cn.hkxj.platform.pojo.constant.Academy;
 import cn.hkxj.platform.spider.UrpCourse;
 import cn.hkxj.platform.spider.UrpCourseSpider;
@@ -16,9 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorCompletionService;
@@ -46,7 +40,7 @@ public class GradeSearchService {
     public List<GradeAndCourse> getEverGradeFromSpider(Student student) {
         CompletionService<List<GradeAndCourse>> spiderExecutorService = new ExecutorCompletionService<>(executorService);
 
-        spiderExecutorService.submit(() -> appSpiderService.getGradeAndCourseByAccount(student.getAccount()).getCurrentTermGrade());
+        spiderExecutorService.submit(() -> appSpiderService.getGradeAndCourseByAccount(student.getAccount()).getEverTermGrade());
         spiderExecutorService.submit(() -> urpSpiderService.getEverGrade(student));
         List<GradeAndCourse> gradeAndCourses = mergeResult(spiderExecutorService);
         saveDBexecutorService.submit(() -> saveGradeAndCourse(student, gradeAndCourses));
@@ -60,10 +54,18 @@ public class GradeSearchService {
         spiderExecutorService.submit(() -> appSpiderService.getGradeAndCourseByAccount(student.getAccount()).getCurrentTermGrade());
         spiderExecutorService.submit(() -> urpSpiderService.getCurrentGrade(student));
         List<GradeAndCourse> gradeAndCourses = mergeResult(spiderExecutorService);
-        saveDBexecutorService.submit(() -> saveGradeAndCourse(student, gradeAndCourses));
+        filterMergeResultForCurrentTerm(gradeAndCourses);
 
         return gradeAndCourses;
     }
+
+    public List<GradeAndCourse> getCurrentGradeFromSpiderAndSaveDB(Student student) {
+        //爬虫爬取的结果
+        List<GradeAndCourse> crawlingResult = getCurrentGradeFromSpider(student);
+        saveDBexecutorService.submit(() -> saveGradeAndCourse(student, crawlingResult));
+        return crawlingResult;
+    }
+
 
 
     /**
@@ -171,5 +173,12 @@ public class GradeSearchService {
         }
         buffer.append("\n 查询仅供参考，以教务网为准，如有疑问微信联系：吴彦祖【hkdhd666】\n（有同学反映，大学英语提高班也是选修课）");
         return buffer.toString();
+    }
+
+    private void filterMergeResultForCurrentTerm(List<GradeAndCourse> mergeResult){
+        //这里硬编码了一个Term对象，数据是当前学期的信息
+        final Term currentTerm = new Term(2018, 2019, 2);
+        //因为app爬虫的数据可能有问题，处理合并过后错误的数据
+        mergeResult.removeIf(gradeAndCourse -> !Objects.deepEquals(currentTerm, gradeAndCourse.getTerm()));
     }
 }
