@@ -1,23 +1,14 @@
 package cn.hkxj.platform.controller;
 
-import cn.hkxj.platform.pojo.EmptyRoom;
-import cn.hkxj.platform.pojo.Room;
 import cn.hkxj.platform.pojo.WebResponse;
 import cn.hkxj.platform.pojo.constant.Building;
-import cn.hkxj.platform.pojo.constant.LessonOrder;
-import cn.hkxj.platform.pojo.timetable.CourseTimeTable;
-import cn.hkxj.platform.pojo.timetable.RoomTimeTable;
+import cn.hkxj.platform.pojo.constant.ErrorCode;
 import cn.hkxj.platform.service.EmptyRoomService;
-import cn.hkxj.platform.utils.SchoolTimeUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.joda.time.LocalTime;
-import org.springframework.context.annotation.Scope;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.io.IOException;
-import java.util.*;
 
 
 /**
@@ -26,7 +17,6 @@ import java.util.*;
  * 提供空教室查询功能API
  */
 @RestController
-//@RequestMapping("/emptyRoom")
 @Slf4j
 public class EmtpyRoomController {
 
@@ -43,9 +33,9 @@ public class EmtpyRoomController {
             try {
                 return WebResponse.success(emptyRoomService.getEmptyRoomReply(emptyRoomService.getRoomTimeTableByTime(schoolWeek,dayOfWeek,order,Building.getBuildingByName(buildingName),floor)));
             }catch (IOException e){
-                log.info("fail to Serialization emptyRoom {},{},{},{},{}", schoolWeek, dayOfWeek,order,buildingName,floor);
+                log.error("fail to get emptyRoom data {},{},{},{},{}", schoolWeek, dayOfWeek,order,buildingName,floor);
             }
-            return WebResponse.fail(500,"fail to get emptyRoom Data");
+            return WebResponse.fail(ErrorCode.NO_DATA.getErrorCode(),"fail to get emptyRoom Data");
         }
 
 
