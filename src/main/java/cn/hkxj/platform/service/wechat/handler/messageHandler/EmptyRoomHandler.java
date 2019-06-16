@@ -67,11 +67,7 @@ public class EmptyRoomHandler implements WxMpMessageHandler {
 	 */
 	String parseContent(String content){
 		String[] strings = StreamSupport.stream(SPLITTER.split(content).spliterator(), false).toArray(String[]::new);
-
-		if (content.equals("空教室")){
-			return EMPTY_ROOM_URL;
-		}
-
+		
 		if ((strings.length == CONTENT_SIZE_2)){
 			return sizeTwoContent(strings);
 		}
