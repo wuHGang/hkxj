@@ -132,7 +132,7 @@ public class TemplateBuilder {
      * @param gradeAndCourse 课程和成绩信息
      * @return List<WxMpTemplateData>
      */
-    public List<WxMpTemplateData> assemblyTemplateContentForGradeUpadte(GradeAndCourse gradeAndCourse) {
+    public List<WxMpTemplateData> assemblyTemplateContentForGradeUpdate(GradeAndCourse gradeAndCourse) {
         List<WxMpTemplateData> templateDatas = new ArrayList<>();
         //first关键字
         WxMpTemplateData first = new WxMpTemplateData();

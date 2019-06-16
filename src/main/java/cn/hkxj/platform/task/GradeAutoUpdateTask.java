@@ -87,7 +87,7 @@ public class GradeAutoUpdateTask {
             return;
         }
         //如果学生对应的密码不正确
-        if(!isUrpPassowrdCorrect(student)){
+        if(!isUrpPasswordCorrect(student)){
             processUrpPasswordNotCorrect(task, wxMpService, appid);
             return;
         }
@@ -157,7 +157,7 @@ public class GradeAutoUpdateTask {
     private void sendTemplateMessage(ScheduleTask task, WxMpService wxMpService, List<GradeAndCourse> pendingProcess) {
         for (GradeAndCourse gradeAndCourse : pendingProcess) {
             //因为一次模板消息只能处理一个成绩，所以循环处理
-            List<WxMpTemplateData> data = templateBuilder.assemblyTemplateContentForGradeUpadte(gradeAndCourse);
+            List<WxMpTemplateData> data = templateBuilder.assemblyTemplateContentForGradeUpdate(gradeAndCourse);
             WxMpTemplateMessage.MiniProgram miniProgram = new WxMpTemplateMessage.MiniProgram();
             miniProgram.setAppid(MiniProgram.APPID.getValue());
             miniProgram.setPagePath(MiniProgram.GRADE_PATH.getValue());
@@ -206,7 +206,7 @@ public class GradeAutoUpdateTask {
      * @param student 学生实体
      * @return isCorrect的值
      */
-    private boolean isUrpPassowrdCorrect(Student student){
+    private boolean isUrpPasswordCorrect(Student student){
         return student.getIsCorrect();
     }
 
