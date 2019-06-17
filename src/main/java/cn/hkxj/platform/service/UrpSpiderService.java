@@ -74,10 +74,10 @@ public class UrpSpiderService {
         UrpResult<CurrentGrade> currentGrade;
         try {
             currentGrade = urpSpider.getCurrentGrade();
-            log.error("account {} urp password error", student.getAccount());
             if (currentGrade.getStatus() == 400) {
                 student.setIsCorrect(false);
                 studentMapper.updateByPrimaryKey(student);
+                log.error("account {} urp password error", student.getAccount());
             }
 
         } catch (Exception e) {
