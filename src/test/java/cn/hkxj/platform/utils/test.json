@@ -1,0 +1,23 @@
+{
+  "touser": "lllllllllllllllllllllllllll",
+  "template_id": "XmX4UWJdtRDbDXhVToLAXYKJgHES2hNq9PT2N-XdzNs",
+  "url": "http://alshdlahsidhasdhas",
+  "miniprogram": {
+    "appid": "wx05f7264e83fa40e9",
+    "path": "pages/core/cj/cj"
+  },
+  "data": {
+    "first": {
+      "value": "当日课表\n"
+    },
+    "keyword1": {
+      "value": "\nasdasdasd"
+    },
+    "keyword2": {
+      "value": "\n第16周   星期一"
+    },
+    "remark": {
+      "value": "查询仅供参考，以学校下发的课表为准，如有疑问微信添加吴彦祖【hkdhd666】"
+    }
+  }
+}

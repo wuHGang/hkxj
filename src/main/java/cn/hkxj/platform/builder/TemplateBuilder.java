@@ -1,11 +1,9 @@
 package cn.hkxj.platform.builder;
 
 import cn.hkxj.platform.pojo.GradeAndCourse;
-import cn.hkxj.platform.pojo.timetable.CourseTimeTable;
 import cn.hkxj.platform.pojo.wechat.CourseGroupMsg;
 import cn.hkxj.platform.utils.DateUtils;
 import cn.hkxj.platform.utils.SchoolTimeUtil;
-import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.template.WxMpTemplateData;
 import me.chanjar.weixin.mp.bean.template.WxMpTemplateMessage;
 import org.springframework.stereotype.Service;
@@ -21,74 +19,56 @@ import java.util.List;
 @Service
 public class TemplateBuilder {
 
-	private static final String PLUS_COURSE_TEMPLATE_ID = "XmX4UWJdtRDbDXhVToLAXYKJgHES2hNq9PT2N-XdzNs";
-	private static final String PLUS_GRADE_UPDATE_TEMPLDATE_ID = "U10CT2cy2feEGgwlVygMvT7jYTDybG9HREKacuTViyI";
-	private static final String PLUS_TIPS_TEMPLATE_ID = "5Wh5PCHrSg0DAYy8iASRFXVT-MEUkRl-FYZ3-0CzNa8";
-
-	private static final String TEST_COURSE_TEMPLATE_ID = "PVBBEzdHFhJAMsB3-P1y8OW20mY_oD_z6o86s2QQRJk";
-	private static final String TEST_GRADE_TEMPLATE_ID = "5kdSuhc4-7VqjZVqrIwBlPMPL6cigfjAA9eoGZhE2cA";
-	private static final String TEST_TIPS_TEMPLATE_ID = "3fQ5xvLTmD2fnPS_CZnBquQjvaXA9AXdiLwjbexKeoU";
-
-	public WxMpTemplateMessage build(WxMpXmlMessage wxMessage, List<WxMpTemplateData> list, String url) {
-		return WxMpTemplateMessage.builder()
-				.toUser(wxMessage.getFromUser())
-				.templateId("zJXOQMw1pnkk7oZpcUoWYVML7NfzwQRe-0BDS7wZDRU")
-				.data(list)
-				.url(url)
-				.build();
-	}
-
-	public WxMpTemplateMessage buildCourseMessage(String openid, List<WxMpTemplateData> list, String url){
-		return WxMpTemplateMessage.builder()
-				.toUser(openid)
-				.templateId(PLUS_COURSE_TEMPLATE_ID)
-				.data(list)
-				.url(url)
-				.build();
-	}
-
-	public WxMpTemplateMessage buildCourseMessage(String openid, List<WxMpTemplateData> list, String url, WxMpTemplateMessage.MiniProgram miniProgram){
-		return WxMpTemplateMessage.builder()
-				.toUser(openid)
-				.templateId(PLUS_COURSE_TEMPLATE_ID)
-				.data(list)
-				.miniProgram(miniProgram)
-				.url(url)
-				.build();
-	}
-
-
-	public WxMpTemplateMessage buildCourseMessage(WxMpXmlMessage wxMpXmlMessage, List<WxMpTemplateData> list, String url){
-		return WxMpTemplateMessage.builder()
-				.toUser(wxMpXmlMessage.getFromUser())
-				.templateId(PLUS_COURSE_TEMPLATE_ID)
-				.data(list)
-				.url(url)
-				.build();
-	}
-
-	public WxMpTemplateMessage buildGradeUpdateMessage(String openid, List<WxMpTemplateData> list, String url){
-        return WxMpTemplateMessage.builder()
-                .toUser(openid)
-                .templateId(PLUS_GRADE_UPDATE_TEMPLDATE_ID)
-                .data(list)
-                .url(url)
-                .build();
+    /**
+     * 生成不带小程序跳转的模板消息
+     * @param openid 用户的openid
+     * @param list 模板消息的内容
+     * @param templateId 模板id
+     * @param url 跳转地址
+     * @return 模板消息
+     */
+    public WxMpTemplateMessage buildWithNoMiniProgram(String openid, List<WxMpTemplateData> list, String templateId, String url) {
+        return build(openid, list, templateId, null, url);
     }
 
-	public WxMpTemplateMessage buildGradeUpdateMessage(String openid, List<WxMpTemplateData> list, WxMpTemplateMessage.MiniProgram miniProgram){
-		return WxMpTemplateMessage.builder()
-				.toUser(openid)
-				.templateId(PLUS_GRADE_UPDATE_TEMPLDATE_ID)
-				.data(list)
-				.miniProgram(miniProgram)
-				.build();
-	}
+    /**
+     * 生成不带url跳转的模板消息
+     * @param openid 用户的openid
+     * @param list 模板消息的内容
+     * @param templateId 模板id
+     * @param miniProgram 小程序跳转
+     * @return 模板消息
+     */
+    public WxMpTemplateMessage buildWithNoUrl(String openid, List<WxMpTemplateData> list, String templateId, WxMpTemplateMessage.MiniProgram miniProgram) {
+        return build(openid, list, templateId, miniProgram, null);
+    }
 
-	public WxMpTemplateMessage buildTipsMessage(String openid, List<WxMpTemplateData> list, String url){
+    /**
+     * 生成不带小程序跳转和url跳转的模板消息
+     * @param openid 用户的openid
+     * @param list 模板消息的内容
+     * @param templateId 模板id
+     * @return 模板消息
+     */
+    public WxMpTemplateMessage buildWithNoUrlAndMiniProgram(String openid, List<WxMpTemplateData> list, String templateId){
+        return build(openid, list, templateId, null, null);
+    }
+
+    /**
+     *
+     * @param openid 用户的openid
+     * @param list 模板消息的内容
+     * @param templdateId 模板id
+     * @param miniProgram 小程序跳转
+     * @param url 跳转地址
+     * @return 模板消息
+     */
+	public WxMpTemplateMessage build(String openid, List<WxMpTemplateData> list, String templdateId,
+                                     WxMpTemplateMessage.MiniProgram miniProgram, String url) {
 		return WxMpTemplateMessage.builder()
 				.toUser(openid)
-				.templateId(PLUS_TIPS_TEMPLATE_ID)
+				.templateId(templdateId)
+                .miniProgram(miniProgram)
 				.data(list)
 				.url(url)
 				.build();

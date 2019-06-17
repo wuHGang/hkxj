@@ -3,6 +3,7 @@ package cn.hkxj.platform.service.wechat.handler.messageHandler;
 import cn.hkxj.platform.builder.TemplateBuilder;
 import cn.hkxj.platform.builder.TextBuilder;
 import cn.hkxj.platform.config.wechat.WechatMpPlusProperties;
+import cn.hkxj.platform.config.wechat.WechatTemplateProperties;
 import cn.hkxj.platform.pojo.ScheduleTask;
 import cn.hkxj.platform.pojo.constant.SubscribeScene;
 import cn.hkxj.platform.pojo.timetable.CourseTimeTable;
@@ -49,6 +50,8 @@ public class CourseMessageHandler implements WxMpMessageHandler {
     private WechatMpPlusProperties wechatMpPlusProperties;
     @Resource
     private OpenIdService openIdService;
+    @Resource
+    private WechatTemplateProperties wechatTemplateProperties;
 
     @Override
     public WxMpXmlOutMessage handle(WxMpXmlMessage wxMpXmlMessage, Map<String, Object> map, WxMpService wxMpService, WxSessionManager wxSessionManager) {
@@ -74,7 +77,9 @@ public class CourseMessageHandler implements WxMpMessageHandler {
         Openid openid = openIdService.getOpenid(wxMpXmlMessage.getFromUser(), wxMpService.getWxMpConfigStorage().getAppId()).get(0);
         List<CourseTimeTable> courseTimeTables = courseService.getCoursesCurrentDay(openid.getAccount());
         List<WxMpTemplateData> templateData = templateBuilder.assemblyTemplateContentForCourse(courseService.toText(courseTimeTables));
-        WxMpTemplateMessage templateMessage = templateBuilder.buildCourseMessage(wxMpXmlMessage, templateData, TEMPLATE_REDIRECT_URL);
+        WxMpTemplateMessage templateMessage =
+                templateBuilder.buildWithNoMiniProgram(wxMpXmlMessage.getFromUser(), templateData,
+                        wechatTemplateProperties.getPlusCourseTemplateId(), TEMPLATE_REDIRECT_URL);
         try {
             wxMpService.getTemplateMsgService().sendTemplateMsg(templateMessage);
         } catch (WxErrorException e) {
