@@ -1,10 +1,8 @@
 package cn.hkxj.platform.service.wechat.handler.messageHandler;
 
 import cn.hkxj.platform.builder.TextBuilder;
-import cn.hkxj.platform.mapper.OpenidMapper;
 import cn.hkxj.platform.service.OpenIdService;
 import lombok.extern.slf4j.Slf4j;
-import me.chanjar.weixin.common.exception.WxErrorException;
 import me.chanjar.weixin.common.session.WxSessionManager;
 import me.chanjar.weixin.mp.api.WxMpMessageHandler;
 import me.chanjar.weixin.mp.api.WxMpService;
@@ -23,15 +21,12 @@ public class UnbindMessageHandler implements WxMpMessageHandler {
     private TextBuilder textBuilder;
 
     @Resource
-    private OpenidMapper openidMapper;
-
-    @Resource
     private OpenIdService openIdService;
 
     public WxMpXmlOutMessage handle(WxMpXmlMessage wxMpXmlMessage,
                                     Map<String, Object> map,
                                     WxMpService wxMpService,
-                                    WxSessionManager wxSessionManager) throws WxErrorException {
+                                    WxSessionManager wxSessionManager) {
         try {
             String appid = wxMpService.getWxMpConfigStorage().getAppId();
             openIdService.openIdUnbind(wxMpXmlMessage.getFromUser(), appid);

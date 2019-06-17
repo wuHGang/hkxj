@@ -64,6 +64,7 @@ public class StudentBindService {
 			result = openidMapper.isOpenidExist(openid)!=null&&openidMapper.isOpenidBind(openid)==0;
 		}
         if(result){
+			//可以重新绑定
 			Student student = null;
 			if (isStudentExist(account)) {
 				updateOpenid(openid, account, appid);

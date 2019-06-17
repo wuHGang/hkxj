@@ -1,6 +1,7 @@
 package cn.hkxj.platform.service;
 
 import cn.hkxj.platform.config.wechat.WechatMpPlusProperties;
+import cn.hkxj.platform.config.wechat.WechatMpProProperties;
 import cn.hkxj.platform.mapper.OpenidMapper;
 import cn.hkxj.platform.mapper.OpenidPlusMapper;
 import cn.hkxj.platform.mapper.StudentMapper;
@@ -33,7 +34,7 @@ public class OpenIdService {
 	}
 
 	public boolean openidIsBind(String openid, String appid) {
-		if(Objects.equals(wechatMpPlusProperties.getAppId(), appid)){
+		if(isPlus(appid)){
 			return openidPlusMapper.isOpenidBind(openid)==1;
 		}
 		return openidMapper.isOpenidBind(openid)==1;
@@ -44,7 +45,7 @@ public class OpenIdService {
 		openidExample
 				.createCriteria()
 				.andOpenidEqualTo(openid);
-		if(Objects.equals(wechatMpPlusProperties.getAppId(), appid)){
+		if(isPlus(appid)){
 			return openidPlusMapper.selectByExample(openidExample);
 		}
 		return openidMapper.selectByExample(openidExample);
@@ -60,13 +61,35 @@ public class OpenIdService {
     }
 
     public void openIdUnbind(String openid, String appid){
-		if(Objects.equals(wechatMpPlusProperties.getAppId(), appid)){
+		if(isPlus(appid)){
 			openidPlusMapper.openidUnbind(openid);
 		} else {
 			openidMapper.openidUnbind(openid);
 		}
 	}
 
+	public void openIdUnbindAllPlatform(Openid openid, String appid){
+        OpenidExample openidExample = new OpenidExample();
+        openidExample.createCriteria().andAccountEqualTo(openid.getAccount());
+	    openid.setIsBind(false);
+	    if(isPlus(appid)){
+	        openidPlusMapper.openidUnbind(openid.getOpenid());
+	        Openid proOpenid = openidMapper.selectByExample(openidExample).get(0);
+	        if(Objects.nonNull(proOpenid)){
+	            proOpenid.setIsBind(false);
+	            openidMapper.updateByPrimaryKey(proOpenid);
+            }
+        } else {
+	        openidMapper.openidUnbind(openid.getOpenid());
+            Openid plusOpenid = openidPlusMapper.selectByExample(openidExample).get(0);
+            if(Objects.nonNull(plusOpenid)){
+                plusOpenid.setIsBind(false);
+                openidMapper.updateByPrimaryKey(plusOpenid);
+            }
+        }
+    }
 
-
+    private boolean isPlus(String appid){
+        return Objects.equals(wechatMpPlusProperties.getAppId(), appid);
+    }
 }

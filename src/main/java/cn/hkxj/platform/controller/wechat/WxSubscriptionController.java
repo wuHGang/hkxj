@@ -10,7 +10,7 @@ import cn.hkxj.platform.service.ScheduleTaskService;
 import cn.hkxj.platform.service.wechat.StudentBindService;
 import cn.hkxj.platform.utils.OneOffSubcriptionUtil;
 import lombok.extern.slf4j.Slf4j;
-import me.chanjar.weixin.common.exception.WxErrorException;
+import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.kefu.WxMpKefuMessage;
 import org.springframework.stereotype.Controller;
@@ -78,23 +78,35 @@ public class WxSubscriptionController {
             httpSession.setAttribute("account", student.getAccount().toString());
             log.info("redirect to timetable account：{}", student.getAccount());
             //只有当action等于确认的时候才进入处理
-            if (Objects.equals("confirm", action)) {
-                WxMpService wxMpService = WechatMpConfiguration.getMpServices().get(appid);
-                //没有订阅的话，进行插入
-                if (Objects.equals(wechatMpPlusProperties.getAppId(), appid)) {
-                    //plus的处理过程
-                    wxMpPlusToProcessing(wxMpService, openid, scene, student);
-                } else {
-                    //pro的处理过程
-                    wxMpProToProcessing(wxMpService, openid, scene, student);
-                }
-            }
+            actionEqualToConfirm(student, action, appid, openid, scene);
             return "new";
 
         } else {
             httpSession.setAttribute("openid", openid);
             log.info("redirect to login");
             return "LoginWeb/Login";
+        }
+    }
+
+    /**
+     * 当一次性订阅的action等于confirm的时候的处理函数
+     * @param student 学生实体
+     * @param action 确认动作
+     * @param appid 公众号的appid
+     * @param openid 用户的openid
+     * @param scene 订阅的场景值
+     */
+    private void actionEqualToConfirm(Student student, String action, String appid, String openid, String scene){
+        if (Objects.equals("confirm", action)) {
+            WxMpService wxMpService = WechatMpConfiguration.getMpServices().get(appid);
+            //没有订阅的话，进行插入
+            if (Objects.equals(wechatMpPlusProperties.getAppId(), appid)) {
+                //plus的处理过程
+                wxMpPlusToProcessing(wxMpService, openid, scene, student);
+            } else {
+                //pro的处理过程
+                wxMpProToProcessing(wxMpService, openid, scene, student);
+            }
         }
     }
 

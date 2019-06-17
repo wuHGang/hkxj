@@ -2,16 +2,15 @@ package cn.hkxj.platform.service.wechat.handler.messageHandler;
 
 import cn.hkxj.platform.builder.TemplateBuilder;
 import lombok.extern.slf4j.Slf4j;
-import me.chanjar.weixin.common.exception.WxErrorException;
 import me.chanjar.weixin.common.session.WxSessionManager;
 import me.chanjar.weixin.mp.api.WxMpMessageHandler;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
 import me.chanjar.weixin.mp.bean.template.WxMpTemplateData;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -20,15 +19,15 @@ import java.util.Map;
 @Component
 public class ExampleTemplateHandler implements WxMpMessageHandler {
 
-    @Autowired
+    @Resource
     private TemplateBuilder templateBuilder;
 
     @Override
-    public WxMpXmlOutMessage handle(WxMpXmlMessage wxMpXmlMessage, Map<String, Object> map, WxMpService wxMpService, WxSessionManager wxSessionManager) throws WxErrorException {
+    public WxMpXmlOutMessage handle(WxMpXmlMessage wxMpXmlMessage, Map<String, Object> map, WxMpService wxMpService, WxSessionManager wxSessionManager) {
 
         System.out.println("！！！模板测试！！！");
         try {
-            List<WxMpTemplateData> datas = new ArrayList<WxMpTemplateData>();
+            List<WxMpTemplateData> datas = new ArrayList<>();
 
             WxMpTemplateData first = new WxMpTemplateData();
             first.setName("first");

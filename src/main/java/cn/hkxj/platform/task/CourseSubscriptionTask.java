@@ -4,14 +4,14 @@ import cn.hkxj.platform.builder.TemplateBuilder;
 import cn.hkxj.platform.config.wechat.WechatMpConfiguration;
 import cn.hkxj.platform.config.wechat.WechatMpPlusProperties;
 import cn.hkxj.platform.pojo.ScheduleTask;
+import cn.hkxj.platform.pojo.constant.MiniProgram;
 import cn.hkxj.platform.pojo.wechat.CourseGroupMsg;
 import cn.hkxj.platform.pojo.wechat.OneOffSubscription;
 import cn.hkxj.platform.service.CourseSubscribeService;
 import cn.hkxj.platform.service.ScheduleTaskService;
 import cn.hkxj.platform.utils.OneOffSubcriptionUtil;
-import cn.hkxj.platform.utils.SchoolTimeUtil;
 import lombok.extern.slf4j.Slf4j;
-import me.chanjar.weixin.common.exception.WxErrorException;
+import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.template.WxMpTemplateData;
 import me.chanjar.weixin.mp.bean.template.WxMpTemplateMessage;
@@ -41,9 +41,9 @@ public class CourseSubscriptionTask {
 
     private static final String MSG_TITLE = "今日课表";
 
+//    @Scheduled(cron = "0/60 * * * * ?")
     @Async
     @Scheduled(cron = "0 0 8 ? * MON-FRI")      //这个cron表达式的意思是星期一到星期五的早上8点执行一次
-//    @Scheduled(cron = "0/30 * * * * ?")
     void sendCourseRemindMsg() {
         Map<String, Set<CourseGroupMsg>> courseGroupMsgMap = courseSubscribeService.getCoursesSubscribeForCurrentDay();
         courseGroupMsgMap.forEach((appid, courseGroupMsgSet) -> {
@@ -75,17 +75,21 @@ public class CourseSubscriptionTask {
      * @param wxMpService wxMpService
      */
     private void plusMpProcess(ScheduleTask task, CourseGroupMsg msg, WxMpService wxMpService){
-        List<WxMpTemplateData> templateData = assemblyTemplateContent(msg);
-        String url = "https://platform.hackerda.com/platform/course/timetable";
+        List<WxMpTemplateData> templateData = templateBuilder.assemblyTemplateContentForCourse(msg);
+        WxMpTemplateMessage.MiniProgram miniProgram = new WxMpTemplateMessage.MiniProgram();
+        miniProgram.setAppid(MiniProgram.APPID.getValue());
+        miniProgram.setPagePath(MiniProgram.COURSE_PATH.getValue());
+        String url = "https://platform.hackerda.com/platform/show/timetable";
         //构建一个课程推送的模板消息
-        WxMpTemplateMessage templateMessage = templateBuilder.buildCourseMessage(task.getOpenid(), templateData, url);
+        WxMpTemplateMessage templateMessage = templateBuilder.buildCourseMessage(task.getOpenid(), templateData, url, miniProgram);
         try {
             //发送成功的同时更新发送状态
             wxMpService.getTemplateMsgService().sendTemplateMsg(templateMessage);
             scheduleTaskService.updateSendStatus(task, ScheduleTaskService.SEND_SUCCESS);
             log.info("send Message to appid:{} openid:{} success", wxMpService.getWxMpConfigStorage().getAppId(), task.getOpenid());
         } catch (WxErrorException e) {
-            log.error("send kefu Message to appid:{} openid:{} failed message:{}",
+            scheduleTaskService.updateSendStatus(task, ScheduleTaskService.SEND_FAIL);
+            log.error("send Message to appid:{} openid:{} failed message:{}",
                     wxMpService.getWxMpConfigStorage().getAppId(), task.getOpenid(), e.getMessage());
         }
     }
@@ -129,39 +133,6 @@ public class CourseSubscriptionTask {
     private WxMpService getWxMpService(String appid) {
         return WechatMpConfiguration.getMpServices().get(appid);
     }
-
-    /**
-     * 组装模板消息需要的WxMpTemplateData的列表
-     * @param msg 课程推送信息
-     * @return WxMpTemplateData的列表
-     */
-    private List<WxMpTemplateData> assemblyTemplateContent(CourseGroupMsg msg) {
-        List<WxMpTemplateData> templateDatas = new ArrayList<>();
-        //first关键字
-        WxMpTemplateData first = new WxMpTemplateData();
-        first.setName("first");
-        first.setValue("当日课表\n");
-        //keyword1关键字
-        WxMpTemplateData course = new WxMpTemplateData();
-        course.setName("keyword1");
-        course.setValue("\n" + msg.getCourseContent() + "\n");
-        //keyword2关键字
-        WxMpTemplateData date = new WxMpTemplateData();
-        date.setName("keyword2");
-        date.setValue("第" + SchoolTimeUtil.getSchoolWeek() + "周   " + SchoolTimeUtil.getDayOfWeekChinese());
-        //remark关键字
-        WxMpTemplateData remark = new WxMpTemplateData();
-        remark.setName("remark");
-        remark.setValue("查询仅供参考，以学校下发的课表为准，如有疑问微信添加吴彦祖【hkdhd666】");
-
-        templateDatas.add(first);
-        templateDatas.add(course);
-        templateDatas.add(date);
-        templateDatas.add(remark);
-
-        return templateDatas;
-    }
-
 
     /**
      * 给并行流添加一个监视

@@ -8,7 +8,6 @@ import cn.hkxj.platform.pojo.WebResponse;
 import cn.hkxj.platform.service.GradeSearchService;
 import cn.hkxj.platform.service.wechat.StudentBindService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,7 +23,7 @@ import java.util.List;
 @Slf4j
 @RestController
 public class GradeController {
-    @Autowired
+    @Resource
     private GradeSearchService gradeSearchService;
     @Resource(name = "studentBindService")
     private StudentBindService studentBindService;
@@ -44,7 +43,7 @@ public class GradeController {
             log.error("student grade query error account:{} password:{}", account, password);
             throw e;
         }
-        List<GradeAndCourse> currentGradeFromSpider = gradeSearchService.getCurrentGradeFromSpider(student);
+        List<GradeAndCourse> currentGradeFromSpider = gradeSearchService.getCurrentGradeFromSpiderAndSaveDB(student);
         currentGradeFromSpider.sort(Comparator.comparing(o -> o.getCourse().getType()));
         return WebResponse.success(currentGradeFromSpider);
     }
