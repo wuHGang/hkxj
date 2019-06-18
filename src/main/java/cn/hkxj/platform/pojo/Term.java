@@ -53,6 +53,29 @@ public class Term {
         this.order = order;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Term term = (Term) o;
+
+        return new EqualsBuilder()
+                .append(startYear, term.startYear)
+                .append(endYear, term.endYear)
+                .append(order, term.order)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37)
+                .append(startYear)
+                .append(endYear)
+                .append(order)
+                .toHashCode();
+    }
 
     @Override
     public String toString() {

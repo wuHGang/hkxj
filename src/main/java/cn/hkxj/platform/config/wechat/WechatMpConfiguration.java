@@ -87,6 +87,11 @@ public class WechatMpConfiguration {
 		return Boolean.TRUE;
 	}
 
+	@Bean
+	public WechatTemplateProperties wechatTemplateProperties(){
+		return new WechatTemplateProperties();
+	}
+
 	private WxMpMessageRouter newRouter(WxMpService wxMpService){
 		final WxMessageRouter newRouter = new WxMessageRouter(wxMpService);
 		newRouter.rule()

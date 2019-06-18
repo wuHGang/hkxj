@@ -3,6 +3,7 @@ package cn.hkxj.platform.task;
 import cn.hkxj.platform.builder.TemplateBuilder;
 import cn.hkxj.platform.config.wechat.WechatMpConfiguration;
 import cn.hkxj.platform.config.wechat.WechatMpPlusProperties;
+import cn.hkxj.platform.config.wechat.WechatTemplateProperties;
 import cn.hkxj.platform.pojo.ScheduleTask;
 import cn.hkxj.platform.pojo.constant.MiniProgram;
 import cn.hkxj.platform.pojo.wechat.CourseGroupMsg;
@@ -38,6 +39,8 @@ public class CourseSubscriptionTask {
     private WechatMpPlusProperties wechatMpPlusProperties;
     @Resource
     private TemplateBuilder templateBuilder;
+    @Resource
+    private WechatTemplateProperties wechatTemplateProperties;
 
     private static final String MSG_TITLE = "今日课表";
 
@@ -81,7 +84,8 @@ public class CourseSubscriptionTask {
         miniProgram.setPagePath(MiniProgram.COURSE_PATH.getValue());
         String url = "https://platform.hackerda.com/platform/show/timetable";
         //构建一个课程推送的模板消息
-        WxMpTemplateMessage templateMessage = templateBuilder.buildCourseMessage(task.getOpenid(), templateData, url, miniProgram);
+        WxMpTemplateMessage templateMessage =
+                templateBuilder.build(task.getOpenid(), templateData, wechatTemplateProperties.getPlusCourseTemplateId(), miniProgram, url);
         try {
             //发送成功的同时更新发送状态
             wxMpService.getTemplateMsgService().sendTemplateMsg(templateMessage);
