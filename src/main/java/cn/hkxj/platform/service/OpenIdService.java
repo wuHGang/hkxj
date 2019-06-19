@@ -84,7 +84,7 @@ public class OpenIdService {
             Openid plusOpenid = openidPlusMapper.selectByExample(openidExample).get(0);
             if(Objects.nonNull(plusOpenid)){
                 plusOpenid.setIsBind(false);
-                openidMapper.updateByPrimaryKey(plusOpenid);
+                openidPlusMapper.updateByPrimaryKey(plusOpenid);
             }
         }
     }
