@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 /**
  * @author junrong.chen
@@ -74,18 +75,18 @@ public class OpenIdService {
 	    openid.setIsBind(false);
 	    if(isPlus(appid)){
 	        openidPlusMapper.openidUnbind(openid.getOpenid());
-	        Openid proOpenid = openidMapper.selectByExample(openidExample).get(0);
-	        if(Objects.nonNull(proOpenid)){
-	            proOpenid.setIsBind(false);
-	            openidMapper.updateByPrimaryKey(proOpenid);
-            }
+
+            openidMapper.selectByExample(openidExample).stream().findFirst().ifPresent(proOpenid -> {
+                proOpenid.setIsBind(false);
+                openidMapper.updateByPrimaryKey(proOpenid);
+            });
         } else {
 	        openidMapper.openidUnbind(openid.getOpenid());
-            Openid plusOpenid = openidPlusMapper.selectByExample(openidExample).get(0);
-            if(Objects.nonNull(plusOpenid)){
+            openidPlusMapper.selectByExample(openidExample).stream().findFirst().ifPresent(plusOpenid -> {
                 plusOpenid.setIsBind(false);
                 openidPlusMapper.updateByPrimaryKey(plusOpenid);
-            }
+            });
+
         }
     }
 
