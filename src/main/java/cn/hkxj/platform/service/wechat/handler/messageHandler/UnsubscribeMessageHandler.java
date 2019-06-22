@@ -25,8 +25,8 @@ import java.util.stream.StreamSupport;
 @Slf4j
 @Component
 public class UnsubscribeMessageHandler implements WxMpMessageHandler{
-    private static final String PATTERN = "格式不正确:\n\n退订格式:\n退订 关键字 如：明日课表";
-    private static final String NOT_EXIST_RECORD_REPLY = "您还未订阅相关功能，请先订阅后再尝试退订\n\n订阅格式:\n订阅 关键字 如：明日课表";
+    private static final String PATTERN = "格式不正确:\n\n退订格式:\n退订 关键字 如：课表推送， 成绩推送";
+    private static final String NOT_EXIST_RECORD_REPLY = "您还未订阅相关功能，请先订阅后再尝试退订\n\n订阅格式:\n订阅 关键字 如：成绩推送";
     private static Splitter SPLITTER = Splitter.on(" ").trimResults().omitEmptyStrings();
     private static final int VALID_LENGTH = 2;
 

@@ -26,9 +26,7 @@ import java.util.stream.StreamSupport;
 @Slf4j
 @Component
 public class SubscribeMessageHandler implements WxMpMessageHandler{
-    private static final String PATTERN = "格式不正确:\n\n订阅格式:\n订阅 关键字 如：明日课表";
-    private static Splitter SPLITTER = Splitter.on(" ").trimResults().omitEmptyStrings();
-    private static final int VALID_LENGTH = 2;
+    private static final String PATTERN = "格式不正确:\n\n订阅格式:\n发送关键字 如：课表推送， 成绩推送";
 
 
     @Resource
@@ -38,7 +36,7 @@ public class SubscribeMessageHandler implements WxMpMessageHandler{
 
     @Override
     public WxMpXmlOutMessage handle(WxMpXmlMessage wxMessage, Map<String, Object> context, WxMpService wxMpService, WxSessionManager sessionManager) {
-        String scene = parseContent(wxMessage.getContent());
+        String scene = wxMessage.getContent();
         if(!Objects.isNull(scene)){
             String openid = wxMessage.getFromUser();
             String appid = wxMpService.getWxMpConfigStorage().getAppId();
@@ -50,15 +48,4 @@ public class SubscribeMessageHandler implements WxMpMessageHandler{
         return textBuilder.build(PATTERN, wxMessage, wxMpService);
     }
 
-    //解析发送来的消息，同时将关键字对应的场景值返回
-    private String parseContent(String content){
-        String[] strings = StreamSupport.stream(SPLITTER.split(content).spliterator(), false).toArray(String[]::new);
-        if(strings.length == VALID_LENGTH){
-            SubscribeScene subscribeScene = SubscribeScene.getSubscribeSceneByChinese(strings[1]);
-            if(!Objects.isNull(subscribeScene)){
-                return subscribeScene.getScene();
-            }
-        }
-        return null;
-    }
 }

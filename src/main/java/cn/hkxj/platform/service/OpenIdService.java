@@ -74,14 +74,16 @@ public class OpenIdService {
 	    openid.setIsBind(false);
 	    if(isPlus(appid)){
 	        openidPlusMapper.openidUnbind(openid.getOpenid());
-	        Openid proOpenid = openidMapper.selectByExample(openidExample).get(0);
+	        List<Openid> openids = openidMapper.selectByExample(openidExample);
+			Openid proOpenid = openids.stream().findFirst().orElse(null);
 	        if(Objects.nonNull(proOpenid)){
 	            proOpenid.setIsBind(false);
 	            openidMapper.updateByPrimaryKey(proOpenid);
             }
         } else {
 	        openidMapper.openidUnbind(openid.getOpenid());
-            Openid plusOpenid = openidPlusMapper.selectByExample(openidExample).get(0);
+            List<Openid> openids = openidPlusMapper.selectByExample(openidExample);
+			Openid plusOpenid = openids.stream().findFirst().orElse(null);
             if(Objects.nonNull(plusOpenid)){
                 plusOpenid.setIsBind(false);
                 openidPlusMapper.updateByPrimaryKey(plusOpenid);
