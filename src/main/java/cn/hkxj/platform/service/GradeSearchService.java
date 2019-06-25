@@ -148,8 +148,8 @@ public class GradeSearchService {
         return Lists.newArrayList(resultSet);
     }
 
-    public String gradeListToText(List<GradeAndCourse> studentGrades) {
-        StringBuffer buffer = new StringBuffer();
+    public static String gradeListToText(List<GradeAndCourse> studentGrades) {
+        StringBuilder buffer = new StringBuilder();
         boolean i = true;
         if (studentGrades.size() == 0) {
             buffer.append("尚无本学期成绩");

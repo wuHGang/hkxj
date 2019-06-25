@@ -34,13 +34,9 @@ import java.util.concurrent.Executors;
 public class GradeMessageHandler implements WxMpMessageHandler {
 
     @Resource
-    private TextBuilder textBuilder;
-    @Resource
     private GradeSearchService gradeSearchService;
     @Resource
     private OpenIdService openIdService;
-    @Resource
-    private TaskBindingService taskBindingService;
     @Resource
     private ScheduleTaskService scheduleTaskService;
 
@@ -58,14 +54,14 @@ public class GradeMessageHandler implements WxMpMessageHandler {
 
         cacheThreadPool.execute(() -> scheduleTaskService.checkAndSetSubscribeStatus(scheduleTask, true));
 
-        CompletableFuture<String> completableFuture = CompletableFuture.supplyAsync(() -> {
-            List<GradeAndCourse> gradeFromSpiderSync = gradeSearchService.getCurrentGradeFromSpider(student);
-            return gradeSearchService.gradeListToText(gradeFromSpiderSync);
+        CompletableFuture<List<GradeAndCourse>> completableFuture = CompletableFuture.supplyAsync(() -> {
+            return gradeSearchService.getCurrentGradeFromSpider(student);
+
         }, cacheThreadPool);
 
         CustomerMessageService messageService = new CustomerMessageService(wxMpXmlMessage, wxMpService);
 
-        return messageService.sendMessage(completableFuture, student);
+        return messageService.sendGradeMessage(completableFuture, student);
     }
 
 
