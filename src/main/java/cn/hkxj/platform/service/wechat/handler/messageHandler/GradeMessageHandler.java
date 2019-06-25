@@ -52,12 +52,14 @@ public class GradeMessageHandler implements WxMpMessageHandler {
                                     WxSessionManager wxSessionManager) {
         String appid = wxMpService.getWxMpConfigStorage().getAppId();
         String openid = wxMpXmlMessage.getFromUser();
+
         Student student = openIdService.getStudentByOpenId(openid, appid);
         ScheduleTask scheduleTask = new ScheduleTask(appid, openid, SubscribeScene.GRADE_AUTO_UPDATE.getScene());
+
         cacheThreadPool.execute(() -> scheduleTaskService.checkAndSetSubscribeStatus(scheduleTask, true));
 
         CompletableFuture<String> completableFuture = CompletableFuture.supplyAsync(() -> {
-            List<GradeAndCourse> gradeFromSpiderSync = gradeSearchService.getCurrentGradeFromSpiderAndSaveDB(student);
+            List<GradeAndCourse> gradeFromSpiderSync = gradeSearchService.getCurrentGradeFromSpider(student);
             return gradeSearchService.gradeListToText(gradeFromSpiderSync);
         }, cacheThreadPool);
 

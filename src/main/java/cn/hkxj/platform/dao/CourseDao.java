@@ -16,7 +16,7 @@ public class CourseDao {
     @Resource
     private CourseMapper courseMapper;
 
-    public List<Course> selectCourseByUid(List<Integer> courseIdList){
+    public List<Course> selectCourseByUid(List<String> courseIdList){
         return courseMapper.selectCourseByUid(courseIdList);
     }
 }

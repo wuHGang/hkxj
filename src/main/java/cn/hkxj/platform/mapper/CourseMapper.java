@@ -30,7 +30,7 @@ public interface CourseMapper {
 
     List<Course> getAllCourses(@Param("ids") List<Integer> ids);
 
-    List<Course> selectCourseByUid(@Param("uidList") List<Integer> uidList);
+    List<Course> selectCourseByUid(@Param("uidList") List<String> uidList);
 
     List<Course> selectNameByUid(String uid);
 

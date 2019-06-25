@@ -43,7 +43,7 @@ public class GradeController {
             log.error("student grade query error account:{} password:{}", account, password);
             throw e;
         }
-        List<GradeAndCourse> currentGradeFromSpider = gradeSearchService.getCurrentGradeFromSpiderAndSaveDB(student);
+        List<GradeAndCourse> currentGradeFromSpider = gradeSearchService.getCurrentGradeFromSpider(student);
         currentGradeFromSpider.sort(Comparator.comparing(o -> o.getCourse().getType()));
         return WebResponse.success(currentGradeFromSpider);
     }

@@ -27,13 +27,10 @@ import java.util.stream.Collectors;
 public class GradeSearchServiceTest {
 	@Resource(name = "gradeSearchService")
 	private GradeSearchService gradeSearchService;
-//	@Autowired
-//	private WxMpService wxMpService;
 
 	@Test
 	public void getAccess_token() throws WxErrorException {
-//		String accessToken = wxMpService.getAccessToken();
-//		System.out.println(accessToken);
+
 	}
 
     @Test

@@ -29,7 +29,7 @@ public class CourseDaoTest {
 
     @Test
     public void selectCourseById() {
-        ArrayList<Integer> list = Lists.newArrayList(1606002, 1606026);
+        ArrayList<String> list = Lists.newArrayList("1606002", "1606026", "TS17028");
         List<Course> courses = courseDao.selectCourseByUid(list);
         log.info(courses.toString());
     }

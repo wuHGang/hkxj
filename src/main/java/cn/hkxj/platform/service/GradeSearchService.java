@@ -63,11 +63,13 @@ public class GradeSearchService {
 
         spiderExecutorService.submit(() -> appSpiderService.getGradeAndCourseByAccount(student.getAccount()).getCurrentTermGrade());
         spiderExecutorService.submit(() -> urpSpiderService.getCurrentGrade(student));
-        List<GradeAndCourse> gradeAndCourses = mergeResult(spiderExecutorService);
+        final List<GradeAndCourse> gradeAndCourses = mergeResult(spiderExecutorService);
+
+        saveDBexecutorService.submit(() -> saveGradeAndCourse(student, gradeAndCourses));
 
         filterMergeResultForCurrentTerm(gradeAndCourses);
         if(gradeAndCourses.isEmpty()){
-            gradeAndCourses = getGradeFromDB(student);
+            return getGradeFromDB(student);
         }
 
         filterMergeResultForCurrentTerm(gradeAndCourses);
@@ -77,8 +79,8 @@ public class GradeSearchService {
 
     List<GradeAndCourse> getGradeFromDB(Student student){
         List<Grade> currentGrade = gradeDao.getCurrentGrade(student);
-        List<Integer> courseUidList = currentGrade.stream()
-                .map(grade-> Integer.parseInt(grade.getCourseId()))
+        List<String> courseUidList = currentGrade.stream()
+                .map(Grade::getCourseId)
                 .collect(Collectors.toList());
         final List<Course> courseList = courseDao.selectCourseByUid(courseUidList);
 
@@ -88,14 +90,6 @@ public class GradeSearchService {
                         .map(course -> new GradeAndCourse(grade, course, currentTerm)))
                 .collect(Collectors.toList());
     }
-
-    public List<GradeAndCourse> getCurrentGradeFromSpiderAndSaveDB(Student student) {
-        //爬虫爬取的结果
-        List<GradeAndCourse> crawlingResult = getCurrentGradeFromSpider(student);
-        saveDBexecutorService.submit(() -> saveGradeAndCourse(student, crawlingResult));
-        return crawlingResult;
-    }
-
 
     /**
      * 将本学期的成绩数据存储于数据库，同时适用于自动更新，返回最新爬取更新的成绩集合用于自动更新的回复功能
