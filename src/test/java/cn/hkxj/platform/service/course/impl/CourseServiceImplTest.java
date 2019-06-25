@@ -36,8 +36,10 @@ public class CourseServiceImplTest {
 
     @Test
     public void getCoursesByAccount() {
-        List<CourseTimeTable> courseTimeTables = courseService.getCoursesByAccount(2016025067);
-        System.out.println(courseService.getCoursesByAccount(2016025067));
+//        List<CourseTimeTable> courseTimeTables = courseService.getCoursesByAccount(2017024832);
+//        System.out.println(courseService.getCoursesByAccount(2017024832));
+        List<CourseTimeTable> courseTimeTables = courseService.getCoursesByAccount(2017026003);
+        System.out.println(courseService.getCoursesByAccount(2017026003));
     }
 
     @Test

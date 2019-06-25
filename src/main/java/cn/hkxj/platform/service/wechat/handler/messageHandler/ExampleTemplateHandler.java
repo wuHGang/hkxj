@@ -42,7 +42,7 @@ public class ExampleTemplateHandler implements WxMpMessageHandler {
             datas.add(name);
             datas.add(grade);
             String url = "http://suagr.tunnel.echomod.cn/login/" + wxMpXmlMessage.getFromUser();
-            wxMpService.getTemplateMsgService().sendTemplateMsg(templateBuilder.build(wxMpXmlMessage, datas, url));
+//            wxMpService.getTemplateMsgService().sendTemplateMsg(templateBuilder.build(wxMpXmlMessage, datas, url));
             return null;
         } catch (Exception e) {
             log.error("在组装返回信息时出现错误 {}", e.getMessage());

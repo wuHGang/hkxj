@@ -3,6 +3,7 @@ package cn.hkxj.platform.task;
 import cn.hkxj.platform.builder.TemplateBuilder;
 import cn.hkxj.platform.config.wechat.WechatMpConfiguration;
 import cn.hkxj.platform.config.wechat.WechatMpPlusProperties;
+import cn.hkxj.platform.config.wechat.WechatTemplateProperties;
 import cn.hkxj.platform.pojo.*;
 import cn.hkxj.platform.pojo.constant.MiniProgram;
 import cn.hkxj.platform.pojo.constant.SubscribeScene;
@@ -52,6 +53,8 @@ public class GradeAutoUpdateTask {
     private WechatMpPlusProperties wechatMpPlusProperties;
     @Resource
     private TemplateBuilder templateBuilder;
+    @Resource
+    private WechatTemplateProperties wechatTemplateProperties;
 
     @Value("scheduled.gradeUpdate")
     private String updateSwitch;
@@ -114,7 +117,9 @@ public class GradeAutoUpdateTask {
         scheduleTaskService.updateSubscribeStatus(task, ScheduleTaskService.FUNCTION_DISABLE);
         if(isPlus(appid)){
             List<WxMpTemplateData> templateData = templateBuilder.assemblyTemplateContentForTips(ERROR_CONTENT);
-            WxMpTemplateMessage wxMpTemplateMessage = templateBuilder.buildTipsMessage(task.getOpenid(), templateData, BIND_URL);
+            WxMpTemplateMessage wxMpTemplateMessage =
+                    templateBuilder.buildWithNoMiniProgram(task.getOpenid(),
+                            templateData, wechatTemplateProperties.getPlusTipsTemplateId(), BIND_URL);
             try {
                 wxMpService.getTemplateMsgService().sendTemplateMsg(wxMpTemplateMessage);
             } catch (WxErrorException e) {
@@ -161,7 +166,8 @@ public class GradeAutoUpdateTask {
             WxMpTemplateMessage.MiniProgram miniProgram = new WxMpTemplateMessage.MiniProgram();
             miniProgram.setAppid(MiniProgram.APPID.getValue());
             miniProgram.setPagePath(MiniProgram.GRADE_PATH.getValue());
-            WxMpTemplateMessage templateMessage = templateBuilder.buildGradeUpdateMessage(task.getOpenid(), data, miniProgram);
+            WxMpTemplateMessage templateMessage =
+                    templateBuilder.buildWithNoUrl(task.getOpenid(), data,  wechatTemplateProperties.getPlusGradeUpdateTemplateId(), miniProgram);
             try {
                 wxMpService.getTemplateMsgService().sendTemplateMsg(templateMessage);
                 log.info("send template message success openid:{}", task.getOpenid());

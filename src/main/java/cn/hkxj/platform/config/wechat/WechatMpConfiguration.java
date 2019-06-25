@@ -87,6 +87,11 @@ public class WechatMpConfiguration {
 		return Boolean.TRUE;
 	}
 
+	@Bean
+	public WechatTemplateProperties wechatTemplateProperties(){
+		return new WechatTemplateProperties();
+	}
+
 	private WxMpMessageRouter newRouter(WxMpService wxMpService){
 		final WxMessageRouter newRouter = new WxMessageRouter(wxMpService);
 		newRouter.rule()
@@ -94,6 +99,12 @@ public class WechatMpConfiguration {
 				.rContent("(课表|课程|今日课表)")
 				.interceptor(wechatOpenIdInterceptor)
 				.handler(courseMessageHandler)
+				.end()
+				.rule()
+				.async(false)
+				.rContent("课表推送|成绩推送")
+				.interceptor(wechatOpenIdInterceptor)
+				.handler(subscribeMessageHandler)
 				.end()
 				.rule()
 				.async(false)
@@ -118,12 +129,6 @@ public class WechatMpConfiguration {
 				.interceptor(wechatOpenIdInterceptor)
 				.content("解绑")
 				.handler(unbindMessageHandler)
-				.end()
-				.rule()
-				.async(false)
-				.rContent("订阅.*?")
-				.interceptor(wechatOpenIdInterceptor)
-				.handler(subscribeMessageHandler)
 				.end()
 				.rule()
 				.async(false)

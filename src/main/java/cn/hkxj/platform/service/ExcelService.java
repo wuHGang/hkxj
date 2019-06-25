@@ -261,6 +261,7 @@ public class ExcelService {
             courseTimeTable.setStart(excelResult.getStartAndStopTime().get("start" + i));
             courseTimeTable.setEnd(excelResult.getStartAndStopTime().get("end" + i));
             System.out.println("courseTimetable     " + courseTimeTable);
+            //如果有指定的课程就直接返回，没有的话插入后返回
             courseTimeTable = getOppositeCourseTimetable(courseTimeTable);
 //            courseTimeTableMapper.insertSelective(courseTimeTable);
             timetableIds.add(courseTimeTable.getId());
@@ -315,13 +316,8 @@ public class ExcelService {
             Course course = getOppositeCourse(excelResult, map.get("distinct"));
             //处理教室信息
             Room room = getOppositeRoom(excelResult);
-            //插入相应的课程时间表，没有和数据库做比对
+            //插入相应的课程时间表，数据库做了比对
             Set<Integer> timetableIds = insertCourseTimetable(course, room, excelResult);
-            for(Integer id : timetableIds){
-                if(id == 5899 || id == 5900){
-                    System.out.println("5899  ||| 5900");
-                }
-            }
             //处理班级信息
             processClassesAndCourseTimetableMapping(classesList, timetableIds);
         }
@@ -361,7 +357,7 @@ public class ExcelService {
             List<ExcelResult> excelResults = new ArrayList<>();
             for(int i = 1; i < rowNum; i++){
                 Row row=sheet.getRow(i);
-                if(i == 1884){
+                if(i == 1578){
                     Map map = new HashMap();
                 }
                 log.info("current excel row number {}", i);

@@ -38,7 +38,7 @@ public class ExcelServiceTest {
 //        System.out.println(excelService.parseBuilding("图书馆S4004"));
 //        System.out.println(excelService.parseBuilding("N10播放室"));
         List<ExcelResult> excelResults = excelService.readExcel();
-        excelService.insertDb(excelResults);
+//        excelService.insertDb(excelResults);
     }
 
     public static void main(String[] args) {

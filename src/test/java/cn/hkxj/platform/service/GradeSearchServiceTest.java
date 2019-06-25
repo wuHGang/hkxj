@@ -1,5 +1,7 @@
 package cn.hkxj.platform.service;
 
+import cn.hkxj.platform.pojo.Course;
+import cn.hkxj.platform.pojo.Grade;
 import cn.hkxj.platform.pojo.GradeAndCourse;
 import cn.hkxj.platform.pojo.Student;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +15,7 @@ import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author junrong.chen
@@ -61,5 +64,13 @@ public class GradeSearchServiceTest {
             log.info(gradeAndCourse.toString());
         }
 
+    }
+
+    @Test
+    public void getGradeFromDB(){
+        Student student = new Student();
+        student.setAccount(2016024069);
+        List<GradeAndCourse> gradeFromDB = gradeSearchService.getGradeFromDB(student);
+        log.info(gradeFromDB.toString());
     }
 }

@@ -53,16 +53,6 @@ public class Term {
         this.order = order;
     }
 
-
-    @Override
-    public String toString() {
-        return MoreObjects.toStringHelper(this)
-                .add("startYear", startYear)
-                .add("endYear", endYear)
-                .add("order", order)
-                .toString();
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -86,4 +76,14 @@ public class Term {
                 .append(order)
                 .toHashCode();
     }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("startYear", startYear)
+                .add("endYear", endYear)
+                .add("order", order)
+                .toString();
+    }
+
 }

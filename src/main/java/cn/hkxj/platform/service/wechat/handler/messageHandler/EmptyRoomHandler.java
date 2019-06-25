@@ -67,7 +67,7 @@ public class EmptyRoomHandler implements WxMpMessageHandler {
 	 */
 	String parseContent(String content){
 		String[] strings = StreamSupport.stream(SPLITTER.split(content).spliterator(), false).toArray(String[]::new);
-		
+
 		if ((strings.length == CONTENT_SIZE_2)){
 			return sizeTwoContent(strings);
 		}
