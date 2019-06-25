@@ -54,10 +54,7 @@ public class GradeMessageHandler implements WxMpMessageHandler {
 
         cacheThreadPool.execute(() -> scheduleTaskService.checkAndSetSubscribeStatus(scheduleTask, true));
 
-        CompletableFuture<List<GradeAndCourse>> completableFuture = CompletableFuture.supplyAsync(() -> {
-            return gradeSearchService.getCurrentGradeFromSpider(student);
-
-        }, cacheThreadPool);
+        CompletableFuture<List<GradeAndCourse>> completableFuture = CompletableFuture.supplyAsync(() -> gradeSearchService.getCurrentGradeFromSpider(student), cacheThreadPool);
 
         CustomerMessageService messageService = new CustomerMessageService(wxMpXmlMessage, wxMpService);
 
