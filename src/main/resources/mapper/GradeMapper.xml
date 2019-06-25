@@ -140,4 +140,10 @@
       gmt_create = #{gmtCreate,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
   </update>
+    <select id="selectCurrentGrade" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from grade
+        where account = #{account,jdbcType=INTEGER} and  year = #{year,jdbcType=INTEGER} and term = #{year,jdbcType=INTEGER}
+    </select>
 </mapper>

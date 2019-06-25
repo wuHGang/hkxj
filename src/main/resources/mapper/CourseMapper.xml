@@ -239,4 +239,14 @@
     <select id="selectCourseByName" resultType="cn.hkxj.platform.pojo.Course" resultMap="BaseResultMap">
           select <include refid="Base_Column_List" /> from course where name=#{name,jdbcType=VARCHAR}
     </select>
+
+    <select id="selectCourseByUid" parameterType="java.util.List" resultType="cn.hkxj.platform.pojo.Course"
+            resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from course where uid IN
+        <foreach collection="uidList" item="uid" open="(" close=")" separator=",">
+            #{uid, jdbcType=INTEGER}
+        </foreach>
+    </select>
 </mapper>

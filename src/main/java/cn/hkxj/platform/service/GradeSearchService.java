@@ -1,5 +1,7 @@
 package cn.hkxj.platform.service;
 
+import cn.hkxj.platform.dao.CourseDao;
+import cn.hkxj.platform.dao.GradeDao;
 import cn.hkxj.platform.mapper.CourseMapper;
 import cn.hkxj.platform.mapper.GradeMapper;
 import cn.hkxj.platform.pojo.*;
@@ -18,6 +20,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author xie
@@ -34,8 +38,14 @@ public class GradeSearchService {
     private UrpSpiderService urpSpiderService;
     @Resource
     private AppSpiderService appSpiderService;
+    @Resource
+    private GradeDao gradeDao;
+    @Resource
+    private CourseDao courseDao;
+
     private static ExecutorService executorService = Executors.newFixedThreadPool(10);
     private static ExecutorService saveDBexecutorService = Executors.newSingleThreadExecutor();
+    private static final Term currentTerm = new Term(2018, 2019, 2);
 
     public List<GradeAndCourse> getEverGradeFromSpider(Student student) {
         CompletionService<List<GradeAndCourse>> spiderExecutorService = new ExecutorCompletionService<>(executorService);
@@ -54,9 +64,27 @@ public class GradeSearchService {
         spiderExecutorService.submit(() -> appSpiderService.getGradeAndCourseByAccount(student.getAccount()).getCurrentTermGrade());
         spiderExecutorService.submit(() -> urpSpiderService.getCurrentGrade(student));
         List<GradeAndCourse> gradeAndCourses = mergeResult(spiderExecutorService);
+        if(gradeAndCourses.isEmpty()){
+            gradeAndCourses = getGradeFromDB(student);
+        }
+
         filterMergeResultForCurrentTerm(gradeAndCourses);
 
         return gradeAndCourses;
+    }
+
+    private List<GradeAndCourse> getGradeFromDB(Student student){
+        List<Grade> currentGrade = gradeDao.getCurrentGrade(student);
+        List<Integer> courseUidList = currentGrade.stream()
+                .map(grade-> Integer.parseInt(grade.getCourseId()))
+                .collect(Collectors.toList());
+        final List<Course> courseList = courseDao.selectCourseByUid(courseUidList);
+
+        return currentGrade.stream()
+                .flatMap(grade -> courseList.stream()
+                        .filter(course -> grade.getCourseId().equals(course.getUid()))
+                        .map(course -> new GradeAndCourse(grade, course, currentTerm)))
+                .collect(Collectors.toList());
     }
 
     public List<GradeAndCourse> getCurrentGradeFromSpiderAndSaveDB(Student student) {
@@ -87,9 +115,7 @@ public class GradeSearchService {
                 course.setAcademy(Academy.getAcademyByName(urpCourse.getAcademyName()));
                 courseMapper.insert(course);
             }
-            if (grade.getScore() == -1) {
-                continue;
-            }
+
             if (gradeMapper.ifExistGrade(student.getAccount(), grade.getCourseId()) == 0) {
                 courseMapper.insertStudentAndCourse(student.getAccount(), uid);
                 gradeMapper.insert(grade);
@@ -177,7 +203,7 @@ public class GradeSearchService {
 
     private void filterMergeResultForCurrentTerm(List<GradeAndCourse> mergeResult){
         //这里硬编码了一个Term对象，数据是当前学期的信息
-        final Term currentTerm = new Term(2018, 2019, 2);
+
         //因为app爬虫的数据可能有问题，处理合并过后错误的数据
         mergeResult.removeIf(gradeAndCourse -> !Objects.deepEquals(currentTerm, gradeAndCourse.getTerm()));
     }

@@ -2,11 +2,15 @@ package cn.hkxj.platform.pojo;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 /**
  * @author JR Chan
  * @date 2018/12/15
  */
+@AllArgsConstructor
+@NoArgsConstructor
 public class GradeAndCourse {
     private Grade grade;
     private Course course;
