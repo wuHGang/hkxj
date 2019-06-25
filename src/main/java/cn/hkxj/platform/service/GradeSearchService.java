@@ -64,6 +64,8 @@ public class GradeSearchService {
         spiderExecutorService.submit(() -> appSpiderService.getGradeAndCourseByAccount(student.getAccount()).getCurrentTermGrade());
         spiderExecutorService.submit(() -> urpSpiderService.getCurrentGrade(student));
         List<GradeAndCourse> gradeAndCourses = mergeResult(spiderExecutorService);
+
+        filterMergeResultForCurrentTerm(gradeAndCourses);
         if(gradeAndCourses.isEmpty()){
             gradeAndCourses = getGradeFromDB(student);
         }
@@ -73,7 +75,7 @@ public class GradeSearchService {
         return gradeAndCourses;
     }
 
-    private List<GradeAndCourse> getGradeFromDB(Student student){
+    List<GradeAndCourse> getGradeFromDB(Student student){
         List<Grade> currentGrade = gradeDao.getCurrentGrade(student);
         List<Integer> courseUidList = currentGrade.stream()
                 .map(grade-> Integer.parseInt(grade.getCourseId()))
