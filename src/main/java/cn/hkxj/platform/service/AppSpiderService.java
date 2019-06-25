@@ -47,7 +47,7 @@ public class AppSpiderService {
     private static Pattern FIND_NUM = Pattern.compile("[^0-9]");
 
 
-    public ArrayList<ExamTimeTable> getExamByAccount(int account) throws PasswordUncorrectException {
+    public List<ExamTimeTable> getExamByAccount(int account) throws PasswordUncorrectException {
         AppSpider appSpider = new AppSpider(account);
         appSpider.getToken();
         ArrayList<ExamTimeTable> examTimeTableArrayList = new ArrayList<>();

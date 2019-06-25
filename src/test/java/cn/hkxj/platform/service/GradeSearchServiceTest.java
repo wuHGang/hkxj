@@ -36,7 +36,7 @@ public class GradeSearchServiceTest {
     @Test
     public void getCurrentTermGrade() {
         Student student = new Student();
-        student.setAccount(2016023726);
+        student.setAccount(2016024249);
         student.setPassword("1");
         long start = System.currentTimeMillis();
         List<GradeAndCourse> currentTermGrade = gradeSearchService.getCurrentGradeFromSpider(student);

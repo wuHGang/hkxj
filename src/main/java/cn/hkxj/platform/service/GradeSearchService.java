@@ -26,10 +26,10 @@ import java.util.concurrent.Executors;
 @Slf4j
 @Service("gradeSearchService")
 public class GradeSearchService {
-	@Resource
-	private CourseMapper courseMapper;
-	@Resource
-	private GradeMapper gradeMapper;
+    @Resource
+    private CourseMapper courseMapper;
+    @Resource
+    private GradeMapper gradeMapper;
     @Resource
     private UrpSpiderService urpSpiderService;
     @Resource
@@ -65,7 +65,6 @@ public class GradeSearchService {
         saveDBexecutorService.submit(() -> saveGradeAndCourse(student, crawlingResult));
         return crawlingResult;
     }
-
 
 
     /**
@@ -156,26 +155,26 @@ public class GradeSearchService {
         if (studentGrades.size() == 0) {
             buffer.append("尚无选修课成绩");
         } else {
-            int allPoint=0;
+            int allPoint = 0;
             for (GradeAndCourse gradeAndCourse : studentGrades) {
-                allPoint+=gradeAndCourse.getCourse().getCredit();
+                allPoint += gradeAndCourse.getCourse().getCredit();
                 float grade = gradeAndCourse.getGrade().getScore();
                 buffer.append("考试名称：").append(gradeAndCourse.getCourse().getName()).append("\n")
                         .append("成绩：").append(grade == -1 ? "" : grade / 100).append("   学分：")
                         .append(((float) gradeAndCourse.getGrade().getPoint()) / 10).append("\n\n");
             }
-            allPoint/=10;
-            buffer.insert(0,"- - - - - - - - - - - - - - - \n");
-            int num=0;
-            if(allPoint<7)num=7-allPoint;
-            buffer.insert(0,"你选修的公共选修课共"+allPoint+"学分\n还差"+num+"学分\n");
-            buffer.insert(0,"- - - - - - - - - - - - - - - \n");
+            allPoint /= 10;
+            buffer.insert(0, "- - - - - - - - - - - - - - - \n");
+            int num = 0;
+            if (allPoint < 7) num = 7 - allPoint;
+            buffer.insert(0, "你选修的公共选修课共" + allPoint + "学分\n还差" + num + "学分\n");
+            buffer.insert(0, "- - - - - - - - - - - - - - - \n");
         }
         buffer.append("\n 查询仅供参考，以教务网为准，如有疑问微信联系：吴彦祖【hkdhd666】\n（有同学反映，大学英语提高班也是选修课）");
         return buffer.toString();
     }
 
-    private void filterMergeResultForCurrentTerm(List<GradeAndCourse> mergeResult){
+    private void filterMergeResultForCurrentTerm(List<GradeAndCourse> mergeResult) {
         //这里硬编码了一个Term对象，数据是当前学期的信息
         final Term currentTerm = new Term(2018, 2019, 2);
         //因为app爬虫的数据可能有问题，处理合并过后错误的数据

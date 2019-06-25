@@ -35,12 +35,10 @@ public class CustomerMessageService {
         try {
             String result = future.get(3, TimeUnit.SECONDS);
             return buildMessage(result);
-        } catch (TimeoutException e) {
-            future.whenCompleteAsync((result, exception) -> {
-                sentTextMessage(wxMpXmlMessage, wxMpService, result);
-            });
-        } catch (InterruptedException | ExecutionException e) {
-            log.error("student {} get grade error {}", student.getAccount(), e);
+        } catch (TimeoutException | InterruptedException | ExecutionException e) {
+            log.error("student {} from wechat message get grade error {}", student.getAccount(), e.getMessage());
+        } finally {
+            future.whenCompleteAsync((result, exception) -> sentTextMessage(wxMpXmlMessage, wxMpService, result));
         }
         return buildMessage("服务器正在努力查询中");
     }
