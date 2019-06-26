@@ -110,6 +110,7 @@ public class WechatMpConfiguration {
 				.rule()
 				.async(false)
 				.interceptor(wechatOpenIdInterceptor)
+				.interceptor(studentInfoInterceptor)
 				.rContent(".*?成绩.*?")
 				.handler(gradeMessageHandler)
 				.end()
