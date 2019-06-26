@@ -1,5 +1,6 @@
 package cn.hkxj.platform.config.wechat;
 
+import cn.hkxj.platform.interceptor.StudentInfoInterceptor;
 import cn.hkxj.platform.interceptor.WechatOpenIdInterceptor;
 import cn.hkxj.platform.service.wechat.WxMessageRouter;
 import cn.hkxj.platform.service.wechat.handler.messageHandler.*;
@@ -66,6 +67,9 @@ public class WechatMpConfiguration {
 	@Resource
 	private SubscribeMessageHandler subscribeMessageHandler;
 
+	@Resource
+    private StudentInfoInterceptor studentInfoInterceptor;
+
 	private static Map<String, WxMpMessageRouter> routers = Maps.newHashMap();
 	private static Map<String, WxMpService> mpServices = Maps.newHashMap();
 
@@ -93,12 +97,14 @@ public class WechatMpConfiguration {
 				.async(false)
 				.rContent("(课表|课程|今日课表)")
 				.interceptor(wechatOpenIdInterceptor)
+                .interceptor(studentInfoInterceptor)
 				.handler(courseMessageHandler)
 				.end()
 				.rule()
 				.async(false)
 				.rContent("课表推送|成绩推送")
 				.interceptor(wechatOpenIdInterceptor)
+                .interceptor(studentInfoInterceptor)
 				.handler(subscribeMessageHandler)
 				.end()
 				.rule()
@@ -110,18 +116,21 @@ public class WechatMpConfiguration {
 				.rule()
 				.async(false)
 				.interceptor(wechatOpenIdInterceptor)
+                .interceptor(studentInfoInterceptor)
 				.rContent("准考证号|四级|六级|准考证|四六级")
 				.handler(cetSearchHandler)
 				.end()
 				.rule()
 				.async(false)
 				.interceptor(wechatOpenIdInterceptor)
+                .interceptor(studentInfoInterceptor)
 				.content("openid")
 				.handler(openidMessageHandler)
 				.end()
 				.rule()
 				.async(false)
 				.interceptor(wechatOpenIdInterceptor)
+                .interceptor(studentInfoInterceptor)
 				.content("解绑")
 				.handler(unbindMessageHandler)
 				.end()
@@ -129,12 +138,14 @@ public class WechatMpConfiguration {
 				.async(false)
 				.rContent(".*?考试.*?")
 				.interceptor(wechatOpenIdInterceptor)
+                .interceptor(studentInfoInterceptor)
 				.handler(examMessageHandler)
 				.end()
 				.rule()
 				.async(false)
 				.rContent(".*?选修.*?")
 				.interceptor(wechatOpenIdInterceptor)
+                .interceptor(studentInfoInterceptor)
 				.handler(electiveCourseMessageHandler)
 				.end()
 				.rule()
@@ -146,6 +157,7 @@ public class WechatMpConfiguration {
 				.async(false)
 				.rContent("退订.*?")
 				.interceptor(wechatOpenIdInterceptor)
+                .interceptor(studentInfoInterceptor)
 				.handler(unsubscribeMessageHandler)
 				.end();
 		return newRouter;
