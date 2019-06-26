@@ -24,7 +24,7 @@ import java.util.Map;
  */
 @Configuration
 @ComponentScan(basePackages = "cn.hkxj.platform.*")
-@EnableConfigurationProperties(value = {WechatMpProProperties.class, WechatMpPlusProperties.class})
+@EnableConfigurationProperties(value = {WechatMpProProperties.class, WechatMpPlusProperties.class, WechatTemplateProperties.class})
 public class WechatMpConfiguration {
 
 	@Resource
@@ -54,7 +54,7 @@ public class WechatMpConfiguration {
 	@Resource
 	private WechatOpenIdInterceptor wechatOpenIdInterceptor;
 
-	@Autowired
+	@Resource
 	private CETSearchHandler cetSearchHandler;
 
 	@Resource
@@ -85,11 +85,6 @@ public class WechatMpConfiguration {
 		routers.put(wechatMpProProperties.getAppId(), this.newRouter(wxProMpService));
 		mpServices.put(wechatMpProProperties.getAppId(), wxProMpService);
 		return Boolean.TRUE;
-	}
-
-	@Bean
-	public WechatTemplateProperties wechatTemplateProperties(){
-		return new WechatTemplateProperties();
 	}
 
 	private WxMpMessageRouter newRouter(WxMpService wxMpService){
