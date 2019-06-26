@@ -1,21 +1,17 @@
 package cn.hkxj.platform.service;
 
-import cn.hkxj.platform.pojo.Course;
-import cn.hkxj.platform.pojo.Grade;
 import cn.hkxj.platform.pojo.GradeAndCourse;
 import cn.hkxj.platform.pojo.Student;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author junrong.chen
@@ -36,7 +32,7 @@ public class GradeSearchServiceTest {
     @Test
     public void getCurrentTermGrade() {
         Student student = new Student();
-        student.setAccount(2017026198);
+        student.setAccount(2016024970);
         student.setPassword("1");
         long start = System.currentTimeMillis();
         List<GradeAndCourse> currentTermGrade = gradeSearchService.getCurrentGradeFromSpider(student);
@@ -66,7 +62,7 @@ public class GradeSearchServiceTest {
     @Test
     public void getGradeFromDB(){
         Student student = new Student();
-        student.setAccount(2016024069);
+        student.setAccount(2016025735);
         List<GradeAndCourse> gradeFromDB = gradeSearchService.getGradeFromDB(student);
         log.info(gradeFromDB.toString());
     }
