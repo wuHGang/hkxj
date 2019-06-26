@@ -79,7 +79,7 @@ public class GradeSearchService {
 
     List<GradeAndCourse> getGradeFromDB(Student student){
         List<Grade> currentGrade = gradeDao.getCurrentGrade(student);
-        currentGrade.removeIf(grade -> !grade.getYear().equals(2018) && !grade.getTerm().equals((byte) 2));
+        currentGrade.removeIf(grade -> !grade.getYear().equals(2018) || !grade.getTerm().equals((byte) 2));
         List<String> courseUidList = currentGrade.stream()
                 .map(Grade::getCourseId)
                 .collect(Collectors.toList());
