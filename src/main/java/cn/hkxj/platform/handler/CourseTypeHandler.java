@@ -16,8 +16,12 @@ import java.sql.SQLException;
  * @author junrong.chen
  * @date 2018/9/16
  */
-public class CourseTypeHandler extends BaseTypeHandler<CourseType> {
+public class CourseTypeHandler extends EnumTypeHandler<CourseType> {
 
+
+    public CourseTypeHandler(Class<CourseType> type) {
+        super(type);
+    }
 
     @Override
     public void setParameter(PreparedStatement preparedStatement, int i, CourseType courseType, JdbcType jdbcType) throws SQLException {
