@@ -61,7 +61,7 @@ public class GradeSearchService {
     public List<GradeAndCourse> getCurrentGradeFromSpider(Student student) {
         CompletionService<List<GradeAndCourse>> spiderExecutorService = new ExecutorCompletionService<>(executorService);
 
-//        spiderExecutorService.submit(() -> appSpiderService.getGradeAndCourseByAccount(student.getAccount()).getCurrentTermGrade());
+        spiderExecutorService.submit(() -> appSpiderService.getGradeAndCourseByAccount(student.getAccount()).getCurrentTermGrade());
         spiderExecutorService.submit(() -> urpSpiderService.getCurrentGrade(student));
         final List<GradeAndCourse> gradeAndCourses = mergeResult(spiderExecutorService);
 
