@@ -61,7 +61,7 @@ public class CustomerMessageService {
                 }
             });
         }
-        return buildMessage("服务器正在努力查询中");
+        return null;
     }
 
     private void sentTextMessage(WxMpXmlMessage wxMpXmlMessage, WxMpService wxMpService, String result) {
@@ -71,15 +71,16 @@ public class CustomerMessageService {
         wxMpKefuMessage.setMsgType("text");
         wxMpKefuMessage.setToUser(wxMpXmlMessage.getFromUser());
         try {
+            log.info("send customer message {}", result);
             wxMpService.getKefuService().sendKefuMessage(wxMpKefuMessage);
         } catch (WxErrorException e) {
-            log.error("send grade customer message error", e);
+            log.error("send customer message error", e);
         }
     }
 
     private WxMpXmlOutTextMessage buildMessage(String content) {
         return WxMpXmlOutMessage.TEXT().content(content)
-                .fromUser(wxMpXmlMessage.getFromUser()).toUser(wxMpXmlMessage.getToUser())
+                .fromUser(wxMpXmlMessage.getToUser()).toUser(wxMpXmlMessage.getFromUser())
                 .build();
     }
 }
