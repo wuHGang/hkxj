@@ -50,7 +50,7 @@ public class CustomerMessageService {
     public WxMpXmlOutTextMessage sendGradeMessage(CompletableFuture<List<GradeAndCourse>> future, Student student) {
 
         try {
-            List<GradeAndCourse> gradeAndCourses = future.get(4, TimeUnit.SECONDS);
+            List<GradeAndCourse> gradeAndCourses = future.get(3500, TimeUnit.MILLISECONDS);
             return buildMessage(GradeSearchService.gradeListToText(gradeAndCourses));
         } catch (TimeoutException | InterruptedException | ExecutionException e) {
             log.error("student {} from wechat message get grade error {}", student.getAccount(), e.getMessage());
