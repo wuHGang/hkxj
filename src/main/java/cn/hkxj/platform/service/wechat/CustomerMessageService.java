@@ -79,7 +79,7 @@ public class CustomerMessageService {
 
     private WxMpXmlOutTextMessage buildMessage(String content) {
         return WxMpXmlOutMessage.TEXT().content(content)
-                .fromUser(wxMpXmlMessage.getToUser()).toUser(wxMpXmlMessage.getFromUser())
+                .fromUser(wxMpXmlMessage.getFromUser()).toUser(wxMpXmlMessage.getToUser())
                 .build();
     }
 }
