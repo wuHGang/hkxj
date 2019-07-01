@@ -30,10 +30,10 @@ import java.util.stream.Stream;
 @Slf4j
 @Service("gradeSearchService")
 public class GradeSearchService {
-	@Resource
-	private CourseMapper courseMapper;
-	@Resource
-	private GradeMapper gradeMapper;
+    @Resource
+    private CourseMapper courseMapper;
+    @Resource
+    private GradeMapper gradeMapper;
     @Resource
     private UrpSpiderService urpSpiderService;
     @Resource
@@ -63,11 +63,13 @@ public class GradeSearchService {
 
         spiderExecutorService.submit(() -> appSpiderService.getGradeAndCourseByAccount(student.getAccount()).getCurrentTermGrade());
         spiderExecutorService.submit(() -> urpSpiderService.getCurrentGrade(student));
-        List<GradeAndCourse> gradeAndCourses = mergeResult(spiderExecutorService);
+        final List<GradeAndCourse> gradeAndCourses = mergeResult(spiderExecutorService);
+
+        saveDBexecutorService.submit(() -> saveGradeAndCourse(student, gradeAndCourses));
 
         filterMergeResultForCurrentTerm(gradeAndCourses);
         if(gradeAndCourses.isEmpty()){
-            gradeAndCourses = getGradeFromDB(student);
+            return getGradeFromDB(student);
         }
 
         filterMergeResultForCurrentTerm(gradeAndCourses);
@@ -77,8 +79,9 @@ public class GradeSearchService {
 
     List<GradeAndCourse> getGradeFromDB(Student student){
         List<Grade> currentGrade = gradeDao.getCurrentGrade(student);
-        List<Integer> courseUidList = currentGrade.stream()
-                .map(grade-> Integer.parseInt(grade.getCourseId()))
+        currentGrade.removeIf(grade -> !grade.getYear().equals(2018) && !grade.getTerm().equals((byte) 2));
+        List<String> courseUidList = currentGrade.stream()
+                .map(Grade::getCourseId)
                 .collect(Collectors.toList());
         final List<Course> courseList = courseDao.selectCourseByUid(courseUidList);
 
@@ -88,15 +91,6 @@ public class GradeSearchService {
                         .map(course -> new GradeAndCourse(grade, course, currentTerm)))
                 .collect(Collectors.toList());
     }
-
-    public List<GradeAndCourse> getCurrentGradeFromSpiderAndSaveDB(Student student) {
-        //爬虫爬取的结果
-        List<GradeAndCourse> crawlingResult = getCurrentGradeFromSpider(student);
-        saveDBexecutorService.submit(() -> saveGradeAndCourse(student, crawlingResult));
-        return crawlingResult;
-    }
-
-
 
     /**
      * 将本学期的成绩数据存储于数据库，同时适用于自动更新，返回最新爬取更新的成绩集合用于自动更新的回复功能
@@ -155,8 +149,8 @@ public class GradeSearchService {
         return Lists.newArrayList(resultSet);
     }
 
-    public String gradeListToText(List<GradeAndCourse> studentGrades) {
-        StringBuffer buffer = new StringBuffer();
+    public static String gradeListToText(List<GradeAndCourse> studentGrades) {
+        StringBuilder buffer = new StringBuilder();
         boolean i = true;
         if (studentGrades.size() == 0) {
             buffer.append("尚无本学期成绩");
@@ -184,26 +178,26 @@ public class GradeSearchService {
         if (studentGrades.size() == 0) {
             buffer.append("尚无选修课成绩");
         } else {
-            int allPoint=0;
+            int allPoint = 0;
             for (GradeAndCourse gradeAndCourse : studentGrades) {
-                allPoint+=gradeAndCourse.getCourse().getCredit();
+                allPoint += gradeAndCourse.getCourse().getCredit();
                 float grade = gradeAndCourse.getGrade().getScore();
                 buffer.append("考试名称：").append(gradeAndCourse.getCourse().getName()).append("\n")
                         .append("成绩：").append(grade == -1 ? "" : grade / 100).append("   学分：")
                         .append(((float) gradeAndCourse.getGrade().getPoint()) / 10).append("\n\n");
             }
-            allPoint/=10;
-            buffer.insert(0,"- - - - - - - - - - - - - - - \n");
-            int num=0;
-            if(allPoint<7)num=7-allPoint;
-            buffer.insert(0,"你选修的公共选修课共"+allPoint+"学分\n还差"+num+"学分\n");
-            buffer.insert(0,"- - - - - - - - - - - - - - - \n");
+            allPoint /= 10;
+            buffer.insert(0, "- - - - - - - - - - - - - - - \n");
+            int num = 0;
+            if (allPoint < 7) num = 7 - allPoint;
+            buffer.insert(0, "你选修的公共选修课共" + allPoint + "学分\n还差" + num + "学分\n");
+            buffer.insert(0, "- - - - - - - - - - - - - - - \n");
         }
         buffer.append("\n 查询仅供参考，以教务网为准，如有疑问微信联系：吴彦祖【hkdhd666】\n（有同学反映，大学英语提高班也是选修课）");
         return buffer.toString();
     }
 
-    private void filterMergeResultForCurrentTerm(List<GradeAndCourse> mergeResult){
+    private void filterMergeResultForCurrentTerm(List<GradeAndCourse> mergeResult) {
         //这里硬编码了一个Term对象，数据是当前学期的信息
 
         //因为app爬虫的数据可能有问题，处理合并过后错误的数据

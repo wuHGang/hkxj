@@ -196,7 +196,7 @@ public class ExamTimeTableService {
         int id = student.getClasses().getId();
         List<Integer> timeTableIdList = examTimeTableMapper.selectExamIdIdByClassId(id);
         if(timeTableIdList.size() == 0){
-            ArrayList<ExamTimeTable> examList;
+            List<ExamTimeTable> examList;
             try {
                 examList = appSpiderService.getExamByAccount(student.getAccount());
             } catch (PasswordUncorrectException e) {
@@ -207,7 +207,7 @@ public class ExamTimeTableService {
             }
 
             ExecutorService executorService = Executors.newSingleThreadExecutor();
-            ArrayList<ExamTimeTable> finalExamList = examList;
+            List<ExamTimeTable> finalExamList = examList;
             executorService.execute(() -> saveExamTimeTask(id, finalExamList));
             return examList;
         }

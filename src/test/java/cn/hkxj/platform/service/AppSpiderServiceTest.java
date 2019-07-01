@@ -2,6 +2,8 @@ package cn.hkxj.platform.service;
 
 import cn.hkxj.platform.PlatformApplication;
 import cn.hkxj.platform.exceptions.PasswordUncorrectException;
+import cn.hkxj.platform.pojo.AllGradeAndCourse;
+import cn.hkxj.platform.pojo.GradeAndCourse;
 import cn.hkxj.platform.pojo.timetable.ExamTimeTable;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,6 +14,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import javax.annotation.Resource;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author junrong.chen
@@ -26,7 +29,19 @@ public class AppSpiderServiceTest {
 
     @Test
     public void getExamByAccount() throws PasswordUncorrectException {
-        ArrayList<ExamTimeTable> examByAccount = appSpiderService.getExamByAccount(2017023523);
-        System.out.println(examByAccount.toString());
+        List<ExamTimeTable> examByAccount = appSpiderService.getExamByAccount(2017023523);
+        for (ExamTimeTable table : examByAccount) {
+            System.out.println(examByAccount.toString());
+        }
+
+    }
+
+    @Test
+    public void getGrade(){
+        AllGradeAndCourse gradeAndCourseByAccount = appSpiderService.getGradeAndCourseByAccount(2017023523);
+        for (GradeAndCourse course : gradeAndCourseByAccount.getCurrentTermGrade()) {
+            System.out.println(course.toString());
+        }
+
     }
 }

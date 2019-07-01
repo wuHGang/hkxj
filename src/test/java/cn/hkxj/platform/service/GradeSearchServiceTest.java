@@ -27,19 +27,16 @@ import java.util.stream.Collectors;
 public class GradeSearchServiceTest {
 	@Resource(name = "gradeSearchService")
 	private GradeSearchService gradeSearchService;
-//	@Autowired
-//	private WxMpService wxMpService;
 
 	@Test
 	public void getAccess_token() throws WxErrorException {
-//		String accessToken = wxMpService.getAccessToken();
-//		System.out.println(accessToken);
+
 	}
 
     @Test
     public void getCurrentTermGrade() {
         Student student = new Student();
-        student.setAccount(2016023726);
+        student.setAccount(2017026198);
         student.setPassword("1");
         long start = System.currentTimeMillis();
         List<GradeAndCourse> currentTermGrade = gradeSearchService.getCurrentGradeFromSpider(student);
