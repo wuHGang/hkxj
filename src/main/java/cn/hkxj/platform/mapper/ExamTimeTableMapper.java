@@ -28,4 +28,7 @@ public interface ExamTimeTableMapper {
     List<Integer> selectExamIdIdByClassId(@Param("id") int id);
 
     void insertClassAndExamRelation(@Param("class_id") int classId, @Param("exam_timetable_id") int examId);
+
+    List<ExamTimeTable> selectExamTimeTableTomorrowByClassId(@Param("classesId") int classesId);
+
 }

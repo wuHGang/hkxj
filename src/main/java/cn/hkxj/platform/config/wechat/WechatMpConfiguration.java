@@ -102,7 +102,7 @@ public class WechatMpConfiguration {
 				.end()
 				.rule()
 				.async(false)
-				.rContent("课表推送|成绩推送")
+				.rContent("课表推送|成绩推送|考试推送")
 				.interceptor(wechatOpenIdInterceptor)
 				.handler(subscribeMessageHandler)
 				.end()

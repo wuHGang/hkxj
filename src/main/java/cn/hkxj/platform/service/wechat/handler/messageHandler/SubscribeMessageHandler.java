@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.StreamSupport;
 
 /**
@@ -26,7 +27,7 @@ import java.util.stream.StreamSupport;
 @Slf4j
 @Component
 public class SubscribeMessageHandler implements WxMpMessageHandler{
-    private static final String PATTERN = "格式不正确:\n\n订阅格式:\n发送关键字 如：课表推送， 成绩推送";
+    private static final String PATTERN = "格式不正确:\n\n订阅格式:\n发送关键字 如：课表推送， 成绩推送， 考试推送";
 
 
     @Resource
@@ -36,7 +37,11 @@ public class SubscribeMessageHandler implements WxMpMessageHandler{
 
     @Override
     public WxMpXmlOutMessage handle(WxMpXmlMessage wxMessage, Map<String, Object> context, WxMpService wxMpService, WxSessionManager sessionManager) {
-        String scene = wxMessage.getContent();
+        SubscribeScene subscribeScene = SubscribeScene.getSubscribeSceneByChinese(wxMessage.getContent());
+        if(Objects.isNull(subscribeScene)){
+            return textBuilder.build(PATTERN, wxMessage, wxMpService);
+        }
+        String scene = subscribeScene.getScene();
         if(!Objects.isNull(scene)){
             String openid = wxMessage.getFromUser();
             String appid = wxMpService.getWxMpConfigStorage().getAppId();

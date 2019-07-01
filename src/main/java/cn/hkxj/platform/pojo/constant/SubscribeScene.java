@@ -11,8 +11,8 @@ import com.google.common.base.Objects;
 public enum SubscribeScene {
 
     COURSE_PUSH("课表推送", "1005"),
-    GRADE_AUTO_UPDATE("成绩推送", "1010");
-
+    GRADE_AUTO_UPDATE("成绩推送", "1010"),
+    EXAM_SUBSCRUBE("考试推送","1015");
 
     private String chinese;
 
@@ -29,6 +29,8 @@ public enum SubscribeScene {
                 return COURSE_PUSH;
             case "成绩推送":
                 return GRADE_AUTO_UPDATE;
+            case "考试推送":
+                return EXAM_SUBSCRUBE;
             default:
                 return null;
         }

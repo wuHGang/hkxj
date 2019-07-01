@@ -69,7 +69,7 @@ public class ScheduleTaskService {
      * @param scene 订阅场景值
      * @return 映射关系
      */
-    public Map<String, List<ScheduleTask>> getSubscribeData(int scene) {
+    public Map<String, List<ScheduleTask>>  getSubscribeData(int scene) {
        return getSubscribeData(scene, true);
     }
 

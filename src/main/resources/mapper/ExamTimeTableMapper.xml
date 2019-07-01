@@ -229,4 +229,13 @@
     <select id="selectExamIdIdByClassId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
         select exam_timetable_id from class_exam_timetable where class_id = #{id}
     </select>
+
+  <select id="selectExamTimeTableTomorrowByClassId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List" />
+    FROM `exam_timetable`
+    WHERE `id` IN ( SELECT `exam_timetable_id` FROM `class_exam_timetable` WHERE `class_id` = #{classesId,jdbcType=INTEGER} )
+    and TO_DAYS(`start`) - TO_DAYS( NOW( ) )  = 1 and 1 = 1
+  </select>
+
 </mapper>
