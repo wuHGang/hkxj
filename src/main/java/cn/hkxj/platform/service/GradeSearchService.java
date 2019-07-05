@@ -58,16 +58,8 @@ public class GradeSearchService {
     }
 
 
-    public List<GradeAndCourse> getCurrentGradeFromSpider(Student student) {
-        CompletionService<List<GradeAndCourse>> spiderExecutorService = new ExecutorCompletionService<>(executorService);
-
-        spiderExecutorService.submit(() -> appSpiderService.getGradeAndCourseByAccount(student.getAccount()).getCurrentTermGrade());
-        spiderExecutorService.submit(() -> urpSpiderService.getCurrentGrade(student));
-        final List<GradeAndCourse> gradeAndCourses = mergeResult(spiderExecutorService);
-
-        saveDBexecutorService.submit(() -> saveGradeAndCourse(student, gradeAndCourses));
-
-        filterMergeResultForCurrentTerm(gradeAndCourses);
+    public List<GradeAndCourse> getCurrentGrade(Student student) {
+        List<GradeAndCourse> gradeAndCourses = getCurrentGradeFromSpider(student);
         if(gradeAndCourses.isEmpty()){
             return getGradeFromDB(student);
         }
@@ -77,9 +69,27 @@ public class GradeSearchService {
         return gradeAndCourses;
     }
 
+    public List<GradeAndCourse> getCurrentGradeFromSpider(Student student){
+        CompletionService<List<GradeAndCourse>> spiderExecutorService = new ExecutorCompletionService<>(executorService);
+
+        spiderExecutorService.submit(() -> appSpiderService.getGradeAndCourseByAccount(student.getAccount()).getCurrentTermGrade());
+        spiderExecutorService.submit(() -> urpSpiderService.getCurrentGrade(student));
+        final List<GradeAndCourse> gradeAndCourses = mergeResult(spiderExecutorService);
+
+        saveDBexecutorService.submit(() -> saveGradeAndCourse(student, gradeAndCourses));
+
+        filterMergeResultForCurrentTerm(gradeAndCourses);
+        return gradeAndCourses;
+    }
+
     List<GradeAndCourse> getGradeFromDB(Student student){
         List<Grade> currentGrade = gradeDao.getCurrentGrade(student);
-        currentGrade.removeIf(grade -> !grade.getYear().equals(2018) && !grade.getTerm().equals((byte) 2));
+        currentGrade.removeIf(grade -> !grade.getYear().equals(2018) || !grade.getTerm().equals((byte) 2));
+
+        if(currentGrade.isEmpty()){
+            return Lists.newArrayListWithExpectedSize(0);
+        }
+
         List<String> courseUidList = currentGrade.stream()
                 .map(Grade::getCourseId)
                 .collect(Collectors.toList());

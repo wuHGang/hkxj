@@ -50,7 +50,7 @@ public class CustomerMessageService {
     public WxMpXmlOutTextMessage sendGradeMessage(CompletableFuture<List<GradeAndCourse>> future, Student student) {
 
         try {
-            List<GradeAndCourse> gradeAndCourses = future.get(4, TimeUnit.SECONDS);
+            List<GradeAndCourse> gradeAndCourses = future.get(3500, TimeUnit.MILLISECONDS);
             return buildMessage(GradeSearchService.gradeListToText(gradeAndCourses));
         } catch (TimeoutException | InterruptedException | ExecutionException e) {
             log.error("student {} from wechat message get grade error {}", student.getAccount(), e.getMessage());
@@ -61,7 +61,7 @@ public class CustomerMessageService {
                 }
             });
         }
-        return buildMessage("服务器正在努力查询中");
+        return null;
     }
 
     private void sentTextMessage(WxMpXmlMessage wxMpXmlMessage, WxMpService wxMpService, String result) {
@@ -71,9 +71,10 @@ public class CustomerMessageService {
         wxMpKefuMessage.setMsgType("text");
         wxMpKefuMessage.setToUser(wxMpXmlMessage.getFromUser());
         try {
+            log.info("send customer message {}", result);
             wxMpService.getKefuService().sendKefuMessage(wxMpKefuMessage);
         } catch (WxErrorException e) {
-            log.error("send grade customer message error", e);
+            log.error("send customer message error", e);
         }
     }
 

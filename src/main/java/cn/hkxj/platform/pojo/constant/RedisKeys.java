@@ -2,7 +2,9 @@ package cn.hkxj.platform.pojo.constant;
 
 public enum RedisKeys {
 
-    EMPTY_ROOM_KEY("app_search_service:emptyRoom:");
+    EMPTY_ROOM_KEY("app_search_service:emptyRoom:"),
+
+    OPENID_TO_ACCOUNT("mark_openid:");
 
     private String name;
 
