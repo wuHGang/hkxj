@@ -4,7 +4,9 @@ public enum RedisKeys {
 
     EMPTY_ROOM_KEY("app_search_service:emptyRoom:"),
 
-    OPENID_TO_ACCOUNT("mark_openid:");
+    OPENID_TO_ACCOUNT("mark_openid:"),
+
+    URP_SPIDER_COOKIE("urp_spider_cookie:");
 
     private String name;
 

@@ -26,7 +26,7 @@ public class NewUrpSpider {
             .build();
 
     public void getCaptcha(){
-
+        CookieManager cookieManager = new CookieManager();
         Request request = new Request.Builder()
                 .url(CAPTCHA)
                 .get()
