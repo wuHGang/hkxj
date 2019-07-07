@@ -20,4 +20,8 @@ public class WechatTemplateProperties {
 
     @Value("${wechat.mp.plus.templateId.tips}")
     private String plusTipsTemplateId;
+
+    @Value("${wechat.mp.plus.templateId.exam}")
+    private String plusExamTemplateId;
+
 }

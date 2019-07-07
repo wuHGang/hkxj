@@ -2,6 +2,7 @@ package cn.hkxj.platform.builder;
 
 import cn.hkxj.platform.pojo.GradeAndCourse;
 import cn.hkxj.platform.pojo.wechat.CourseGroupMsg;
+import cn.hkxj.platform.pojo.wechat.ExamGroupMsg;
 import cn.hkxj.platform.utils.DateUtils;
 import cn.hkxj.platform.utils.SchoolTimeUtil;
 import me.chanjar.weixin.mp.bean.template.WxMpTemplateData;
@@ -195,6 +196,33 @@ public class TemplateBuilder {
         templateDatas.add(first);
         templateDatas.add(course);
         templateDatas.add(date);
+        templateDatas.add(remark);
+
+        return templateDatas;
+    }
+
+    /**
+     * 组装课程推送模板消息需要的WxMpTemplateData的列表
+     * @param msg 课程推送信息
+     * @return List<WxMpTemplateData>
+     */
+    public List<WxMpTemplateData> assemblyTemplateContentForExam(ExamGroupMsg msg) {
+        List<WxMpTemplateData> templateDatas = new ArrayList<>();
+        //first关键字
+        WxMpTemplateData first = new WxMpTemplateData();
+        first.setName("first");
+        first.setValue("考试推送\n");
+        //keyword1关键字
+        WxMpTemplateData course = new WxMpTemplateData();
+        course.setName("keyword1");
+        course.setValue("\n" + msg.getCourseContent() + "\n");
+
+        WxMpTemplateData remark = new WxMpTemplateData();
+        remark.setName("remark");
+        remark.setValue("查询仅供参考，以学校下发的考试通知为准，如有疑问微信添加吴彦祖【hkdhd666】\n");
+
+        templateDatas.add(first);
+        templateDatas.add(course);
         templateDatas.add(remark);
 
         return templateDatas;
