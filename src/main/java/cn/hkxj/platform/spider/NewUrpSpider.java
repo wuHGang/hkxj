@@ -1,19 +1,17 @@
 package cn.hkxj.platform.spider;
 
-import com.google.common.io.Files;
+import cn.hkxj.platform.spider.model.VerifyCode;
+import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.CookieManager;
-import java.net.CookiePolicy;
 import java.net.HttpCookie;
 import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
+@Slf4j
 public class NewUrpSpider {
     private static final String ROOT = "http://xsurp.usth.edu.cn";
     private static final String CAPTCHA = ROOT + "/img/captcha.jpg";
@@ -25,7 +23,7 @@ public class NewUrpSpider {
             .cookieJar(new JavaNetCookieJar(cookieManager))
             .build();
 
-    public void getCaptcha(){
+    public VerifyCode getCaptcha(){
         CookieManager cookieManager = new CookieManager();
         Request request = new Request.Builder()
                 .url(CAPTCHA)
@@ -33,14 +31,18 @@ public class NewUrpSpider {
                 .build();
 
         try {
-            byte[] bytes = client.newCall(request).execute().body().bytes();
-            Files.write(bytes, new File("pic.jpg"));
+            if(client.newCall(request).execute().isSuccessful()){
+                byte[] bytes = client.newCall(request).execute().body().bytes();
+                return new VerifyCode(bytes);
+            }
+
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("get verify code error", e);
         }
 
         List<HttpCookie> cookies = cookieManager.getCookieStore().getCookies();
         System.out.println(cookies);
+        return null;
     }
 
 

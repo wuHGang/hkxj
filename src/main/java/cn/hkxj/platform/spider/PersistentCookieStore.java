@@ -25,7 +25,6 @@ import static ch.qos.logback.core.encoder.ByteArrayUtil.hexStringToByteArray;
 @Slf4j
 public class PersistentCookieStore implements CookieStore {
 
-    private static final String LOG_TAG = "PersistentCookieStore";
     private static final String COOKIE_PREFS = "CookiePrefsFile";
     private static final String HOST_NAME_PREFIX = "host_";
     private static final String COOKIE_NAME_PREFIX = "cookie_";
@@ -54,18 +53,18 @@ public class PersistentCookieStore implements CookieStore {
                 this.cookies.put(key, new ConcurrentHashMap<>());
             }
 
-            String[] cookieNameArr = cookieNames.split(",");
-            for (String name : cookieNameArr) {
-                String encodedCookie = this.cookiePrefs.getString("cookie_" + name, null);
-                if (encodedCookie == null) {
-                    continue;
-                }
-
-                Cookie decodedCookie = this.decodeCookie(encodedCookie);
-                if (decodedCookie != null) {
-                    this.cookies.get(key).put(name, decodedCookie);
-                }
-            }
+//            String[] cookieNameArr = cookieNames.split(",");
+//            for (String name : cookieNameArr) {
+//                String encodedCookie = tempCookieMap.get("cookie_" + name, null);
+//                if (encodedCookie == null) {
+//                    continue;
+//                }
+//
+//                Cookie decodedCookie = this.decodeCookie(encodedCookie);
+//                if (decodedCookie != null) {
+//                    this.cookies.get(key).put(name, decodedCookie);
+//                }
+//            }
         }
         tempCookieMap.clear();
 
@@ -102,18 +101,18 @@ public class PersistentCookieStore implements CookieStore {
         return false;
     }
 
-    protected Cookie decodeCookie(String cookieString) {
-        byte[] bytes = hexStringToByteArray(cookieString);
-        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
-        Cookie cookie = null;
-        try {
-            ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream);
-            cookie = ((SerializableCookie) objectInputStream.readObject()).getCookie();
-        } catch (IOException e) {
-            log.error("IOException in decodeCookie", e);
-        } catch (ClassNotFoundException e) {
-            log.error("ClassNotFoundException in decodeCookie", e);
-        }
-        return cookie;
-    }
+//    protected Cookie decodeCookie(String cookieString) {
+//        byte[] bytes = hexStringToByteArray(cookieString);
+//        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
+//        Cookie cookie = null;
+//        try {
+//            ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream);
+//            cookie = ((SerializableCookie) objectInputStream.readObject()).getCookie();
+//        } catch (IOException e) {
+//            log.error("IOException in decodeCookie", e);
+//        } catch (ClassNotFoundException e) {
+//            log.error("ClassNotFoundException in decodeCookie", e);
+//        }
+//        return cookie;
+//    }
 }
