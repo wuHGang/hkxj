@@ -3,6 +3,7 @@ package cn.hkxj.platform.spider;
 import cn.hkxj.platform.spider.model.VerifyCode;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
+import org.slf4j.MDC;
 
 import java.io.IOException;
 import java.net.CookieManager;
@@ -17,17 +18,26 @@ public class NewUrpSpider {
     private static final String CAPTCHA = ROOT + "/img/captcha.jpg";
     private static final String CHECK = ROOT + "/j_spring_security_check";
     private static final String INDEX = ROOT + "/index.jsp";
-    private static final CookieManager cookieManager = new CookieManager();
     private static final OkHttpClient client = new OkHttpClient.Builder()
-            .connectTimeout(60, TimeUnit.SECONDS)
-            .cookieJar(new JavaNetCookieJar(cookieManager))
+            .connectTimeout(600, TimeUnit.SECONDS)
+            .readTimeout(600, TimeUnit.SECONDS)
+            .cookieJar(new UrpCookieJar())
+            .build();
+
+    private final static Headers HEADERS = new Headers.Builder()
+            .add("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3")
+            .add("Host", "xsurp.usth.edu.cn")
+            .add("Connection", "keep-alive")
+            .add("Accept-Encoding", "gzip")
+            .add("User-Agent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36")
+            .add("Upgrade-Insecure-Requests", "1")
             .build();
 
     public VerifyCode getCaptcha(){
-        CookieManager cookieManager = new CookieManager();
         Request request = new Request.Builder()
                 .url(CAPTCHA)
                 .get()
+                .headers(HEADERS)
                 .build();
 
         try {
@@ -40,8 +50,6 @@ public class NewUrpSpider {
             log.error("get verify code error", e);
         }
 
-        List<HttpCookie> cookies = cookieManager.getCookieStore().getCookies();
-        System.out.println(cookies);
         return null;
     }
 
@@ -62,8 +70,6 @@ public class NewUrpSpider {
         try {
             String string = client.newCall(request).execute().body().string();
             System.out.println(string);
-            List<HttpCookie> cookies = cookieManager.getCookieStore().getCookies();
-            System.out.println(cookies);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -87,12 +93,14 @@ public class NewUrpSpider {
     }
 
     public static void main(String[] args) {
+        MDC.put("cookieTrace", "trace");
         NewUrpSpider spider = new NewUrpSpider();
-        spider.getCaptcha();
+        VerifyCode captcha = spider.getCaptcha();
+        captcha.write("pic.jpg");
         Scanner scanner = new Scanner(System.in);
         String code = scanner.nextLine();
         System.out.println(code);
-        spider.studentCheck("学号", "密码", code);
+        spider.studentCheck("2014025838", "1", code);
 //        spider.login();
     }
 }
