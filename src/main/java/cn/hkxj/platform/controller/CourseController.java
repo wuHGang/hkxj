@@ -45,7 +45,7 @@ public class CourseController {
 		}
 
 		if (!isAccountValid(account)){
-			log.info("student login fail--invalid account:{}", account);
+			log.info("student getStudentInfo fail--invalid account:{}", account);
 			return WebResponse.fail(ErrorCode.ACCOUNT_OR_PASSWORD_INVALID.getErrorCode(), "账号无效");
 		}
 

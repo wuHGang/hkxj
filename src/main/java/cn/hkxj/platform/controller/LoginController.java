@@ -36,9 +36,9 @@ public class LoginController {
 	@PostMapping("/student")
 	public WebResponse studentLogin(@RequestParam("account")String account,
 	                                @RequestParam("password")String password) throws PasswordUncorrectException {
-		log.info("student login--account:{} password:{}", account, password);
+		log.info("student getStudentInfo--account:{} password:{}", account, password);
 		if (!isAccountValid(account)){
-			log.info("student login fail--invalid account:{}", account, password);
+			log.info("student getStudentInfo fail--invalid account:{}", account, password);
 			return WebResponse.fail(ErrorCode.ACCOUNT_OR_PASSWORD_INVALID.getErrorCode(), "账号无效");
 		}
         Student student;
@@ -53,7 +53,7 @@ public class LoginController {
 		    return WebResponse.fail(ErrorCode.ACCOUNT_OR_PASSWORD_INVALID.getErrorCode(), "账号无效");
         }
 		session.setAttribute("student", student);
-		log.info("student login success--account:{} password:{}", account, password);
+		log.info("student getStudentInfo success--account:{} password:{}", account, password);
 
 		return WebResponse.success(student);
 	}

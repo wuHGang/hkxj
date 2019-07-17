@@ -3,33 +3,36 @@ package cn.hkxj.platform.spider;
 import cn.hkxj.platform.pojo.constant.RedisKeys;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.Cookie;
+import okhttp3.HttpUrl;
 import org.apache.http.util.TextUtils;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.util.StringUtils;
 
 import javax.naming.Context;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.net.CookieStore;
 import java.net.HttpCookie;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static ch.qos.logback.core.encoder.ByteArrayUtil.hexStringToByteArray;
-
 @Slf4j
 public class PersistentCookieStore implements CookieStore {
 
-    private static final String COOKIE_PREFS = "CookiePrefsFile";
     private static final String HOST_NAME_PREFIX = "host_";
-    private static final String COOKIE_NAME_PREFIX = "cookie_";
+    private static HashMap uriIndex = new HashMap<URI, List<HttpCookie>>();
+    /**
+     * 用户前置访问验证码的session的保存
+     */
+    private static ConcurrentHashMap verifyCodeIndex = new ConcurrentHashMap<String, List<HttpCookie>>();
+    /**
+     * 用户验证码验证成功后的session保存
+     */
+    private static ConcurrentHashMap accountIndex = new ConcurrentHashMap<String, List<HttpCookie>>();
     private final HashMap<String, ConcurrentHashMap<String, Cookie>> cookies;
-    private boolean omitNonPersistentCookies = false;
     private RedisTemplate<String, String> redisTemplate;
 
     /** Construct a persistent cookie store.  */
@@ -53,18 +56,6 @@ public class PersistentCookieStore implements CookieStore {
                 this.cookies.put(key, new ConcurrentHashMap<>());
             }
 
-//            String[] cookieNameArr = cookieNames.split(",");
-//            for (String name : cookieNameArr) {
-//                String encodedCookie = tempCookieMap.get("cookie_" + name, null);
-//                if (encodedCookie == null) {
-//                    continue;
-//                }
-//
-//                Cookie decodedCookie = this.decodeCookie(encodedCookie);
-//                if (decodedCookie != null) {
-//                    this.cookies.get(key).put(name, decodedCookie);
-//                }
-//            }
         }
         tempCookieMap.clear();
 
@@ -73,7 +64,24 @@ public class PersistentCookieStore implements CookieStore {
 
     @Override
     public void add(URI uri, HttpCookie cookie) {
+        if (cookie == null) {
+            throw new NullPointerException("cookie is null");
+        }
 
+//        try {
+//            if (cookie.getMaxAge() != 0) {
+//                // and add it to domain index
+//                if (cookie.getDomain() != null) {
+//                    addIndex(domainIndex, cookie.getDomain(), cookie);
+//                }
+//                if (uri != null) {
+//                    // add it to uri index, too
+//                    addIndex(uriIndex, getEffectiveURI(uri), cookie);
+//                }
+//            }
+//        } finally {
+//            lock.unlock();
+//        }
     }
 
     @Override
@@ -101,18 +109,21 @@ public class PersistentCookieStore implements CookieStore {
         return false;
     }
 
-//    protected Cookie decodeCookie(String cookieString) {
-//        byte[] bytes = hexStringToByteArray(cookieString);
-//        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
-//        Cookie cookie = null;
-//        try {
-//            ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream);
-//            cookie = ((SerializableCookie) objectInputStream.readObject()).getCookie();
-//        } catch (IOException e) {
-//            log.error("IOException in decodeCookie", e);
-//        } catch (ClassNotFoundException e) {
-//            log.error("ClassNotFoundException in decodeCookie", e);
-//        }
-//        return cookie;
-//    }
+    // add 'cookie' indexed by 'index' into 'indexStore'
+    private <T> void addIndex(Map<T, List<HttpCookie>> indexStore, T index, HttpCookie cookie)
+    {
+        if (index != null) {
+            List<HttpCookie> cookies = indexStore.get(index);
+            if (cookies != null) {
+                // there may already have the same cookie, so remove it first
+                cookies.remove(cookie);
+
+                cookies.add(cookie);
+            } else {
+                cookies = new ArrayList<HttpCookie>();
+                cookies.add(cookie);
+                indexStore.put(index, cookies);
+            }
+        }
+    }
 }

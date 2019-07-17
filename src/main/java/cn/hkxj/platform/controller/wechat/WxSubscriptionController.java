@@ -68,7 +68,7 @@ public class WxSubscriptionController {
         httpSession.setAttribute("appid", appid);
 
         if (Objects.isNull(openid)) {
-            log.info("redirect to login");
+            log.info("redirect to getStudentInfo");
             return "LoginWeb/Login";
         }
 
@@ -83,7 +83,7 @@ public class WxSubscriptionController {
 
         } else {
             httpSession.setAttribute("openid", openid);
-            log.info("redirect to login");
+            log.info("redirect to getStudentInfo");
             return "LoginWeb/Login";
         }
     }

@@ -5,6 +5,7 @@ import com.google.common.base.Objects;
 
 import java.util.Date;
 
+
 public class Student {
     private Integer id;
 

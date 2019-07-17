@@ -2,17 +2,22 @@ package cn.hkxj.platform.spider;
 
 import cn.hkxj.platform.exceptions.UrpRequestException;
 import cn.hkxj.platform.exceptions.UrpTimeoutException;
+import cn.hkxj.platform.pojo.Student;
+import cn.hkxj.platform.service.ClazzService;
 import cn.hkxj.platform.spider.model.VerifyCode;
-import com.google.common.io.Files;
+import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.slf4j.MDC;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.CookieManager;
-import java.util.Arrays;
-import java.util.Scanner;
+import java.util.*;
 
 @Slf4j
 public class NewUrpSpider {
@@ -20,7 +25,7 @@ public class NewUrpSpider {
     private static final String CAPTCHA = ROOT + "/img/captcha.jpg";
     private static final String CHECK = ROOT + "/j_spring_security_check";
     private static final String INDEX = ROOT + "/index.jsp";
-    private static final String LOGIN = ROOT + "/login";
+    private static final String LOGIN = ROOT + "/getStudentInfo";
     private static final String STUDENT_INFO = ROOT + "/student/rollManagement/rollInfo/index";
     private static final CookieManager manager = new CookieManager();
     private static final OkHttpClient client = new OkHttpClient.Builder()
@@ -81,17 +86,41 @@ public class NewUrpSpider {
     }
 
 
-    public void login(){
+    public void getStudentInfo(){
         Request request = new Request.Builder()
                 .url(STUDENT_INFO)
                 .get()
                 .build();
 
-        log.info(new String(execute(request)));
+        Map<String, String> userInfo = parseUserInfo(new String(execute(request)));
+        Student student = new Student();
+        student.setAccount(Integer.parseInt(userInfo.get("学号")));
+        student.setIsCorrect(true);
+        student.setEthnic(userInfo.get("民族"));
+        student.setSex(userInfo.get("性别"));
+        student.setName(userInfo.get("姓名"));
+
+        System.out.println(student);
     }
 
-    private void paseUserInfo(){
-        File file = new File("userinfo.html");
+    private Map<String, String> parseUserInfo(String html){
+        HashMap<String, String> infoMap = new HashMap<>();
+        Document document = Jsoup.parse(html);
+        Elements elements = document.getElementsByClass("profile-info-row");
+        for(Element e: elements){
+            Elements name = e.getElementsByClass("profile-info-name");
+            List<Element> nameList = Lists.newArrayList(name.iterator());
+            Elements value = e.getElementsByClass("profile-info-value");
+            List<Element> valueList = Lists.newArrayList(value.iterator());
+
+
+            for(int x=0; x< nameList.size(); x++){
+                infoMap.put(nameList.get(x).text(), valueList.get(x).text());
+            }
+        }
+
+        return infoMap;
+
 
     }
 
@@ -118,6 +147,6 @@ public class NewUrpSpider {
         String code = scanner.nextLine();
         System.out.println(code);
         spider.studentCheck("2014025838", "1", code);
-        spider.login();
+        spider.getStudentInfo();
     }
 }
