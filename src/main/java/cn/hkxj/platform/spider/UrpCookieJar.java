@@ -39,6 +39,7 @@ public class UrpCookieJar implements CookieJar {
 
     @Override
     public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
+
         CookieHandler cookieHandler = selectCookieHandler(url);
         List<String> cookieStrings = new ArrayList<>();
         for (Cookie cookie : cookies) {
@@ -83,9 +84,9 @@ public class UrpCookieJar implements CookieJar {
 
 
     private CookieHandler selectCookieHandler(HttpUrl url){
-        System.out.println(MDC.get("cookieTrace"));
         CookieManager cookieManager = new CookieManager();
         CookieHandler result = traceCookieHandler.putIfAbsent(MDC.get("cookieTrace"), cookieManager);
+
         return  result == null ? cookieManager : result;
     }
 

@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 
 /**
+ * @author junrong.chen
  * 验证码
  */
 @Slf4j
@@ -30,5 +31,9 @@ public class VerifyCode {
         } catch (IOException e) {
             log.error("write verify code error", e);
         }
+    }
+
+    public boolean isEmpty(){
+        return data.length == 0;
     }
 }
