@@ -1,13 +1,16 @@
 package cn.hkxj.platform.spider;
 
+import cn.hkxj.platform.exceptions.PasswordUncorrectException;
 import cn.hkxj.platform.exceptions.UrpRequestException;
 import cn.hkxj.platform.exceptions.UrpTimeoutException;
+import cn.hkxj.platform.exceptions.UrpVerifyCodeException;
 import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.service.ClazzService;
 import cn.hkxj.platform.spider.model.VerifyCode;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
+import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -32,6 +35,7 @@ public class NewUrpSpider {
             .cookieJar(new UrpCookieJar())
             .retryOnConnectionFailure(true)
             .addInterceptor(new RetryInterceptor(5))
+            .followRedirects(false)
             .build();
 
     private final static Headers HEADERS = new Headers.Builder()
@@ -70,8 +74,16 @@ public class NewUrpSpider {
                 .post(body)
                 .build();
 
-        new String(execute(request));
-        log.info("success");
+        Response response = getResponse(request);
+        String location = response.header("Location");
+        if(StringUtils.isEmpty(location)){
+            throw new UrpRequestException("url: "+ request.url().toString()+ " code: "+response.code()+" cause: "+ response.message());
+        }else if(location.contains("badCaptcha")){
+            throw new UrpVerifyCodeException();
+        }else if(location.contains("badCredentials")){
+            throw new PasswordUncorrectException();
+        }
+
     }
 
 
@@ -128,7 +140,7 @@ public class NewUrpSpider {
 
     private byte[] execute(Request request){
         try (Response response = client.newCall(request).execute()) {
-            if(!response.isSuccessful() || response.body() == null){
+            if((!response.isSuccessful() || response.body() == null) && !response.isRedirect()){
                 throw new UrpRequestException("url: "+ request.url().toString()+ " code: "+response.code()+" cause: "+ response.message());
             }
             return response.body().bytes();
@@ -138,6 +150,19 @@ public class NewUrpSpider {
     }
 
 
+    private Response getResponse(Request request){
+        try (Response response = client.newCall(request).execute()) {
+            if((!response.isSuccessful() || response.body() == null) && !response.isRedirect()){
+                throw new UrpRequestException("url: "+ request.url().toString()+ " code: "+response.code()+" cause: "+ response.message());
+            }
+            return response;
+        } catch (IOException e) {
+            throw new UrpTimeoutException(request.url().toString(), e);
+        }
+    }
+
+
+
     public static void main(String[] args) {
         MDC.put("cookieTrace", "trace");
         NewUrpSpider spider = new NewUrpSpider();
@@ -145,8 +170,7 @@ public class NewUrpSpider {
         captcha.write("pic.jpg");
         Scanner scanner = new Scanner(System.in);
         String code = scanner.nextLine();
-        System.out.println(code);
         spider.studentCheck("2014025838", "1", code);
-        spider.getStudentInfo();
+//        spider.getStudentInfo();
     }
 }

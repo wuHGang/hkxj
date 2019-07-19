@@ -28,15 +28,16 @@ public class RetryInterceptor implements Interceptor {
     public Response intercept(Chain chain) throws IOException {
         int retryNum = 0;
         while (retryNum < maxRetry) {
+            retryNum++;
             try {
                 Response response = chain.proceed(chain.request());
-                if(!response.isSuccessful()){
+
+                if(!response.isSuccessful()&& !response.isRedirect()){
                     log.debug("urp url {} request retry  time {}, cause {}, code {}", chain.request().url().toString(), retryNum, response.message(), response.code());
                 }else {
                     return response;
                 }
             }catch (IOException e){
-                retryNum++;
                 log.debug("urp url {} request retry  time {}, cause {}", chain.request().url().toString(), retryNum, e.getMessage());
             }
 
