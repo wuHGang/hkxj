@@ -10,8 +10,6 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
-import static org.junit.Assert.*;
-
 /**
  * @author Yuki
  * @date 2019/2/26 16:35
@@ -20,10 +18,10 @@ import static org.junit.Assert.*;
 @SpringBootTest(classes = PlatformApplication.class)
 @WebAppConfiguration
 @TestPropertySource(value = "classpath:application-prod.properties")
-public class ClazzServiceTest {
+public class ClassServiceTest {
 
     @Autowired
-    private ClazzService clazzService;
+    private ClassService classService;
 
     @Test
     public void parseSpiderResult() {
@@ -31,6 +29,6 @@ public class ClazzServiceTest {
         urpStudentInfo.setClassname("采矿16-1班");
         urpStudentInfo.setAcademy("11");
         urpStudentInfo.setAccount(2016024170);
-        System.out.println(clazzService.parseSpiderResult(urpStudentInfo));;
+        System.out.println(classService.parseSpiderResult(urpStudentInfo));;
     }
 }

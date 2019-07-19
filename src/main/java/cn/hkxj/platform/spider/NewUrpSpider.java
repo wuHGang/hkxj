@@ -4,8 +4,7 @@ import cn.hkxj.platform.exceptions.PasswordUncorrectException;
 import cn.hkxj.platform.exceptions.UrpRequestException;
 import cn.hkxj.platform.exceptions.UrpTimeoutException;
 import cn.hkxj.platform.exceptions.UrpVerifyCodeException;
-import cn.hkxj.platform.pojo.Student;
-import cn.hkxj.platform.service.ClazzService;
+import cn.hkxj.platform.spider.model.UrpStudentInfo;
 import cn.hkxj.platform.spider.model.VerifyCode;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +16,6 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.MDC;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.CookieManager;
 import java.util.*;
@@ -27,7 +25,6 @@ public class NewUrpSpider {
     private static final String ROOT = "http://222.171.146.55";
     private static final String CAPTCHA = ROOT + "/img/captcha.jpg";
     private static final String CHECK = ROOT + "/j_spring_security_check";
-    private static final String INDEX = ROOT + "/index.jsp";
     private static final String LOGIN = ROOT + "/getStudentInfo";
     private static final String STUDENT_INFO = ROOT + "/student/rollManagement/rollInfo/index";
     private static final CookieManager manager = new CookieManager();
@@ -49,6 +46,10 @@ public class NewUrpSpider {
             .add("Cache-Control", "max-age=0")
             .build();
 
+
+    private String account;
+    private String password;
+
     public VerifyCode getCaptcha() {
         Request request = new Request.Builder()
                 .url(CAPTCHA)
@@ -61,8 +62,11 @@ public class NewUrpSpider {
 
     }
 
-
+    /**
+     * 登陆校验
+     */
     public void studentCheck(String account, String password, String captcha){
+
         FormBody.Builder params = new FormBody.Builder();
         FormBody body = params.add("j_username", account)
                 .add("j_password", password)
@@ -76,6 +80,7 @@ public class NewUrpSpider {
 
         Response response = getResponse(request);
         String location = response.header("Location");
+
         if(StringUtils.isEmpty(location)){
             throw new UrpRequestException("url: "+ request.url().toString()+ " code: "+response.code()+" cause: "+ response.message());
         }else if(location.contains("badCaptcha")){
@@ -84,35 +89,32 @@ public class NewUrpSpider {
             throw new PasswordUncorrectException();
         }
 
+        this.account = account;
+        this.password = password;
+
     }
 
 
-    private void loginPage(){
-        Request request = new Request.Builder()
-                .url(LOGIN)
-                .get()
-                .headers(HEADERS)
-                .build();
-
-        log.info(Arrays.toString(execute(request)));
-    }
-
-
-    public void getStudentInfo(){
+    public UrpStudentInfo getStudentInfo(){
+        if(this.account == null){
+            throw new UnsupportedOperationException("spider haven`t login");
+        }
         Request request = new Request.Builder()
                 .url(STUDENT_INFO)
                 .get()
                 .build();
 
         Map<String, String> userInfo = parseUserInfo(new String(execute(request)));
-        Student student = new Student();
+
+        UrpStudentInfo student = new UrpStudentInfo();
         student.setAccount(Integer.parseInt(userInfo.get("学号")));
-        student.setIsCorrect(true);
         student.setEthnic(userInfo.get("民族"));
         student.setSex(userInfo.get("性别"));
         student.setName(userInfo.get("姓名"));
+        student.setMajor(userInfo.get("专业"));
+        student.setAcademy(userInfo.get("学院"));
 
-        System.out.println(student);
+        return student;
     }
 
     private Map<String, String> parseUserInfo(String html){
@@ -132,15 +134,13 @@ public class NewUrpSpider {
         }
 
         return infoMap;
-
-
     }
 
 
 
     private byte[] execute(Request request){
         try (Response response = client.newCall(request).execute()) {
-            if((!response.isSuccessful() || response.body() == null) && !response.isRedirect()){
+            if(isResponseFail(response)){
                 throw new UrpRequestException("url: "+ request.url().toString()+ " code: "+response.code()+" cause: "+ response.message());
             }
             return response.body().bytes();
@@ -152,13 +152,24 @@ public class NewUrpSpider {
 
     private Response getResponse(Request request){
         try (Response response = client.newCall(request).execute()) {
-            if((!response.isSuccessful() || response.body() == null) && !response.isRedirect()){
+            if(isResponseFail(response)){
                 throw new UrpRequestException("url: "+ request.url().toString()+ " code: "+response.code()+" cause: "+ response.message());
             }
             return response;
         } catch (IOException e) {
             throw new UrpTimeoutException(request.url().toString(), e);
         }
+    }
+
+
+    /**
+     *
+     * @param response
+     * @return
+     */
+    private boolean isResponseFail(Response response){
+        return response.body() == null ||
+                (!response.isSuccessful() && !response.isRedirect());
     }
 
 
@@ -171,6 +182,6 @@ public class NewUrpSpider {
         Scanner scanner = new Scanner(System.in);
         String code = scanner.nextLine();
         spider.studentCheck("2014025838", "1", code);
-//        spider.getStudentInfo();
+        spider.getStudentInfo();
     }
 }

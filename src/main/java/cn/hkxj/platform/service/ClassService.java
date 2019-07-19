@@ -1,5 +1,6 @@
 package cn.hkxj.platform.service;
 
+import cn.hkxj.platform.dao.ClassDao;
 import cn.hkxj.platform.mapper.ClassesMapper;
 import cn.hkxj.platform.pojo.constant.Academy;
 import cn.hkxj.platform.pojo.Classes;
@@ -19,9 +20,9 @@ import java.util.Objects;
  */
 @Slf4j
 @Service("clazzService")
-public class ClazzService {
+public class ClassService {
     @Resource
-    private ClassesMapper classesMapper;
+    private ClassDao classDao;
     @Resource
     private SubjectService subjectService;
 
@@ -82,8 +83,7 @@ public class ClazzService {
             classes = parseText(classname);
         }
 
-
-        List<Classes> classesList = selectFromDB(classes);
+        List<Classes> classesList = classDao.getClassByClassName(classes);
 
         if (classesList.size() == 1) {
             return classesList.get(0);
@@ -103,18 +103,9 @@ public class ClazzService {
         Subject subjectByName = subjectService.getSubjectByName(studentWrapper.getMajor());
         classes.setSubject(subjectByName.getId());
 
-        classesMapper.insert(classes);
+        classDao.insertClass(classes);
 
         return classes;
-    }
-
-    private List<Classes> selectFromDB(Classes classes) {
-        ClassesExample classesExample = new ClassesExample();
-        classesExample.createCriteria()
-                .andNameEqualTo(classes.getName())
-                .andNumEqualTo(classes.getNum())
-                .andYearEqualTo(classes.getYear());
-        return classesMapper.selectByExample(classesExample);
     }
 
 

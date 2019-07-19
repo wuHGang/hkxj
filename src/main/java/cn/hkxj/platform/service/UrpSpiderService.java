@@ -42,7 +42,7 @@ import java.util.stream.Collectors;
 @Service("urpSpiderService")
 public class UrpSpiderService {
     @Resource
-    private ClazzService clazzService;
+    private ClassService classService;
     @Resource
     private CourseMapper courseMapper;
     @Resource
@@ -61,7 +61,7 @@ public class UrpSpiderService {
             throw new SpiderException(information.getMessage());
         }
         UrpStudentInfo urpStudentInfo = information.getData().getUrpStudentInfo();
-        Classes classes = clazzService.parseSpiderResult(urpStudentInfo);
+        Classes classes = classService.parseSpiderResult(urpStudentInfo);
         Student student = wrapperToStudent(urpStudentInfo);
         student.setClasses(classes);
         return student;
