@@ -70,7 +70,7 @@ public class ClassService {
         classes.setNum(1);
 
         String classname = studentWrapper.getClassname();
-        if(Objects.equals("班", classname.substring(classname.length() - 1, classname.length()))){
+        if(Objects.equals("班", classname.substring(classname.length() - 1))){
             classname = classname.substring(0, classname.length() - 1);
         }
         if (classname.startsWith("财会S")) {

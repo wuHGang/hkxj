@@ -1,20 +1,29 @@
 package cn.hkxj.platform.service.wechat;
 
+import cn.hkxj.platform.config.wechat.WechatMpConfiguration;
 import cn.hkxj.platform.config.wechat.WechatMpPlusProperties;
+import cn.hkxj.platform.dao.StudentDao;
 import cn.hkxj.platform.exceptions.OpenidExistException;
 import cn.hkxj.platform.exceptions.PasswordUncorrectException;
 import cn.hkxj.platform.exceptions.ReadTimeoutException;
 import cn.hkxj.platform.mapper.OpenidMapper;
 import cn.hkxj.platform.mapper.OpenidPlusMapper;
 import cn.hkxj.platform.mapper.StudentMapper;
+import cn.hkxj.platform.pojo.timetable.CourseTimeTable;
 import cn.hkxj.platform.pojo.wechat.Openid;
 import cn.hkxj.platform.pojo.example.OpenidExample;
 import cn.hkxj.platform.pojo.Student;
+import cn.hkxj.platform.service.CourseService;
+import cn.hkxj.platform.service.NewUrpSpiderService;
 import cn.hkxj.platform.service.UrpSpiderService;
 import lombok.extern.slf4j.Slf4j;
+import me.chanjar.weixin.common.error.WxErrorException;
+import me.chanjar.weixin.mp.api.WxMpService;
+import me.chanjar.weixin.mp.bean.kefu.WxMpKefuMessage;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.annotation.Resources;
 import java.util.List;
 import java.util.Objects;
 
@@ -26,16 +35,19 @@ import java.util.Objects;
 @Slf4j
 public class StudentBindService {
     private static final String template = "account: %s openid: %s is exist";
-    @Resource
-    private StudentMapper studentMapper;
+
     @Resource
     private OpenidMapper openidMapper;
     @Resource
     private OpenidPlusMapper openidPlusMapper;
     @Resource
-    private UrpSpiderService urpSpiderService;
-    @Resource
     private WechatMpPlusProperties wechatMpPlusProperties;
+    @Resource
+    private StudentDao studentDao;
+    @Resource
+    private CourseService courseService;
+    @Resource
+    private NewUrpSpiderService newUrpSpiderService;
 
     /**
      * 学号与微信公众平台openID关联
@@ -50,7 +62,7 @@ public class StudentBindService {
      * @throws ReadTimeoutException       读取信息超时异常
      * @throws OpenidExistException       Openid已存在
      */
-    public Student studentBind(String openid, String account, String password, String appid) throws PasswordUncorrectException, ReadTimeoutException, OpenidExistException {
+    public Student studentBind(String openid, String account, String password, String appid, String verifyCode) throws PasswordUncorrectException, ReadTimeoutException, OpenidExistException {
         if (isStudentBind(openid, appid)) {
             throw new OpenidExistException(String.format(template, account, openid));
         }
@@ -69,8 +81,8 @@ public class StudentBindService {
             if (isStudentExist(account)) {
                 updateOpenid(openid, account, appid);
             } else {
-                student = getStudentBySpider(account, password);
-                studentMapper.insert(student);
+                student = newUrpSpiderService.login(account, password, verifyCode);
+                studentDao.insertStudent(student);
                 updateOpenid(openid, account, appid);
             }
             return student;
@@ -79,13 +91,14 @@ public class StudentBindService {
             if (isStudentExist(account)) {
                 saveOpenid(openid, account, appid);
             } else {
-                student = getStudentBySpider(account, password);
+                student = newUrpSpiderService.login(account, password, verifyCode);
                 studentBind(student, openid, appid);
             }
             return student;
         }
 
     }
+
 
     /**
      * 用于学生从非微信渠道登录
@@ -94,17 +107,18 @@ public class StudentBindService {
      * @param password 密码
      * @return 学生信息
      */
-    public Student studentLogin(String account, String password) throws PasswordUncorrectException {
-        Student student = getStudentByDB(Integer.parseInt(account));
+    public Student studentLogin(String account, String password, String verifyCode) throws PasswordUncorrectException {
+        Student student = studentDao.selectStudentByAccount(Integer.parseInt(account));
         if (student == null) {
-            student = getStudentBySpider(account, password);
-            saveStudent(student);
+            student = newUrpSpiderService.login(account, password, verifyCode);
+            studentDao.insertStudent(student);
         }
         return student;
     }
 
+
     public Student studentBind(Student student, String openid, String appid) {
-        studentMapper.insert(student);
+        studentDao.insertStudent(student);
         saveOpenid(openid, student.getAccount().toString(), appid);
         return student;
     }
@@ -117,26 +131,17 @@ public class StudentBindService {
             Openid openidEntity = openids.get(0);
             return openidEntity.getIsBind();
         }
-//        return getOpenID(openid).size() != 0;
     }
 
     private boolean isStudentExist(String account) {
-        Student student = studentMapper.selectByAccount(Integer.parseInt(account));
+        Student student = studentDao.selectStudentByAccount(Integer.parseInt(account));
         return student != null;
-    }
-
-    private Student getStudentBySpider(String account, String password) throws ReadTimeoutException {
-        return urpSpiderService.getInformation(Integer.parseInt(account), password);
-    }
-
-    private Student getStudentByDB(int account) {
-        return studentMapper.selectByAccount(account);
     }
 
     public Student getStudentByOpenID(String openid, String appid) {
         List<Openid> openidList = getOpenID(openid, appid);
         if (openidList.size() != 0) {
-            return getStudentByDB(openidList.get(0).getAccount());
+            return studentDao.selectStudentByAccount(openidList.get(0).getAccount());
         }
         throw new RuntimeException("用户未绑定");
 
@@ -151,10 +156,6 @@ public class StudentBindService {
             return openidPlusMapper.selectByExample(openidExample);
         }
         return openidMapper.selectByExample(openidExample);
-    }
-
-    private int saveStudent(Student student) {
-        return studentMapper.insert(student);
     }
 
     private int saveOpenid(String openid, String account, String appid) {
@@ -176,5 +177,27 @@ public class StudentBindService {
             return openidPlusMapper.updateByPrimaryKey(update);
         }
         return openidMapper.updateByPrimaryKey(update);
+    }
+
+
+    private void sendMessage(String scene, String appid, String openid, String account){
+        if(!Objects.isNull(appid)){
+            if(Objects.equals(wechatMpPlusProperties.getAppId(), appid)){
+                WxMpService wxMpService = WechatMpConfiguration.getMpServices().get(appid);
+                if(Objects.equals("1005", scene)){
+                    List<CourseTimeTable> courseTimeTableList = courseService.getCoursesCurrentDay(Integer.parseInt(account));
+                    WxMpKefuMessage wxMpKefuMessage = new WxMpKefuMessage();
+                    wxMpKefuMessage.setMsgType("text");
+                    wxMpKefuMessage.setContent(courseService.toText(courseTimeTableList));
+                    wxMpKefuMessage.setToUser(openid);
+                    try {
+                        wxMpService.getKefuService().sendKefuMessage(wxMpKefuMessage);
+                        log.info("send kefuMessage about course success openid:{} appid:{}", openid, appid);
+                    } catch (WxErrorException e) {
+                        log.info("send kefuMessage about course failed openid:{} appid:{}", openid, appid);
+                    }
+                }
+            }
+        }
     }
 }

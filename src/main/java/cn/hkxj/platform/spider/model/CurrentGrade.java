@@ -10,7 +10,7 @@ import java.util.List;
  * @date 2019/1/13
  */
 public class CurrentGrade {
-    @JSONField(name = "currentGrade")
+    @JSONField(name = "currentGrade.json")
     private List<UrpGrade> urpGradeList;
 
     public List<UrpGrade> getUrpGradeList() {
@@ -25,7 +25,7 @@ public class CurrentGrade {
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
-                .add("currentGrade", urpGradeList)
+                .add("currentGrade.json", urpGradeList)
                 .toString();
     }
 }

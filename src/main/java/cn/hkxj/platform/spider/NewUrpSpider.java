@@ -4,11 +4,15 @@ import cn.hkxj.platform.exceptions.PasswordUncorrectException;
 import cn.hkxj.platform.exceptions.UrpRequestException;
 import cn.hkxj.platform.exceptions.UrpTimeoutException;
 import cn.hkxj.platform.exceptions.UrpVerifyCodeException;
+import cn.hkxj.platform.spider.model.NewUrpGradeResult;
 import cn.hkxj.platform.spider.model.UrpStudentInfo;
 import cn.hkxj.platform.spider.model.VerifyCode;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -22,12 +26,15 @@ import java.util.*;
 
 @Slf4j
 public class NewUrpSpider {
-    private static final String ROOT = "http://222.171.146.55";
+    private static final String ROOT = "http://xsurp.usth.edu.cn";
     private static final String CAPTCHA = ROOT + "/img/captcha.jpg";
     private static final String CHECK = ROOT + "/j_spring_security_check";
     private static final String LOGIN = ROOT + "/getStudentInfo";
     private static final String STUDENT_INFO = ROOT + "/student/rollManagement/rollInfo/index";
-    private static final CookieManager manager = new CookieManager();
+    private static final String CURRENT_GRADE = ROOT + "/student/integratedQuery/scoreQuery/thisTermScores/data";
+    private static final TypeReference<List<NewUrpGradeResult>> CURRENT_GRADE_REFERENCE =
+            new TypeReference<List<NewUrpGradeResult>>() {
+    };
     private static final OkHttpClient client = new OkHttpClient.Builder()
             .cookieJar(new UrpCookieJar())
             .retryOnConnectionFailure(true)
@@ -75,6 +82,7 @@ public class NewUrpSpider {
 
         Request request = new Request.Builder()
                 .url(CHECK)
+                .headers(HEADERS)
                 .post(body)
                 .build();
 
@@ -94,6 +102,33 @@ public class NewUrpSpider {
 
     }
 
+    public NewUrpGradeResult getCurrentGrade(){
+        if(this.account == null){
+            throw new UnsupportedOperationException("spider haven`t login");
+        }
+
+        Request request = new Request.Builder()
+                .url(CURRENT_GRADE)
+                .headers(HEADERS)
+                .get()
+                .build();
+
+        String result = new String(execute(request));
+        log.info(result);
+
+        List<NewUrpGradeResult> newUrpGradeResults = JSON.parseObject(result, CURRENT_GRADE_REFERENCE);
+
+        if(CollectionUtils.isNotEmpty(newUrpGradeResults)){
+            if(newUrpGradeResults.size() >1){
+                log.error("account {} current grade result size {}", account, newUrpGradeResults.size());
+            }
+
+            return newUrpGradeResults.get(0);
+        }
+
+        return null;
+    }
+
 
     public UrpStudentInfo getStudentInfo(){
         if(this.account == null){
@@ -107,16 +142,22 @@ public class NewUrpSpider {
         Map<String, String> userInfo = parseUserInfo(new String(execute(request)));
 
         UrpStudentInfo student = new UrpStudentInfo();
-        student.setAccount(Integer.parseInt(userInfo.get("学号")));
+        student.setAccount(Integer.parseInt(account));
         student.setEthnic(userInfo.get("民族"));
         student.setSex(userInfo.get("性别"));
         student.setName(userInfo.get("姓名"));
         student.setMajor(userInfo.get("专业"));
         student.setAcademy(userInfo.get("学院"));
+        student.setClassname(userInfo.get("班级"));
+        student.setPassword(password);
 
         return student;
     }
 
+
+    /**
+     * 解析学生信息页面的html
+     */
     private Map<String, String> parseUserInfo(String html){
         HashMap<String, String> infoMap = new HashMap<>();
         Document document = Jsoup.parse(html);
@@ -163,9 +204,7 @@ public class NewUrpSpider {
 
 
     /**
-     *
-     * @param response
-     * @return
+     * 排除重定向的响应
      */
     private boolean isResponseFail(Response response){
         return response.body() == null ||
@@ -181,7 +220,7 @@ public class NewUrpSpider {
         captcha.write("pic.jpg");
         Scanner scanner = new Scanner(System.in);
         String code = scanner.nextLine();
-        spider.studentCheck("2014025838", "1", code);
-        spider.getStudentInfo();
+        spider.studentCheck("2018025838", "1", code);
+        spider.getCurrentGrade();
     }
 }

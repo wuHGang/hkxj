@@ -12,6 +12,8 @@ public enum  ErrorCode {
 	USER_UNAUTHORIZED(401),
 	ACCOUNT_OR_PASSWORD_INVALID(402),
 	OPENID_EXIST(403),
+	VERIFY_CODE_ERROR(404),
+
 	/**
 	 *服务器端错误
 	 */
