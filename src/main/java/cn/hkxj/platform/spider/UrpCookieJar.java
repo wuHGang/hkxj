@@ -1,8 +1,8 @@
 package cn.hkxj.platform.spider;
 
+import lombok.extern.slf4j.Slf4j;
 import okhttp3.Cookie;
 import okhttp3.CookieJar;
-import okhttp3.Headers;
 import okhttp3.HttpUrl;
 import okhttp3.internal.annotations.EverythingIsNonNull;
 import okhttp3.internal.platform.Platform;
@@ -27,12 +27,13 @@ import static okhttp3.internal.platform.Platform.WARN;
  * @author junrong.chen
  * @date 2019/7/16
  */
+@Slf4j
 @EverythingIsNonNull
 public class UrpCookieJar implements CookieJar {
     private final ConcurrentHashMap<String, CookieHandler> accountCookieHandler;
     private final ConcurrentHashMap<String, CookieHandler> traceCookieHandler;
 
-    public UrpCookieJar(){
+    UrpCookieJar() {
         accountCookieHandler = new ConcurrentHashMap<>();
         traceCookieHandler = new ConcurrentHashMap<>();
     }
@@ -40,7 +41,7 @@ public class UrpCookieJar implements CookieJar {
     @Override
     public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
 
-        CookieHandler cookieHandler = selectCookieHandler(url);
+        CookieHandler cookieHandler = selectCookieHandler();
         List<String> cookieStrings = new ArrayList<>();
         for (Cookie cookie : cookies) {
             cookieStrings.add(cookie.toString());
@@ -55,7 +56,7 @@ public class UrpCookieJar implements CookieJar {
 
     @Override
     public List<Cookie> loadForRequest(HttpUrl url) {
-        CookieHandler cookieHandler = selectCookieHandler(url);
+        CookieHandler cookieHandler = selectCookieHandler();
         // The RI passes all headers. We don't have 'em, so we don't pass 'em!
         Map<String, List<String>> headers = Collections.emptyMap();
         Map<String, List<String>> cookieHeaders;
@@ -83,11 +84,18 @@ public class UrpCookieJar implements CookieJar {
     }
 
 
-    private CookieHandler selectCookieHandler(HttpUrl url){
+    private CookieHandler selectCookieHandler() {
         CookieManager cookieManager = new CookieManager();
-        CookieHandler result = traceCookieHandler.putIfAbsent(MDC.get("cookieTrace"), cookieManager);
+        CookieHandler result = null;
+        if (StringUtils.isNotEmpty(MDC.get("account"))) {
+            result = accountCookieHandler.putIfAbsent(MDC.get("account"), cookieManager);
+        } else if (StringUtils.isNotEmpty(MDC.get("cookieTrace"))) {
+            result = traceCookieHandler.putIfAbsent(MDC.get("cookieTrace"), cookieManager);
+        }
 
-        return  result == null ? cookieManager : result;
+        log.error("no cookie jar to use");
+
+        return result == null ? cookieManager : result;
     }
 
     /**
@@ -120,4 +128,14 @@ public class UrpCookieJar implements CookieJar {
         }
         return result;
     }
+
+
+    public void saveCookieByAccount(String account){
+        if (StringUtils.isNotEmpty(MDC.get("cookieTrace"))) {
+            CookieHandler cookieHandler = traceCookieHandler.get(MDC.get("cookieTrace"));
+            accountCookieHandler.put(account, cookieHandler);
+            traceCookieHandler.remove(MDC.get("cookieTrace"));
+        }
+    }
+
 }

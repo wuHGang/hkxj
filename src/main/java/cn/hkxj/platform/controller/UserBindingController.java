@@ -101,7 +101,7 @@ public class UserBindingController {
         try {
             response.getOutputStream().write(verifyCode.getData());
         } catch (IOException e) {
-            log.error("get outputStream error");
+            log.error("get outputStream error", e);
         }
     }
 

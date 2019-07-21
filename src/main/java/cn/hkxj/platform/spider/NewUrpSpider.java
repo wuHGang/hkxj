@@ -21,8 +21,10 @@ import org.jsoup.select.Elements;
 import org.slf4j.MDC;
 
 import java.io.IOException;
-import java.net.CookieManager;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
 
 @Slf4j
 public class NewUrpSpider {
