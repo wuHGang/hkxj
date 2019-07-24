@@ -59,8 +59,8 @@ public class GradeAutoUpdateTask {
     @Value("scheduled.gradeUpdate")
     private String updateSwitch;
 
-    @Async
-    @Scheduled(cron = "0 0 0/2 * * ?") //每两个小时执行一次
+//    @Async
+//    @Scheduled(cron = "0 0 0/2 * * ?") //每两个小时执行一次
 //    @Scheduled(cron = "0/60 * * * * ?") //每两个小时执行一次
     void autoUpdateGrade() {
         //执行前，检查定时任务的可用性
