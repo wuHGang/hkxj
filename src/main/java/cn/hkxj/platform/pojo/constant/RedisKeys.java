@@ -6,21 +6,20 @@ public enum RedisKeys {
 
     OPENID_TO_ACCOUNT("mark_openid:"),
 
-    URP_SPIDER_COOKIE("urp_spider_cookie:");
+    URP_SPIDER_COOKIE("urp_spider_cookie:"),
 
+    URP_COOKIE("urp_cookie"),
+
+    URP_COOKIE_ACCOUNT("urp_cookie_account"),
+    ;
     private String name;
 
     RedisKeys(String name){
         this.name=name;
     }
 
-    public static RedisKeys getRedisKeyByName(String name){
-        switch (name){
-            case "search_service:emptyRoom:":
-                return EMPTY_ROOM_KEY;
-            default:
-                throw new IllegalArgumentException("no redisKeys match:" + name);
-        }
+    public String genKey(String key){
+        return name + "_" + key;
     }
 
     public String getName(){

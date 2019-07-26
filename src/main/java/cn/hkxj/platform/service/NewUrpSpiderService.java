@@ -33,7 +33,17 @@ public class NewUrpSpiderService {
     public Student login(String account, String password, String verifyCode){
         NewUrpSpider spider = new NewUrpSpider();
         spider.studentCheck(account, password, verifyCode);
-        UrpStudentInfo studentInfo = spider.getStudentInfo();
+        return getUserInfo(spider.getStudentInfo());
+    }
+
+    public Student login(String account, String password){
+        NewUrpSpider spider = new NewUrpSpider(account, password);
+
+        return getUserInfo(spider.getStudentInfo());
+    }
+
+    private Student getUserInfo(UrpStudentInfo studentInfo){
+
         Classes classes = classService.parseSpiderResult(studentInfo);
         Student student = wrapperToStudent(studentInfo);
         student.setClasses(classes);

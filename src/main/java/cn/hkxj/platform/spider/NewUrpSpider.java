@@ -37,8 +37,9 @@ public class NewUrpSpider {
     private static final TypeReference<List<NewUrpGradeResult>> CURRENT_GRADE_REFERENCE =
             new TypeReference<List<NewUrpGradeResult>>() {
     };
+    private static final UrpCookieJar cookieJar = new UrpCookieJar();
     private static final OkHttpClient client = new OkHttpClient.Builder()
-            .cookieJar(new UrpCookieJar())
+            .cookieJar(cookieJar)
             .retryOnConnectionFailure(true)
             .addInterceptor(new RetryInterceptor(5))
             .followRedirects(false)
@@ -58,6 +59,20 @@ public class NewUrpSpider {
 
     private String account;
     private String password;
+
+    public NewUrpSpider(){
+
+    }
+
+    public NewUrpSpider(String account, String password){
+        if(!canUseCookie(account)){
+            throw new UnsupportedOperationException("haven`t cookie to use");
+        }
+        MDC.put("account", account);
+        this.account = account;
+        this.password = password;
+    }
+
 
     public VerifyCode getCaptcha() {
         Request request = new Request.Builder()
@@ -101,6 +116,8 @@ public class NewUrpSpider {
 
         this.account = account;
         this.password = password;
+
+        cookieJar.saveCookieByAccount(account);
 
     }
 
@@ -149,11 +166,15 @@ public class NewUrpSpider {
         student.setSex(userInfo.get("性别"));
         student.setName(userInfo.get("姓名"));
         student.setMajor(userInfo.get("专业"));
-        student.setAcademy(userInfo.get("学院"));
+        student.setAcademy(userInfo.get("院系"));
         student.setClassname(userInfo.get("班级"));
         student.setPassword(password);
 
         return student;
+    }
+
+    public boolean canUseCookie(String account){
+        return cookieJar.canUseCookie(account);
     }
 
 
