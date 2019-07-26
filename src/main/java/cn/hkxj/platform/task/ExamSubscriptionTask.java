@@ -62,8 +62,8 @@ public class ExamSubscriptionTask {
 
 
     //@Scheduled(cron = "0/30 * * * * ?")
-    @Async
-    @Scheduled(cron = "0 0 20 ? * MON-FRI")      //这个cron表达式的意思是星期一到星期五的晚上8点执行一次
+//    @Async
+//    @Scheduled(cron = "0 0 20 ? * MON-FRI")      //这个cron表达式的意思是星期一到星期五的晚上8点执行一次
     void autoUpdateExam() {
         //执行前，检查定时任务的可用性
         if (isTaskEnable())
