@@ -21,10 +21,7 @@ import org.jsoup.select.Elements;
 import org.slf4j.MDC;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
 @Slf4j
 public class NewUrpSpider {
@@ -34,6 +31,7 @@ public class NewUrpSpider {
     private static final String LOGIN = ROOT + "/getStudentInfo";
     private static final String STUDENT_INFO = ROOT + "/student/rollManagement/rollInfo/index";
     private static final String CURRENT_GRADE = ROOT + "/student/integratedQuery/scoreQuery/thisTermScores/data";
+    private static final String INDEX = ROOT + "/index.jsp";
     private static final TypeReference<List<NewUrpGradeResult>> CURRENT_GRADE_REFERENCE =
             new TypeReference<List<NewUrpGradeResult>>() {
     };
@@ -64,13 +62,12 @@ public class NewUrpSpider {
 
     }
 
-    public NewUrpSpider(String account, String password){
+    public NewUrpSpider(String account){
         if(!canUseCookie(account)){
             throw new UnsupportedOperationException("haven`t cookie to use");
         }
         MDC.put("account", account);
         this.account = account;
-        this.password = password;
     }
 
 
@@ -151,10 +148,11 @@ public class NewUrpSpider {
 
     public UrpStudentInfo getStudentInfo(){
         if(this.account == null){
-            throw new UnsupportedOperationException("spider haven`t login");
+            throw new UnsupportedOperationException("spider haven`t  login");
         }
         Request request = new Request.Builder()
                 .url(STUDENT_INFO)
+                .headers(HEADERS)
                 .get()
                 .build();
 
@@ -173,10 +171,17 @@ public class NewUrpSpider {
         return student;
     }
 
-    public boolean canUseCookie(String account){
+    /**
+     * 判断某个学号是否有可用的cookie
+     * @param account  学号
+     */
+    public static boolean canUseCookie(String account){
         return cookieJar.canUseCookie(account);
     }
 
+    public static UrpCookieJar getCookieJar() {
+        return cookieJar;
+    }
 
     /**
      * 解析学生信息页面的html
@@ -223,6 +228,33 @@ public class NewUrpSpider {
         } catch (IOException e) {
             throw new UrpTimeoutException(request.url().toString(), e);
         }
+    }
+
+    public boolean isCookieExpire(){
+
+        Request request = new Request.Builder()
+                .url(INDEX)
+                .headers(HEADERS)
+                .get()
+                .build();
+
+        Response response = getResponse(request);
+        if(response.isSuccessful()){
+            return false;
+        }
+
+        if(response.isRedirect()){
+            String location = response.header("Location");
+            if(StringUtils.isNotEmpty(location)){
+                if(location.contains("login")){
+                    return true;
+                }else {
+                    log.error("check cookie Redirect location {}", location);
+                }
+            }
+        }
+        // 网络超时是否应该返回true呢
+        return true;
     }
 
 

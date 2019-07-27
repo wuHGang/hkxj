@@ -8,14 +8,12 @@ import cn.hkxj.platform.exceptions.PasswordUncorrectException;
 import cn.hkxj.platform.exceptions.ReadTimeoutException;
 import cn.hkxj.platform.mapper.OpenidMapper;
 import cn.hkxj.platform.mapper.OpenidPlusMapper;
-import cn.hkxj.platform.mapper.StudentMapper;
 import cn.hkxj.platform.pojo.timetable.CourseTimeTable;
 import cn.hkxj.platform.pojo.wechat.Openid;
 import cn.hkxj.platform.pojo.example.OpenidExample;
 import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.service.CourseService;
 import cn.hkxj.platform.service.NewUrpSpiderService;
-import cn.hkxj.platform.service.UrpSpiderService;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.mp.api.WxMpService;
@@ -23,7 +21,6 @@ import me.chanjar.weixin.mp.bean.kefu.WxMpKefuMessage;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import javax.annotation.Resources;
 import java.util.List;
 import java.util.Objects;
 
@@ -81,7 +78,7 @@ public class StudentBindService {
             if (isStudentExist(account)) {
                 updateOpenid(openid, account, appid);
             } else {
-                student = newUrpSpiderService.login(account, password, verifyCode);
+                student = newUrpSpiderService.getStudentInfo(account, password, verifyCode);
                 studentDao.insertStudent(student);
                 updateOpenid(openid, account, appid);
             }
@@ -91,7 +88,7 @@ public class StudentBindService {
             if (isStudentExist(account)) {
                 saveOpenid(openid, account, appid);
             } else {
-                student = newUrpSpiderService.login(account, password, verifyCode);
+                student = newUrpSpiderService.getStudentInfo(account, password, verifyCode);
                 studentBind(student, openid, appid);
             }
             return student;
@@ -110,7 +107,7 @@ public class StudentBindService {
     public Student studentLogin(String account, String password, String verifyCode) throws PasswordUncorrectException {
         Student student = studentDao.selectStudentByAccount(Integer.parseInt(account));
         if (student == null) {
-            student = newUrpSpiderService.login(account, password, verifyCode);
+            student = newUrpSpiderService.getStudentInfo(account, password, verifyCode);
             studentDao.insertStudent(student);
         }
         return student;

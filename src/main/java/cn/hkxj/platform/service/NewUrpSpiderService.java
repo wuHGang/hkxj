@@ -11,6 +11,11 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 
 /**
+ * 第一次登录成功后，将学号对应session的cookie持久化
+ * 如果需要不使用验证码登录，使用之前需要校验该账号是否有可用的cookie
+ *
+ *
+ *
  * @author junrong.chen
  * @date 2019/7/18
  */
@@ -29,16 +34,25 @@ public class NewUrpSpiderService {
         return spider.getCaptcha();
     }
 
+    /**
+     * 判断一个学号是否有可用的cookie
+     */
+    public boolean canUseCookie(String account){
+        if(NewUrpSpider.canUseCookie(account)){
+            NewUrpSpider spider = new NewUrpSpider(account);
+            return !spider.isCookieExpire();
+        }
+        return false;
+    }
 
-    public Student login(String account, String password, String verifyCode){
+    public Student getStudentInfo(String account, String password, String verifyCode){
         NewUrpSpider spider = new NewUrpSpider();
         spider.studentCheck(account, password, verifyCode);
         return getUserInfo(spider.getStudentInfo());
     }
 
-    public Student login(String account, String password){
-        NewUrpSpider spider = new NewUrpSpider(account, password);
-
+    public Student getStudentInfo(String account){
+        NewUrpSpider spider = new NewUrpSpider(account);
         return getUserInfo(spider.getStudentInfo());
     }
 

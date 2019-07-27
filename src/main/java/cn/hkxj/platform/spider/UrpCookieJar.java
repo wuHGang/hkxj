@@ -19,6 +19,10 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
+ * 实现okHttp的cookieJar接口需要实现的两个方法saveFromResponse和loadForRequest
+ * 这样的cookieJar只能维护一个client的cookie，如果需要维护多个用户的cookieJar就必须要创建多个client
+ * 由于需要实现的两个方法不能添加参数，所以使用线程变量来传递需要的参数
+ *
  * @author junrong.chen
  * @date 2019/7/16
  */
