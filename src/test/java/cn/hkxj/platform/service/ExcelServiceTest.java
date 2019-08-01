@@ -1,6 +1,8 @@
 package cn.hkxj.platform.service;
 
 import cn.hkxj.platform.PlatformApplication;
+import cn.hkxj.platform.mapper.OpenidMapper;
+import cn.hkxj.platform.mapper.OpenidPlusMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,6 +26,8 @@ public class ExcelServiceTest {
 
     @Resource
     private ExcelService excelService;
+    @Resource
+    private OpenidPlusMapper openidPlusMapper;
 
 
     @Test
@@ -37,8 +41,9 @@ public class ExcelServiceTest {
 //        System.out.println(excelService.parseBuilding("科N302"));
 //        System.out.println(excelService.parseBuilding("图书馆S4004"));
 //        System.out.println(excelService.parseBuilding("N10播放室"));
-        List<ExcelResult> excelResults = excelService.readExcel();
+//        List<ExcelResult> excelResults = excelService.readExcel();
 //        excelService.insertDb(excelResults);
+        System.out.println(openidPlusMapper.getAllOpenidsFromOneClass(316, "oWPfu0noOKkUHpTkmP8ExbUgfqUY"));;
     }
 
     public static void main(String[] args) {

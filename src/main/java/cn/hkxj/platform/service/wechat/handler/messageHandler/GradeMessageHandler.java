@@ -1,10 +1,12 @@
 package cn.hkxj.platform.service.wechat.handler.messageHandler;
 
 import cn.hkxj.platform.pojo.GradeAndCourse;
+import cn.hkxj.platform.pojo.GradeSearchResult;
 import cn.hkxj.platform.pojo.ScheduleTask;
 import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.pojo.constant.SubscribeScene;
 import cn.hkxj.platform.service.GradeSearchService;
+import cn.hkxj.platform.service.NewGradeSearchService;
 import cn.hkxj.platform.service.OpenIdService;
 import cn.hkxj.platform.service.ScheduleTaskService;
 import cn.hkxj.platform.service.wechat.CustomerMessageService;
@@ -32,7 +34,7 @@ import java.util.concurrent.Executors;
 public class GradeMessageHandler implements WxMpMessageHandler {
 
     @Resource
-    private GradeSearchService gradeSearchService;
+    private NewGradeSearchService newGradeSearchService;
     @Resource
     private OpenIdService openIdService;
     @Resource
@@ -52,7 +54,7 @@ public class GradeMessageHandler implements WxMpMessageHandler {
 
         cacheThreadPool.execute(() -> scheduleTaskService.checkAndSetSubscribeStatus(scheduleTask, true));
 
-        CompletableFuture<List<GradeAndCourse>> completableFuture = CompletableFuture.supplyAsync(() -> gradeSearchService.getCurrentGrade(student), cacheThreadPool);
+        CompletableFuture<GradeSearchResult> completableFuture = CompletableFuture.supplyAsync(() -> newGradeSearchService.getCurrentGrade(student), cacheThreadPool);
 
         CustomerMessageService messageService = new CustomerMessageService(wxMpXmlMessage, wxMpService);
 

@@ -86,6 +86,14 @@ public class OpenIdService {
         }
     }
 
+    public List<String> getAllOpenidsFromOneClass(int classId, String openid, String appid){
+        if (isPlus(appid)) {
+            return openidPlusMapper.getAllOpenidsFromOneClass(classId, openid);
+        } else {
+            return openidMapper.getAllOpenidsFromOneClass(classId, openid);
+        }
+    }
+
     private boolean isPlus(String appid){
         return Objects.equals(wechatMpPlusProperties.getAppId(), appid);
     }

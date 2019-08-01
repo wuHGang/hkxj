@@ -1,10 +1,15 @@
 package cn.hkxj.platform.service;
 
 import cn.hkxj.platform.pojo.Classes;
+import cn.hkxj.platform.pojo.Course;
 import cn.hkxj.platform.pojo.Student;
+import cn.hkxj.platform.pojo.constant.Academy;
+import cn.hkxj.platform.pojo.constant.CourseType;
 import cn.hkxj.platform.spider.NewUrpSpider;
+import cn.hkxj.platform.spider.newmodel.CurrentGrade;
 import cn.hkxj.platform.spider.model.UrpStudentInfo;
 import cn.hkxj.platform.spider.model.VerifyCode;
+import cn.hkxj.platform.spider.newmodel.UrpCourse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +34,24 @@ public class NewUrpSpiderService {
         return spider.getCaptcha();
     }
 
+    public CurrentGrade getCurrentTermGrade(){
+        NewUrpSpider spider = new NewUrpSpider();
+        return spider.getCurrentGrade();
+    }
+
+    public Course getCourseFromSpider(String uid){
+        NewUrpSpider spider = new NewUrpSpider();
+        UrpCourse urpCourse = spider.getUrpCourse(uid);
+        Course course = new Course();
+        course.setName(urpCourse.getKcm());
+        course.setUid(urpCourse.getKch());
+        course.setCredit((int) (urpCourse.getXf() * 10));
+        course.setAcademy(Academy.getAcademyByCode(urpCourse.getXsh()));
+        //因为接口返回的数据里面没有课程类型，所以设置成未知。
+        //在成绩接口中有
+        course.setType(CourseType.UNKNOWN);
+        return course;
+    }
 
     public Student login(String account, String password, String verifyCode){
         NewUrpSpider spider = new NewUrpSpider();
