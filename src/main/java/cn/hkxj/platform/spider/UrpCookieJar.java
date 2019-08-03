@@ -84,13 +84,11 @@ public class UrpCookieJar implements ClearableCookieJar {
      */
     private CookieCache selectCookieHandler() {
         CookieCache cookieCache = new SetCookieCache();
-        CookieCache result = null;
+        CookieCache result;
         if (StringUtils.isNotEmpty(MDC.get("account"))) {
             result = accountCookieHandler.putIfAbsent(MDC.get("account"), cookieCache);
-        } else if (StringUtils.isNotEmpty(MDC.get("cookieTrace"))) {
-            result = traceCookieHandler.putIfAbsent(MDC.get("cookieTrace"), cookieCache);
-        }else {
-            log.error("no cookie jar to use");
+        } else {
+            throw new RuntimeException("no cookie jar can use");
         }
 
         return result == null ? cookieCache : result;

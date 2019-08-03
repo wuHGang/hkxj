@@ -55,9 +55,8 @@ public class UserBindingController {
 	@RequestMapping(value = "/bind/wechat", method = RequestMethod.POST, produces="application/json;charset=UTF-8")
 	@ResponseBody
 	public WebResponse loginHtmlPost(@RequestParam("account") String account,
-									 @RequestParam("password") String password,
-									 @RequestParam("verifyCode") String verifyCode) {
-		log.info("student bind start account:{} password:{} verifyCode:{}", account, password, verifyCode);
+									 @RequestParam("password") String password) {
+		log.info("student bind start account:{} password:{}", account, password);
         MDC.put("cookieTrace", getCookieTrace());
         if (!isAccountValid(account)){
             log.info("student getStudentInfo fail--invalid account:{}", account);
@@ -68,10 +67,10 @@ public class UserBindingController {
 		String appid = (String) httpSession.getAttribute("appid");
 		try {
 			if (Objects.isNull(openid)){
-				studentBindService.studentLogin(account, password, verifyCode);
+				studentBindService.studentLogin(account, password);
 			}
 			else {
-				studentBindService.studentBind(openid, account, password, appid, verifyCode);
+				studentBindService.studentBind(openid, account, password, appid);
 			}
 			httpSession.setAttribute("account", account);
 		}catch (UrpVerifyCodeException e){
@@ -92,11 +91,11 @@ public class UserBindingController {
 
 
     @GetMapping("/verifyCode.jpg")
-    public void getVerifyCode(HttpServletRequest request, HttpServletResponse response){
+    public void getVerifyCode(@RequestParam("key") String key, HttpServletResponse response){
 
         MDC.put("cookieTrace", getCookieTrace());
 
-        VerifyCode verifyCode = newUrpSpiderService.getVerifyCode();
+        VerifyCode verifyCode = newUrpSpiderService.getVerifyCode(key);
         response.setContentType("image/jpeg");
         try {
             response.getOutputStream().write(verifyCode.getData());

@@ -34,11 +34,13 @@ public class RetryInterceptor implements Interceptor {
 
                 if(!response.isSuccessful()&& !response.isRedirect()){
                     log.debug("urp url {} request retry  time {}, cause {}, code {}", chain.request().url().toString(), retryNum, response.message(), response.code());
+                    response.close();
                 }else {
                     return response;
                 }
             }catch (IOException e){
-                log.debug("urp url {} request retry  time {}, cause {}", chain.request().url().toString(), retryNum, e.getMessage());
+                log.error("urp url {} request retry  time {}, cause {}", chain.request().url().toString(), retryNum,
+                        e.getMessage());
             }
 
         }

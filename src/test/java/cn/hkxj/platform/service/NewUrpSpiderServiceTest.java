@@ -1,6 +1,7 @@
 package cn.hkxj.platform.service;
 
 import cn.hkxj.platform.pojo.Student;
+import cn.hkxj.platform.spider.NewUrpSpider;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,20 +20,18 @@ public class NewUrpSpiderServiceTest {
 
     @Test
     public void getVerifyCode() {
-        newUrpSpiderService.getVerifyCode().write("");
+        NewUrpSpider urpSpider = new NewUrpSpider("xxx", "xxx");
+        String code = urpSpider.getCode("e76ebd7e-2ab1-4d17-85f5-9e17a45c5448");
+        System.out.println(code);
     }
 
     @Test
     public void login() {
-        Student student = newUrpSpiderService.getStudentInfo("2014025838");
+        Student student = newUrpSpiderService.getStudentInfo("2014025838", "1");
         log.info(student.toString());
 
     }
 
-    @Test
-    public void canUseCookie(){
-        boolean canUseCookie = newUrpSpiderService.canUseCookie("2014025838");
-        System.out.println(canUseCookie);
-    }
+
 
 }

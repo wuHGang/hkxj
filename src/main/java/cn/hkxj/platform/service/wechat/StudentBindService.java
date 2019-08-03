@@ -59,7 +59,7 @@ public class StudentBindService {
      * @throws ReadTimeoutException       读取信息超时异常
      * @throws OpenidExistException       Openid已存在
      */
-    public Student studentBind(String openid, String account, String password, String appid, String verifyCode) throws PasswordUncorrectException, ReadTimeoutException, OpenidExistException {
+    public Student studentBind(String openid, String account, String password, String appid) throws PasswordUncorrectException, ReadTimeoutException, OpenidExistException {
         if (isStudentBind(openid, appid)) {
             throw new OpenidExistException(String.format(template, account, openid));
         }
@@ -78,7 +78,7 @@ public class StudentBindService {
             if (isStudentExist(account)) {
                 updateOpenid(openid, account, appid);
             } else {
-                student = newUrpSpiderService.getStudentInfo(account, password, verifyCode);
+                student = newUrpSpiderService.getStudentInfo(account, password);
                 studentDao.insertStudent(student);
                 updateOpenid(openid, account, appid);
             }
@@ -88,7 +88,7 @@ public class StudentBindService {
             if (isStudentExist(account)) {
                 saveOpenid(openid, account, appid);
             } else {
-                student = newUrpSpiderService.getStudentInfo(account, password, verifyCode);
+                student = newUrpSpiderService.getStudentInfo(account, password);
                 studentBind(student, openid, appid);
             }
             return student;
@@ -104,10 +104,10 @@ public class StudentBindService {
      * @param password 密码
      * @return 学生信息
      */
-    public Student studentLogin(String account, String password, String verifyCode) throws PasswordUncorrectException {
+    public Student studentLogin(String account, String password) throws PasswordUncorrectException {
         Student student = studentDao.selectStudentByAccount(Integer.parseInt(account));
         if (student == null) {
-            student = newUrpSpiderService.getStudentInfo(account, password, verifyCode);
+            student = newUrpSpiderService.getStudentInfo(account, password);
             studentDao.insertStudent(student);
         }
         return student;

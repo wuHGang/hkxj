@@ -11,6 +11,8 @@ public enum RedisKeys {
     URP_COOKIE("urp_cookie"),
 
     URP_COOKIE_ACCOUNT("urp_cookie_account"),
+
+    KAPTCHA("kaptcha")
     ;
     private String name;
 

@@ -21,17 +21,22 @@ import org.jsoup.select.Elements;
 import org.slf4j.MDC;
 
 import java.io.IOException;
-import java.util.*;
+import java.net.CookieManager;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 public class NewUrpSpider {
     private static final String ROOT = "http://xsurp.usth.edu.cn";
+    private static final String TENSORFLOW = "http://spider.hackerda.com/valid";
     private static final String CAPTCHA = ROOT + "/img/captcha.jpg";
     private static final String CHECK = ROOT + "/j_spring_security_check";
     private static final String LOGIN = ROOT + "/getStudentInfo";
     private static final String STUDENT_INFO = ROOT + "/student/rollManagement/rollInfo/index";
     private static final String CURRENT_GRADE = ROOT + "/student/integratedQuery/scoreQuery/thisTermScores/data";
     private static final String INDEX = ROOT + "/index.jsp";
+    private static final String LOGIN_PAGE = ROOT + "/login";
     private static final TypeReference<List<NewUrpGradeResult>> CURRENT_GRADE_REFERENCE =
             new TypeReference<List<NewUrpGradeResult>>() {
     };
@@ -47,29 +52,22 @@ public class NewUrpSpider {
             .add("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3")
             .add("Host", "xsurp.usth.edu.cn")
             .add("Connection", "keep-alive")
-            .add("Accept-Encoding", "gzip, deflate")
             .add("User-Agent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36")
             .add("Upgrade-Insecure-Requests", "1")
             .add("Accept-Language", "zh-CN,zh;q=0.9,en;q=0.8")
             .add("Cache-Control", "max-age=0")
+            .add("Referer", ": http://xsurp.usth.edu.cn/login")
             .build();
 
 
     private String account;
     private String password;
 
-    public NewUrpSpider(){
-
-    }
-
-    public NewUrpSpider(String account){
-        if(!canUseCookie(account)){
-            throw new UnsupportedOperationException("haven`t cookie to use");
-        }
+    public NewUrpSpider(String account, String password){
         MDC.put("account", account);
         this.account = account;
+        this.password = password;
     }
-
 
     public VerifyCode getCaptcha() {
         Request request = new Request.Builder()
@@ -87,6 +85,7 @@ public class NewUrpSpider {
      * 登陆校验
      */
     public void studentCheck(String account, String password, String captcha){
+
 
         FormBody.Builder params = new FormBody.Builder();
         FormBody body = params.add("j_username", account)
@@ -109,12 +108,9 @@ public class NewUrpSpider {
             throw new UrpVerifyCodeException();
         }else if(location.contains("badCredentials")){
             throw new PasswordUncorrectException();
+        }else if(location.contains("concurrentSessionExpired")){
+
         }
-
-        this.account = account;
-        this.password = password;
-
-        cookieJar.saveCookieByAccount(account);
 
     }
 
@@ -150,6 +146,8 @@ public class NewUrpSpider {
         if(this.account == null){
             throw new UnsupportedOperationException("spider haven`t  login");
         }
+
+
         Request request = new Request.Builder()
                 .url(STUDENT_INFO)
                 .headers(HEADERS)
@@ -182,6 +180,7 @@ public class NewUrpSpider {
     public static UrpCookieJar getCookieJar() {
         return cookieJar;
     }
+
 
     /**
      * 解析学生信息页面的html
@@ -261,21 +260,24 @@ public class NewUrpSpider {
     /**
      * 排除重定向的响应
      */
-    private boolean isResponseFail(Response response){
+    private static boolean isResponseFail(Response response){
         return response.body() == null ||
                 (!response.isSuccessful() && !response.isRedirect());
     }
 
 
+    public String getCode(String key){
+        String url = TENSORFLOW+"?key="+key;
+        Request request = new Request.Builder()
+                .url(url)
+                .get()
+                .build();
+
+        return new String(execute(request));
+    }
+
 
     public static void main(String[] args) {
-        MDC.put("cookieTrace", "trace");
-        NewUrpSpider spider = new NewUrpSpider();
-        VerifyCode captcha = spider.getCaptcha();
-        captcha.write("pic.jpg");
-        Scanner scanner = new Scanner(System.in);
-        String code = scanner.nextLine();
-        spider.studentCheck("2018025838", "1", code);
-        spider.getCurrentGrade();
+
     }
 }
