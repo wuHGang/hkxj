@@ -28,13 +28,13 @@ public class TestController {
     }
 
     @RequestMapping("/testGrade")
-    public void testGrade(){
+    public String testGrade(){
 
         Student student = new Student();
         student.setAccount(2016024170);
         student.setPassword("1");
         GradeSearchResult gradeSearchResult = newGradeSearchService.getCurrentGrade(student);
-        System.out.println(NewGradeSearchService.gradeListToText(gradeSearchResult.getData()));
+        return NewGradeSearchService.gradeListToText(gradeSearchResult.getData());
     }
 
     @RequestMapping("tests")
