@@ -35,13 +35,9 @@ public class NewGradeSearchServiceTest {
 
     @Test
     public void test(){
-        httpSession.setAttribute("cookieTrace",  "trace");
-        NewUrpSpider spider = new NewUrpSpider();
+        NewUrpSpider spider = new NewUrpSpider("xxx", "xxx");
         VerifyCode captcha = spider.getCaptcha();
         captcha.write("C:\\Users\\Yuki\\Desktop\\pic.jpg");
-        Scanner scanner = new Scanner(System.in);
-        String code = scanner.nextLine();
-        spider.studentCheck("2016024170", "1", code);
         Student student = new Student();
         student.setAccount(2016024170);
         student.setPassword("1");

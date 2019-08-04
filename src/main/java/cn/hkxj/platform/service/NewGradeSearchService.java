@@ -78,7 +78,8 @@ public class NewGradeSearchService {
     }
 
     public CurrentGrade getCurrentGradeFromSpider(Student student){
-        CurrentGrade currentGrade = newUrpSpiderService.getCurrentTermGrade();
+        CurrentGrade currentGrade = newUrpSpiderService.getCurrentTermGrade(student.getAccount().toString(),
+                student.getPassword());
         if(currentGrade.getList() == null){
             return null;
         }
@@ -91,7 +92,7 @@ public class NewGradeSearchService {
         for(UrpGrade urpGrade : currentGrade.getList()){
             String uid = urpGrade.getId().getCourseNumber();
             if(!courseMapper.ifExistCourse(uid)){
-                Course course = newUrpSpiderService.getCourseFromSpider(uid);
+                Course course = newUrpSpiderService.getCourseFromSpider(student, uid);
                 courseMapper.insert(course);
             }
             if(gradeMapper.ifExistGrade(student.getAccount(), uid) == 0){

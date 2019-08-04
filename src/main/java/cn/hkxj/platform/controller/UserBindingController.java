@@ -37,10 +37,8 @@ public class UserBindingController {
 	private HttpSession httpSession;
 	@Resource
 	private StudentBindService studentBindService;
-    @Resource
-    private NewUrpSpiderService newUrpSpiderService;
 
-    private static final int ACCOUNT_LENGTH = 10;
+	private static final int ACCOUNT_LENGTH = 10;
     private static final String ACCOUNT_PREFIX = "20";
 
 	@RequestMapping(value = "/bind", method = RequestMethod.GET)
@@ -57,7 +55,7 @@ public class UserBindingController {
 	public WebResponse loginHtmlPost(@RequestParam("account") String account,
 									 @RequestParam("password") String password) {
 		log.info("student bind start account:{} password:{}", account, password);
-        MDC.put("cookieTrace", getCookieTrace());
+
         if (!isAccountValid(account)){
             log.info("student getStudentInfo fail--invalid account:{}", account);
             return WebResponse.fail(ErrorCode.ACCOUNT_OR_PASSWORD_INVALID.getErrorCode(), "账号无效");
@@ -89,30 +87,6 @@ public class UserBindingController {
 		return WebResponse.success();
 	}
 
-
-    @GetMapping("/verifyCode.jpg")
-    public void getVerifyCode(@RequestParam("key") String key, HttpServletResponse response){
-
-        MDC.put("cookieTrace", getCookieTrace());
-
-        VerifyCode verifyCode = newUrpSpiderService.getVerifyCode(key);
-        response.setContentType("image/jpeg");
-        try {
-            response.getOutputStream().write(verifyCode.getData());
-        } catch (IOException e) {
-            log.error("get outputStream error", e);
-        }
-    }
-
-    private String getCookieTrace(){
-        if(httpSession.getAttribute("cookieTrace") == null){
-            String traceId = MDC.get("traceId");
-            httpSession.setAttribute("cookieTrace", traceId);
-            return traceId;
-        }else {
-            return httpSession.getAttribute("cookieTrace").toString();
-        }
-    }
 
     private boolean isAccountValid(String account){
         return !Objects.isNull(account) && account.length() == ACCOUNT_LENGTH && account.startsWith(ACCOUNT_PREFIX);
