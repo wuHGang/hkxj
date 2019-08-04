@@ -4,15 +4,11 @@ import cn.hkxj.platform.exceptions.PasswordUncorrectException;
 import cn.hkxj.platform.exceptions.UrpRequestException;
 import cn.hkxj.platform.exceptions.UrpTimeoutException;
 import cn.hkxj.platform.exceptions.UrpVerifyCodeException;
-import cn.hkxj.platform.spider.model.NewUrpGradeResult;
 import cn.hkxj.platform.spider.model.UrpStudentInfo;
 import cn.hkxj.platform.spider.model.VerifyCode;
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.TypeReference;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -22,9 +18,7 @@ import org.slf4j.MDC;
 
 import java.io.IOException;
 import java.net.CookieManager;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 public class NewUrpSpider {
@@ -34,13 +28,19 @@ public class NewUrpSpider {
     private static final String CHECK = ROOT + "/j_spring_security_check";
     private static final String LOGIN = ROOT + "/getStudentInfo";
     private static final String STUDENT_INFO = ROOT + "/student/rollManagement/rollInfo/index";
-    private static final String CURRENT_GRADE = ROOT + "/student/integratedQuery/scoreQuery/thisTermScores/data";
-    private static final String INDEX = ROOT + "/index.jsp";
-    private static final String LOGIN_PAGE = ROOT + "/login";
-    private static final TypeReference<List<NewUrpGradeResult>> CURRENT_GRADE_REFERENCE =
-            new TypeReference<List<NewUrpGradeResult>>() {
+    private static final String CURRENT_TERM_GRADE = ROOT + "/student/integratedQuery/scoreQuery/thisTermScores/data";
+    private static final String CURRENT_TERM_GRADE_DETAIL = ROOT + "/student/integratedQuery/scoreQuery/coursePropertyScores/serchScoreDetail";
+    private static final String COURSE_DETAIL = ROOT+ "/student/integratedQuery/course/courseSchdule/detail";
+    private static final TypeReference<UrpGradeDetail> gradeDetailTypeReference
+            = new TypeReference<UrpGradeDetail>() {
     };
-    private static final UrpCookieJar cookieJar = new UrpCookieJar();
+    private static final TypeReference<CurrentGrade> currentGradeTypeReference
+            = new TypeReference<CurrentGrade>() {
+    };
+    private static final TypeReference<List<UrpCourse>> courseTypeReference
+            = new TypeReference<List<UrpCourse>>() {
+    };
+    private static final CookieManager manager = new CookieManager();
     private static final OkHttpClient client = new OkHttpClient.Builder()
             .cookieJar(cookieJar)
             .retryOnConnectionFailure(true)
@@ -67,6 +67,50 @@ public class NewUrpSpider {
         MDC.put("account", account);
         this.account = account;
         this.password = password;
+    }
+
+    public CurrentGrade getCurrentGrade(){
+        Request request = new Request.Builder()
+                .url(CURRENT_TERM_GRADE)
+                .get()
+                .build();
+        String result = new String(execute(request));
+        List<Map<String, Object>> list = JSON.parseObject(result, new TypeReference<List<Map<String, Object>>>(){});
+        JSONArray jsonArray = (JSONArray) list.get(0).get("list");
+        CurrentGrade currentGrade = new CurrentGrade();
+        currentGrade.setList(jsonArray.toJavaList(UrpGrade.class));
+        return currentGrade;
+    }
+
+    public UrpGradeDetail getUrpGradeDetail(UrpGrade urpGrade){
+        FormBody.Builder params = new FormBody.Builder();
+        CourseForUrpGrade courseForUrpGrade = urpGrade.getId();
+        FormBody body = params.add("zxjxjhh", courseForUrpGrade.getExecutiveEducationPlanNumber())
+                .add("kch", courseForUrpGrade.getCourseNumber())
+                .add("kssj", courseForUrpGrade.getExamtime())
+                .add("kxh", urpGrade.getCoureSequenceNumber())
+                .build();
+
+        Request request = new Request.Builder()
+                .url(CURRENT_TERM_GRADE_DETAIL)
+                .post(body)
+                .build();
+        String result =  new String(execute(request));
+        return JSON.parseObject(result, gradeDetailTypeReference);
+    }
+
+    public UrpCourse getUrpCourse(String uid){
+        FormBody.Builder params = new FormBody.Builder();
+        FormBody body = params.add("kch", uid).build();
+        Request request = new Request.Builder()
+                .url(COURSE_DETAIL)
+                .post(body)
+                .build();
+        String result = new String(execute(request));
+        //因为爬虫爬取的结果是个集合，所以先转成list
+        List<UrpCourse> courses = JSONArray.parseObject(result, courseTypeReference);
+        //因为用uid查询，所以取第一个元素即可
+        return courses.get(0);
     }
 
     public VerifyCode getCaptcha() {
@@ -258,9 +302,11 @@ public class NewUrpSpider {
 
 
     /**
-     * 排除重定向的响应
+     *
+     * @param response
+     * @return
      */
-    private static boolean isResponseFail(Response response){
+    private boolean isResponseFail(Response response){
         return response.body() == null ||
                 (!response.isSuccessful() && !response.isRedirect());
     }

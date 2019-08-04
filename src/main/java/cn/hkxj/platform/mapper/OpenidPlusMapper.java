@@ -42,4 +42,6 @@ public interface OpenidPlusMapper {
     int openidUnbind(String openid);
 
     int isOpenidBind(String openid);
+
+    List<String> getAllOpenidsFromOneClass(@Param("classId") int classId, @Param("openid")String openid);
 }

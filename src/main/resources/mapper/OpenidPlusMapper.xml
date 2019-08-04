@@ -250,4 +250,7 @@
   <select id="isOpenidBind" parameterType="String" resultType="int">
     select is_bind from openid_plus where openid = #{value}
   </select>
+  <select id="getAllOpenidsFromOneClass" resultType="String">
+    select openid from openid_plus o where account IN (select account from student where class_id = #{classId}) and o.openid != #{openid} and o.is_bind = 1
+  </select>
 </mapper>
