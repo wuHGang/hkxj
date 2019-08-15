@@ -29,13 +29,9 @@ import org.jsoup.select.Elements;
 import org.slf4j.MDC;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import sun.misc.BASE64Encoder;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Slf4j
 public class NewUrpSpider {
@@ -91,11 +87,12 @@ public class NewUrpSpider {
         this.password = password;
 
         VerifyCode verifyCode = getCaptcha();
-        BASE64Encoder encoder = new BASE64Encoder();
+        Base64.Encoder encoder = Base64.getEncoder();
+
         UUID uuid = UUID.randomUUID();
         HashOperations<String, String, String> opsForHash = stringRedisTemplate.opsForHash();
 
-        opsForHash.put(RedisKeys.KAPTCHA.getName(), uuid.toString(), encoder.encode(verifyCode.getData().clone()));
+        opsForHash.put(RedisKeys.KAPTCHA.getName(), uuid.toString(), encoder.encodeToString(verifyCode.getData().clone()));
         String code = getCode(uuid.toString());
 
         studentCheck(account, password, code);
