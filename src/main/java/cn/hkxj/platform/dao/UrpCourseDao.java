@@ -25,7 +25,7 @@ public class UrpCourseDao {
     public UrpCourse getUrpCourseByUid(String uid){
         UrpCourseExample urpCourseExample = new UrpCourseExample();
         urpCourseExample.createCriteria()
-                .andKchEqualTo(uid);
+                .andCourseNumberEqualTo(uid);
         return urpCourseMapper.selectByExample(urpCourseExample).stream().findFirst().orElse(null);
     }
 

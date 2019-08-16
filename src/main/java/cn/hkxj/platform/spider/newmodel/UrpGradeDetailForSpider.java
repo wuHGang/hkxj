@@ -3,6 +3,7 @@ package cn.hkxj.platform.spider.newmodel;
 import cn.hkxj.platform.pojo.UrpGradeDetail;
 import com.google.common.collect.Lists;
 import lombok.Data;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 
@@ -27,17 +28,20 @@ public class UrpGradeDetailForSpider {
 
     public List<UrpGradeDetail> convertToUrpGradeDetail(){
         List<UrpGradeDetail> urpGradeDetailList = Lists.newArrayList();
+        if(CollectionUtils.isEmpty(xs) || CollectionUtils.isEmpty(mx)){
+            return null;
+        }
         //因为xs和mx都只有3个元素，所以直接for循环
         for(int i = 0; i < 3; i ++){
             XsGradeDetail xsGradeDetail = this.xs.get(i);
             MxGradeDetail mxGradeDetail = this.mx.get(i);
             UrpGradeDetail urpGradeDetail = new UrpGradeDetail();
-            urpGradeDetail.setUsualscorecoefficient(xsGradeDetail.getUsualScoreCoefficient());
-            urpGradeDetail.setMidtermscorecoefficient(xsGradeDetail.getMidtermScoreCoefficient());
-            urpGradeDetail.setEndtermscorecoefficient(xsGradeDetail.getEndtermScoreCoefficient());
-            urpGradeDetail.setScorecoefficient(xsGradeDetail.getScoreCoefficient());
+            urpGradeDetail.setUsualScoreCoefficient(xsGradeDetail.getUsualScoreCoefficient());
+            urpGradeDetail.setMidtermScoreCoefficient(xsGradeDetail.getMidtermScoreCoefficient());
+            urpGradeDetail.setEndtermScoreCoefficient(xsGradeDetail.getEndtermScoreCoefficient());
+            urpGradeDetail.setScoreCoefficient(xsGradeDetail.getScoreCoefficient());
             urpGradeDetail.setXsRemark(xsGradeDetail.getRemark());
-            urpGradeDetail.setScoretypecode(xsGradeDetail.getId().getScoreTypeCode());
+            urpGradeDetail.setScoreTypeCode(xsGradeDetail.getId().getScoreTypeCode());
             //cjxs为first,cjxs_为second，first和second只是为了区分，没有特殊含义
             urpGradeDetail.setFirstcjxs(mxGradeDetail.getCjxs());
             urpGradeDetail.setFirstpscjxs(mxGradeDetail.getPscjxs());
@@ -50,10 +54,10 @@ public class UrpGradeDetailForSpider {
             urpGradeDetail.setMxRemark(mxGradeDetail.getRemark());
             urpGradeDetail.setMxRemark1(mxGradeDetail.getRemark1());
             urpGradeDetail.setMxRemark2(mxGradeDetail.getRemark2());
-            urpGradeDetail.setZcj(mxGradeDetail.getZcj());
-            urpGradeDetail.setQzcj(mxGradeDetail.getQzcj());
-            urpGradeDetail.setQmcj(mxGradeDetail.getQmcj());
-            urpGradeDetail.setPscj(mxGradeDetail.getPscj());
+            urpGradeDetail.setTotalGrade(mxGradeDetail.getZcj());
+            urpGradeDetail.setMidtermGrade(mxGradeDetail.getQzcj());
+            urpGradeDetail.setFinaltermGrade(mxGradeDetail.getQmcj());
+            urpGradeDetail.setRegularGrade(mxGradeDetail.getPscj());
             urpGradeDetailList.add(urpGradeDetail);
         }
         return urpGradeDetailList;

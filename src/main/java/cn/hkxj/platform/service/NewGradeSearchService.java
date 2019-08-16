@@ -106,9 +106,9 @@ public class NewGradeSearchService {
             buffer.append("|").append(term.getTermCode()).append("学年，").append(term.getTermName()).append("|\n");
             for (UrpGradeAndUrpCourse urpGradeAndUrpCourse : studentGrades) {
                 int grade = urpGradeAndUrpCourse.getNewGrade().getUrpGrade().getScore();
-                buffer.append("考试名称：").append(urpGradeAndUrpCourse.getUrpCourse().getKcm()).append("\n")
+                buffer.append("考试名称：").append(urpGradeAndUrpCourse.getUrpCourse().getCourseName()).append("\n")
                         .append("成绩：").append(grade == -1 ? "" : grade).append("   学分：")
-                        .append((urpGradeAndUrpCourse.getUrpCourse().getXf())).append("\n\n");
+                        .append((urpGradeAndUrpCourse.getUrpCourse().getCredit())).append("\n\n");
             }
             buffer.append("- - - - - - - - - - - - - -\n\n");
         }

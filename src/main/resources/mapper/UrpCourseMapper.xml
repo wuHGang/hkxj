@@ -3,51 +3,51 @@
 <mapper namespace="cn.hkxj.platform.mapper.UrpCourseMapper" >
   <resultMap id="BaseResultMap" type="cn.hkxj.platform.pojo.UrpCourse" >
     <id column="id" property="id" jdbcType="INTEGER" />
-    <result column="bybz" property="bybz" jdbcType="VARCHAR" />
-    <result column="bz" property="bz" jdbcType="VARCHAR" />
-    <result column="bzrs" property="bzrs" jdbcType="INTEGER" />
-    <result column="cks" property="cks" jdbcType="VARCHAR" />
-    <result column="jc" property="jc" jdbcType="VARCHAR" />
-    <result column="jkzxs" property="jkzxs" jdbcType="INTEGER" />
+    <result column="undergraduate_postgraduate_flag" property="undergraduatePostgraduateFlag" jdbcType="VARCHAR" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="standard_person_number" property="standardPersonNumber" jdbcType="INTEGER" />
+    <result column="reference_book" property="referenceBook" jdbcType="VARCHAR" />
+    <result column="teaching_material" property="teachingMaterial" jdbcType="VARCHAR" />
+    <result column="total_hour_of_teaching" property="totalHourOfTeaching" jdbcType="INTEGER" />
     <result column="jsm" property="jsm" jdbcType="VARCHAR" />
-    <result column="jsrq" property="jsrq" jdbcType="VARCHAR" />
+    <result column="end_Date" property="endDate" jdbcType="VARCHAR" />
     <result column="jxdg" property="jxdg" jdbcType="VARCHAR" />
-    <result column="jxfssm" property="jxfssm" jdbcType="VARCHAR" />
-    <result column="kch" property="kch" jdbcType="VARCHAR" />
-    <result column="kcjbmc" property="kcjbmc" jdbcType="VARCHAR" />
-    <result column="kclbmc" property="kclbmc" jdbcType="VARCHAR" />
-    <result column="kcm" property="kcm" jdbcType="VARCHAR" />
-    <result column="kcsm" property="kcsm" jdbcType="VARCHAR" />
-    <result column="kcztdm" property="kcztdm" jdbcType="VARCHAR" />
-    <result column="kkxq" property="kkxq" jdbcType="VARCHAR" />
-    <result column="knzxs" property="knzxs" jdbcType="INTEGER" />
-    <result column="ksflbdm" property="ksflbdm" jdbcType="VARCHAR" />
-    <result column="kslxmc" property="kslxmc" jdbcType="VARCHAR" />
-    <result column="ksrq" property="ksrq" jdbcType="VARCHAR" />
-    <result column="kwxf" property="kwxf" jdbcType="INTEGER" />
-    <result column="kwzxs" property="kwzxs" jdbcType="INTEGER" />
-    <result column="nrjj" property="nrjj" jdbcType="VARCHAR" />
-    <result column="qzsjzxs" property="qzsjzxs" jdbcType="INTEGER" />
-    <result column="sjzs" property="sjzs" jdbcType="INTEGER" />
-    <result column="rsxsdm" property="rsxsdm" jdbcType="VARCHAR" />
-    <result column="sflbmc" property="sflbmc" jdbcType="VARCHAR" />
-    <result column="sjzxs" property="sjzxs" jdbcType="INTEGER" />
-    <result column="sjzyzxs" property="sjzyzxs" jdbcType="INTEGER" />
-    <result column="syzxs" property="syzxs" jdbcType="INTEGER" />
-    <result column="szdw" property="szdw" jdbcType="VARCHAR" />
-    <result column="tlfdzxs" property="tlfdzxs" jdbcType="INTEGER" />
-    <result column="xf" property="xf" jdbcType="DOUBLE" />
-    <result column="xkmlh" property="xkmlh" jdbcType="VARCHAR" />
-    <result column="xkmlm" property="xkmlm" jdbcType="VARCHAR" />
-    <result column="xqh" property="xqh" jdbcType="VARCHAR" />
-    <result column="xqm" property="xqm" jdbcType="VARCHAR" />
-    <result column="xs" property="xs" jdbcType="INTEGER" />
-    <result column="xsh" property="xsh" jdbcType="INTEGER" />
+    <result column="teaching_method" property="teachingMethod" jdbcType="VARCHAR" />
+    <result column="course_number" property="courseNumber" jdbcType="VARCHAR" />
+    <result column="basic_name_of_course" property="basicNameOfCourse" jdbcType="VARCHAR" />
+    <result column="course_type" property="courseType" jdbcType="VARCHAR" />
+    <result column="course_name" property="courseName" jdbcType="VARCHAR" />
+    <result column="course_description" property="courseDescription" jdbcType="VARCHAR" />
+    <result column="course_status" property="courseStatus" jdbcType="VARCHAR" />
+    <result column="semester" property="semester" jdbcType="VARCHAR" />
+    <result column="total_hour_in_class" property="totalHourInClass" jdbcType="INTEGER" />
+    <result column="course_fee_class_code" property="courseFeeClassCode" jdbcType="VARCHAR" />
+    <result column="examination_name" property="examinationName" jdbcType="VARCHAR" />
+    <result column="start_date" property="startDate" jdbcType="VARCHAR" />
+    <result column="extracurricular_credit" property="extracurricularCredit" jdbcType="INTEGER" />
+    <result column="extracurricular_total_hour" property="extracurricularTotalHour" jdbcType="INTEGER" />
+    <result column="content_abstract" property="contentAbstract" jdbcType="VARCHAR" />
+    <result column="on_computer_hour" property="onComputerHour" jdbcType="INTEGER" />
+    <result column="practice_week" property="practiceWeek" jdbcType="INTEGER" />
+    <result column="number_coeffcient_code" property="numberCoeffcientCode" jdbcType="VARCHAR" />
+    <result column="charge_category_name" property="chargeCategoryName" jdbcType="VARCHAR" />
+    <result column="design_total_hour" property="designTotalHour" jdbcType="INTEGER" />
+    <result column="design_homework_total_hour" property="designHomeworkTotalHour" jdbcType="INTEGER" />
+    <result column="experiment_hour" property="experimentHour" jdbcType="INTEGER" />
+    <result column="teaching_staff" property="teachingStaff" jdbcType="VARCHAR" />
+    <result column="discuss_counseling_total_hour" property="discussCounselingTotalHour" jdbcType="INTEGER" />
+    <result column="credit" property="credit" jdbcType="DOUBLE" />
+    <result column="subject_category_number" property="subjectCategoryNumber" jdbcType="VARCHAR" />
+    <result column="subject_category_name" property="subjectCategoryName" jdbcType="VARCHAR" />
+    <result column="campus_number" property="campusNumber" jdbcType="VARCHAR" />
+    <result column="campus_name" property="campusName" jdbcType="VARCHAR" />
+    <result column="class_hour" property="classHour" jdbcType="INTEGER" />
+    <result column="academy" property="academy" jdbcType="INTEGER" />
     <result column="xxkch" property="xxkch" jdbcType="VARCHAR" />
-    <result column="ywjxdg" property="ywjxdg" jdbcType="VARCHAR" />
-    <result column="ywkcm" property="ywkcm" jdbcType="VARCHAR" />
-    <result column="ywnrjj" property="ywnrjj" jdbcType="VARCHAR" />
-    <result column="zyxkdx" property="zyxkdx" jdbcType="VARCHAR" />
+    <result column="english_syllabus" property="englishSyllabus" jdbcType="VARCHAR" />
+    <result column="english_course_name" property="englishCourseName" jdbcType="VARCHAR" />
+    <result column="english_content_brief" property="englishContentBrief" jdbcType="VARCHAR" />
+    <result column="course_target" property="courseTarget" jdbcType="VARCHAR" />
     <result column="gmt_create" property="gmtCreate" jdbcType="TIMESTAMP" />
   </resultMap>
   <sql id="Example_Where_Clause" >
@@ -109,10 +109,15 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, bybz, bz, bzrs, cks, jc, jkzxs, jsm, jsrq, jxdg, jxfssm, kch, kcjbmc, kclbmc, 
-    kcm, kcsm, kcztdm, kkxq, knzxs, ksflbdm, kslxmc, ksrq, kwxf, kwzxs, nrjj, qzsjzxs, 
-    sjzs, rsxsdm, sflbmc, sjzxs, sjzyzxs, syzxs, szdw, tlfdzxs, xf, xkmlh, xkmlm, xqh, 
-    xqm, xs, xsh, xxkch, ywjxdg, ywkcm, ywnrjj, zyxkdx, gmt_create
+    id, undergraduate_postgraduate_flag, remark, standard_person_number, reference_book,
+    teaching_material, total_hour_of_teaching, jsm, end_Date, jxdg, teaching_method, course_number,
+    basic_name_of_course, course_type, course_name, course_description, course_status,
+    semester, total_hour_in_class, course_fee_class_code, examination_name, start_date,
+    extracurricular_credit, extracurricular_total_hour, content_abstract, on_computer_hour,
+    practice_week, number_coeffcient_code, charge_category_name, design_total_hour, design_homework_total_hour,
+    experiment_hour, teaching_staff, discuss_counseling_total_hour, credit, subject_category_number,
+    subject_category_name, campus_number, campus_name, class_hour, academy, xxkch, english_syllabus,
+    english_course_name, english_content_brief, course_target, gmt_create
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="cn.hkxj.platform.pojo.example.UrpCourseExample" >
     select
@@ -129,7 +134,7 @@
     </if>
   </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
-    select 
+    select
     <include refid="Base_Column_List" />
     from urp_course
     where id = #{id,jdbcType=INTEGER}
@@ -145,177 +150,186 @@
     </if>
   </delete>
   <insert id="insert" parameterType="cn.hkxj.platform.pojo.UrpCourse" >
-    insert into urp_course (id, bybz, bz, 
-      bzrs, cks, jc, jkzxs, 
-      jsm, jsrq, jxdg, jxfssm, 
-      kch, kcjbmc, kclbmc, 
-      kcm, kcsm, kcztdm, 
-      kkxq, knzxs, ksflbdm, 
-      kslxmc, ksrq, kwxf, 
-      kwzxs, nrjj, qzsjzxs, 
-      sjzs, rsxsdm, sflbmc, 
-      sjzxs, sjzyzxs, syzxs, 
-      szdw, tlfdzxs, xf, xkmlh, 
-      xkmlm, xqh, xqm, xs, 
-      xsh, xxkch, ywjxdg, 
-      ywkcm, ywnrjj, zyxkdx, 
-      gmt_create)
-    values (#{id,jdbcType=INTEGER}, #{bybz,jdbcType=VARCHAR}, #{bz,jdbcType=VARCHAR}, 
-      #{bzrs,jdbcType=INTEGER}, #{cks,jdbcType=VARCHAR}, #{jc,jdbcType=VARCHAR}, #{jkzxs,jdbcType=INTEGER}, 
-      #{jsm,jdbcType=VARCHAR}, #{jsrq,jdbcType=VARCHAR}, #{jxdg,jdbcType=VARCHAR}, #{jxfssm,jdbcType=VARCHAR}, 
-      #{kch,jdbcType=VARCHAR}, #{kcjbmc,jdbcType=VARCHAR}, #{kclbmc,jdbcType=VARCHAR}, 
-      #{kcm,jdbcType=VARCHAR}, #{kcsm,jdbcType=VARCHAR}, #{kcztdm,jdbcType=VARCHAR}, 
-      #{kkxq,jdbcType=VARCHAR}, #{knzxs,jdbcType=INTEGER}, #{ksflbdm,jdbcType=VARCHAR}, 
-      #{kslxmc,jdbcType=VARCHAR}, #{ksrq,jdbcType=VARCHAR}, #{kwxf,jdbcType=INTEGER}, 
-      #{kwzxs,jdbcType=INTEGER}, #{nrjj,jdbcType=VARCHAR}, #{qzsjzxs,jdbcType=INTEGER}, 
-      #{sjzs,jdbcType=INTEGER}, #{rsxsdm,jdbcType=VARCHAR}, #{sflbmc,jdbcType=VARCHAR}, 
-      #{sjzxs,jdbcType=INTEGER}, #{sjzyzxs,jdbcType=INTEGER}, #{syzxs,jdbcType=INTEGER}, 
-      #{szdw,jdbcType=VARCHAR}, #{tlfdzxs,jdbcType=INTEGER}, #{xf,jdbcType=DOUBLE}, #{xkmlh,jdbcType=VARCHAR}, 
-      #{xkmlm,jdbcType=VARCHAR}, #{xqh,jdbcType=VARCHAR}, #{xqm,jdbcType=VARCHAR}, #{xs,jdbcType=INTEGER}, 
-      #{xsh,jdbcType=INTEGER}, #{xxkch,jdbcType=VARCHAR}, #{ywjxdg,jdbcType=VARCHAR}, 
-      #{ywkcm,jdbcType=VARCHAR}, #{ywnrjj,jdbcType=VARCHAR}, #{zyxkdx,jdbcType=VARCHAR}, 
-      #{gmtCreate,jdbcType=TIMESTAMP})
+    insert into urp_course (id, undergraduate_postgraduate_flag,
+    remark, standard_person_number, reference_book,
+    teaching_material, total_hour_of_teaching,
+    jsm, end_Date, jxdg,
+    teaching_method, course_number, basic_name_of_course,
+    course_type, course_name, course_description,
+    course_status, semester, total_hour_in_class,
+    course_fee_class_code, examination_name, start_date,
+    extracurricular_credit, extracurricular_total_hour,
+    content_abstract, on_computer_hour, practice_week,
+    number_coeffcient_code, charge_category_name,
+    design_total_hour, design_homework_total_hour,
+    experiment_hour, teaching_staff, discuss_counseling_total_hour,
+    credit, subject_category_number, subject_category_name,
+    campus_number, campus_name, class_hour,
+    academy, xxkch, english_syllabus,
+    english_course_name, english_content_brief,
+    course_target, gmt_create)
+    values (#{id,jdbcType=INTEGER}, #{undergraduatePostgraduateFlag,jdbcType=VARCHAR},
+    #{remark,jdbcType=VARCHAR}, #{standardPersonNumber,jdbcType=INTEGER}, #{referenceBook,jdbcType=VARCHAR},
+    #{teachingMaterial,jdbcType=VARCHAR}, #{totalHourOfTeaching,jdbcType=INTEGER},
+    #{jsm,jdbcType=VARCHAR}, #{endDate,jdbcType=VARCHAR}, #{jxdg,jdbcType=VARCHAR},
+    #{teachingMethod,jdbcType=VARCHAR}, #{courseNumber,jdbcType=VARCHAR}, #{basicNameOfCourse,jdbcType=VARCHAR},
+    #{courseType,jdbcType=VARCHAR}, #{courseName,jdbcType=VARCHAR}, #{courseDescription,jdbcType=VARCHAR},
+    #{courseStatus,jdbcType=VARCHAR}, #{semester,jdbcType=VARCHAR}, #{totalHourInClass,jdbcType=INTEGER},
+    #{courseFeeClassCode,jdbcType=VARCHAR}, #{examinationName,jdbcType=VARCHAR}, #{startDate,jdbcType=VARCHAR},
+    #{extracurricularCredit,jdbcType=INTEGER}, #{extracurricularTotalHour,jdbcType=INTEGER},
+    #{contentAbstract,jdbcType=VARCHAR}, #{onComputerHour,jdbcType=INTEGER}, #{practiceWeek,jdbcType=INTEGER},
+    #{numberCoeffcientCode,jdbcType=VARCHAR}, #{chargeCategoryName,jdbcType=VARCHAR},
+    #{designTotalHour,jdbcType=INTEGER}, #{designHomeworkTotalHour,jdbcType=INTEGER},
+    #{experimentHour,jdbcType=INTEGER}, #{teachingStaff,jdbcType=VARCHAR}, #{discussCounselingTotalHour,jdbcType=INTEGER},
+    #{credit,jdbcType=DOUBLE}, #{subjectCategoryNumber,jdbcType=VARCHAR}, #{subjectCategoryName,jdbcType=VARCHAR},
+    #{campusNumber,jdbcType=VARCHAR}, #{campusName,jdbcType=VARCHAR}, #{classHour,jdbcType=INTEGER},
+    #{academy,jdbcType=INTEGER}, #{xxkch,jdbcType=VARCHAR}, #{englishSyllabus,jdbcType=VARCHAR},
+    #{englishCourseName,jdbcType=VARCHAR}, #{englishContentBrief,jdbcType=VARCHAR},
+    #{courseTarget,jdbcType=VARCHAR}, #{gmtCreate,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="cn.hkxj.platform.pojo.UrpCourse" >
+    <selectKey order="AFTER" keyProperty="id" resultType="int">
+      select LAST_INSERT_ID();
+    </selectKey>
     insert into urp_course
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         id,
       </if>
-      <if test="bybz != null" >
-        bybz,
+      <if test="undergraduatePostgraduateFlag != null" >
+        undergraduate_postgraduate_flag,
       </if>
-      <if test="bz != null" >
-        bz,
+      <if test="remark != null" >
+        remark,
       </if>
-      <if test="bzrs != null" >
-        bzrs,
+      <if test="standardPersonNumber != null" >
+        standard_person_number,
       </if>
-      <if test="cks != null" >
-        cks,
+      <if test="referenceBook != null" >
+        reference_book,
       </if>
-      <if test="jc != null" >
-        jc,
+      <if test="teachingMaterial != null" >
+        teaching_material,
       </if>
-      <if test="jkzxs != null" >
-        jkzxs,
+      <if test="totalHourOfTeaching != null" >
+        total_hour_of_teaching,
       </if>
       <if test="jsm != null" >
         jsm,
       </if>
-      <if test="jsrq != null" >
-        jsrq,
+      <if test="endDate != null" >
+        end_Date,
       </if>
       <if test="jxdg != null" >
         jxdg,
       </if>
-      <if test="jxfssm != null" >
-        jxfssm,
+      <if test="teachingMethod != null" >
+        teaching_method,
       </if>
-      <if test="kch != null" >
-        kch,
+      <if test="courseNumber != null" >
+        course_number,
       </if>
-      <if test="kcjbmc != null" >
-        kcjbmc,
+      <if test="basicNameOfCourse != null" >
+        basic_name_of_course,
       </if>
-      <if test="kclbmc != null" >
-        kclbmc,
+      <if test="courseType != null" >
+        course_type,
       </if>
-      <if test="kcm != null" >
-        kcm,
+      <if test="courseName != null" >
+        course_name,
       </if>
-      <if test="kcsm != null" >
-        kcsm,
+      <if test="courseDescription != null" >
+        course_description,
       </if>
-      <if test="kcztdm != null" >
-        kcztdm,
+      <if test="courseStatus != null" >
+        course_status,
       </if>
-      <if test="kkxq != null" >
-        kkxq,
+      <if test="semester != null" >
+        semester,
       </if>
-      <if test="knzxs != null" >
-        knzxs,
+      <if test="totalHourInClass != null" >
+        total_hour_in_class,
       </if>
-      <if test="ksflbdm != null" >
-        ksflbdm,
+      <if test="courseFeeClassCode != null" >
+        course_fee_class_code,
       </if>
-      <if test="kslxmc != null" >
-        kslxmc,
+      <if test="examinationName != null" >
+        examination_name,
       </if>
-      <if test="ksrq != null" >
-        ksrq,
+      <if test="startDate != null" >
+        start_date,
       </if>
-      <if test="kwxf != null" >
-        kwxf,
+      <if test="extracurricularCredit != null" >
+        extracurricular_credit,
       </if>
-      <if test="kwzxs != null" >
-        kwzxs,
+      <if test="extracurricularTotalHour != null" >
+        extracurricular_total_hour,
       </if>
-      <if test="nrjj != null" >
-        nrjj,
+      <if test="contentAbstract != null" >
+        content_abstract,
       </if>
-      <if test="qzsjzxs != null" >
-        qzsjzxs,
+      <if test="onComputerHour != null" >
+        on_computer_hour,
       </if>
-      <if test="sjzs != null" >
-        sjzs,
+      <if test="practiceWeek != null" >
+        practice_week,
       </if>
-      <if test="rsxsdm != null" >
-        rsxsdm,
+      <if test="numberCoeffcientCode != null" >
+        number_coeffcient_code,
       </if>
-      <if test="sflbmc != null" >
-        sflbmc,
+      <if test="chargeCategoryName != null" >
+        charge_category_name,
       </if>
-      <if test="sjzxs != null" >
-        sjzxs,
+      <if test="designTotalHour != null" >
+        design_total_hour,
       </if>
-      <if test="sjzyzxs != null" >
-        sjzyzxs,
+      <if test="designHomeworkTotalHour != null" >
+        design_homework_total_hour,
       </if>
-      <if test="syzxs != null" >
-        syzxs,
+      <if test="experimentHour != null" >
+        experiment_hour,
       </if>
-      <if test="szdw != null" >
-        szdw,
+      <if test="teachingStaff != null" >
+        teaching_staff,
       </if>
-      <if test="tlfdzxs != null" >
-        tlfdzxs,
+      <if test="discussCounselingTotalHour != null" >
+        discuss_counseling_total_hour,
       </if>
-      <if test="xf != null" >
-        xf,
+      <if test="credit != null" >
+        credit,
       </if>
-      <if test="xkmlh != null" >
-        xkmlh,
+      <if test="subjectCategoryNumber != null" >
+        subject_category_number,
       </if>
-      <if test="xkmlm != null" >
-        xkmlm,
+      <if test="subjectCategoryName != null" >
+        subject_category_name,
       </if>
-      <if test="xqh != null" >
-        xqh,
+      <if test="campusNumber != null" >
+        campus_number,
       </if>
-      <if test="xqm != null" >
-        xqm,
+      <if test="campusName != null" >
+        campus_name,
       </if>
-      <if test="xs != null" >
-        xs,
+      <if test="classHour != null" >
+        class_hour,
       </if>
-      <if test="xsh != null" >
-        xsh,
+      <if test="academy != null" >
+        academy,
       </if>
       <if test="xxkch != null" >
         xxkch,
       </if>
-      <if test="ywjxdg != null" >
-        ywjxdg,
+      <if test="englishSyllabus != null" >
+        english_syllabus,
       </if>
-      <if test="ywkcm != null" >
-        ywkcm,
+      <if test="englishCourseName != null" >
+        english_course_name,
       </if>
-      <if test="ywnrjj != null" >
-        ywnrjj,
+      <if test="englishContentBrief != null" >
+        english_content_brief,
       </if>
-      <if test="zyxkdx != null" >
-        zyxkdx,
+      <if test="courseTarget != null" >
+        course_target,
       </if>
       <if test="gmtCreate != null" >
         gmt_create,
@@ -325,140 +339,140 @@
       <if test="id != null" >
         #{id,jdbcType=INTEGER},
       </if>
-      <if test="bybz != null" >
-        #{bybz,jdbcType=VARCHAR},
+      <if test="undergraduatePostgraduateFlag != null" >
+        #{undergraduatePostgraduateFlag,jdbcType=VARCHAR},
       </if>
-      <if test="bz != null" >
-        #{bz,jdbcType=VARCHAR},
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
       </if>
-      <if test="bzrs != null" >
-        #{bzrs,jdbcType=INTEGER},
+      <if test="standardPersonNumber != null" >
+        #{standardPersonNumber,jdbcType=INTEGER},
       </if>
-      <if test="cks != null" >
-        #{cks,jdbcType=VARCHAR},
+      <if test="referenceBook != null" >
+        #{referenceBook,jdbcType=VARCHAR},
       </if>
-      <if test="jc != null" >
-        #{jc,jdbcType=VARCHAR},
+      <if test="teachingMaterial != null" >
+        #{teachingMaterial,jdbcType=VARCHAR},
       </if>
-      <if test="jkzxs != null" >
-        #{jkzxs,jdbcType=INTEGER},
+      <if test="totalHourOfTeaching != null" >
+        #{totalHourOfTeaching,jdbcType=INTEGER},
       </if>
       <if test="jsm != null" >
         #{jsm,jdbcType=VARCHAR},
       </if>
-      <if test="jsrq != null" >
-        #{jsrq,jdbcType=VARCHAR},
+      <if test="endDate != null" >
+        #{endDate,jdbcType=VARCHAR},
       </if>
       <if test="jxdg != null" >
         #{jxdg,jdbcType=VARCHAR},
       </if>
-      <if test="jxfssm != null" >
-        #{jxfssm,jdbcType=VARCHAR},
+      <if test="teachingMethod != null" >
+        #{teachingMethod,jdbcType=VARCHAR},
       </if>
-      <if test="kch != null" >
-        #{kch,jdbcType=VARCHAR},
+      <if test="courseNumber != null" >
+        #{courseNumber,jdbcType=VARCHAR},
       </if>
-      <if test="kcjbmc != null" >
-        #{kcjbmc,jdbcType=VARCHAR},
+      <if test="basicNameOfCourse != null" >
+        #{basicNameOfCourse,jdbcType=VARCHAR},
       </if>
-      <if test="kclbmc != null" >
-        #{kclbmc,jdbcType=VARCHAR},
+      <if test="courseType != null" >
+        #{courseType,jdbcType=VARCHAR},
       </if>
-      <if test="kcm != null" >
-        #{kcm,jdbcType=VARCHAR},
+      <if test="courseName != null" >
+        #{courseName,jdbcType=VARCHAR},
       </if>
-      <if test="kcsm != null" >
-        #{kcsm,jdbcType=VARCHAR},
+      <if test="courseDescription != null" >
+        #{courseDescription,jdbcType=VARCHAR},
       </if>
-      <if test="kcztdm != null" >
-        #{kcztdm,jdbcType=VARCHAR},
+      <if test="courseStatus != null" >
+        #{courseStatus,jdbcType=VARCHAR},
       </if>
-      <if test="kkxq != null" >
-        #{kkxq,jdbcType=VARCHAR},
+      <if test="semester != null" >
+        #{semester,jdbcType=VARCHAR},
       </if>
-      <if test="knzxs != null" >
-        #{knzxs,jdbcType=INTEGER},
+      <if test="totalHourInClass != null" >
+        #{totalHourInClass,jdbcType=INTEGER},
       </if>
-      <if test="ksflbdm != null" >
-        #{ksflbdm,jdbcType=VARCHAR},
+      <if test="courseFeeClassCode != null" >
+        #{courseFeeClassCode,jdbcType=VARCHAR},
       </if>
-      <if test="kslxmc != null" >
-        #{kslxmc,jdbcType=VARCHAR},
+      <if test="examinationName != null" >
+        #{examinationName,jdbcType=VARCHAR},
       </if>
-      <if test="ksrq != null" >
-        #{ksrq,jdbcType=VARCHAR},
+      <if test="startDate != null" >
+        #{startDate,jdbcType=VARCHAR},
       </if>
-      <if test="kwxf != null" >
-        #{kwxf,jdbcType=INTEGER},
+      <if test="extracurricularCredit != null" >
+        #{extracurricularCredit,jdbcType=INTEGER},
       </if>
-      <if test="kwzxs != null" >
-        #{kwzxs,jdbcType=INTEGER},
+      <if test="extracurricularTotalHour != null" >
+        #{extracurricularTotalHour,jdbcType=INTEGER},
       </if>
-      <if test="nrjj != null" >
-        #{nrjj,jdbcType=VARCHAR},
+      <if test="contentAbstract != null" >
+        #{contentAbstract,jdbcType=VARCHAR},
       </if>
-      <if test="qzsjzxs != null" >
-        #{qzsjzxs,jdbcType=INTEGER},
+      <if test="onComputerHour != null" >
+        #{onComputerHour,jdbcType=INTEGER},
       </if>
-      <if test="sjzs != null" >
-        #{sjzs,jdbcType=INTEGER},
+      <if test="practiceWeek != null" >
+        #{practiceWeek,jdbcType=INTEGER},
       </if>
-      <if test="rsxsdm != null" >
-        #{rsxsdm,jdbcType=VARCHAR},
+      <if test="numberCoeffcientCode != null" >
+        #{numberCoeffcientCode,jdbcType=VARCHAR},
       </if>
-      <if test="sflbmc != null" >
-        #{sflbmc,jdbcType=VARCHAR},
+      <if test="chargeCategoryName != null" >
+        #{chargeCategoryName,jdbcType=VARCHAR},
       </if>
-      <if test="sjzxs != null" >
-        #{sjzxs,jdbcType=INTEGER},
+      <if test="designTotalHour != null" >
+        #{designTotalHour,jdbcType=INTEGER},
       </if>
-      <if test="sjzyzxs != null" >
-        #{sjzyzxs,jdbcType=INTEGER},
+      <if test="designHomeworkTotalHour != null" >
+        #{designHomeworkTotalHour,jdbcType=INTEGER},
       </if>
-      <if test="syzxs != null" >
-        #{syzxs,jdbcType=INTEGER},
+      <if test="experimentHour != null" >
+        #{experimentHour,jdbcType=INTEGER},
       </if>
-      <if test="szdw != null" >
-        #{szdw,jdbcType=VARCHAR},
+      <if test="teachingStaff != null" >
+        #{teachingStaff,jdbcType=VARCHAR},
       </if>
-      <if test="tlfdzxs != null" >
-        #{tlfdzxs,jdbcType=INTEGER},
+      <if test="discussCounselingTotalHour != null" >
+        #{discussCounselingTotalHour,jdbcType=INTEGER},
       </if>
-      <if test="xf != null" >
-        #{xf,jdbcType=DOUBLE},
+      <if test="credit != null" >
+        #{credit,jdbcType=DOUBLE},
       </if>
-      <if test="xkmlh != null" >
-        #{xkmlh,jdbcType=VARCHAR},
+      <if test="subjectCategoryNumber != null" >
+        #{subjectCategoryNumber,jdbcType=VARCHAR},
       </if>
-      <if test="xkmlm != null" >
-        #{xkmlm,jdbcType=VARCHAR},
+      <if test="subjectCategoryName != null" >
+        #{subjectCategoryName,jdbcType=VARCHAR},
       </if>
-      <if test="xqh != null" >
-        #{xqh,jdbcType=VARCHAR},
+      <if test="campusNumber != null" >
+        #{campusNumber,jdbcType=VARCHAR},
       </if>
-      <if test="xqm != null" >
-        #{xqm,jdbcType=VARCHAR},
+      <if test="campusName != null" >
+        #{campusName,jdbcType=VARCHAR},
       </if>
-      <if test="xs != null" >
-        #{xs,jdbcType=INTEGER},
+      <if test="classHour != null" >
+        #{classHour,jdbcType=INTEGER},
       </if>
-      <if test="xsh != null" >
-        #{xsh,jdbcType=INTEGER},
+      <if test="academy != null" >
+        #{academy,jdbcType=INTEGER},
       </if>
       <if test="xxkch != null" >
         #{xxkch,jdbcType=VARCHAR},
       </if>
-      <if test="ywjxdg != null" >
-        #{ywjxdg,jdbcType=VARCHAR},
+      <if test="englishSyllabus != null" >
+        #{englishSyllabus,jdbcType=VARCHAR},
       </if>
-      <if test="ywkcm != null" >
-        #{ywkcm,jdbcType=VARCHAR},
+      <if test="englishCourseName != null" >
+        #{englishCourseName,jdbcType=VARCHAR},
       </if>
-      <if test="ywnrjj != null" >
-        #{ywnrjj,jdbcType=VARCHAR},
+      <if test="englishContentBrief != null" >
+        #{englishContentBrief,jdbcType=VARCHAR},
       </if>
-      <if test="zyxkdx != null" >
-        #{zyxkdx,jdbcType=VARCHAR},
+      <if test="courseTarget != null" >
+        #{courseTarget,jdbcType=VARCHAR},
       </if>
       <if test="gmtCreate != null" >
         #{gmtCreate,jdbcType=TIMESTAMP},
@@ -477,140 +491,140 @@
       <if test="record.id != null" >
         id = #{record.id,jdbcType=INTEGER},
       </if>
-      <if test="record.bybz != null" >
-        bybz = #{record.bybz,jdbcType=VARCHAR},
+      <if test="record.undergraduatePostgraduateFlag != null" >
+        undergraduate_postgraduate_flag = #{record.undergraduatePostgraduateFlag,jdbcType=VARCHAR},
       </if>
-      <if test="record.bz != null" >
-        bz = #{record.bz,jdbcType=VARCHAR},
+      <if test="record.remark != null" >
+        remark = #{record.remark,jdbcType=VARCHAR},
       </if>
-      <if test="record.bzrs != null" >
-        bzrs = #{record.bzrs,jdbcType=INTEGER},
+      <if test="record.standardPersonNumber != null" >
+        standard_person_number = #{record.standardPersonNumber,jdbcType=INTEGER},
       </if>
-      <if test="record.cks != null" >
-        cks = #{record.cks,jdbcType=VARCHAR},
+      <if test="record.referenceBook != null" >
+        reference_book = #{record.referenceBook,jdbcType=VARCHAR},
       </if>
-      <if test="record.jc != null" >
-        jc = #{record.jc,jdbcType=VARCHAR},
+      <if test="record.teachingMaterial != null" >
+        teaching_material = #{record.teachingMaterial,jdbcType=VARCHAR},
       </if>
-      <if test="record.jkzxs != null" >
-        jkzxs = #{record.jkzxs,jdbcType=INTEGER},
+      <if test="record.totalHourOfTeaching != null" >
+        total_hour_of_teaching = #{record.totalHourOfTeaching,jdbcType=INTEGER},
       </if>
       <if test="record.jsm != null" >
         jsm = #{record.jsm,jdbcType=VARCHAR},
       </if>
-      <if test="record.jsrq != null" >
-        jsrq = #{record.jsrq,jdbcType=VARCHAR},
+      <if test="record.endDate != null" >
+        end_Date = #{record.endDate,jdbcType=VARCHAR},
       </if>
       <if test="record.jxdg != null" >
         jxdg = #{record.jxdg,jdbcType=VARCHAR},
       </if>
-      <if test="record.jxfssm != null" >
-        jxfssm = #{record.jxfssm,jdbcType=VARCHAR},
+      <if test="record.teachingMethod != null" >
+        teaching_method = #{record.teachingMethod,jdbcType=VARCHAR},
       </if>
-      <if test="record.kch != null" >
-        kch = #{record.kch,jdbcType=VARCHAR},
+      <if test="record.courseNumber != null" >
+        course_number = #{record.courseNumber,jdbcType=VARCHAR},
       </if>
-      <if test="record.kcjbmc != null" >
-        kcjbmc = #{record.kcjbmc,jdbcType=VARCHAR},
+      <if test="record.basicNameOfCourse != null" >
+        basic_name_of_course = #{record.basicNameOfCourse,jdbcType=VARCHAR},
       </if>
-      <if test="record.kclbmc != null" >
-        kclbmc = #{record.kclbmc,jdbcType=VARCHAR},
+      <if test="record.courseType != null" >
+        course_type = #{record.courseType,jdbcType=VARCHAR},
       </if>
-      <if test="record.kcm != null" >
-        kcm = #{record.kcm,jdbcType=VARCHAR},
+      <if test="record.courseName != null" >
+        course_name = #{record.courseName,jdbcType=VARCHAR},
       </if>
-      <if test="record.kcsm != null" >
-        kcsm = #{record.kcsm,jdbcType=VARCHAR},
+      <if test="record.courseDescription != null" >
+        course_description = #{record.courseDescription,jdbcType=VARCHAR},
       </if>
-      <if test="record.kcztdm != null" >
-        kcztdm = #{record.kcztdm,jdbcType=VARCHAR},
+      <if test="record.courseStatus != null" >
+        course_status = #{record.courseStatus,jdbcType=VARCHAR},
       </if>
-      <if test="record.kkxq != null" >
-        kkxq = #{record.kkxq,jdbcType=VARCHAR},
+      <if test="record.semester != null" >
+        semester = #{record.semester,jdbcType=VARCHAR},
       </if>
-      <if test="record.knzxs != null" >
-        knzxs = #{record.knzxs,jdbcType=INTEGER},
+      <if test="record.totalHourInClass != null" >
+        total_hour_in_class = #{record.totalHourInClass,jdbcType=INTEGER},
       </if>
-      <if test="record.ksflbdm != null" >
-        ksflbdm = #{record.ksflbdm,jdbcType=VARCHAR},
+      <if test="record.courseFeeClassCode != null" >
+        course_fee_class_code = #{record.courseFeeClassCode,jdbcType=VARCHAR},
       </if>
-      <if test="record.kslxmc != null" >
-        kslxmc = #{record.kslxmc,jdbcType=VARCHAR},
+      <if test="record.examinationName != null" >
+        examination_name = #{record.examinationName,jdbcType=VARCHAR},
       </if>
-      <if test="record.ksrq != null" >
-        ksrq = #{record.ksrq,jdbcType=VARCHAR},
+      <if test="record.startDate != null" >
+        start_date = #{record.startDate,jdbcType=VARCHAR},
       </if>
-      <if test="record.kwxf != null" >
-        kwxf = #{record.kwxf,jdbcType=INTEGER},
+      <if test="record.extracurricularCredit != null" >
+        extracurricular_credit = #{record.extracurricularCredit,jdbcType=INTEGER},
       </if>
-      <if test="record.kwzxs != null" >
-        kwzxs = #{record.kwzxs,jdbcType=INTEGER},
+      <if test="record.extracurricularTotalHour != null" >
+        extracurricular_total_hour = #{record.extracurricularTotalHour,jdbcType=INTEGER},
       </if>
-      <if test="record.nrjj != null" >
-        nrjj = #{record.nrjj,jdbcType=VARCHAR},
+      <if test="record.contentAbstract != null" >
+        content_abstract = #{record.contentAbstract,jdbcType=VARCHAR},
       </if>
-      <if test="record.qzsjzxs != null" >
-        qzsjzxs = #{record.qzsjzxs,jdbcType=INTEGER},
+      <if test="record.onComputerHour != null" >
+        on_computer_hour = #{record.onComputerHour,jdbcType=INTEGER},
       </if>
-      <if test="record.sjzs != null" >
-        sjzs = #{record.sjzs,jdbcType=INTEGER},
+      <if test="record.practiceWeek != null" >
+        practice_week = #{record.practiceWeek,jdbcType=INTEGER},
       </if>
-      <if test="record.rsxsdm != null" >
-        rsxsdm = #{record.rsxsdm,jdbcType=VARCHAR},
+      <if test="record.numberCoeffcientCode != null" >
+        number_coeffcient_code = #{record.numberCoeffcientCode,jdbcType=VARCHAR},
       </if>
-      <if test="record.sflbmc != null" >
-        sflbmc = #{record.sflbmc,jdbcType=VARCHAR},
+      <if test="record.chargeCategoryName != null" >
+        charge_category_name = #{record.chargeCategoryName,jdbcType=VARCHAR},
       </if>
-      <if test="record.sjzxs != null" >
-        sjzxs = #{record.sjzxs,jdbcType=INTEGER},
+      <if test="record.designTotalHour != null" >
+        design_total_hour = #{record.designTotalHour,jdbcType=INTEGER},
       </if>
-      <if test="record.sjzyzxs != null" >
-        sjzyzxs = #{record.sjzyzxs,jdbcType=INTEGER},
+      <if test="record.designHomeworkTotalHour != null" >
+        design_homework_total_hour = #{record.designHomeworkTotalHour,jdbcType=INTEGER},
       </if>
-      <if test="record.syzxs != null" >
-        syzxs = #{record.syzxs,jdbcType=INTEGER},
+      <if test="record.experimentHour != null" >
+        experiment_hour = #{record.experimentHour,jdbcType=INTEGER},
       </if>
-      <if test="record.szdw != null" >
-        szdw = #{record.szdw,jdbcType=VARCHAR},
+      <if test="record.teachingStaff != null" >
+        teaching_staff = #{record.teachingStaff,jdbcType=VARCHAR},
       </if>
-      <if test="record.tlfdzxs != null" >
-        tlfdzxs = #{record.tlfdzxs,jdbcType=INTEGER},
+      <if test="record.discussCounselingTotalHour != null" >
+        discuss_counseling_total_hour = #{record.discussCounselingTotalHour,jdbcType=INTEGER},
       </if>
-      <if test="record.xf != null" >
-        xf = #{record.xf,jdbcType=DOUBLE},
+      <if test="record.credit != null" >
+        credit = #{record.credit,jdbcType=DOUBLE},
       </if>
-      <if test="record.xkmlh != null" >
-        xkmlh = #{record.xkmlh,jdbcType=VARCHAR},
+      <if test="record.subjectCategoryNumber != null" >
+        subject_category_number = #{record.subjectCategoryNumber,jdbcType=VARCHAR},
       </if>
-      <if test="record.xkmlm != null" >
-        xkmlm = #{record.xkmlm,jdbcType=VARCHAR},
+      <if test="record.subjectCategoryName != null" >
+        subject_category_name = #{record.subjectCategoryName,jdbcType=VARCHAR},
       </if>
-      <if test="record.xqh != null" >
-        xqh = #{record.xqh,jdbcType=VARCHAR},
+      <if test="record.campusNumber != null" >
+        campus_number = #{record.campusNumber,jdbcType=VARCHAR},
       </if>
-      <if test="record.xqm != null" >
-        xqm = #{record.xqm,jdbcType=VARCHAR},
+      <if test="record.campusName != null" >
+        campus_name = #{record.campusName,jdbcType=VARCHAR},
       </if>
-      <if test="record.xs != null" >
-        xs = #{record.xs,jdbcType=INTEGER},
+      <if test="record.classHour != null" >
+        class_hour = #{record.classHour,jdbcType=INTEGER},
       </if>
-      <if test="record.xsh != null" >
-        xsh = #{record.xsh,jdbcType=INTEGER},
+      <if test="record.academy != null" >
+        academy = #{record.academy,jdbcType=INTEGER},
       </if>
       <if test="record.xxkch != null" >
         xxkch = #{record.xxkch,jdbcType=VARCHAR},
       </if>
-      <if test="record.ywjxdg != null" >
-        ywjxdg = #{record.ywjxdg,jdbcType=VARCHAR},
+      <if test="record.englishSyllabus != null" >
+        english_syllabus = #{record.englishSyllabus,jdbcType=VARCHAR},
       </if>
-      <if test="record.ywkcm != null" >
-        ywkcm = #{record.ywkcm,jdbcType=VARCHAR},
+      <if test="record.englishCourseName != null" >
+        english_course_name = #{record.englishCourseName,jdbcType=VARCHAR},
       </if>
-      <if test="record.ywnrjj != null" >
-        ywnrjj = #{record.ywnrjj,jdbcType=VARCHAR},
+      <if test="record.englishContentBrief != null" >
+        english_content_brief = #{record.englishContentBrief,jdbcType=VARCHAR},
       </if>
-      <if test="record.zyxkdx != null" >
-        zyxkdx = #{record.zyxkdx,jdbcType=VARCHAR},
+      <if test="record.courseTarget != null" >
+        course_target = #{record.courseTarget,jdbcType=VARCHAR},
       </if>
       <if test="record.gmtCreate != null" >
         gmt_create = #{record.gmtCreate,jdbcType=TIMESTAMP},
@@ -623,52 +637,52 @@
   <update id="updateByExample" parameterType="map" >
     update urp_course
     set id = #{record.id,jdbcType=INTEGER},
-      bybz = #{record.bybz,jdbcType=VARCHAR},
-      bz = #{record.bz,jdbcType=VARCHAR},
-      bzrs = #{record.bzrs,jdbcType=INTEGER},
-      cks = #{record.cks,jdbcType=VARCHAR},
-      jc = #{record.jc,jdbcType=VARCHAR},
-      jkzxs = #{record.jkzxs,jdbcType=INTEGER},
-      jsm = #{record.jsm,jdbcType=VARCHAR},
-      jsrq = #{record.jsrq,jdbcType=VARCHAR},
-      jxdg = #{record.jxdg,jdbcType=VARCHAR},
-      jxfssm = #{record.jxfssm,jdbcType=VARCHAR},
-      kch = #{record.kch,jdbcType=VARCHAR},
-      kcjbmc = #{record.kcjbmc,jdbcType=VARCHAR},
-      kclbmc = #{record.kclbmc,jdbcType=VARCHAR},
-      kcm = #{record.kcm,jdbcType=VARCHAR},
-      kcsm = #{record.kcsm,jdbcType=VARCHAR},
-      kcztdm = #{record.kcztdm,jdbcType=VARCHAR},
-      kkxq = #{record.kkxq,jdbcType=VARCHAR},
-      knzxs = #{record.knzxs,jdbcType=INTEGER},
-      ksflbdm = #{record.ksflbdm,jdbcType=VARCHAR},
-      kslxmc = #{record.kslxmc,jdbcType=VARCHAR},
-      ksrq = #{record.ksrq,jdbcType=VARCHAR},
-      kwxf = #{record.kwxf,jdbcType=INTEGER},
-      kwzxs = #{record.kwzxs,jdbcType=INTEGER},
-      nrjj = #{record.nrjj,jdbcType=VARCHAR},
-      qzsjzxs = #{record.qzsjzxs,jdbcType=INTEGER},
-      sjzs = #{record.sjzs,jdbcType=INTEGER},
-      rsxsdm = #{record.rsxsdm,jdbcType=VARCHAR},
-      sflbmc = #{record.sflbmc,jdbcType=VARCHAR},
-      sjzxs = #{record.sjzxs,jdbcType=INTEGER},
-      sjzyzxs = #{record.sjzyzxs,jdbcType=INTEGER},
-      syzxs = #{record.syzxs,jdbcType=INTEGER},
-      szdw = #{record.szdw,jdbcType=VARCHAR},
-      tlfdzxs = #{record.tlfdzxs,jdbcType=INTEGER},
-      xf = #{record.xf,jdbcType=DOUBLE},
-      xkmlh = #{record.xkmlh,jdbcType=VARCHAR},
-      xkmlm = #{record.xkmlm,jdbcType=VARCHAR},
-      xqh = #{record.xqh,jdbcType=VARCHAR},
-      xqm = #{record.xqm,jdbcType=VARCHAR},
-      xs = #{record.xs,jdbcType=INTEGER},
-      xsh = #{record.xsh,jdbcType=INTEGER},
-      xxkch = #{record.xxkch,jdbcType=VARCHAR},
-      ywjxdg = #{record.ywjxdg,jdbcType=VARCHAR},
-      ywkcm = #{record.ywkcm,jdbcType=VARCHAR},
-      ywnrjj = #{record.ywnrjj,jdbcType=VARCHAR},
-      zyxkdx = #{record.zyxkdx,jdbcType=VARCHAR},
-      gmt_create = #{record.gmtCreate,jdbcType=TIMESTAMP}
+    undergraduate_postgraduate_flag = #{record.undergraduatePostgraduateFlag,jdbcType=VARCHAR},
+    remark = #{record.remark,jdbcType=VARCHAR},
+    standard_person_number = #{record.standardPersonNumber,jdbcType=INTEGER},
+    reference_book = #{record.referenceBook,jdbcType=VARCHAR},
+    teaching_material = #{record.teachingMaterial,jdbcType=VARCHAR},
+    total_hour_of_teaching = #{record.totalHourOfTeaching,jdbcType=INTEGER},
+    jsm = #{record.jsm,jdbcType=VARCHAR},
+    end_Date = #{record.endDate,jdbcType=VARCHAR},
+    jxdg = #{record.jxdg,jdbcType=VARCHAR},
+    teaching_method = #{record.teachingMethod,jdbcType=VARCHAR},
+    course_number = #{record.courseNumber,jdbcType=VARCHAR},
+    basic_name_of_course = #{record.basicNameOfCourse,jdbcType=VARCHAR},
+    course_type = #{record.courseType,jdbcType=VARCHAR},
+    course_name = #{record.courseName,jdbcType=VARCHAR},
+    course_description = #{record.courseDescription,jdbcType=VARCHAR},
+    course_status = #{record.courseStatus,jdbcType=VARCHAR},
+    semester = #{record.semester,jdbcType=VARCHAR},
+    total_hour_in_class = #{record.totalHourInClass,jdbcType=INTEGER},
+    course_fee_class_code = #{record.courseFeeClassCode,jdbcType=VARCHAR},
+    examination_name = #{record.examinationName,jdbcType=VARCHAR},
+    start_date = #{record.startDate,jdbcType=VARCHAR},
+    extracurricular_credit = #{record.extracurricularCredit,jdbcType=INTEGER},
+    extracurricular_total_hour = #{record.extracurricularTotalHour,jdbcType=INTEGER},
+    content_abstract = #{record.contentAbstract,jdbcType=VARCHAR},
+    on_computer_hour = #{record.onComputerHour,jdbcType=INTEGER},
+    practice_week = #{record.practiceWeek,jdbcType=INTEGER},
+    number_coeffcient_code = #{record.numberCoeffcientCode,jdbcType=VARCHAR},
+    charge_category_name = #{record.chargeCategoryName,jdbcType=VARCHAR},
+    design_total_hour = #{record.designTotalHour,jdbcType=INTEGER},
+    design_homework_total_hour = #{record.designHomeworkTotalHour,jdbcType=INTEGER},
+    experiment_hour = #{record.experimentHour,jdbcType=INTEGER},
+    teaching_staff = #{record.teachingStaff,jdbcType=VARCHAR},
+    discuss_counseling_total_hour = #{record.discussCounselingTotalHour,jdbcType=INTEGER},
+    credit = #{record.credit,jdbcType=DOUBLE},
+    subject_category_number = #{record.subjectCategoryNumber,jdbcType=VARCHAR},
+    subject_category_name = #{record.subjectCategoryName,jdbcType=VARCHAR},
+    campus_number = #{record.campusNumber,jdbcType=VARCHAR},
+    campus_name = #{record.campusName,jdbcType=VARCHAR},
+    class_hour = #{record.classHour,jdbcType=INTEGER},
+    academy = #{record.academy,jdbcType=INTEGER},
+    xxkch = #{record.xxkch,jdbcType=VARCHAR},
+    english_syllabus = #{record.englishSyllabus,jdbcType=VARCHAR},
+    english_course_name = #{record.englishCourseName,jdbcType=VARCHAR},
+    english_content_brief = #{record.englishContentBrief,jdbcType=VARCHAR},
+    course_target = #{record.courseTarget,jdbcType=VARCHAR},
+    gmt_create = #{record.gmtCreate,jdbcType=TIMESTAMP}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -676,140 +690,140 @@
   <update id="updateByPrimaryKeySelective" parameterType="cn.hkxj.platform.pojo.UrpCourse" >
     update urp_course
     <set >
-      <if test="bybz != null" >
-        bybz = #{bybz,jdbcType=VARCHAR},
+      <if test="undergraduatePostgraduateFlag != null" >
+        undergraduate_postgraduate_flag = #{undergraduatePostgraduateFlag,jdbcType=VARCHAR},
       </if>
-      <if test="bz != null" >
-        bz = #{bz,jdbcType=VARCHAR},
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
       </if>
-      <if test="bzrs != null" >
-        bzrs = #{bzrs,jdbcType=INTEGER},
+      <if test="standardPersonNumber != null" >
+        standard_person_number = #{standardPersonNumber,jdbcType=INTEGER},
       </if>
-      <if test="cks != null" >
-        cks = #{cks,jdbcType=VARCHAR},
+      <if test="referenceBook != null" >
+        reference_book = #{referenceBook,jdbcType=VARCHAR},
       </if>
-      <if test="jc != null" >
-        jc = #{jc,jdbcType=VARCHAR},
+      <if test="teachingMaterial != null" >
+        teaching_material = #{teachingMaterial,jdbcType=VARCHAR},
       </if>
-      <if test="jkzxs != null" >
-        jkzxs = #{jkzxs,jdbcType=INTEGER},
+      <if test="totalHourOfTeaching != null" >
+        total_hour_of_teaching = #{totalHourOfTeaching,jdbcType=INTEGER},
       </if>
       <if test="jsm != null" >
         jsm = #{jsm,jdbcType=VARCHAR},
       </if>
-      <if test="jsrq != null" >
-        jsrq = #{jsrq,jdbcType=VARCHAR},
+      <if test="endDate != null" >
+        end_Date = #{endDate,jdbcType=VARCHAR},
       </if>
       <if test="jxdg != null" >
         jxdg = #{jxdg,jdbcType=VARCHAR},
       </if>
-      <if test="jxfssm != null" >
-        jxfssm = #{jxfssm,jdbcType=VARCHAR},
+      <if test="teachingMethod != null" >
+        teaching_method = #{teachingMethod,jdbcType=VARCHAR},
       </if>
-      <if test="kch != null" >
-        kch = #{kch,jdbcType=VARCHAR},
+      <if test="courseNumber != null" >
+        course_number = #{courseNumber,jdbcType=VARCHAR},
       </if>
-      <if test="kcjbmc != null" >
-        kcjbmc = #{kcjbmc,jdbcType=VARCHAR},
+      <if test="basicNameOfCourse != null" >
+        basic_name_of_course = #{basicNameOfCourse,jdbcType=VARCHAR},
       </if>
-      <if test="kclbmc != null" >
-        kclbmc = #{kclbmc,jdbcType=VARCHAR},
+      <if test="courseType != null" >
+        course_type = #{courseType,jdbcType=VARCHAR},
       </if>
-      <if test="kcm != null" >
-        kcm = #{kcm,jdbcType=VARCHAR},
+      <if test="courseName != null" >
+        course_name = #{courseName,jdbcType=VARCHAR},
       </if>
-      <if test="kcsm != null" >
-        kcsm = #{kcsm,jdbcType=VARCHAR},
+      <if test="courseDescription != null" >
+        course_description = #{courseDescription,jdbcType=VARCHAR},
       </if>
-      <if test="kcztdm != null" >
-        kcztdm = #{kcztdm,jdbcType=VARCHAR},
+      <if test="courseStatus != null" >
+        course_status = #{courseStatus,jdbcType=VARCHAR},
       </if>
-      <if test="kkxq != null" >
-        kkxq = #{kkxq,jdbcType=VARCHAR},
+      <if test="semester != null" >
+        semester = #{semester,jdbcType=VARCHAR},
       </if>
-      <if test="knzxs != null" >
-        knzxs = #{knzxs,jdbcType=INTEGER},
+      <if test="totalHourInClass != null" >
+        total_hour_in_class = #{totalHourInClass,jdbcType=INTEGER},
       </if>
-      <if test="ksflbdm != null" >
-        ksflbdm = #{ksflbdm,jdbcType=VARCHAR},
+      <if test="courseFeeClassCode != null" >
+        course_fee_class_code = #{courseFeeClassCode,jdbcType=VARCHAR},
       </if>
-      <if test="kslxmc != null" >
-        kslxmc = #{kslxmc,jdbcType=VARCHAR},
+      <if test="examinationName != null" >
+        examination_name = #{examinationName,jdbcType=VARCHAR},
       </if>
-      <if test="ksrq != null" >
-        ksrq = #{ksrq,jdbcType=VARCHAR},
+      <if test="startDate != null" >
+        start_date = #{startDate,jdbcType=VARCHAR},
       </if>
-      <if test="kwxf != null" >
-        kwxf = #{kwxf,jdbcType=INTEGER},
+      <if test="extracurricularCredit != null" >
+        extracurricular_credit = #{extracurricularCredit,jdbcType=INTEGER},
       </if>
-      <if test="kwzxs != null" >
-        kwzxs = #{kwzxs,jdbcType=INTEGER},
+      <if test="extracurricularTotalHour != null" >
+        extracurricular_total_hour = #{extracurricularTotalHour,jdbcType=INTEGER},
       </if>
-      <if test="nrjj != null" >
-        nrjj = #{nrjj,jdbcType=VARCHAR},
+      <if test="contentAbstract != null" >
+        content_abstract = #{contentAbstract,jdbcType=VARCHAR},
       </if>
-      <if test="qzsjzxs != null" >
-        qzsjzxs = #{qzsjzxs,jdbcType=INTEGER},
+      <if test="onComputerHour != null" >
+        on_computer_hour = #{onComputerHour,jdbcType=INTEGER},
       </if>
-      <if test="sjzs != null" >
-        sjzs = #{sjzs,jdbcType=INTEGER},
+      <if test="practiceWeek != null" >
+        practice_week = #{practiceWeek,jdbcType=INTEGER},
       </if>
-      <if test="rsxsdm != null" >
-        rsxsdm = #{rsxsdm,jdbcType=VARCHAR},
+      <if test="numberCoeffcientCode != null" >
+        number_coeffcient_code = #{numberCoeffcientCode,jdbcType=VARCHAR},
       </if>
-      <if test="sflbmc != null" >
-        sflbmc = #{sflbmc,jdbcType=VARCHAR},
+      <if test="chargeCategoryName != null" >
+        charge_category_name = #{chargeCategoryName,jdbcType=VARCHAR},
       </if>
-      <if test="sjzxs != null" >
-        sjzxs = #{sjzxs,jdbcType=INTEGER},
+      <if test="designTotalHour != null" >
+        design_total_hour = #{designTotalHour,jdbcType=INTEGER},
       </if>
-      <if test="sjzyzxs != null" >
-        sjzyzxs = #{sjzyzxs,jdbcType=INTEGER},
+      <if test="designHomeworkTotalHour != null" >
+        design_homework_total_hour = #{designHomeworkTotalHour,jdbcType=INTEGER},
       </if>
-      <if test="syzxs != null" >
-        syzxs = #{syzxs,jdbcType=INTEGER},
+      <if test="experimentHour != null" >
+        experiment_hour = #{experimentHour,jdbcType=INTEGER},
       </if>
-      <if test="szdw != null" >
-        szdw = #{szdw,jdbcType=VARCHAR},
+      <if test="teachingStaff != null" >
+        teaching_staff = #{teachingStaff,jdbcType=VARCHAR},
       </if>
-      <if test="tlfdzxs != null" >
-        tlfdzxs = #{tlfdzxs,jdbcType=INTEGER},
+      <if test="discussCounselingTotalHour != null" >
+        discuss_counseling_total_hour = #{discussCounselingTotalHour,jdbcType=INTEGER},
       </if>
-      <if test="xf != null" >
-        xf = #{xf,jdbcType=DOUBLE},
+      <if test="credit != null" >
+        credit = #{credit,jdbcType=DOUBLE},
       </if>
-      <if test="xkmlh != null" >
-        xkmlh = #{xkmlh,jdbcType=VARCHAR},
+      <if test="subjectCategoryNumber != null" >
+        subject_category_number = #{subjectCategoryNumber,jdbcType=VARCHAR},
       </if>
-      <if test="xkmlm != null" >
-        xkmlm = #{xkmlm,jdbcType=VARCHAR},
+      <if test="subjectCategoryName != null" >
+        subject_category_name = #{subjectCategoryName,jdbcType=VARCHAR},
       </if>
-      <if test="xqh != null" >
-        xqh = #{xqh,jdbcType=VARCHAR},
+      <if test="campusNumber != null" >
+        campus_number = #{campusNumber,jdbcType=VARCHAR},
       </if>
-      <if test="xqm != null" >
-        xqm = #{xqm,jdbcType=VARCHAR},
+      <if test="campusName != null" >
+        campus_name = #{campusName,jdbcType=VARCHAR},
       </if>
-      <if test="xs != null" >
-        xs = #{xs,jdbcType=INTEGER},
+      <if test="classHour != null" >
+        class_hour = #{classHour,jdbcType=INTEGER},
       </if>
-      <if test="xsh != null" >
-        xsh = #{xsh,jdbcType=INTEGER},
+      <if test="academy != null" >
+        academy = #{academy,jdbcType=INTEGER},
       </if>
       <if test="xxkch != null" >
         xxkch = #{xxkch,jdbcType=VARCHAR},
       </if>
-      <if test="ywjxdg != null" >
-        ywjxdg = #{ywjxdg,jdbcType=VARCHAR},
+      <if test="englishSyllabus != null" >
+        english_syllabus = #{englishSyllabus,jdbcType=VARCHAR},
       </if>
-      <if test="ywkcm != null" >
-        ywkcm = #{ywkcm,jdbcType=VARCHAR},
+      <if test="englishCourseName != null" >
+        english_course_name = #{englishCourseName,jdbcType=VARCHAR},
       </if>
-      <if test="ywnrjj != null" >
-        ywnrjj = #{ywnrjj,jdbcType=VARCHAR},
+      <if test="englishContentBrief != null" >
+        english_content_brief = #{englishContentBrief,jdbcType=VARCHAR},
       </if>
-      <if test="zyxkdx != null" >
-        zyxkdx = #{zyxkdx,jdbcType=VARCHAR},
+      <if test="courseTarget != null" >
+        course_target = #{courseTarget,jdbcType=VARCHAR},
       </if>
       <if test="gmtCreate != null" >
         gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
@@ -819,55 +833,55 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="cn.hkxj.platform.pojo.UrpCourse" >
     update urp_course
-    set bybz = #{bybz,jdbcType=VARCHAR},
-      bz = #{bz,jdbcType=VARCHAR},
-      bzrs = #{bzrs,jdbcType=INTEGER},
-      cks = #{cks,jdbcType=VARCHAR},
-      jc = #{jc,jdbcType=VARCHAR},
-      jkzxs = #{jkzxs,jdbcType=INTEGER},
-      jsm = #{jsm,jdbcType=VARCHAR},
-      jsrq = #{jsrq,jdbcType=VARCHAR},
-      jxdg = #{jxdg,jdbcType=VARCHAR},
-      jxfssm = #{jxfssm,jdbcType=VARCHAR},
-      kch = #{kch,jdbcType=VARCHAR},
-      kcjbmc = #{kcjbmc,jdbcType=VARCHAR},
-      kclbmc = #{kclbmc,jdbcType=VARCHAR},
-      kcm = #{kcm,jdbcType=VARCHAR},
-      kcsm = #{kcsm,jdbcType=VARCHAR},
-      kcztdm = #{kcztdm,jdbcType=VARCHAR},
-      kkxq = #{kkxq,jdbcType=VARCHAR},
-      knzxs = #{knzxs,jdbcType=INTEGER},
-      ksflbdm = #{ksflbdm,jdbcType=VARCHAR},
-      kslxmc = #{kslxmc,jdbcType=VARCHAR},
-      ksrq = #{ksrq,jdbcType=VARCHAR},
-      kwxf = #{kwxf,jdbcType=INTEGER},
-      kwzxs = #{kwzxs,jdbcType=INTEGER},
-      nrjj = #{nrjj,jdbcType=VARCHAR},
-      qzsjzxs = #{qzsjzxs,jdbcType=INTEGER},
-      sjzs = #{sjzs,jdbcType=INTEGER},
-      rsxsdm = #{rsxsdm,jdbcType=VARCHAR},
-      sflbmc = #{sflbmc,jdbcType=VARCHAR},
-      sjzxs = #{sjzxs,jdbcType=INTEGER},
-      sjzyzxs = #{sjzyzxs,jdbcType=INTEGER},
-      syzxs = #{syzxs,jdbcType=INTEGER},
-      szdw = #{szdw,jdbcType=VARCHAR},
-      tlfdzxs = #{tlfdzxs,jdbcType=INTEGER},
-      xf = #{xf,jdbcType=DOUBLE},
-      xkmlh = #{xkmlh,jdbcType=VARCHAR},
-      xkmlm = #{xkmlm,jdbcType=VARCHAR},
-      xqh = #{xqh,jdbcType=VARCHAR},
-      xqm = #{xqm,jdbcType=VARCHAR},
-      xs = #{xs,jdbcType=INTEGER},
-      xsh = #{xsh,jdbcType=INTEGER},
-      xxkch = #{xxkch,jdbcType=VARCHAR},
-      ywjxdg = #{ywjxdg,jdbcType=VARCHAR},
-      ywkcm = #{ywkcm,jdbcType=VARCHAR},
-      ywnrjj = #{ywnrjj,jdbcType=VARCHAR},
-      zyxkdx = #{zyxkdx,jdbcType=VARCHAR},
-      gmt_create = #{gmtCreate,jdbcType=TIMESTAMP}
+    set undergraduate_postgraduate_flag = #{undergraduatePostgraduateFlag,jdbcType=VARCHAR},
+    remark = #{remark,jdbcType=VARCHAR},
+    standard_person_number = #{standardPersonNumber,jdbcType=INTEGER},
+    reference_book = #{referenceBook,jdbcType=VARCHAR},
+    teaching_material = #{teachingMaterial,jdbcType=VARCHAR},
+    total_hour_of_teaching = #{totalHourOfTeaching,jdbcType=INTEGER},
+    jsm = #{jsm,jdbcType=VARCHAR},
+    end_Date = #{endDate,jdbcType=VARCHAR},
+    jxdg = #{jxdg,jdbcType=VARCHAR},
+    teaching_method = #{teachingMethod,jdbcType=VARCHAR},
+    course_number = #{courseNumber,jdbcType=VARCHAR},
+    basic_name_of_course = #{basicNameOfCourse,jdbcType=VARCHAR},
+    course_type = #{courseType,jdbcType=VARCHAR},
+    course_name = #{courseName,jdbcType=VARCHAR},
+    course_description = #{courseDescription,jdbcType=VARCHAR},
+    course_status = #{courseStatus,jdbcType=VARCHAR},
+    semester = #{semester,jdbcType=VARCHAR},
+    total_hour_in_class = #{totalHourInClass,jdbcType=INTEGER},
+    course_fee_class_code = #{courseFeeClassCode,jdbcType=VARCHAR},
+    examination_name = #{examinationName,jdbcType=VARCHAR},
+    start_date = #{startDate,jdbcType=VARCHAR},
+    extracurricular_credit = #{extracurricularCredit,jdbcType=INTEGER},
+    extracurricular_total_hour = #{extracurricularTotalHour,jdbcType=INTEGER},
+    content_abstract = #{contentAbstract,jdbcType=VARCHAR},
+    on_computer_hour = #{onComputerHour,jdbcType=INTEGER},
+    practice_week = #{practiceWeek,jdbcType=INTEGER},
+    number_coeffcient_code = #{numberCoeffcientCode,jdbcType=VARCHAR},
+    charge_category_name = #{chargeCategoryName,jdbcType=VARCHAR},
+    design_total_hour = #{designTotalHour,jdbcType=INTEGER},
+    design_homework_total_hour = #{designHomeworkTotalHour,jdbcType=INTEGER},
+    experiment_hour = #{experimentHour,jdbcType=INTEGER},
+    teaching_staff = #{teachingStaff,jdbcType=VARCHAR},
+    discuss_counseling_total_hour = #{discussCounselingTotalHour,jdbcType=INTEGER},
+    credit = #{credit,jdbcType=DOUBLE},
+    subject_category_number = #{subjectCategoryNumber,jdbcType=VARCHAR},
+    subject_category_name = #{subjectCategoryName,jdbcType=VARCHAR},
+    campus_number = #{campusNumber,jdbcType=VARCHAR},
+    campus_name = #{campusName,jdbcType=VARCHAR},
+    class_hour = #{classHour,jdbcType=INTEGER},
+    academy = #{academy,jdbcType=INTEGER},
+    xxkch = #{xxkch,jdbcType=VARCHAR},
+    english_syllabus = #{englishSyllabus,jdbcType=VARCHAR},
+    english_course_name = #{englishCourseName,jdbcType=VARCHAR},
+    english_content_brief = #{englishContentBrief,jdbcType=VARCHAR},
+    course_target = #{courseTarget,jdbcType=VARCHAR},
+    gmt_create = #{gmtCreate,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
   </update>
   <select id="ifExistCourse" resultType="boolean">
-    select ifnull ((select count(1)  from urp_course where kch=#{uid,jdbcType=VARCHAR}), 0)
+    select ifnull ((select count(1)  from urp_course where course_number =#{uid,jdbcType=VARCHAR}), 0)
   </select>
 </mapper>

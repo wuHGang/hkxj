@@ -26,6 +26,8 @@ public class UrpGradeDetailDao {
 
     public List<UrpGradeDetail> insertForSpider(UrpGradeForSpider urpGradeForSpider, UrpGrade urpGrade){
         List<UrpGradeDetail> urpGradeDetailList = urpGradeForSpider.getUrpGradeDetailForSpider().convertToUrpGradeDetail();
+        //urpGradeDetailList为空的情况就是成绩没有明细
+        if(urpGradeDetailList == null) return null;
         //因为convertToUrpGradeDetail返回的UrpGradeDetail中都是没有gradeId的，所以需要设置后才进行成绩详情的插入
         urpGradeDetailList.stream().peek(gradeDetail -> gradeDetail.setGradeId(urpGrade.getId()))
                 .forEach(this::insertUrpGradeDetail);

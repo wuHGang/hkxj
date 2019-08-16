@@ -7,21 +7,21 @@
     <result column="major_id" property="majorId" jdbcType="INTEGER" />
     <result column="class_id" property="classId" jdbcType="INTEGER" />
     <result column="plan_id" property="planId" jdbcType="INTEGER" />
-    <result column="avgcj" property="avgcj" jdbcType="DOUBLE" />
-    <result column="bjh" property="bjh" jdbcType="VARCHAR" />
-    <result column="courseSequenceNumber" property="coursesequencenumber" jdbcType="VARCHAR" />
-    <result column="coursePropertyCode" property="coursepropertycode" jdbcType="VARCHAR" />
-    <result column="coursePropertyName" property="coursepropertyname" jdbcType="VARCHAR" />
+    <result column="average_score" property="averageScore" jdbcType="DOUBLE" />
+    <result column="class_number" property="classNumber" jdbcType="VARCHAR" />
+    <result column="course_sequence_number" property="courseSequenceNumber" jdbcType="VARCHAR" />
+    <result column="course_property_code" property="coursePropertyCode" jdbcType="VARCHAR" />
+    <result column="course_property_name" property="coursePropertyName" jdbcType="VARCHAR" />
     <result column="examtime" property="examtime" jdbcType="VARCHAR" />
-    <result column="executiveEducationPlanNumber" property="executiveeducationplannumber" jdbcType="VARCHAR" />
-    <result column="maxcj" property="maxcj" jdbcType="INTEGER" />
-    <result column="mincj" property="mincj" jdbcType="INTEGER" />
+    <result column="executive_education_plan_number" property="executiveEducationPlanNumber" jdbcType="VARCHAR" />
+    <result column="max_score" property="maxScore" jdbcType="INTEGER" />
+    <result column="min_score" property="minScore" jdbcType="INTEGER" />
     <result column="operator" property="operator" jdbcType="VARCHAR" />
     <result column="operatetime" property="operatetime" jdbcType="VARCHAR" />
-    <result column="persentlevelPoint" property="persentlevelpoint" jdbcType="VARCHAR" />
-    <result column="termCode" property="termcode" jdbcType="VARCHAR" />
-    <result column="termName" property="termname" jdbcType="VARCHAR" />
-    <result column="xsh" property="xsh" jdbcType="INTEGER" />
+    <result column="persent_level_point" property="persentLevelPoint" jdbcType="VARCHAR" />
+    <result column="term_code" property="termCode" jdbcType="VARCHAR" />
+    <result column="term_name" property="termName" jdbcType="VARCHAR" />
+    <result column="academy" property="academy" jdbcType="INTEGER" />
     <result column="gmt_create" property="gmtCreate" jdbcType="TIMESTAMP" />
   </resultMap>
   <sql id="Example_Where_Clause" >
@@ -83,9 +83,10 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, course_id, major_id, class_id, plan_id, avgcj, bjh, courseSequenceNumber, coursePropertyCode,
-    coursePropertyName, examtime, executiveEducationPlanNumber, maxcj, mincj, operator,
-    operatetime, persentlevelPoint, termCode, termName, xsh, gmt_create
+    id, course_id, major_id, class_id, plan_id, average_score, class_number, course_sequence_number,
+    course_property_code, course_property_name, examtime, executive_education_plan_number,
+    max_score, min_score, operator, operatetime, persent_level_point, term_code, term_name,
+    academy, gmt_create
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="cn.hkxj.platform.pojo.example.UrpExamExample" >
     select
@@ -119,26 +120,26 @@
   </delete>
   <insert id="insert" parameterType="cn.hkxj.platform.pojo.UrpExam" >
     insert into urp_exam (id, course_id, major_id,
-    class_id, plan_id, avgcj,
-    bjh, courseSequenceNumber, coursePropertyCode,
-    coursePropertyName, examtime, executiveEducationPlanNumber,
-    maxcj, mincj, operator,
-    operatetime, persentlevelPoint, termCode,
-    termName, xsh, gmt_create
+    class_id, plan_id, average_score,
+    class_number, course_sequence_number, course_property_code,
+    course_property_name, examtime, executive_education_plan_number,
+    max_score, min_score, operator,
+    operatetime, persent_level_point, term_code,
+    term_name, academy, gmt_create
     )
     values (#{id,jdbcType=INTEGER}, #{courseId,jdbcType=VARCHAR}, #{majorId,jdbcType=INTEGER},
-    #{classId,jdbcType=INTEGER}, #{planId,jdbcType=INTEGER}, #{avgcj,jdbcType=DOUBLE},
-    #{bjh,jdbcType=VARCHAR}, #{coursesequencenumber,jdbcType=VARCHAR}, #{coursepropertycode,jdbcType=VARCHAR},
-    #{coursepropertyname,jdbcType=VARCHAR}, #{examtime,jdbcType=VARCHAR}, #{executiveeducationplannumber,jdbcType=VARCHAR},
-    #{maxcj,jdbcType=INTEGER}, #{mincj,jdbcType=INTEGER}, #{operator,jdbcType=VARCHAR},
-    #{operatetime,jdbcType=VARCHAR}, #{persentlevelpoint,jdbcType=VARCHAR}, #{termcode,jdbcType=VARCHAR},
-    #{termname,jdbcType=VARCHAR}, #{xsh,jdbcType=INTEGER}, #{gmtCreate,jdbcType=TIMESTAMP}
+    #{classId,jdbcType=INTEGER}, #{planId,jdbcType=INTEGER}, #{averageScore,jdbcType=DOUBLE},
+    #{classNumber,jdbcType=VARCHAR}, #{courseSequenceNumber,jdbcType=VARCHAR}, #{coursePropertyCode,jdbcType=VARCHAR},
+    #{coursePropertyName,jdbcType=VARCHAR}, #{examtime,jdbcType=VARCHAR}, #{executiveEducationPlanNumber,jdbcType=VARCHAR},
+    #{maxScore,jdbcType=INTEGER}, #{minScore,jdbcType=INTEGER}, #{operator,jdbcType=VARCHAR},
+    #{operatetime,jdbcType=VARCHAR}, #{persentLevelPoint,jdbcType=VARCHAR}, #{termCode,jdbcType=VARCHAR},
+    #{termName,jdbcType=VARCHAR}, #{academy,jdbcType=INTEGER}, #{gmtCreate,jdbcType=TIMESTAMP}
     )
   </insert>
   <insert id="insertSelective" parameterType="cn.hkxj.platform.pojo.UrpExam" >
-    <selectKey order="AFTER" keyProperty="id" resultType="int">
-      select LAST_INSERT_ID();
-    </selectKey>
+      <selectKey order="AFTER" keyProperty="id" resultType="int">
+          select LAST_INSERT_ID();
+      </selectKey>
     insert into urp_exam
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -156,32 +157,32 @@
       <if test="planId != null" >
         plan_id,
       </if>
-      <if test="avgcj != null" >
-        avgcj,
+      <if test="averageScore != null" >
+        average_score,
       </if>
-      <if test="bjh != null" >
-        bjh,
+      <if test="classNumber != null" >
+        class_number,
       </if>
-      <if test="coursesequencenumber != null" >
-        courseSequenceNumber,
+      <if test="courseSequenceNumber != null" >
+        course_sequence_number,
       </if>
-      <if test="coursepropertycode != null" >
-        coursePropertyCode,
+      <if test="coursePropertyCode != null" >
+        course_property_code,
       </if>
-      <if test="coursepropertyname != null" >
-        coursePropertyName,
+      <if test="coursePropertyName != null" >
+        course_property_name,
       </if>
       <if test="examtime != null" >
         examtime,
       </if>
-      <if test="executiveeducationplannumber != null" >
-        executiveEducationPlanNumber,
+      <if test="executiveEducationPlanNumber != null" >
+        executive_education_plan_number,
       </if>
-      <if test="maxcj != null" >
-        maxcj,
+      <if test="maxScore != null" >
+        max_score,
       </if>
-      <if test="mincj != null" >
-        mincj,
+      <if test="minScore != null" >
+        min_score,
       </if>
       <if test="operator != null" >
         operator,
@@ -189,17 +190,17 @@
       <if test="operatetime != null" >
         operatetime,
       </if>
-      <if test="persentlevelpoint != null" >
-        persentlevelPoint,
+      <if test="persentLevelPoint != null" >
+        persent_level_point,
       </if>
-      <if test="termcode != null" >
-        termCode,
+      <if test="termCode != null" >
+        term_code,
       </if>
-      <if test="termname != null" >
-        termName,
+      <if test="termName != null" >
+        term_name,
       </if>
-      <if test="xsh != null" >
-        xsh,
+      <if test="academy != null" >
+        academy,
       </if>
       <if test="gmtCreate != null" >
         gmt_create,
@@ -221,32 +222,32 @@
       <if test="planId != null" >
         #{planId,jdbcType=INTEGER},
       </if>
-      <if test="avgcj != null" >
-        #{avgcj,jdbcType=DOUBLE},
+      <if test="averageScore != null" >
+        #{averageScore,jdbcType=DOUBLE},
       </if>
-      <if test="bjh != null" >
-        #{bjh,jdbcType=VARCHAR},
+      <if test="classNumber != null" >
+        #{classNumber,jdbcType=VARCHAR},
       </if>
-      <if test="coursesequencenumber != null" >
-        #{coursesequencenumber,jdbcType=VARCHAR},
+      <if test="courseSequenceNumber != null" >
+        #{courseSequenceNumber,jdbcType=VARCHAR},
       </if>
-      <if test="coursepropertycode != null" >
-        #{coursepropertycode,jdbcType=VARCHAR},
+      <if test="coursePropertyCode != null" >
+        #{coursePropertyCode,jdbcType=VARCHAR},
       </if>
-      <if test="coursepropertyname != null" >
-        #{coursepropertyname,jdbcType=VARCHAR},
+      <if test="coursePropertyName != null" >
+        #{coursePropertyName,jdbcType=VARCHAR},
       </if>
       <if test="examtime != null" >
         #{examtime,jdbcType=VARCHAR},
       </if>
-      <if test="executiveeducationplannumber != null" >
-        #{executiveeducationplannumber,jdbcType=VARCHAR},
+      <if test="executiveEducationPlanNumber != null" >
+        #{executiveEducationPlanNumber,jdbcType=VARCHAR},
       </if>
-      <if test="maxcj != null" >
-        #{maxcj,jdbcType=INTEGER},
+      <if test="maxScore != null" >
+        #{maxScore,jdbcType=INTEGER},
       </if>
-      <if test="mincj != null" >
-        #{mincj,jdbcType=INTEGER},
+      <if test="minScore != null" >
+        #{minScore,jdbcType=INTEGER},
       </if>
       <if test="operator != null" >
         #{operator,jdbcType=VARCHAR},
@@ -254,17 +255,17 @@
       <if test="operatetime != null" >
         #{operatetime,jdbcType=VARCHAR},
       </if>
-      <if test="persentlevelpoint != null" >
-        #{persentlevelpoint,jdbcType=VARCHAR},
+      <if test="persentLevelPoint != null" >
+        #{persentLevelPoint,jdbcType=VARCHAR},
       </if>
-      <if test="termcode != null" >
-        #{termcode,jdbcType=VARCHAR},
+      <if test="termCode != null" >
+        #{termCode,jdbcType=VARCHAR},
       </if>
-      <if test="termname != null" >
-        #{termname,jdbcType=VARCHAR},
+      <if test="termName != null" >
+        #{termName,jdbcType=VARCHAR},
       </if>
-      <if test="xsh != null" >
-        #{xsh,jdbcType=INTEGER},
+      <if test="academy != null" >
+        #{academy,jdbcType=INTEGER},
       </if>
       <if test="gmtCreate != null" >
         #{gmtCreate,jdbcType=TIMESTAMP},
@@ -295,32 +296,32 @@
       <if test="record.planId != null" >
         plan_id = #{record.planId,jdbcType=INTEGER},
       </if>
-      <if test="record.avgcj != null" >
-        avgcj = #{record.avgcj,jdbcType=DOUBLE},
+      <if test="record.averageScore != null" >
+        average_score = #{record.averageScore,jdbcType=DOUBLE},
       </if>
-      <if test="record.bjh != null" >
-        bjh = #{record.bjh,jdbcType=VARCHAR},
+      <if test="record.classNumber != null" >
+        class_number = #{record.classNumber,jdbcType=VARCHAR},
       </if>
-      <if test="record.coursesequencenumber != null" >
-        courseSequenceNumber = #{record.coursesequencenumber,jdbcType=VARCHAR},
+      <if test="record.courseSequenceNumber != null" >
+        course_sequence_number = #{record.courseSequenceNumber,jdbcType=VARCHAR},
       </if>
-      <if test="record.coursepropertycode != null" >
-        coursePropertyCode = #{record.coursepropertycode,jdbcType=VARCHAR},
+      <if test="record.coursePropertyCode != null" >
+        course_property_code = #{record.coursePropertyCode,jdbcType=VARCHAR},
       </if>
-      <if test="record.coursepropertyname != null" >
-        coursePropertyName = #{record.coursepropertyname,jdbcType=VARCHAR},
+      <if test="record.coursePropertyName != null" >
+        course_property_name = #{record.coursePropertyName,jdbcType=VARCHAR},
       </if>
       <if test="record.examtime != null" >
         examtime = #{record.examtime,jdbcType=VARCHAR},
       </if>
-      <if test="record.executiveeducationplannumber != null" >
-        executiveEducationPlanNumber = #{record.executiveeducationplannumber,jdbcType=VARCHAR},
+      <if test="record.executiveEducationPlanNumber != null" >
+        executive_education_plan_number = #{record.executiveEducationPlanNumber,jdbcType=VARCHAR},
       </if>
-      <if test="record.maxcj != null" >
-        maxcj = #{record.maxcj,jdbcType=INTEGER},
+      <if test="record.maxScore != null" >
+        max_score = #{record.maxScore,jdbcType=INTEGER},
       </if>
-      <if test="record.mincj != null" >
-        mincj = #{record.mincj,jdbcType=INTEGER},
+      <if test="record.minScore != null" >
+        min_score = #{record.minScore,jdbcType=INTEGER},
       </if>
       <if test="record.operator != null" >
         operator = #{record.operator,jdbcType=VARCHAR},
@@ -328,17 +329,17 @@
       <if test="record.operatetime != null" >
         operatetime = #{record.operatetime,jdbcType=VARCHAR},
       </if>
-      <if test="record.persentlevelpoint != null" >
-        persentlevelPoint = #{record.persentlevelpoint,jdbcType=VARCHAR},
+      <if test="record.persentLevelPoint != null" >
+        persent_level_point = #{record.persentLevelPoint,jdbcType=VARCHAR},
       </if>
-      <if test="record.termcode != null" >
-        termCode = #{record.termcode,jdbcType=VARCHAR},
+      <if test="record.termCode != null" >
+        term_code = #{record.termCode,jdbcType=VARCHAR},
       </if>
-      <if test="record.termname != null" >
-        termName = #{record.termname,jdbcType=VARCHAR},
+      <if test="record.termName != null" >
+        term_name = #{record.termName,jdbcType=VARCHAR},
       </if>
-      <if test="record.xsh != null" >
-        xsh = #{record.xsh,jdbcType=INTEGER},
+      <if test="record.academy != null" >
+        academy = #{record.academy,jdbcType=INTEGER},
       </if>
       <if test="record.gmtCreate != null" >
         gmt_create = #{record.gmtCreate,jdbcType=TIMESTAMP},
@@ -355,21 +356,21 @@
     major_id = #{record.majorId,jdbcType=INTEGER},
     class_id = #{record.classId,jdbcType=INTEGER},
     plan_id = #{record.planId,jdbcType=INTEGER},
-    avgcj = #{record.avgcj,jdbcType=DOUBLE},
-    bjh = #{record.bjh,jdbcType=VARCHAR},
-    courseSequenceNumber = #{record.coursesequencenumber,jdbcType=VARCHAR},
-    coursePropertyCode = #{record.coursepropertycode,jdbcType=VARCHAR},
-    coursePropertyName = #{record.coursepropertyname,jdbcType=VARCHAR},
+    average_score = #{record.averageScore,jdbcType=DOUBLE},
+    class_number = #{record.classNumber,jdbcType=VARCHAR},
+    course_sequence_number = #{record.courseSequenceNumber,jdbcType=VARCHAR},
+    course_property_code = #{record.coursePropertyCode,jdbcType=VARCHAR},
+    course_property_name = #{record.coursePropertyName,jdbcType=VARCHAR},
     examtime = #{record.examtime,jdbcType=VARCHAR},
-    executiveEducationPlanNumber = #{record.executiveeducationplannumber,jdbcType=VARCHAR},
-    maxcj = #{record.maxcj,jdbcType=INTEGER},
-    mincj = #{record.mincj,jdbcType=INTEGER},
+    executive_education_plan_number = #{record.executiveEducationPlanNumber,jdbcType=VARCHAR},
+    max_score = #{record.maxScore,jdbcType=INTEGER},
+    min_score = #{record.minScore,jdbcType=INTEGER},
     operator = #{record.operator,jdbcType=VARCHAR},
     operatetime = #{record.operatetime,jdbcType=VARCHAR},
-    persentlevelPoint = #{record.persentlevelpoint,jdbcType=VARCHAR},
-    termCode = #{record.termcode,jdbcType=VARCHAR},
-    termName = #{record.termname,jdbcType=VARCHAR},
-    xsh = #{record.xsh,jdbcType=INTEGER},
+    persent_level_point = #{record.persentLevelPoint,jdbcType=VARCHAR},
+    term_code = #{record.termCode,jdbcType=VARCHAR},
+    term_name = #{record.termName,jdbcType=VARCHAR},
+    academy = #{record.academy,jdbcType=INTEGER},
     gmt_create = #{record.gmtCreate,jdbcType=TIMESTAMP}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -390,32 +391,32 @@
       <if test="planId != null" >
         plan_id = #{planId,jdbcType=INTEGER},
       </if>
-      <if test="avgcj != null" >
-        avgcj = #{avgcj,jdbcType=DOUBLE},
+      <if test="averageScore != null" >
+        average_score = #{averageScore,jdbcType=DOUBLE},
       </if>
-      <if test="bjh != null" >
-        bjh = #{bjh,jdbcType=VARCHAR},
+      <if test="classNumber != null" >
+        class_number = #{classNumber,jdbcType=VARCHAR},
       </if>
-      <if test="coursesequencenumber != null" >
-        courseSequenceNumber = #{coursesequencenumber,jdbcType=VARCHAR},
+      <if test="courseSequenceNumber != null" >
+        course_sequence_number = #{courseSequenceNumber,jdbcType=VARCHAR},
       </if>
-      <if test="coursepropertycode != null" >
-        coursePropertyCode = #{coursepropertycode,jdbcType=VARCHAR},
+      <if test="coursePropertyCode != null" >
+        course_property_code = #{coursePropertyCode,jdbcType=VARCHAR},
       </if>
-      <if test="coursepropertyname != null" >
-        coursePropertyName = #{coursepropertyname,jdbcType=VARCHAR},
+      <if test="coursePropertyName != null" >
+        course_property_name = #{coursePropertyName,jdbcType=VARCHAR},
       </if>
       <if test="examtime != null" >
         examtime = #{examtime,jdbcType=VARCHAR},
       </if>
-      <if test="executiveeducationplannumber != null" >
-        executiveEducationPlanNumber = #{executiveeducationplannumber,jdbcType=VARCHAR},
+      <if test="executiveEducationPlanNumber != null" >
+        executive_education_plan_number = #{executiveEducationPlanNumber,jdbcType=VARCHAR},
       </if>
-      <if test="maxcj != null" >
-        maxcj = #{maxcj,jdbcType=INTEGER},
+      <if test="maxScore != null" >
+        max_score = #{maxScore,jdbcType=INTEGER},
       </if>
-      <if test="mincj != null" >
-        mincj = #{mincj,jdbcType=INTEGER},
+      <if test="minScore != null" >
+        min_score = #{minScore,jdbcType=INTEGER},
       </if>
       <if test="operator != null" >
         operator = #{operator,jdbcType=VARCHAR},
@@ -423,17 +424,17 @@
       <if test="operatetime != null" >
         operatetime = #{operatetime,jdbcType=VARCHAR},
       </if>
-      <if test="persentlevelpoint != null" >
-        persentlevelPoint = #{persentlevelpoint,jdbcType=VARCHAR},
+      <if test="persentLevelPoint != null" >
+        persent_level_point = #{persentLevelPoint,jdbcType=VARCHAR},
       </if>
-      <if test="termcode != null" >
-        termCode = #{termcode,jdbcType=VARCHAR},
+      <if test="termCode != null" >
+        term_code = #{termCode,jdbcType=VARCHAR},
       </if>
-      <if test="termname != null" >
-        termName = #{termname,jdbcType=VARCHAR},
+      <if test="termName != null" >
+        term_name = #{termName,jdbcType=VARCHAR},
       </if>
-      <if test="xsh != null" >
-        xsh = #{xsh,jdbcType=INTEGER},
+      <if test="academy != null" >
+        academy = #{academy,jdbcType=INTEGER},
       </if>
       <if test="gmtCreate != null" >
         gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
@@ -444,25 +445,28 @@
   <update id="updateByPrimaryKey" parameterType="cn.hkxj.platform.pojo.UrpExam" >
     update urp_exam
     set course_id = #{courseId,jdbcType=VARCHAR},
-    major_id = #{majorId,jdbcType=INTEGER},
-    class_id = #{classId,jdbcType=INTEGER},
-    plan_id = #{planId,jdbcType=INTEGER},
-    avgcj = #{avgcj,jdbcType=DOUBLE},
-    bjh = #{bjh,jdbcType=VARCHAR},
-    courseSequenceNumber = #{coursesequencenumber,jdbcType=VARCHAR},
-    coursePropertyCode = #{coursepropertycode,jdbcType=VARCHAR},
-    coursePropertyName = #{coursepropertyname,jdbcType=VARCHAR},
-    examtime = #{examtime,jdbcType=VARCHAR},
-    executiveEducationPlanNumber = #{executiveeducationplannumber,jdbcType=VARCHAR},
-    maxcj = #{maxcj,jdbcType=INTEGER},
-    mincj = #{mincj,jdbcType=INTEGER},
-    operator = #{operator,jdbcType=VARCHAR},
-    operatetime = #{operatetime,jdbcType=VARCHAR},
-    persentlevelPoint = #{persentlevelpoint,jdbcType=VARCHAR},
-    termCode = #{termcode,jdbcType=VARCHAR},
-    termName = #{termname,jdbcType=VARCHAR},
-    xsh = #{xsh,jdbcType=INTEGER},
-    gmt_create = #{gmtCreate,jdbcType=TIMESTAMP}
+      major_id = #{majorId,jdbcType=INTEGER},
+      class_id = #{classId,jdbcType=INTEGER},
+      plan_id = #{planId,jdbcType=INTEGER},
+      average_score = #{averageScore,jdbcType=DOUBLE},
+      class_number = #{classNumber,jdbcType=VARCHAR},
+      course_sequence_number = #{courseSequenceNumber,jdbcType=VARCHAR},
+      course_property_code = #{coursePropertyCode,jdbcType=VARCHAR},
+      course_property_name = #{coursePropertyName,jdbcType=VARCHAR},
+      examtime = #{examtime,jdbcType=VARCHAR},
+      executive_education_plan_number = #{executiveEducationPlanNumber,jdbcType=VARCHAR},
+      max_score = #{maxScore,jdbcType=INTEGER},
+      min_score = #{minScore,jdbcType=INTEGER},
+      operator = #{operator,jdbcType=VARCHAR},
+      operatetime = #{operatetime,jdbcType=VARCHAR},
+      persent_level_point = #{persentLevelPoint,jdbcType=VARCHAR},
+      term_code = #{termCode,jdbcType=VARCHAR},
+      term_name = #{termName,jdbcType=VARCHAR},
+      academy = #{academy,jdbcType=INTEGER},
+      gmt_create = #{gmtCreate,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
   </update>
+  <select id="getOneClassCurrentTermAllUrpExamId" resultType="int">
+    select id from urp_exam where termCode = #{termCode} and termName = #{termName} and class_id = #{classId}
+  </select>
 </mapper>
