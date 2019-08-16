@@ -3,8 +3,8 @@
 <mapper namespace="cn.hkxj.platform.mapper.MajorMapper" >
   <resultMap id="BaseResultMap" type="cn.hkxj.platform.pojo.Major" >
     <id column="id" property="id" jdbcType="INTEGER" />
-    <result column="zyh" property="zyh" jdbcType="VARCHAR" />
-    <result column="zym" property="zym" jdbcType="VARCHAR" />
+    <result column="professional_number" property="professionalNumber" jdbcType="VARCHAR" />
+    <result column="professional_name" property="professionalName" jdbcType="VARCHAR" />
     <result column="gmt_create" property="gmtCreate" jdbcType="TIMESTAMP" />
   </resultMap>
   <sql id="Example_Where_Clause" >
@@ -66,7 +66,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, zyh, zym, gmt_create
+    id, professional_number, professional_name, gmt_create
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="cn.hkxj.platform.pojo.example.MajorExample" >
     select
@@ -83,7 +83,7 @@
     </if>
   </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
-    select 
+    select
     <include refid="Base_Column_List" />
     from major
     where id = #{id,jdbcType=INTEGER}
@@ -99,10 +99,10 @@
     </if>
   </delete>
   <insert id="insert" parameterType="cn.hkxj.platform.pojo.Major" >
-    insert into major (id, zyh, zym, 
-      gmt_create)
-    values (#{id,jdbcType=INTEGER}, #{zyh,jdbcType=VARCHAR}, #{zym,jdbcType=VARCHAR}, 
-      #{gmtCreate,jdbcType=TIMESTAMP})
+    insert into major (id, professional_number, professional_name,
+    gmt_create)
+    values (#{id,jdbcType=INTEGER}, #{professionalNumber,jdbcType=VARCHAR}, #{professionalName,jdbcType=VARCHAR},
+    #{gmtCreate,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="cn.hkxj.platform.pojo.Major" >
     <selectKey order="AFTER" keyProperty="id" resultType="int">
@@ -113,11 +113,11 @@
       <if test="id != null" >
         id,
       </if>
-      <if test="zyh != null" >
-        zyh,
+      <if test="professionalNumber != null" >
+        professional_number,
       </if>
-      <if test="zym != null" >
-        zym,
+      <if test="professionalName != null" >
+        professional_name,
       </if>
       <if test="gmtCreate != null" >
         gmt_create,
@@ -127,11 +127,11 @@
       <if test="id != null" >
         #{id,jdbcType=INTEGER},
       </if>
-      <if test="zyh != null" >
-        #{zyh,jdbcType=VARCHAR},
+      <if test="professionalNumber != null" >
+        #{professionalNumber,jdbcType=VARCHAR},
       </if>
-      <if test="zym != null" >
-        #{zym,jdbcType=VARCHAR},
+      <if test="professionalName != null" >
+        #{professionalName,jdbcType=VARCHAR},
       </if>
       <if test="gmtCreate != null" >
         #{gmtCreate,jdbcType=TIMESTAMP},
@@ -150,11 +150,11 @@
       <if test="record.id != null" >
         id = #{record.id,jdbcType=INTEGER},
       </if>
-      <if test="record.zyh != null" >
-        zyh = #{record.zyh,jdbcType=VARCHAR},
+      <if test="record.professionalNumber != null" >
+        professional_number = #{record.professionalNumber,jdbcType=VARCHAR},
       </if>
-      <if test="record.zym != null" >
-        zym = #{record.zym,jdbcType=VARCHAR},
+      <if test="record.professionalName != null" >
+        professional_name = #{record.professionalName,jdbcType=VARCHAR},
       </if>
       <if test="record.gmtCreate != null" >
         gmt_create = #{record.gmtCreate,jdbcType=TIMESTAMP},
@@ -167,9 +167,9 @@
   <update id="updateByExample" parameterType="map" >
     update major
     set id = #{record.id,jdbcType=INTEGER},
-      zyh = #{record.zyh,jdbcType=VARCHAR},
-      zym = #{record.zym,jdbcType=VARCHAR},
-      gmt_create = #{record.gmtCreate,jdbcType=TIMESTAMP}
+    professional_number = #{record.professionalNumber,jdbcType=VARCHAR},
+    professional_name = #{record.professionalName,jdbcType=VARCHAR},
+    gmt_create = #{record.gmtCreate,jdbcType=TIMESTAMP}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -177,11 +177,11 @@
   <update id="updateByPrimaryKeySelective" parameterType="cn.hkxj.platform.pojo.Major" >
     update major
     <set >
-      <if test="zyh != null" >
-        zyh = #{zyh,jdbcType=VARCHAR},
+      <if test="professionalNumber != null" >
+        professional_number = #{professionalNumber,jdbcType=VARCHAR},
       </if>
-      <if test="zym != null" >
-        zym = #{zym,jdbcType=VARCHAR},
+      <if test="professionalName != null" >
+        professional_name = #{professionalName,jdbcType=VARCHAR},
       </if>
       <if test="gmtCreate != null" >
         gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
@@ -191,8 +191,8 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="cn.hkxj.platform.pojo.Major" >
     update major
-    set zyh = #{zyh,jdbcType=VARCHAR},
-      zym = #{zym,jdbcType=VARCHAR},
+    set professional_number = #{professionalNumber,jdbcType=VARCHAR},
+      professional_name = #{professionalName,jdbcType=VARCHAR},
       gmt_create = #{gmtCreate,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
   </update>

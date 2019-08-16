@@ -225,283 +225,283 @@ public class UrpGradeDetailExample {
             return (Criteria) this;
         }
 
-        public Criteria andUsualscorecoefficientIsNull() {
-            addCriterion("usualScoreCoefficient is null");
+        public Criteria andUsualScoreCoefficientIsNull() {
+            addCriterion("usual_score_coefficient is null");
             return (Criteria) this;
         }
 
-        public Criteria andUsualscorecoefficientIsNotNull() {
-            addCriterion("usualScoreCoefficient is not null");
+        public Criteria andUsualScoreCoefficientIsNotNull() {
+            addCriterion("usual_score_coefficient is not null");
             return (Criteria) this;
         }
 
-        public Criteria andUsualscorecoefficientEqualTo(String value) {
-            addCriterion("usualScoreCoefficient =", value, "usualscorecoefficient");
+        public Criteria andUsualScoreCoefficientEqualTo(String value) {
+            addCriterion("usual_score_coefficient =", value, "usualScoreCoefficient");
             return (Criteria) this;
         }
 
-        public Criteria andUsualscorecoefficientNotEqualTo(String value) {
-            addCriterion("usualScoreCoefficient <>", value, "usualscorecoefficient");
+        public Criteria andUsualScoreCoefficientNotEqualTo(String value) {
+            addCriterion("usual_score_coefficient <>", value, "usualScoreCoefficient");
             return (Criteria) this;
         }
 
-        public Criteria andUsualscorecoefficientGreaterThan(String value) {
-            addCriterion("usualScoreCoefficient >", value, "usualscorecoefficient");
+        public Criteria andUsualScoreCoefficientGreaterThan(String value) {
+            addCriterion("usual_score_coefficient >", value, "usualScoreCoefficient");
             return (Criteria) this;
         }
 
-        public Criteria andUsualscorecoefficientGreaterThanOrEqualTo(String value) {
-            addCriterion("usualScoreCoefficient >=", value, "usualscorecoefficient");
+        public Criteria andUsualScoreCoefficientGreaterThanOrEqualTo(String value) {
+            addCriterion("usual_score_coefficient >=", value, "usualScoreCoefficient");
             return (Criteria) this;
         }
 
-        public Criteria andUsualscorecoefficientLessThan(String value) {
-            addCriterion("usualScoreCoefficient <", value, "usualscorecoefficient");
+        public Criteria andUsualScoreCoefficientLessThan(String value) {
+            addCriterion("usual_score_coefficient <", value, "usualScoreCoefficient");
             return (Criteria) this;
         }
 
-        public Criteria andUsualscorecoefficientLessThanOrEqualTo(String value) {
-            addCriterion("usualScoreCoefficient <=", value, "usualscorecoefficient");
+        public Criteria andUsualScoreCoefficientLessThanOrEqualTo(String value) {
+            addCriterion("usual_score_coefficient <=", value, "usualScoreCoefficient");
             return (Criteria) this;
         }
 
-        public Criteria andUsualscorecoefficientLike(String value) {
-            addCriterion("usualScoreCoefficient like", value, "usualscorecoefficient");
+        public Criteria andUsualScoreCoefficientLike(String value) {
+            addCriterion("usual_score_coefficient like", value, "usualScoreCoefficient");
             return (Criteria) this;
         }
 
-        public Criteria andUsualscorecoefficientNotLike(String value) {
-            addCriterion("usualScoreCoefficient not like", value, "usualscorecoefficient");
+        public Criteria andUsualScoreCoefficientNotLike(String value) {
+            addCriterion("usual_score_coefficient not like", value, "usualScoreCoefficient");
             return (Criteria) this;
         }
 
-        public Criteria andUsualscorecoefficientIn(List<String> values) {
-            addCriterion("usualScoreCoefficient in", values, "usualscorecoefficient");
+        public Criteria andUsualScoreCoefficientIn(List<String> values) {
+            addCriterion("usual_score_coefficient in", values, "usualScoreCoefficient");
             return (Criteria) this;
         }
 
-        public Criteria andUsualscorecoefficientNotIn(List<String> values) {
-            addCriterion("usualScoreCoefficient not in", values, "usualscorecoefficient");
+        public Criteria andUsualScoreCoefficientNotIn(List<String> values) {
+            addCriterion("usual_score_coefficient not in", values, "usualScoreCoefficient");
             return (Criteria) this;
         }
 
-        public Criteria andUsualscorecoefficientBetween(String value1, String value2) {
-            addCriterion("usualScoreCoefficient between", value1, value2, "usualscorecoefficient");
+        public Criteria andUsualScoreCoefficientBetween(String value1, String value2) {
+            addCriterion("usual_score_coefficient between", value1, value2, "usualScoreCoefficient");
             return (Criteria) this;
         }
 
-        public Criteria andUsualscorecoefficientNotBetween(String value1, String value2) {
-            addCriterion("usualScoreCoefficient not between", value1, value2, "usualscorecoefficient");
+        public Criteria andUsualScoreCoefficientNotBetween(String value1, String value2) {
+            addCriterion("usual_score_coefficient not between", value1, value2, "usualScoreCoefficient");
             return (Criteria) this;
         }
 
-        public Criteria andMidtermscorecoefficientIsNull() {
-            addCriterion("midtermScoreCoefficient is null");
+        public Criteria andMidtermScoreCoefficientIsNull() {
+            addCriterion("midterm_score_coefficient is null");
             return (Criteria) this;
         }
 
-        public Criteria andMidtermscorecoefficientIsNotNull() {
-            addCriterion("midtermScoreCoefficient is not null");
+        public Criteria andMidtermScoreCoefficientIsNotNull() {
+            addCriterion("midterm_score_coefficient is not null");
             return (Criteria) this;
         }
 
-        public Criteria andMidtermscorecoefficientEqualTo(String value) {
-            addCriterion("midtermScoreCoefficient =", value, "midtermscorecoefficient");
+        public Criteria andMidtermScoreCoefficientEqualTo(String value) {
+            addCriterion("midterm_score_coefficient =", value, "midtermScoreCoefficient");
             return (Criteria) this;
         }
 
-        public Criteria andMidtermscorecoefficientNotEqualTo(String value) {
-            addCriterion("midtermScoreCoefficient <>", value, "midtermscorecoefficient");
+        public Criteria andMidtermScoreCoefficientNotEqualTo(String value) {
+            addCriterion("midterm_score_coefficient <>", value, "midtermScoreCoefficient");
             return (Criteria) this;
         }
 
-        public Criteria andMidtermscorecoefficientGreaterThan(String value) {
-            addCriterion("midtermScoreCoefficient >", value, "midtermscorecoefficient");
+        public Criteria andMidtermScoreCoefficientGreaterThan(String value) {
+            addCriterion("midterm_score_coefficient >", value, "midtermScoreCoefficient");
             return (Criteria) this;
         }
 
-        public Criteria andMidtermscorecoefficientGreaterThanOrEqualTo(String value) {
-            addCriterion("midtermScoreCoefficient >=", value, "midtermscorecoefficient");
+        public Criteria andMidtermScoreCoefficientGreaterThanOrEqualTo(String value) {
+            addCriterion("midterm_score_coefficient >=", value, "midtermScoreCoefficient");
             return (Criteria) this;
         }
 
-        public Criteria andMidtermscorecoefficientLessThan(String value) {
-            addCriterion("midtermScoreCoefficient <", value, "midtermscorecoefficient");
+        public Criteria andMidtermScoreCoefficientLessThan(String value) {
+            addCriterion("midterm_score_coefficient <", value, "midtermScoreCoefficient");
             return (Criteria) this;
         }
 
-        public Criteria andMidtermscorecoefficientLessThanOrEqualTo(String value) {
-            addCriterion("midtermScoreCoefficient <=", value, "midtermscorecoefficient");
+        public Criteria andMidtermScoreCoefficientLessThanOrEqualTo(String value) {
+            addCriterion("midterm_score_coefficient <=", value, "midtermScoreCoefficient");
             return (Criteria) this;
         }
 
-        public Criteria andMidtermscorecoefficientLike(String value) {
-            addCriterion("midtermScoreCoefficient like", value, "midtermscorecoefficient");
+        public Criteria andMidtermScoreCoefficientLike(String value) {
+            addCriterion("midterm_score_coefficient like", value, "midtermScoreCoefficient");
             return (Criteria) this;
         }
 
-        public Criteria andMidtermscorecoefficientNotLike(String value) {
-            addCriterion("midtermScoreCoefficient not like", value, "midtermscorecoefficient");
+        public Criteria andMidtermScoreCoefficientNotLike(String value) {
+            addCriterion("midterm_score_coefficient not like", value, "midtermScoreCoefficient");
             return (Criteria) this;
         }
 
-        public Criteria andMidtermscorecoefficientIn(List<String> values) {
-            addCriterion("midtermScoreCoefficient in", values, "midtermscorecoefficient");
+        public Criteria andMidtermScoreCoefficientIn(List<String> values) {
+            addCriterion("midterm_score_coefficient in", values, "midtermScoreCoefficient");
             return (Criteria) this;
         }
 
-        public Criteria andMidtermscorecoefficientNotIn(List<String> values) {
-            addCriterion("midtermScoreCoefficient not in", values, "midtermscorecoefficient");
+        public Criteria andMidtermScoreCoefficientNotIn(List<String> values) {
+            addCriterion("midterm_score_coefficient not in", values, "midtermScoreCoefficient");
             return (Criteria) this;
         }
 
-        public Criteria andMidtermscorecoefficientBetween(String value1, String value2) {
-            addCriterion("midtermScoreCoefficient between", value1, value2, "midtermscorecoefficient");
+        public Criteria andMidtermScoreCoefficientBetween(String value1, String value2) {
+            addCriterion("midterm_score_coefficient between", value1, value2, "midtermScoreCoefficient");
             return (Criteria) this;
         }
 
-        public Criteria andMidtermscorecoefficientNotBetween(String value1, String value2) {
-            addCriterion("midtermScoreCoefficient not between", value1, value2, "midtermscorecoefficient");
+        public Criteria andMidtermScoreCoefficientNotBetween(String value1, String value2) {
+            addCriterion("midterm_score_coefficient not between", value1, value2, "midtermScoreCoefficient");
             return (Criteria) this;
         }
 
-        public Criteria andEndtermscorecoefficientIsNull() {
-            addCriterion("endtermScoreCoefficient is null");
+        public Criteria andEndtermScoreCoefficientIsNull() {
+            addCriterion("endterm_score_coefficient is null");
             return (Criteria) this;
         }
 
-        public Criteria andEndtermscorecoefficientIsNotNull() {
-            addCriterion("endtermScoreCoefficient is not null");
+        public Criteria andEndtermScoreCoefficientIsNotNull() {
+            addCriterion("endterm_score_coefficient is not null");
             return (Criteria) this;
         }
 
-        public Criteria andEndtermscorecoefficientEqualTo(String value) {
-            addCriterion("endtermScoreCoefficient =", value, "endtermscorecoefficient");
+        public Criteria andEndtermScoreCoefficientEqualTo(String value) {
+            addCriterion("endterm_score_coefficient =", value, "endtermScoreCoefficient");
             return (Criteria) this;
         }
 
-        public Criteria andEndtermscorecoefficientNotEqualTo(String value) {
-            addCriterion("endtermScoreCoefficient <>", value, "endtermscorecoefficient");
+        public Criteria andEndtermScoreCoefficientNotEqualTo(String value) {
+            addCriterion("endterm_score_coefficient <>", value, "endtermScoreCoefficient");
             return (Criteria) this;
         }
 
-        public Criteria andEndtermscorecoefficientGreaterThan(String value) {
-            addCriterion("endtermScoreCoefficient >", value, "endtermscorecoefficient");
+        public Criteria andEndtermScoreCoefficientGreaterThan(String value) {
+            addCriterion("endterm_score_coefficient >", value, "endtermScoreCoefficient");
             return (Criteria) this;
         }
 
-        public Criteria andEndtermscorecoefficientGreaterThanOrEqualTo(String value) {
-            addCriterion("endtermScoreCoefficient >=", value, "endtermscorecoefficient");
+        public Criteria andEndtermScoreCoefficientGreaterThanOrEqualTo(String value) {
+            addCriterion("endterm_score_coefficient >=", value, "endtermScoreCoefficient");
             return (Criteria) this;
         }
 
-        public Criteria andEndtermscorecoefficientLessThan(String value) {
-            addCriterion("endtermScoreCoefficient <", value, "endtermscorecoefficient");
+        public Criteria andEndtermScoreCoefficientLessThan(String value) {
+            addCriterion("endterm_score_coefficient <", value, "endtermScoreCoefficient");
             return (Criteria) this;
         }
 
-        public Criteria andEndtermscorecoefficientLessThanOrEqualTo(String value) {
-            addCriterion("endtermScoreCoefficient <=", value, "endtermscorecoefficient");
+        public Criteria andEndtermScoreCoefficientLessThanOrEqualTo(String value) {
+            addCriterion("endterm_score_coefficient <=", value, "endtermScoreCoefficient");
             return (Criteria) this;
         }
 
-        public Criteria andEndtermscorecoefficientLike(String value) {
-            addCriterion("endtermScoreCoefficient like", value, "endtermscorecoefficient");
+        public Criteria andEndtermScoreCoefficientLike(String value) {
+            addCriterion("endterm_score_coefficient like", value, "endtermScoreCoefficient");
             return (Criteria) this;
         }
 
-        public Criteria andEndtermscorecoefficientNotLike(String value) {
-            addCriterion("endtermScoreCoefficient not like", value, "endtermscorecoefficient");
+        public Criteria andEndtermScoreCoefficientNotLike(String value) {
+            addCriterion("endterm_score_coefficient not like", value, "endtermScoreCoefficient");
             return (Criteria) this;
         }
 
-        public Criteria andEndtermscorecoefficientIn(List<String> values) {
-            addCriterion("endtermScoreCoefficient in", values, "endtermscorecoefficient");
+        public Criteria andEndtermScoreCoefficientIn(List<String> values) {
+            addCriterion("endterm_score_coefficient in", values, "endtermScoreCoefficient");
             return (Criteria) this;
         }
 
-        public Criteria andEndtermscorecoefficientNotIn(List<String> values) {
-            addCriterion("endtermScoreCoefficient not in", values, "endtermscorecoefficient");
+        public Criteria andEndtermScoreCoefficientNotIn(List<String> values) {
+            addCriterion("endterm_score_coefficient not in", values, "endtermScoreCoefficient");
             return (Criteria) this;
         }
 
-        public Criteria andEndtermscorecoefficientBetween(String value1, String value2) {
-            addCriterion("endtermScoreCoefficient between", value1, value2, "endtermscorecoefficient");
+        public Criteria andEndtermScoreCoefficientBetween(String value1, String value2) {
+            addCriterion("endterm_score_coefficient between", value1, value2, "endtermScoreCoefficient");
             return (Criteria) this;
         }
 
-        public Criteria andEndtermscorecoefficientNotBetween(String value1, String value2) {
-            addCriterion("endtermScoreCoefficient not between", value1, value2, "endtermscorecoefficient");
+        public Criteria andEndtermScoreCoefficientNotBetween(String value1, String value2) {
+            addCriterion("endterm_score_coefficient not between", value1, value2, "endtermScoreCoefficient");
             return (Criteria) this;
         }
 
-        public Criteria andScorecoefficientIsNull() {
-            addCriterion("scoreCoefficient is null");
+        public Criteria andScoreCoefficientIsNull() {
+            addCriterion("score_coefficient is null");
             return (Criteria) this;
         }
 
-        public Criteria andScorecoefficientIsNotNull() {
-            addCriterion("scoreCoefficient is not null");
+        public Criteria andScoreCoefficientIsNotNull() {
+            addCriterion("score_coefficient is not null");
             return (Criteria) this;
         }
 
-        public Criteria andScorecoefficientEqualTo(String value) {
-            addCriterion("scoreCoefficient =", value, "scorecoefficient");
+        public Criteria andScoreCoefficientEqualTo(String value) {
+            addCriterion("score_coefficient =", value, "scoreCoefficient");
             return (Criteria) this;
         }
 
-        public Criteria andScorecoefficientNotEqualTo(String value) {
-            addCriterion("scoreCoefficient <>", value, "scorecoefficient");
+        public Criteria andScoreCoefficientNotEqualTo(String value) {
+            addCriterion("score_coefficient <>", value, "scoreCoefficient");
             return (Criteria) this;
         }
 
-        public Criteria andScorecoefficientGreaterThan(String value) {
-            addCriterion("scoreCoefficient >", value, "scorecoefficient");
+        public Criteria andScoreCoefficientGreaterThan(String value) {
+            addCriterion("score_coefficient >", value, "scoreCoefficient");
             return (Criteria) this;
         }
 
-        public Criteria andScorecoefficientGreaterThanOrEqualTo(String value) {
-            addCriterion("scoreCoefficient >=", value, "scorecoefficient");
+        public Criteria andScoreCoefficientGreaterThanOrEqualTo(String value) {
+            addCriterion("score_coefficient >=", value, "scoreCoefficient");
             return (Criteria) this;
         }
 
-        public Criteria andScorecoefficientLessThan(String value) {
-            addCriterion("scoreCoefficient <", value, "scorecoefficient");
+        public Criteria andScoreCoefficientLessThan(String value) {
+            addCriterion("score_coefficient <", value, "scoreCoefficient");
             return (Criteria) this;
         }
 
-        public Criteria andScorecoefficientLessThanOrEqualTo(String value) {
-            addCriterion("scoreCoefficient <=", value, "scorecoefficient");
+        public Criteria andScoreCoefficientLessThanOrEqualTo(String value) {
+            addCriterion("score_coefficient <=", value, "scoreCoefficient");
             return (Criteria) this;
         }
 
-        public Criteria andScorecoefficientLike(String value) {
-            addCriterion("scoreCoefficient like", value, "scorecoefficient");
+        public Criteria andScoreCoefficientLike(String value) {
+            addCriterion("score_coefficient like", value, "scoreCoefficient");
             return (Criteria) this;
         }
 
-        public Criteria andScorecoefficientNotLike(String value) {
-            addCriterion("scoreCoefficient not like", value, "scorecoefficient");
+        public Criteria andScoreCoefficientNotLike(String value) {
+            addCriterion("score_coefficient not like", value, "scoreCoefficient");
             return (Criteria) this;
         }
 
-        public Criteria andScorecoefficientIn(List<String> values) {
-            addCriterion("scoreCoefficient in", values, "scorecoefficient");
+        public Criteria andScoreCoefficientIn(List<String> values) {
+            addCriterion("score_coefficient in", values, "scoreCoefficient");
             return (Criteria) this;
         }
 
-        public Criteria andScorecoefficientNotIn(List<String> values) {
-            addCriterion("scoreCoefficient not in", values, "scorecoefficient");
+        public Criteria andScoreCoefficientNotIn(List<String> values) {
+            addCriterion("score_coefficient not in", values, "scoreCoefficient");
             return (Criteria) this;
         }
 
-        public Criteria andScorecoefficientBetween(String value1, String value2) {
-            addCriterion("scoreCoefficient between", value1, value2, "scorecoefficient");
+        public Criteria andScoreCoefficientBetween(String value1, String value2) {
+            addCriterion("score_coefficient between", value1, value2, "scoreCoefficient");
             return (Criteria) this;
         }
 
-        public Criteria andScorecoefficientNotBetween(String value1, String value2) {
-            addCriterion("scoreCoefficient not between", value1, value2, "scorecoefficient");
+        public Criteria andScoreCoefficientNotBetween(String value1, String value2) {
+            addCriterion("score_coefficient not between", value1, value2, "scoreCoefficient");
             return (Criteria) this;
         }
 
@@ -575,243 +575,243 @@ public class UrpGradeDetailExample {
             return (Criteria) this;
         }
 
-        public Criteria andZcjIsNull() {
-            addCriterion("zcj is null");
+        public Criteria andTotalGradeIsNull() {
+            addCriterion("total_grade is null");
             return (Criteria) this;
         }
 
-        public Criteria andZcjIsNotNull() {
-            addCriterion("zcj is not null");
+        public Criteria andTotalGradeIsNotNull() {
+            addCriterion("total_grade is not null");
             return (Criteria) this;
         }
 
-        public Criteria andZcjEqualTo(Double value) {
-            addCriterion("zcj =", value, "zcj");
+        public Criteria andTotalGradeEqualTo(Double value) {
+            addCriterion("total_grade =", value, "totalGrade");
             return (Criteria) this;
         }
 
-        public Criteria andZcjNotEqualTo(Double value) {
-            addCriterion("zcj <>", value, "zcj");
+        public Criteria andTotalGradeNotEqualTo(Double value) {
+            addCriterion("total_grade <>", value, "totalGrade");
             return (Criteria) this;
         }
 
-        public Criteria andZcjGreaterThan(Double value) {
-            addCriterion("zcj >", value, "zcj");
+        public Criteria andTotalGradeGreaterThan(Double value) {
+            addCriterion("total_grade >", value, "totalGrade");
             return (Criteria) this;
         }
 
-        public Criteria andZcjGreaterThanOrEqualTo(Double value) {
-            addCriterion("zcj >=", value, "zcj");
+        public Criteria andTotalGradeGreaterThanOrEqualTo(Double value) {
+            addCriterion("total_grade >=", value, "totalGrade");
             return (Criteria) this;
         }
 
-        public Criteria andZcjLessThan(Double value) {
-            addCriterion("zcj <", value, "zcj");
+        public Criteria andTotalGradeLessThan(Double value) {
+            addCriterion("total_grade <", value, "totalGrade");
             return (Criteria) this;
         }
 
-        public Criteria andZcjLessThanOrEqualTo(Double value) {
-            addCriterion("zcj <=", value, "zcj");
+        public Criteria andTotalGradeLessThanOrEqualTo(Double value) {
+            addCriterion("total_grade <=", value, "totalGrade");
             return (Criteria) this;
         }
 
-        public Criteria andZcjIn(List<Double> values) {
-            addCriterion("zcj in", values, "zcj");
+        public Criteria andTotalGradeIn(List<Double> values) {
+            addCriterion("total_grade in", values, "totalGrade");
             return (Criteria) this;
         }
 
-        public Criteria andZcjNotIn(List<Double> values) {
-            addCriterion("zcj not in", values, "zcj");
+        public Criteria andTotalGradeNotIn(List<Double> values) {
+            addCriterion("total_grade not in", values, "totalGrade");
             return (Criteria) this;
         }
 
-        public Criteria andZcjBetween(Double value1, Double value2) {
-            addCriterion("zcj between", value1, value2, "zcj");
+        public Criteria andTotalGradeBetween(Double value1, Double value2) {
+            addCriterion("total_grade between", value1, value2, "totalGrade");
             return (Criteria) this;
         }
 
-        public Criteria andZcjNotBetween(Double value1, Double value2) {
-            addCriterion("zcj not between", value1, value2, "zcj");
+        public Criteria andTotalGradeNotBetween(Double value1, Double value2) {
+            addCriterion("total_grade not between", value1, value2, "totalGrade");
             return (Criteria) this;
         }
 
-        public Criteria andPscjIsNull() {
-            addCriterion("pscj is null");
+        public Criteria andRegularGradeIsNull() {
+            addCriterion("regular_grade is null");
             return (Criteria) this;
         }
 
-        public Criteria andPscjIsNotNull() {
-            addCriterion("pscj is not null");
+        public Criteria andRegularGradeIsNotNull() {
+            addCriterion("regular_grade is not null");
             return (Criteria) this;
         }
 
-        public Criteria andPscjEqualTo(Double value) {
-            addCriterion("pscj =", value, "pscj");
+        public Criteria andRegularGradeEqualTo(Double value) {
+            addCriterion("regular_grade =", value, "regularGrade");
             return (Criteria) this;
         }
 
-        public Criteria andPscjNotEqualTo(Double value) {
-            addCriterion("pscj <>", value, "pscj");
+        public Criteria andRegularGradeNotEqualTo(Double value) {
+            addCriterion("regular_grade <>", value, "regularGrade");
             return (Criteria) this;
         }
 
-        public Criteria andPscjGreaterThan(Double value) {
-            addCriterion("pscj >", value, "pscj");
+        public Criteria andRegularGradeGreaterThan(Double value) {
+            addCriterion("regular_grade >", value, "regularGrade");
             return (Criteria) this;
         }
 
-        public Criteria andPscjGreaterThanOrEqualTo(Double value) {
-            addCriterion("pscj >=", value, "pscj");
+        public Criteria andRegularGradeGreaterThanOrEqualTo(Double value) {
+            addCriterion("regular_grade >=", value, "regularGrade");
             return (Criteria) this;
         }
 
-        public Criteria andPscjLessThan(Double value) {
-            addCriterion("pscj <", value, "pscj");
+        public Criteria andRegularGradeLessThan(Double value) {
+            addCriterion("regular_grade <", value, "regularGrade");
             return (Criteria) this;
         }
 
-        public Criteria andPscjLessThanOrEqualTo(Double value) {
-            addCriterion("pscj <=", value, "pscj");
+        public Criteria andRegularGradeLessThanOrEqualTo(Double value) {
+            addCriterion("regular_grade <=", value, "regularGrade");
             return (Criteria) this;
         }
 
-        public Criteria andPscjIn(List<Double> values) {
-            addCriterion("pscj in", values, "pscj");
+        public Criteria andRegularGradeIn(List<Double> values) {
+            addCriterion("regular_grade in", values, "regularGrade");
             return (Criteria) this;
         }
 
-        public Criteria andPscjNotIn(List<Double> values) {
-            addCriterion("pscj not in", values, "pscj");
+        public Criteria andRegularGradeNotIn(List<Double> values) {
+            addCriterion("regular_grade not in", values, "regularGrade");
             return (Criteria) this;
         }
 
-        public Criteria andPscjBetween(Double value1, Double value2) {
-            addCriterion("pscj between", value1, value2, "pscj");
+        public Criteria andRegularGradeBetween(Double value1, Double value2) {
+            addCriterion("regular_grade between", value1, value2, "regularGrade");
             return (Criteria) this;
         }
 
-        public Criteria andPscjNotBetween(Double value1, Double value2) {
-            addCriterion("pscj not between", value1, value2, "pscj");
+        public Criteria andRegularGradeNotBetween(Double value1, Double value2) {
+            addCriterion("regular_grade not between", value1, value2, "regularGrade");
             return (Criteria) this;
         }
 
-        public Criteria andQzcjIsNull() {
-            addCriterion("qzcj is null");
+        public Criteria andMidtermGradeIsNull() {
+            addCriterion("midterm_grade is null");
             return (Criteria) this;
         }
 
-        public Criteria andQzcjIsNotNull() {
-            addCriterion("qzcj is not null");
+        public Criteria andMidtermGradeIsNotNull() {
+            addCriterion("midterm_grade is not null");
             return (Criteria) this;
         }
 
-        public Criteria andQzcjEqualTo(Double value) {
-            addCriterion("qzcj =", value, "qzcj");
+        public Criteria andMidtermGradeEqualTo(Double value) {
+            addCriterion("midterm_grade =", value, "midtermGrade");
             return (Criteria) this;
         }
 
-        public Criteria andQzcjNotEqualTo(Double value) {
-            addCriterion("qzcj <>", value, "qzcj");
+        public Criteria andMidtermGradeNotEqualTo(Double value) {
+            addCriterion("midterm_grade <>", value, "midtermGrade");
             return (Criteria) this;
         }
 
-        public Criteria andQzcjGreaterThan(Double value) {
-            addCriterion("qzcj >", value, "qzcj");
+        public Criteria andMidtermGradeGreaterThan(Double value) {
+            addCriterion("midterm_grade >", value, "midtermGrade");
             return (Criteria) this;
         }
 
-        public Criteria andQzcjGreaterThanOrEqualTo(Double value) {
-            addCriterion("qzcj >=", value, "qzcj");
+        public Criteria andMidtermGradeGreaterThanOrEqualTo(Double value) {
+            addCriterion("midterm_grade >=", value, "midtermGrade");
             return (Criteria) this;
         }
 
-        public Criteria andQzcjLessThan(Double value) {
-            addCriterion("qzcj <", value, "qzcj");
+        public Criteria andMidtermGradeLessThan(Double value) {
+            addCriterion("midterm_grade <", value, "midtermGrade");
             return (Criteria) this;
         }
 
-        public Criteria andQzcjLessThanOrEqualTo(Double value) {
-            addCriterion("qzcj <=", value, "qzcj");
+        public Criteria andMidtermGradeLessThanOrEqualTo(Double value) {
+            addCriterion("midterm_grade <=", value, "midtermGrade");
             return (Criteria) this;
         }
 
-        public Criteria andQzcjIn(List<Double> values) {
-            addCriterion("qzcj in", values, "qzcj");
+        public Criteria andMidtermGradeIn(List<Double> values) {
+            addCriterion("midterm_grade in", values, "midtermGrade");
             return (Criteria) this;
         }
 
-        public Criteria andQzcjNotIn(List<Double> values) {
-            addCriterion("qzcj not in", values, "qzcj");
+        public Criteria andMidtermGradeNotIn(List<Double> values) {
+            addCriterion("midterm_grade not in", values, "midtermGrade");
             return (Criteria) this;
         }
 
-        public Criteria andQzcjBetween(Double value1, Double value2) {
-            addCriterion("qzcj between", value1, value2, "qzcj");
+        public Criteria andMidtermGradeBetween(Double value1, Double value2) {
+            addCriterion("midterm_grade between", value1, value2, "midtermGrade");
             return (Criteria) this;
         }
 
-        public Criteria andQzcjNotBetween(Double value1, Double value2) {
-            addCriterion("qzcj not between", value1, value2, "qzcj");
+        public Criteria andMidtermGradeNotBetween(Double value1, Double value2) {
+            addCriterion("midterm_grade not between", value1, value2, "midtermGrade");
             return (Criteria) this;
         }
 
-        public Criteria andQmcjIsNull() {
-            addCriterion("qmcj is null");
+        public Criteria andFinaltermGradeIsNull() {
+            addCriterion("finalterm_grade is null");
             return (Criteria) this;
         }
 
-        public Criteria andQmcjIsNotNull() {
-            addCriterion("qmcj is not null");
+        public Criteria andFinaltermGradeIsNotNull() {
+            addCriterion("finalterm_grade is not null");
             return (Criteria) this;
         }
 
-        public Criteria andQmcjEqualTo(Double value) {
-            addCriterion("qmcj =", value, "qmcj");
+        public Criteria andFinaltermGradeEqualTo(Double value) {
+            addCriterion("finalterm_grade =", value, "finaltermGrade");
             return (Criteria) this;
         }
 
-        public Criteria andQmcjNotEqualTo(Double value) {
-            addCriterion("qmcj <>", value, "qmcj");
+        public Criteria andFinaltermGradeNotEqualTo(Double value) {
+            addCriterion("finalterm_grade <>", value, "finaltermGrade");
             return (Criteria) this;
         }
 
-        public Criteria andQmcjGreaterThan(Double value) {
-            addCriterion("qmcj >", value, "qmcj");
+        public Criteria andFinaltermGradeGreaterThan(Double value) {
+            addCriterion("finalterm_grade >", value, "finaltermGrade");
             return (Criteria) this;
         }
 
-        public Criteria andQmcjGreaterThanOrEqualTo(Double value) {
-            addCriterion("qmcj >=", value, "qmcj");
+        public Criteria andFinaltermGradeGreaterThanOrEqualTo(Double value) {
+            addCriterion("finalterm_grade >=", value, "finaltermGrade");
             return (Criteria) this;
         }
 
-        public Criteria andQmcjLessThan(Double value) {
-            addCriterion("qmcj <", value, "qmcj");
+        public Criteria andFinaltermGradeLessThan(Double value) {
+            addCriterion("finalterm_grade <", value, "finaltermGrade");
             return (Criteria) this;
         }
 
-        public Criteria andQmcjLessThanOrEqualTo(Double value) {
-            addCriterion("qmcj <=", value, "qmcj");
+        public Criteria andFinaltermGradeLessThanOrEqualTo(Double value) {
+            addCriterion("finalterm_grade <=", value, "finaltermGrade");
             return (Criteria) this;
         }
 
-        public Criteria andQmcjIn(List<Double> values) {
-            addCriterion("qmcj in", values, "qmcj");
+        public Criteria andFinaltermGradeIn(List<Double> values) {
+            addCriterion("finalterm_grade in", values, "finaltermGrade");
             return (Criteria) this;
         }
 
-        public Criteria andQmcjNotIn(List<Double> values) {
-            addCriterion("qmcj not in", values, "qmcj");
+        public Criteria andFinaltermGradeNotIn(List<Double> values) {
+            addCriterion("finalterm_grade not in", values, "finaltermGrade");
             return (Criteria) this;
         }
 
-        public Criteria andQmcjBetween(Double value1, Double value2) {
-            addCriterion("qmcj between", value1, value2, "qmcj");
+        public Criteria andFinaltermGradeBetween(Double value1, Double value2) {
+            addCriterion("finalterm_grade between", value1, value2, "finaltermGrade");
             return (Criteria) this;
         }
 
-        public Criteria andQmcjNotBetween(Double value1, Double value2) {
-            addCriterion("qmcj not between", value1, value2, "qmcj");
+        public Criteria andFinaltermGradeNotBetween(Double value1, Double value2) {
+            addCriterion("finalterm_grade not between", value1, value2, "finaltermGrade");
             return (Criteria) this;
         }
 
@@ -1655,73 +1655,73 @@ public class UrpGradeDetailExample {
             return (Criteria) this;
         }
 
-        public Criteria andScoretypecodeIsNull() {
-            addCriterion("scoreTypeCode is null");
+        public Criteria andScoreTypeCodeIsNull() {
+            addCriterion("score_type_code is null");
             return (Criteria) this;
         }
 
-        public Criteria andScoretypecodeIsNotNull() {
-            addCriterion("scoreTypeCode is not null");
+        public Criteria andScoreTypeCodeIsNotNull() {
+            addCriterion("score_type_code is not null");
             return (Criteria) this;
         }
 
-        public Criteria andScoretypecodeEqualTo(String value) {
-            addCriterion("scoreTypeCode =", value, "scoretypecode");
+        public Criteria andScoreTypeCodeEqualTo(String value) {
+            addCriterion("score_type_code =", value, "scoreTypeCode");
             return (Criteria) this;
         }
 
-        public Criteria andScoretypecodeNotEqualTo(String value) {
-            addCriterion("scoreTypeCode <>", value, "scoretypecode");
+        public Criteria andScoreTypeCodeNotEqualTo(String value) {
+            addCriterion("score_type_code <>", value, "scoreTypeCode");
             return (Criteria) this;
         }
 
-        public Criteria andScoretypecodeGreaterThan(String value) {
-            addCriterion("scoreTypeCode >", value, "scoretypecode");
+        public Criteria andScoreTypeCodeGreaterThan(String value) {
+            addCriterion("score_type_code >", value, "scoreTypeCode");
             return (Criteria) this;
         }
 
-        public Criteria andScoretypecodeGreaterThanOrEqualTo(String value) {
-            addCriterion("scoreTypeCode >=", value, "scoretypecode");
+        public Criteria andScoreTypeCodeGreaterThanOrEqualTo(String value) {
+            addCriterion("score_type_code >=", value, "scoreTypeCode");
             return (Criteria) this;
         }
 
-        public Criteria andScoretypecodeLessThan(String value) {
-            addCriterion("scoreTypeCode <", value, "scoretypecode");
+        public Criteria andScoreTypeCodeLessThan(String value) {
+            addCriterion("score_type_code <", value, "scoreTypeCode");
             return (Criteria) this;
         }
 
-        public Criteria andScoretypecodeLessThanOrEqualTo(String value) {
-            addCriterion("scoreTypeCode <=", value, "scoretypecode");
+        public Criteria andScoreTypeCodeLessThanOrEqualTo(String value) {
+            addCriterion("score_type_code <=", value, "scoreTypeCode");
             return (Criteria) this;
         }
 
-        public Criteria andScoretypecodeLike(String value) {
-            addCriterion("scoreTypeCode like", value, "scoretypecode");
+        public Criteria andScoreTypeCodeLike(String value) {
+            addCriterion("score_type_code like", value, "scoreTypeCode");
             return (Criteria) this;
         }
 
-        public Criteria andScoretypecodeNotLike(String value) {
-            addCriterion("scoreTypeCode not like", value, "scoretypecode");
+        public Criteria andScoreTypeCodeNotLike(String value) {
+            addCriterion("score_type_code not like", value, "scoreTypeCode");
             return (Criteria) this;
         }
 
-        public Criteria andScoretypecodeIn(List<String> values) {
-            addCriterion("scoreTypeCode in", values, "scoretypecode");
+        public Criteria andScoreTypeCodeIn(List<String> values) {
+            addCriterion("score_type_code in", values, "scoreTypeCode");
             return (Criteria) this;
         }
 
-        public Criteria andScoretypecodeNotIn(List<String> values) {
-            addCriterion("scoreTypeCode not in", values, "scoretypecode");
+        public Criteria andScoreTypeCodeNotIn(List<String> values) {
+            addCriterion("score_type_code not in", values, "scoreTypeCode");
             return (Criteria) this;
         }
 
-        public Criteria andScoretypecodeBetween(String value1, String value2) {
-            addCriterion("scoreTypeCode between", value1, value2, "scoretypecode");
+        public Criteria andScoreTypeCodeBetween(String value1, String value2) {
+            addCriterion("score_type_code between", value1, value2, "scoreTypeCode");
             return (Criteria) this;
         }
 
-        public Criteria andScoretypecodeNotBetween(String value1, String value2) {
-            addCriterion("scoreTypeCode not between", value1, value2, "scoretypecode");
+        public Criteria andScoreTypeCodeNotBetween(String value1, String value2) {
+            addCriterion("score_type_code not between", value1, value2, "scoreTypeCode");
             return (Criteria) this;
         }
 

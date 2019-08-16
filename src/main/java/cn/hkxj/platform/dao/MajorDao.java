@@ -24,14 +24,14 @@ public class MajorDao {
     public Major getMajorByZyh(String zyh){
         MajorExample example = new MajorExample();
         example.createCriteria()
-                .andZyhEqualTo(zyh);
+                .andProfessionalNumberEqualTo(zyh);
         return majorMapper.selectByExample(example).stream().findFirst().orElse(null);
     }
 
     public boolean ifExistMajor(String zyh){
         MajorExample example = new MajorExample();
         example.createCriteria()
-                .andZyhEqualTo(zyh);
+                .andProfessionalNumberEqualTo(zyh);
         return majorMapper.countByExample(example) == 1;
     }
 }

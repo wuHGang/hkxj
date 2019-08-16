@@ -165,143 +165,143 @@ public class MajorExample {
             return (Criteria) this;
         }
 
-        public Criteria andZyhIsNull() {
-            addCriterion("zyh is null");
+        public Criteria andProfessionalNumberIsNull() {
+            addCriterion("professional_number is null");
             return (Criteria) this;
         }
 
-        public Criteria andZyhIsNotNull() {
-            addCriterion("zyh is not null");
+        public Criteria andProfessionalNumberIsNotNull() {
+            addCriterion("professional_number is not null");
             return (Criteria) this;
         }
 
-        public Criteria andZyhEqualTo(String value) {
-            addCriterion("zyh =", value, "zyh");
+        public Criteria andProfessionalNumberEqualTo(String value) {
+            addCriterion("professional_number =", value, "professionalNumber");
             return (Criteria) this;
         }
 
-        public Criteria andZyhNotEqualTo(String value) {
-            addCriterion("zyh <>", value, "zyh");
+        public Criteria andProfessionalNumberNotEqualTo(String value) {
+            addCriterion("professional_number <>", value, "professionalNumber");
             return (Criteria) this;
         }
 
-        public Criteria andZyhGreaterThan(String value) {
-            addCriterion("zyh >", value, "zyh");
+        public Criteria andProfessionalNumberGreaterThan(String value) {
+            addCriterion("professional_number >", value, "professionalNumber");
             return (Criteria) this;
         }
 
-        public Criteria andZyhGreaterThanOrEqualTo(String value) {
-            addCriterion("zyh >=", value, "zyh");
+        public Criteria andProfessionalNumberGreaterThanOrEqualTo(String value) {
+            addCriterion("professional_number >=", value, "professionalNumber");
             return (Criteria) this;
         }
 
-        public Criteria andZyhLessThan(String value) {
-            addCriterion("zyh <", value, "zyh");
+        public Criteria andProfessionalNumberLessThan(String value) {
+            addCriterion("professional_number <", value, "professionalNumber");
             return (Criteria) this;
         }
 
-        public Criteria andZyhLessThanOrEqualTo(String value) {
-            addCriterion("zyh <=", value, "zyh");
+        public Criteria andProfessionalNumberLessThanOrEqualTo(String value) {
+            addCriterion("professional_number <=", value, "professionalNumber");
             return (Criteria) this;
         }
 
-        public Criteria andZyhLike(String value) {
-            addCriterion("zyh like", value, "zyh");
+        public Criteria andProfessionalNumberLike(String value) {
+            addCriterion("professional_number like", value, "professionalNumber");
             return (Criteria) this;
         }
 
-        public Criteria andZyhNotLike(String value) {
-            addCriterion("zyh not like", value, "zyh");
+        public Criteria andProfessionalNumberNotLike(String value) {
+            addCriterion("professional_number not like", value, "professionalNumber");
             return (Criteria) this;
         }
 
-        public Criteria andZyhIn(List<String> values) {
-            addCriterion("zyh in", values, "zyh");
+        public Criteria andProfessionalNumberIn(List<String> values) {
+            addCriterion("professional_number in", values, "professionalNumber");
             return (Criteria) this;
         }
 
-        public Criteria andZyhNotIn(List<String> values) {
-            addCriterion("zyh not in", values, "zyh");
+        public Criteria andProfessionalNumberNotIn(List<String> values) {
+            addCriterion("professional_number not in", values, "professionalNumber");
             return (Criteria) this;
         }
 
-        public Criteria andZyhBetween(String value1, String value2) {
-            addCriterion("zyh between", value1, value2, "zyh");
+        public Criteria andProfessionalNumberBetween(String value1, String value2) {
+            addCriterion("professional_number between", value1, value2, "professionalNumber");
             return (Criteria) this;
         }
 
-        public Criteria andZyhNotBetween(String value1, String value2) {
-            addCriterion("zyh not between", value1, value2, "zyh");
+        public Criteria andProfessionalNumberNotBetween(String value1, String value2) {
+            addCriterion("professional_number not between", value1, value2, "professionalNumber");
             return (Criteria) this;
         }
 
-        public Criteria andZymIsNull() {
-            addCriterion("zym is null");
+        public Criteria andProfessionalNameIsNull() {
+            addCriterion("professional_name is null");
             return (Criteria) this;
         }
 
-        public Criteria andZymIsNotNull() {
-            addCriterion("zym is not null");
+        public Criteria andProfessionalNameIsNotNull() {
+            addCriterion("professional_name is not null");
             return (Criteria) this;
         }
 
-        public Criteria andZymEqualTo(String value) {
-            addCriterion("zym =", value, "zym");
+        public Criteria andProfessionalNameEqualTo(String value) {
+            addCriterion("professional_name =", value, "professionalName");
             return (Criteria) this;
         }
 
-        public Criteria andZymNotEqualTo(String value) {
-            addCriterion("zym <>", value, "zym");
+        public Criteria andProfessionalNameNotEqualTo(String value) {
+            addCriterion("professional_name <>", value, "professionalName");
             return (Criteria) this;
         }
 
-        public Criteria andZymGreaterThan(String value) {
-            addCriterion("zym >", value, "zym");
+        public Criteria andProfessionalNameGreaterThan(String value) {
+            addCriterion("professional_name >", value, "professionalName");
             return (Criteria) this;
         }
 
-        public Criteria andZymGreaterThanOrEqualTo(String value) {
-            addCriterion("zym >=", value, "zym");
+        public Criteria andProfessionalNameGreaterThanOrEqualTo(String value) {
+            addCriterion("professional_name >=", value, "professionalName");
             return (Criteria) this;
         }
 
-        public Criteria andZymLessThan(String value) {
-            addCriterion("zym <", value, "zym");
+        public Criteria andProfessionalNameLessThan(String value) {
+            addCriterion("professional_name <", value, "professionalName");
             return (Criteria) this;
         }
 
-        public Criteria andZymLessThanOrEqualTo(String value) {
-            addCriterion("zym <=", value, "zym");
+        public Criteria andProfessionalNameLessThanOrEqualTo(String value) {
+            addCriterion("professional_name <=", value, "professionalName");
             return (Criteria) this;
         }
 
-        public Criteria andZymLike(String value) {
-            addCriterion("zym like", value, "zym");
+        public Criteria andProfessionalNameLike(String value) {
+            addCriterion("professional_name like", value, "professionalName");
             return (Criteria) this;
         }
 
-        public Criteria andZymNotLike(String value) {
-            addCriterion("zym not like", value, "zym");
+        public Criteria andProfessionalNameNotLike(String value) {
+            addCriterion("professional_name not like", value, "professionalName");
             return (Criteria) this;
         }
 
-        public Criteria andZymIn(List<String> values) {
-            addCriterion("zym in", values, "zym");
+        public Criteria andProfessionalNameIn(List<String> values) {
+            addCriterion("professional_name in", values, "professionalName");
             return (Criteria) this;
         }
 
-        public Criteria andZymNotIn(List<String> values) {
-            addCriterion("zym not in", values, "zym");
+        public Criteria andProfessionalNameNotIn(List<String> values) {
+            addCriterion("professional_name not in", values, "professionalName");
             return (Criteria) this;
         }
 
-        public Criteria andZymBetween(String value1, String value2) {
-            addCriterion("zym between", value1, value2, "zym");
+        public Criteria andProfessionalNameBetween(String value1, String value2) {
+            addCriterion("professional_name between", value1, value2, "professionalName");
             return (Criteria) this;
         }
 
-        public Criteria andZymNotBetween(String value1, String value2) {
-            addCriterion("zym not between", value1, value2, "zym");
+        public Criteria andProfessionalNameNotBetween(String value1, String value2) {
+            addCriterion("professional_name not between", value1, value2, "professionalName");
             return (Criteria) this;
         }
 

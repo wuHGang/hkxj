@@ -10,14 +10,14 @@
     <result column="level_name" property="levelName" jdbcType="VARCHAR" />
     <result column="level_point" property="levelPoint" jdbcType="VARCHAR" />
     <result column="rank" property="rank" jdbcType="INTEGER" />
-    <result column="unpassedReasonCode" property="unpassedreasoncode" jdbcType="VARCHAR" />
-    <result column="unpassedReasonExplain" property="unpassedreasonexplain" jdbcType="VARCHAR" />
+    <result column="unpassed_reason_code" property="unpassedReasonCode" jdbcType="VARCHAR" />
+    <result column="unpassed_reason_explain" property="unpassedReasonExplain" jdbcType="VARCHAR" />
     <result column="remark" property="remark" jdbcType="VARCHAR" />
-    <result column="replaceCourseNumber" property="replacecoursenumber" jdbcType="VARCHAR" />
-    <result column="retakeCourseMark" property="retakecoursemark" jdbcType="VARCHAR" />
-    <result column="retakeCourseModeCode" property="retakecoursemodecode" jdbcType="VARCHAR" />
-    <result column="retakeCourseModeExplain" property="retakecoursemodeexplain" jdbcType="VARCHAR" />
-    <result column="standardPoint" property="standardpoint" jdbcType="VARCHAR" />
+    <result column="replace_course_number" property="replaceCourseNumber" jdbcType="VARCHAR" />
+    <result column="retake_course_mark" property="retakeCourseMark" jdbcType="VARCHAR" />
+    <result column="retakeCourse_mode_code" property="retakecourseModeCode" jdbcType="VARCHAR" />
+    <result column="retake_course_mode_explain" property="retakeCourseModeExplain" jdbcType="VARCHAR" />
+    <result column="standard_point" property="standardPoint" jdbcType="VARCHAR" />
     <result column="gmt_create" property="gmtCreate" jdbcType="TIMESTAMP" />
   </resultMap>
   <sql id="Example_Where_Clause" >
@@ -79,9 +79,9 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, exam_id, account, score, grade_point, level_name, level_point, rank, unpassedReasonCode, 
-    unpassedReasonExplain, remark, replaceCourseNumber, retakeCourseMark, retakeCourseModeCode, 
-    retakeCourseModeExplain, standardPoint, gmt_create
+    id, exam_id, account, score, grade_point, level_name, level_point, rank, unpassed_reason_code,
+    unpassed_reason_explain, remark, replace_course_number, retake_course_mark, retakeCourse_mode_code,
+    retake_course_mode_explain, standard_point, gmt_create
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="cn.hkxj.platform.pojo.example.UrpGradeExample" >
     select
@@ -98,7 +98,7 @@
     </if>
   </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
-    select 
+    select
     <include refid="Base_Column_List" />
     from urp_grade
     where id = #{id,jdbcType=INTEGER}
@@ -114,20 +114,20 @@
     </if>
   </delete>
   <insert id="insert" parameterType="cn.hkxj.platform.pojo.UrpGrade" >
-    insert into urp_grade (id, exam_id, account, 
-      score, grade_point, level_name, 
-      level_point, rank, unpassedReasonCode, 
-      unpassedReasonExplain, remark, replaceCourseNumber, 
-      retakeCourseMark, retakeCourseModeCode, 
-      retakeCourseModeExplain, standardPoint, 
-      gmt_create)
-    values (#{id,jdbcType=INTEGER}, #{examId,jdbcType=INTEGER}, #{account,jdbcType=INTEGER}, 
-      #{score,jdbcType=INTEGER}, #{gradePoint,jdbcType=DOUBLE}, #{levelName,jdbcType=VARCHAR}, 
-      #{levelPoint,jdbcType=VARCHAR}, #{rank,jdbcType=INTEGER}, #{unpassedreasoncode,jdbcType=VARCHAR}, 
-      #{unpassedreasonexplain,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{replacecoursenumber,jdbcType=VARCHAR}, 
-      #{retakecoursemark,jdbcType=VARCHAR}, #{retakecoursemodecode,jdbcType=VARCHAR}, 
-      #{retakecoursemodeexplain,jdbcType=VARCHAR}, #{standardpoint,jdbcType=VARCHAR}, 
-      #{gmtCreate,jdbcType=TIMESTAMP})
+    insert into urp_grade (id, exam_id, account,
+    score, grade_point, level_name,
+    level_point, rank, unpassed_reason_code,
+    unpassed_reason_explain, remark, replace_course_number,
+    retake_course_mark, retakeCourse_mode_code,
+    retake_course_mode_explain, standard_point,
+    gmt_create)
+    values (#{id,jdbcType=INTEGER}, #{examId,jdbcType=INTEGER}, #{account,jdbcType=INTEGER},
+    #{score,jdbcType=INTEGER}, #{gradePoint,jdbcType=DOUBLE}, #{levelName,jdbcType=VARCHAR},
+    #{levelPoint,jdbcType=VARCHAR}, #{rank,jdbcType=INTEGER}, #{unpassedReasonCode,jdbcType=VARCHAR},
+    #{unpassedReasonExplain,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{replaceCourseNumber,jdbcType=VARCHAR},
+    #{retakeCourseMark,jdbcType=VARCHAR}, #{retakecourseModeCode,jdbcType=VARCHAR},
+    #{retakeCourseModeExplain,jdbcType=VARCHAR}, #{standardPoint,jdbcType=VARCHAR},
+    #{gmtCreate,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="cn.hkxj.platform.pojo.UrpGrade" >
     <selectKey order="AFTER" keyProperty="id" resultType="int">
@@ -159,29 +159,29 @@
       <if test="rank != null" >
         rank,
       </if>
-      <if test="unpassedreasoncode != null" >
-        unpassedReasonCode,
+      <if test="unpassedReasonCode != null" >
+        unpassed_reason_code,
       </if>
-      <if test="unpassedreasonexplain != null" >
-        unpassedReasonExplain,
+      <if test="unpassedReasonExplain != null" >
+        unpassed_reason_explain,
       </if>
       <if test="remark != null" >
         remark,
       </if>
-      <if test="replacecoursenumber != null" >
-        replaceCourseNumber,
+      <if test="replaceCourseNumber != null" >
+        replace_course_number,
       </if>
-      <if test="retakecoursemark != null" >
-        retakeCourseMark,
+      <if test="retakeCourseMark != null" >
+        retake_course_mark,
       </if>
-      <if test="retakecoursemodecode != null" >
-        retakeCourseModeCode,
+      <if test="retakecourseModeCode != null" >
+        retakeCourse_mode_code,
       </if>
-      <if test="retakecoursemodeexplain != null" >
-        retakeCourseModeExplain,
+      <if test="retakeCourseModeExplain != null" >
+        retake_course_mode_explain,
       </if>
-      <if test="standardpoint != null" >
-        standardPoint,
+      <if test="standardPoint != null" >
+        standard_point,
       </if>
       <if test="gmtCreate != null" >
         gmt_create,
@@ -212,29 +212,29 @@
       <if test="rank != null" >
         #{rank,jdbcType=INTEGER},
       </if>
-      <if test="unpassedreasoncode != null" >
-        #{unpassedreasoncode,jdbcType=VARCHAR},
+      <if test="unpassedReasonCode != null" >
+        #{unpassedReasonCode,jdbcType=VARCHAR},
       </if>
-      <if test="unpassedreasonexplain != null" >
-        #{unpassedreasonexplain,jdbcType=VARCHAR},
+      <if test="unpassedReasonExplain != null" >
+        #{unpassedReasonExplain,jdbcType=VARCHAR},
       </if>
       <if test="remark != null" >
         #{remark,jdbcType=VARCHAR},
       </if>
-      <if test="replacecoursenumber != null" >
-        #{replacecoursenumber,jdbcType=VARCHAR},
+      <if test="replaceCourseNumber != null" >
+        #{replaceCourseNumber,jdbcType=VARCHAR},
       </if>
-      <if test="retakecoursemark != null" >
-        #{retakecoursemark,jdbcType=VARCHAR},
+      <if test="retakeCourseMark != null" >
+        #{retakeCourseMark,jdbcType=VARCHAR},
       </if>
-      <if test="retakecoursemodecode != null" >
-        #{retakecoursemodecode,jdbcType=VARCHAR},
+      <if test="retakecourseModeCode != null" >
+        #{retakecourseModeCode,jdbcType=VARCHAR},
       </if>
-      <if test="retakecoursemodeexplain != null" >
-        #{retakecoursemodeexplain,jdbcType=VARCHAR},
+      <if test="retakeCourseModeExplain != null" >
+        #{retakeCourseModeExplain,jdbcType=VARCHAR},
       </if>
-      <if test="standardpoint != null" >
-        #{standardpoint,jdbcType=VARCHAR},
+      <if test="standardPoint != null" >
+        #{standardPoint,jdbcType=VARCHAR},
       </if>
       <if test="gmtCreate != null" >
         #{gmtCreate,jdbcType=TIMESTAMP},
@@ -274,29 +274,29 @@
       <if test="record.rank != null" >
         rank = #{record.rank,jdbcType=INTEGER},
       </if>
-      <if test="record.unpassedreasoncode != null" >
-        unpassedReasonCode = #{record.unpassedreasoncode,jdbcType=VARCHAR},
+      <if test="record.unpassedReasonCode != null" >
+        unpassed_reason_code = #{record.unpassedReasonCode,jdbcType=VARCHAR},
       </if>
-      <if test="record.unpassedreasonexplain != null" >
-        unpassedReasonExplain = #{record.unpassedreasonexplain,jdbcType=VARCHAR},
+      <if test="record.unpassedReasonExplain != null" >
+        unpassed_reason_explain = #{record.unpassedReasonExplain,jdbcType=VARCHAR},
       </if>
       <if test="record.remark != null" >
         remark = #{record.remark,jdbcType=VARCHAR},
       </if>
-      <if test="record.replacecoursenumber != null" >
-        replaceCourseNumber = #{record.replacecoursenumber,jdbcType=VARCHAR},
+      <if test="record.replaceCourseNumber != null" >
+        replace_course_number = #{record.replaceCourseNumber,jdbcType=VARCHAR},
       </if>
-      <if test="record.retakecoursemark != null" >
-        retakeCourseMark = #{record.retakecoursemark,jdbcType=VARCHAR},
+      <if test="record.retakeCourseMark != null" >
+        retake_course_mark = #{record.retakeCourseMark,jdbcType=VARCHAR},
       </if>
-      <if test="record.retakecoursemodecode != null" >
-        retakeCourseModeCode = #{record.retakecoursemodecode,jdbcType=VARCHAR},
+      <if test="record.retakecourseModeCode != null" >
+        retakeCourse_mode_code = #{record.retakecourseModeCode,jdbcType=VARCHAR},
       </if>
-      <if test="record.retakecoursemodeexplain != null" >
-        retakeCourseModeExplain = #{record.retakecoursemodeexplain,jdbcType=VARCHAR},
+      <if test="record.retakeCourseModeExplain != null" >
+        retake_course_mode_explain = #{record.retakeCourseModeExplain,jdbcType=VARCHAR},
       </if>
-      <if test="record.standardpoint != null" >
-        standardPoint = #{record.standardpoint,jdbcType=VARCHAR},
+      <if test="record.standardPoint != null" >
+        standard_point = #{record.standardPoint,jdbcType=VARCHAR},
       </if>
       <if test="record.gmtCreate != null" >
         gmt_create = #{record.gmtCreate,jdbcType=TIMESTAMP},
@@ -309,22 +309,22 @@
   <update id="updateByExample" parameterType="map" >
     update urp_grade
     set id = #{record.id,jdbcType=INTEGER},
-      exam_id = #{record.examId,jdbcType=INTEGER},
-      account = #{record.account,jdbcType=INTEGER},
-      score = #{record.score,jdbcType=INTEGER},
-      grade_point = #{record.gradePoint,jdbcType=DOUBLE},
-      level_name = #{record.levelName,jdbcType=VARCHAR},
-      level_point = #{record.levelPoint,jdbcType=VARCHAR},
-      rank = #{record.rank,jdbcType=INTEGER},
-      unpassedReasonCode = #{record.unpassedreasoncode,jdbcType=VARCHAR},
-      unpassedReasonExplain = #{record.unpassedreasonexplain,jdbcType=VARCHAR},
-      remark = #{record.remark,jdbcType=VARCHAR},
-      replaceCourseNumber = #{record.replacecoursenumber,jdbcType=VARCHAR},
-      retakeCourseMark = #{record.retakecoursemark,jdbcType=VARCHAR},
-      retakeCourseModeCode = #{record.retakecoursemodecode,jdbcType=VARCHAR},
-      retakeCourseModeExplain = #{record.retakecoursemodeexplain,jdbcType=VARCHAR},
-      standardPoint = #{record.standardpoint,jdbcType=VARCHAR},
-      gmt_create = #{record.gmtCreate,jdbcType=TIMESTAMP}
+    exam_id = #{record.examId,jdbcType=INTEGER},
+    account = #{record.account,jdbcType=INTEGER},
+    score = #{record.score,jdbcType=INTEGER},
+    grade_point = #{record.gradePoint,jdbcType=DOUBLE},
+    level_name = #{record.levelName,jdbcType=VARCHAR},
+    level_point = #{record.levelPoint,jdbcType=VARCHAR},
+    rank = #{record.rank,jdbcType=INTEGER},
+    unpassed_reason_code = #{record.unpassedReasonCode,jdbcType=VARCHAR},
+    unpassed_reason_explain = #{record.unpassedReasonExplain,jdbcType=VARCHAR},
+    remark = #{record.remark,jdbcType=VARCHAR},
+    replace_course_number = #{record.replaceCourseNumber,jdbcType=VARCHAR},
+    retake_course_mark = #{record.retakeCourseMark,jdbcType=VARCHAR},
+    retakeCourse_mode_code = #{record.retakecourseModeCode,jdbcType=VARCHAR},
+    retake_course_mode_explain = #{record.retakeCourseModeExplain,jdbcType=VARCHAR},
+    standard_point = #{record.standardPoint,jdbcType=VARCHAR},
+    gmt_create = #{record.gmtCreate,jdbcType=TIMESTAMP}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -353,29 +353,29 @@
       <if test="rank != null" >
         rank = #{rank,jdbcType=INTEGER},
       </if>
-      <if test="unpassedreasoncode != null" >
-        unpassedReasonCode = #{unpassedreasoncode,jdbcType=VARCHAR},
+      <if test="unpassedReasonCode != null" >
+        unpassed_reason_code = #{unpassedReasonCode,jdbcType=VARCHAR},
       </if>
-      <if test="unpassedreasonexplain != null" >
-        unpassedReasonExplain = #{unpassedreasonexplain,jdbcType=VARCHAR},
+      <if test="unpassedReasonExplain != null" >
+        unpassed_reason_explain = #{unpassedReasonExplain,jdbcType=VARCHAR},
       </if>
       <if test="remark != null" >
         remark = #{remark,jdbcType=VARCHAR},
       </if>
-      <if test="replacecoursenumber != null" >
-        replaceCourseNumber = #{replacecoursenumber,jdbcType=VARCHAR},
+      <if test="replaceCourseNumber != null" >
+        replace_course_number = #{replaceCourseNumber,jdbcType=VARCHAR},
       </if>
-      <if test="retakecoursemark != null" >
-        retakeCourseMark = #{retakecoursemark,jdbcType=VARCHAR},
+      <if test="retakeCourseMark != null" >
+        retake_course_mark = #{retakeCourseMark,jdbcType=VARCHAR},
       </if>
-      <if test="retakecoursemodecode != null" >
-        retakeCourseModeCode = #{retakecoursemodecode,jdbcType=VARCHAR},
+      <if test="retakecourseModeCode != null" >
+        retakeCourse_mode_code = #{retakecourseModeCode,jdbcType=VARCHAR},
       </if>
-      <if test="retakecoursemodeexplain != null" >
-        retakeCourseModeExplain = #{retakecoursemodeexplain,jdbcType=VARCHAR},
+      <if test="retakeCourseModeExplain != null" >
+        retake_course_mode_explain = #{retakeCourseModeExplain,jdbcType=VARCHAR},
       </if>
-      <if test="standardpoint != null" >
-        standardPoint = #{standardpoint,jdbcType=VARCHAR},
+      <if test="standardPoint != null" >
+        standard_point = #{standardPoint,jdbcType=VARCHAR},
       </if>
       <if test="gmtCreate != null" >
         gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
@@ -392,14 +392,14 @@
       level_name = #{levelName,jdbcType=VARCHAR},
       level_point = #{levelPoint,jdbcType=VARCHAR},
       rank = #{rank,jdbcType=INTEGER},
-      unpassedReasonCode = #{unpassedreasoncode,jdbcType=VARCHAR},
-      unpassedReasonExplain = #{unpassedreasonexplain,jdbcType=VARCHAR},
+      unpassed_reason_code = #{unpassedReasonCode,jdbcType=VARCHAR},
+      unpassed_reason_explain = #{unpassedReasonExplain,jdbcType=VARCHAR},
       remark = #{remark,jdbcType=VARCHAR},
-      replaceCourseNumber = #{replacecoursenumber,jdbcType=VARCHAR},
-      retakeCourseMark = #{retakecoursemark,jdbcType=VARCHAR},
-      retakeCourseModeCode = #{retakecoursemodecode,jdbcType=VARCHAR},
-      retakeCourseModeExplain = #{retakecoursemodeexplain,jdbcType=VARCHAR},
-      standardPoint = #{standardpoint,jdbcType=VARCHAR},
+      replace_course_number = #{replaceCourseNumber,jdbcType=VARCHAR},
+      retake_course_mark = #{retakeCourseMark,jdbcType=VARCHAR},
+      retakeCourse_mode_code = #{retakecourseModeCode,jdbcType=VARCHAR},
+      retake_course_mode_explain = #{retakeCourseModeExplain,jdbcType=VARCHAR},
+      standard_point = #{standardPoint,jdbcType=VARCHAR},
       gmt_create = #{gmtCreate,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
   </update>

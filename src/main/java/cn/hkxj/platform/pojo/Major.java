@@ -5,9 +5,9 @@ import java.util.Date;
 public class Major {
     private Integer id;
 
-    private String zyh;
+    private String professionalNumber;
 
-    private String zym;
+    private String professionalName;
 
     private Date gmtCreate;
 
@@ -19,20 +19,20 @@ public class Major {
         this.id = id;
     }
 
-    public String getZyh() {
-        return zyh;
+    public String getProfessionalNumber() {
+        return professionalNumber;
     }
 
-    public void setZyh(String zyh) {
-        this.zyh = zyh == null ? null : zyh.trim();
+    public void setProfessionalNumber(String professionalNumber) {
+        this.professionalNumber = professionalNumber == null ? null : professionalNumber.trim();
     }
 
-    public String getZym() {
-        return zym;
+    public String getProfessionalName() {
+        return professionalName;
     }
 
-    public void setZym(String zym) {
-        this.zym = zym == null ? null : zym.trim();
+    public void setProfessionalName(String professionalName) {
+        this.professionalName = professionalName == null ? null : professionalName.trim();
     }
 
     public Date getGmtCreate() {

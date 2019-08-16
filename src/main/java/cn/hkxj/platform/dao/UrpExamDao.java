@@ -27,8 +27,8 @@ public class UrpExamDao {
         UrpExamExample examExample = new UrpExamExample();
         examExample.createCriteria()
                 .andCourseIdEqualTo(uid)
-                .andTermnameEqualTo(term.getTermName())
-                .andTermcodeEqualTo(term.getTermCode());
+                .andTermNameEqualTo(term.getTermName())
+                .andTermCodeEqualTo(term.getTermCode());
         return urpExamMapper.selectByExample(examExample).stream().findFirst().orElse(null);
     }
 
@@ -36,8 +36,8 @@ public class UrpExamDao {
         UrpExamExample example = new UrpExamExample();
         example.createCriteria()
                 .andClassIdEqualTo(classId)
-                .andTermcodeEqualTo(currentTerm.getTermCode())
-                .andTermnameEqualTo(currentTerm.getTermName());
+                .andTermCodeEqualTo(currentTerm.getTermCode())
+                .andTermNameEqualTo(currentTerm.getTermName());
         return urpExamMapper.selectByExample(example);
     }
 
@@ -50,8 +50,8 @@ public class UrpExamDao {
         example.createCriteria()
                 .andClassIdEqualTo(classId)
                 .andCourseIdEqualTo(uid)
-                .andTermcodeEqualTo(term.getTermCode())
-                .andTermnameEqualTo(term.getTermName());
+                .andTermCodeEqualTo(term.getTermCode())
+                .andTermNameEqualTo(term.getTermName());
         return urpExamMapper.countByExample(example) == 1;
     }
 }

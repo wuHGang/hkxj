@@ -22,21 +22,21 @@ public class UrpGrade {
 
     private Integer rank;
 
-    private String unpassedreasoncode;
+    private String unpassedReasonCode;
 
-    private String unpassedreasonexplain;
+    private String unpassedReasonExplain;
 
     private String remark;
 
-    private String replacecoursenumber;
+    private String replaceCourseNumber;
 
-    private String retakecoursemark;
+    private String retakeCourseMark;
 
-    private String retakecoursemodecode;
+    private String retakecourseModeCode;
 
-    private String retakecoursemodeexplain;
+    private String retakeCourseModeExplain;
 
-    private String standardpoint;
+    private String standardPoint;
 
     private Date gmtCreate;
 

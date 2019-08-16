@@ -4,15 +4,15 @@
   <resultMap id="BaseResultMap" type="cn.hkxj.platform.pojo.UrpGradeDetail" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="grade_id" property="gradeId" jdbcType="INTEGER" />
-    <result column="usualScoreCoefficient" property="usualscorecoefficient" jdbcType="VARCHAR" />
-    <result column="midtermScoreCoefficient" property="midtermscorecoefficient" jdbcType="VARCHAR" />
-    <result column="endtermScoreCoefficient" property="endtermscorecoefficient" jdbcType="VARCHAR" />
-    <result column="scoreCoefficient" property="scorecoefficient" jdbcType="VARCHAR" />
+    <result column="usual_score_coefficient" property="usualScoreCoefficient" jdbcType="VARCHAR" />
+    <result column="midterm_score_coefficient" property="midtermScoreCoefficient" jdbcType="VARCHAR" />
+    <result column="endterm_score_coefficient" property="endtermScoreCoefficient" jdbcType="VARCHAR" />
+    <result column="score_coefficient" property="scoreCoefficient" jdbcType="VARCHAR" />
     <result column="xs_remark" property="xsRemark" jdbcType="VARCHAR" />
-    <result column="zcj" property="zcj" jdbcType="DOUBLE" />
-    <result column="pscj" property="pscj" jdbcType="DOUBLE" />
-    <result column="qzcj" property="qzcj" jdbcType="DOUBLE" />
-    <result column="qmcj" property="qmcj" jdbcType="DOUBLE" />
+    <result column="total_grade" property="totalGrade" jdbcType="DOUBLE" />
+    <result column="regular_grade" property="regularGrade" jdbcType="DOUBLE" />
+    <result column="midterm_grade" property="midtermGrade" jdbcType="DOUBLE" />
+    <result column="finalterm_grade" property="finaltermGrade" jdbcType="DOUBLE" />
     <result column="rounding" property="rounding" jdbcType="VARCHAR" />
     <result column="mx_remark" property="mxRemark" jdbcType="VARCHAR" />
     <result column="mx_remark1" property="mxRemark1" jdbcType="VARCHAR" />
@@ -25,7 +25,7 @@
     <result column="secondpscjxs" property="secondpscjxs" jdbcType="VARCHAR" />
     <result column="secondqzcjxs" property="secondqzcjxs" jdbcType="VARCHAR" />
     <result column="secondqmcjxs" property="secondqmcjxs" jdbcType="VARCHAR" />
-    <result column="scoreTypeCode" property="scoretypecode" jdbcType="VARCHAR" />
+    <result column="score_type_code" property="scoreTypeCode" jdbcType="VARCHAR" />
     <result column="gmt_create" property="gmtCreate" jdbcType="TIMESTAMP" />
   </resultMap>
   <sql id="Example_Where_Clause" >
@@ -87,10 +87,11 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, grade_id, usualScoreCoefficient, midtermScoreCoefficient, endtermScoreCoefficient, 
-    scoreCoefficient, xs_remark, zcj, pscj, qzcj, qmcj, rounding, mx_remark, mx_remark1, 
-    mx_remark2, firstcjxs, firstpscjxs, firstqzcjxs, firstqmcjxs, secondcjxs, secondpscjxs, 
-    secondqzcjxs, secondqmcjxs, scoreTypeCode, gmt_create
+    id, grade_id, usual_score_coefficient, midterm_score_coefficient, endterm_score_coefficient,
+    score_coefficient, xs_remark, total_grade, regular_grade, midterm_grade, finalterm_grade,
+    rounding, mx_remark, mx_remark1, mx_remark2, firstcjxs, firstpscjxs, firstqzcjxs,
+    firstqmcjxs, secondcjxs, secondpscjxs, secondqzcjxs, secondqmcjxs, score_type_code,
+    gmt_create
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="cn.hkxj.platform.pojo.example.UrpGradeDetailExample" >
     select
@@ -107,7 +108,7 @@
     </if>
   </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
-    select 
+    select
     <include refid="Base_Column_List" />
     from urp_grade_detail
     where id = #{id,jdbcType=INTEGER}
@@ -123,24 +124,24 @@
     </if>
   </delete>
   <insert id="insert" parameterType="cn.hkxj.platform.pojo.UrpGradeDetail" >
-    insert into urp_grade_detail (id, grade_id, usualScoreCoefficient, 
-      midtermScoreCoefficient, endtermScoreCoefficient, 
-      scoreCoefficient, xs_remark, zcj, 
-      pscj, qzcj, qmcj, rounding, 
-      mx_remark, mx_remark1, mx_remark2, 
-      firstcjxs, firstpscjxs, firstqzcjxs, 
-      firstqmcjxs, secondcjxs, secondpscjxs, 
-      secondqzcjxs, secondqmcjxs, scoreTypeCode, 
-      gmt_create)
-    values (#{id,jdbcType=INTEGER}, #{gradeId,jdbcType=INTEGER}, #{usualscorecoefficient,jdbcType=VARCHAR}, 
-      #{midtermscorecoefficient,jdbcType=VARCHAR}, #{endtermscorecoefficient,jdbcType=VARCHAR}, 
-      #{scorecoefficient,jdbcType=VARCHAR}, #{xsRemark,jdbcType=VARCHAR}, #{zcj,jdbcType=DOUBLE}, 
-      #{pscj,jdbcType=DOUBLE}, #{qzcj,jdbcType=DOUBLE}, #{qmcj,jdbcType=DOUBLE}, #{rounding,jdbcType=VARCHAR}, 
-      #{mxRemark,jdbcType=VARCHAR}, #{mxRemark1,jdbcType=VARCHAR}, #{mxRemark2,jdbcType=VARCHAR}, 
-      #{firstcjxs,jdbcType=VARCHAR}, #{firstpscjxs,jdbcType=VARCHAR}, #{firstqzcjxs,jdbcType=VARCHAR}, 
-      #{firstqmcjxs,jdbcType=VARCHAR}, #{secondcjxs,jdbcType=VARCHAR}, #{secondpscjxs,jdbcType=VARCHAR}, 
-      #{secondqzcjxs,jdbcType=VARCHAR}, #{secondqmcjxs,jdbcType=VARCHAR}, #{scoretypecode,jdbcType=VARCHAR}, 
-      #{gmtCreate,jdbcType=TIMESTAMP})
+    insert into urp_grade_detail (id, grade_id, usual_score_coefficient,
+    midterm_score_coefficient, endterm_score_coefficient,
+    score_coefficient, xs_remark, total_grade,
+    regular_grade, midterm_grade, finalterm_grade,
+    rounding, mx_remark, mx_remark1,
+    mx_remark2, firstcjxs, firstpscjxs,
+    firstqzcjxs, firstqmcjxs, secondcjxs,
+    secondpscjxs, secondqzcjxs, secondqmcjxs,
+    score_type_code, gmt_create)
+    values (#{id,jdbcType=INTEGER}, #{gradeId,jdbcType=INTEGER}, #{usualScoreCoefficient,jdbcType=VARCHAR},
+    #{midtermScoreCoefficient,jdbcType=VARCHAR}, #{endtermScoreCoefficient,jdbcType=VARCHAR},
+    #{scoreCoefficient,jdbcType=VARCHAR}, #{xsRemark,jdbcType=VARCHAR}, #{totalGrade,jdbcType=DOUBLE},
+    #{regularGrade,jdbcType=DOUBLE}, #{midtermGrade,jdbcType=DOUBLE}, #{finaltermGrade,jdbcType=DOUBLE},
+    #{rounding,jdbcType=VARCHAR}, #{mxRemark,jdbcType=VARCHAR}, #{mxRemark1,jdbcType=VARCHAR},
+    #{mxRemark2,jdbcType=VARCHAR}, #{firstcjxs,jdbcType=VARCHAR}, #{firstpscjxs,jdbcType=VARCHAR},
+    #{firstqzcjxs,jdbcType=VARCHAR}, #{firstqmcjxs,jdbcType=VARCHAR}, #{secondcjxs,jdbcType=VARCHAR},
+    #{secondpscjxs,jdbcType=VARCHAR}, #{secondqzcjxs,jdbcType=VARCHAR}, #{secondqmcjxs,jdbcType=VARCHAR},
+    #{scoreTypeCode,jdbcType=VARCHAR}, #{gmtCreate,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="cn.hkxj.platform.pojo.UrpGradeDetail" >
     <selectKey order="AFTER" keyProperty="id" resultType="int">
@@ -154,32 +155,32 @@
       <if test="gradeId != null" >
         grade_id,
       </if>
-      <if test="usualscorecoefficient != null" >
-        usualScoreCoefficient,
+      <if test="usualScoreCoefficient != null" >
+        usual_score_coefficient,
       </if>
-      <if test="midtermscorecoefficient != null" >
-        midtermScoreCoefficient,
+      <if test="midtermScoreCoefficient != null" >
+        midterm_score_coefficient,
       </if>
-      <if test="endtermscorecoefficient != null" >
-        endtermScoreCoefficient,
+      <if test="endtermScoreCoefficient != null" >
+        endterm_score_coefficient,
       </if>
-      <if test="scorecoefficient != null" >
-        scoreCoefficient,
+      <if test="scoreCoefficient != null" >
+        score_coefficient,
       </if>
       <if test="xsRemark != null" >
         xs_remark,
       </if>
-      <if test="zcj != null" >
-        zcj,
+      <if test="totalGrade != null" >
+        total_grade,
       </if>
-      <if test="pscj != null" >
-        pscj,
+      <if test="regularGrade != null" >
+        regular_grade,
       </if>
-      <if test="qzcj != null" >
-        qzcj,
+      <if test="midtermGrade != null" >
+        midterm_grade,
       </if>
-      <if test="qmcj != null" >
-        qmcj,
+      <if test="finaltermGrade != null" >
+        finalterm_grade,
       </if>
       <if test="rounding != null" >
         rounding,
@@ -217,8 +218,8 @@
       <if test="secondqmcjxs != null" >
         secondqmcjxs,
       </if>
-      <if test="scoretypecode != null" >
-        scoreTypeCode,
+      <if test="scoreTypeCode != null" >
+        score_type_code,
       </if>
       <if test="gmtCreate != null" >
         gmt_create,
@@ -231,32 +232,32 @@
       <if test="gradeId != null" >
         #{gradeId,jdbcType=INTEGER},
       </if>
-      <if test="usualscorecoefficient != null" >
-        #{usualscorecoefficient,jdbcType=VARCHAR},
+      <if test="usualScoreCoefficient != null" >
+        #{usualScoreCoefficient,jdbcType=VARCHAR},
       </if>
-      <if test="midtermscorecoefficient != null" >
-        #{midtermscorecoefficient,jdbcType=VARCHAR},
+      <if test="midtermScoreCoefficient != null" >
+        #{midtermScoreCoefficient,jdbcType=VARCHAR},
       </if>
-      <if test="endtermscorecoefficient != null" >
-        #{endtermscorecoefficient,jdbcType=VARCHAR},
+      <if test="endtermScoreCoefficient != null" >
+        #{endtermScoreCoefficient,jdbcType=VARCHAR},
       </if>
-      <if test="scorecoefficient != null" >
-        #{scorecoefficient,jdbcType=VARCHAR},
+      <if test="scoreCoefficient != null" >
+        #{scoreCoefficient,jdbcType=VARCHAR},
       </if>
       <if test="xsRemark != null" >
         #{xsRemark,jdbcType=VARCHAR},
       </if>
-      <if test="zcj != null" >
-        #{zcj,jdbcType=DOUBLE},
+      <if test="totalGrade != null" >
+        #{totalGrade,jdbcType=DOUBLE},
       </if>
-      <if test="pscj != null" >
-        #{pscj,jdbcType=DOUBLE},
+      <if test="regularGrade != null" >
+        #{regularGrade,jdbcType=DOUBLE},
       </if>
-      <if test="qzcj != null" >
-        #{qzcj,jdbcType=DOUBLE},
+      <if test="midtermGrade != null" >
+        #{midtermGrade,jdbcType=DOUBLE},
       </if>
-      <if test="qmcj != null" >
-        #{qmcj,jdbcType=DOUBLE},
+      <if test="finaltermGrade != null" >
+        #{finaltermGrade,jdbcType=DOUBLE},
       </if>
       <if test="rounding != null" >
         #{rounding,jdbcType=VARCHAR},
@@ -294,8 +295,8 @@
       <if test="secondqmcjxs != null" >
         #{secondqmcjxs,jdbcType=VARCHAR},
       </if>
-      <if test="scoretypecode != null" >
-        #{scoretypecode,jdbcType=VARCHAR},
+      <if test="scoreTypeCode != null" >
+        #{scoreTypeCode,jdbcType=VARCHAR},
       </if>
       <if test="gmtCreate != null" >
         #{gmtCreate,jdbcType=TIMESTAMP},
@@ -317,32 +318,32 @@
       <if test="record.gradeId != null" >
         grade_id = #{record.gradeId,jdbcType=INTEGER},
       </if>
-      <if test="record.usualscorecoefficient != null" >
-        usualScoreCoefficient = #{record.usualscorecoefficient,jdbcType=VARCHAR},
+      <if test="record.usualScoreCoefficient != null" >
+        usual_score_coefficient = #{record.usualScoreCoefficient,jdbcType=VARCHAR},
       </if>
-      <if test="record.midtermscorecoefficient != null" >
-        midtermScoreCoefficient = #{record.midtermscorecoefficient,jdbcType=VARCHAR},
+      <if test="record.midtermScoreCoefficient != null" >
+        midterm_score_coefficient = #{record.midtermScoreCoefficient,jdbcType=VARCHAR},
       </if>
-      <if test="record.endtermscorecoefficient != null" >
-        endtermScoreCoefficient = #{record.endtermscorecoefficient,jdbcType=VARCHAR},
+      <if test="record.endtermScoreCoefficient != null" >
+        endterm_score_coefficient = #{record.endtermScoreCoefficient,jdbcType=VARCHAR},
       </if>
-      <if test="record.scorecoefficient != null" >
-        scoreCoefficient = #{record.scorecoefficient,jdbcType=VARCHAR},
+      <if test="record.scoreCoefficient != null" >
+        score_coefficient = #{record.scoreCoefficient,jdbcType=VARCHAR},
       </if>
       <if test="record.xsRemark != null" >
         xs_remark = #{record.xsRemark,jdbcType=VARCHAR},
       </if>
-      <if test="record.zcj != null" >
-        zcj = #{record.zcj,jdbcType=DOUBLE},
+      <if test="record.totalGrade != null" >
+        total_grade = #{record.totalGrade,jdbcType=DOUBLE},
       </if>
-      <if test="record.pscj != null" >
-        pscj = #{record.pscj,jdbcType=DOUBLE},
+      <if test="record.regularGrade != null" >
+        regular_grade = #{record.regularGrade,jdbcType=DOUBLE},
       </if>
-      <if test="record.qzcj != null" >
-        qzcj = #{record.qzcj,jdbcType=DOUBLE},
+      <if test="record.midtermGrade != null" >
+        midterm_grade = #{record.midtermGrade,jdbcType=DOUBLE},
       </if>
-      <if test="record.qmcj != null" >
-        qmcj = #{record.qmcj,jdbcType=DOUBLE},
+      <if test="record.finaltermGrade != null" >
+        finalterm_grade = #{record.finaltermGrade,jdbcType=DOUBLE},
       </if>
       <if test="record.rounding != null" >
         rounding = #{record.rounding,jdbcType=VARCHAR},
@@ -380,8 +381,8 @@
       <if test="record.secondqmcjxs != null" >
         secondqmcjxs = #{record.secondqmcjxs,jdbcType=VARCHAR},
       </if>
-      <if test="record.scoretypecode != null" >
-        scoreTypeCode = #{record.scoretypecode,jdbcType=VARCHAR},
+      <if test="record.scoreTypeCode != null" >
+        score_type_code = #{record.scoreTypeCode,jdbcType=VARCHAR},
       </if>
       <if test="record.gmtCreate != null" >
         gmt_create = #{record.gmtCreate,jdbcType=TIMESTAMP},
@@ -394,30 +395,30 @@
   <update id="updateByExample" parameterType="map" >
     update urp_grade_detail
     set id = #{record.id,jdbcType=INTEGER},
-      grade_id = #{record.gradeId,jdbcType=INTEGER},
-      usualScoreCoefficient = #{record.usualscorecoefficient,jdbcType=VARCHAR},
-      midtermScoreCoefficient = #{record.midtermscorecoefficient,jdbcType=VARCHAR},
-      endtermScoreCoefficient = #{record.endtermscorecoefficient,jdbcType=VARCHAR},
-      scoreCoefficient = #{record.scorecoefficient,jdbcType=VARCHAR},
-      xs_remark = #{record.xsRemark,jdbcType=VARCHAR},
-      zcj = #{record.zcj,jdbcType=DOUBLE},
-      pscj = #{record.pscj,jdbcType=DOUBLE},
-      qzcj = #{record.qzcj,jdbcType=DOUBLE},
-      qmcj = #{record.qmcj,jdbcType=DOUBLE},
-      rounding = #{record.rounding,jdbcType=VARCHAR},
-      mx_remark = #{record.mxRemark,jdbcType=VARCHAR},
-      mx_remark1 = #{record.mxRemark1,jdbcType=VARCHAR},
-      mx_remark2 = #{record.mxRemark2,jdbcType=VARCHAR},
-      firstcjxs = #{record.firstcjxs,jdbcType=VARCHAR},
-      firstpscjxs = #{record.firstpscjxs,jdbcType=VARCHAR},
-      firstqzcjxs = #{record.firstqzcjxs,jdbcType=VARCHAR},
-      firstqmcjxs = #{record.firstqmcjxs,jdbcType=VARCHAR},
-      secondcjxs = #{record.secondcjxs,jdbcType=VARCHAR},
-      secondpscjxs = #{record.secondpscjxs,jdbcType=VARCHAR},
-      secondqzcjxs = #{record.secondqzcjxs,jdbcType=VARCHAR},
-      secondqmcjxs = #{record.secondqmcjxs,jdbcType=VARCHAR},
-      scoreTypeCode = #{record.scoretypecode,jdbcType=VARCHAR},
-      gmt_create = #{record.gmtCreate,jdbcType=TIMESTAMP}
+    grade_id = #{record.gradeId,jdbcType=INTEGER},
+    usual_score_coefficient = #{record.usualScoreCoefficient,jdbcType=VARCHAR},
+    midterm_score_coefficient = #{record.midtermScoreCoefficient,jdbcType=VARCHAR},
+    endterm_score_coefficient = #{record.endtermScoreCoefficient,jdbcType=VARCHAR},
+    score_coefficient = #{record.scoreCoefficient,jdbcType=VARCHAR},
+    xs_remark = #{record.xsRemark,jdbcType=VARCHAR},
+    total_grade = #{record.totalGrade,jdbcType=DOUBLE},
+    regular_grade = #{record.regularGrade,jdbcType=DOUBLE},
+    midterm_grade = #{record.midtermGrade,jdbcType=DOUBLE},
+    finalterm_grade = #{record.finaltermGrade,jdbcType=DOUBLE},
+    rounding = #{record.rounding,jdbcType=VARCHAR},
+    mx_remark = #{record.mxRemark,jdbcType=VARCHAR},
+    mx_remark1 = #{record.mxRemark1,jdbcType=VARCHAR},
+    mx_remark2 = #{record.mxRemark2,jdbcType=VARCHAR},
+    firstcjxs = #{record.firstcjxs,jdbcType=VARCHAR},
+    firstpscjxs = #{record.firstpscjxs,jdbcType=VARCHAR},
+    firstqzcjxs = #{record.firstqzcjxs,jdbcType=VARCHAR},
+    firstqmcjxs = #{record.firstqmcjxs,jdbcType=VARCHAR},
+    secondcjxs = #{record.secondcjxs,jdbcType=VARCHAR},
+    secondpscjxs = #{record.secondpscjxs,jdbcType=VARCHAR},
+    secondqzcjxs = #{record.secondqzcjxs,jdbcType=VARCHAR},
+    secondqmcjxs = #{record.secondqmcjxs,jdbcType=VARCHAR},
+    score_type_code = #{record.scoreTypeCode,jdbcType=VARCHAR},
+    gmt_create = #{record.gmtCreate,jdbcType=TIMESTAMP}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -428,32 +429,32 @@
       <if test="gradeId != null" >
         grade_id = #{gradeId,jdbcType=INTEGER},
       </if>
-      <if test="usualscorecoefficient != null" >
-        usualScoreCoefficient = #{usualscorecoefficient,jdbcType=VARCHAR},
+      <if test="usualScoreCoefficient != null" >
+        usual_score_coefficient = #{usualScoreCoefficient,jdbcType=VARCHAR},
       </if>
-      <if test="midtermscorecoefficient != null" >
-        midtermScoreCoefficient = #{midtermscorecoefficient,jdbcType=VARCHAR},
+      <if test="midtermScoreCoefficient != null" >
+        midterm_score_coefficient = #{midtermScoreCoefficient,jdbcType=VARCHAR},
       </if>
-      <if test="endtermscorecoefficient != null" >
-        endtermScoreCoefficient = #{endtermscorecoefficient,jdbcType=VARCHAR},
+      <if test="endtermScoreCoefficient != null" >
+        endterm_score_coefficient = #{endtermScoreCoefficient,jdbcType=VARCHAR},
       </if>
-      <if test="scorecoefficient != null" >
-        scoreCoefficient = #{scorecoefficient,jdbcType=VARCHAR},
+      <if test="scoreCoefficient != null" >
+        score_coefficient = #{scoreCoefficient,jdbcType=VARCHAR},
       </if>
       <if test="xsRemark != null" >
         xs_remark = #{xsRemark,jdbcType=VARCHAR},
       </if>
-      <if test="zcj != null" >
-        zcj = #{zcj,jdbcType=DOUBLE},
+      <if test="totalGrade != null" >
+        total_grade = #{totalGrade,jdbcType=DOUBLE},
       </if>
-      <if test="pscj != null" >
-        pscj = #{pscj,jdbcType=DOUBLE},
+      <if test="regularGrade != null" >
+        regular_grade = #{regularGrade,jdbcType=DOUBLE},
       </if>
-      <if test="qzcj != null" >
-        qzcj = #{qzcj,jdbcType=DOUBLE},
+      <if test="midtermGrade != null" >
+        midterm_grade = #{midtermGrade,jdbcType=DOUBLE},
       </if>
-      <if test="qmcj != null" >
-        qmcj = #{qmcj,jdbcType=DOUBLE},
+      <if test="finaltermGrade != null" >
+        finalterm_grade = #{finaltermGrade,jdbcType=DOUBLE},
       </if>
       <if test="rounding != null" >
         rounding = #{rounding,jdbcType=VARCHAR},
@@ -491,8 +492,8 @@
       <if test="secondqmcjxs != null" >
         secondqmcjxs = #{secondqmcjxs,jdbcType=VARCHAR},
       </if>
-      <if test="scoretypecode != null" >
-        scoreTypeCode = #{scoretypecode,jdbcType=VARCHAR},
+      <if test="scoreTypeCode != null" >
+        score_type_code = #{scoreTypeCode,jdbcType=VARCHAR},
       </if>
       <if test="gmtCreate != null" >
         gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
@@ -503,15 +504,15 @@
   <update id="updateByPrimaryKey" parameterType="cn.hkxj.platform.pojo.UrpGradeDetail" >
     update urp_grade_detail
     set grade_id = #{gradeId,jdbcType=INTEGER},
-      usualScoreCoefficient = #{usualscorecoefficient,jdbcType=VARCHAR},
-      midtermScoreCoefficient = #{midtermscorecoefficient,jdbcType=VARCHAR},
-      endtermScoreCoefficient = #{endtermscorecoefficient,jdbcType=VARCHAR},
-      scoreCoefficient = #{scorecoefficient,jdbcType=VARCHAR},
+      usual_score_coefficient = #{usualScoreCoefficient,jdbcType=VARCHAR},
+      midterm_score_coefficient = #{midtermScoreCoefficient,jdbcType=VARCHAR},
+      endterm_score_coefficient = #{endtermScoreCoefficient,jdbcType=VARCHAR},
+      score_coefficient = #{scoreCoefficient,jdbcType=VARCHAR},
       xs_remark = #{xsRemark,jdbcType=VARCHAR},
-      zcj = #{zcj,jdbcType=DOUBLE},
-      pscj = #{pscj,jdbcType=DOUBLE},
-      qzcj = #{qzcj,jdbcType=DOUBLE},
-      qmcj = #{qmcj,jdbcType=DOUBLE},
+      total_grade = #{totalGrade,jdbcType=DOUBLE},
+      regular_grade = #{regularGrade,jdbcType=DOUBLE},
+      midterm_grade = #{midtermGrade,jdbcType=DOUBLE},
+      finalterm_grade = #{finaltermGrade,jdbcType=DOUBLE},
       rounding = #{rounding,jdbcType=VARCHAR},
       mx_remark = #{mxRemark,jdbcType=VARCHAR},
       mx_remark1 = #{mxRemark1,jdbcType=VARCHAR},
@@ -524,7 +525,7 @@
       secondpscjxs = #{secondpscjxs,jdbcType=VARCHAR},
       secondqzcjxs = #{secondqzcjxs,jdbcType=VARCHAR},
       secondqmcjxs = #{secondqmcjxs,jdbcType=VARCHAR},
-      scoreTypeCode = #{scoretypecode,jdbcType=VARCHAR},
+      score_type_code = #{scoreTypeCode,jdbcType=VARCHAR},
       gmt_create = #{gmtCreate,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
   </update>

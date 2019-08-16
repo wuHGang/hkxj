@@ -201,42 +201,42 @@ public class UrpGeneralGradeForSpider {
         urpGrade.setLevelPoint(this.getLevlePoint());
         urpGrade.setRank(this.getRank());
         urpGrade.setRemark(this.getRemark());
-        urpGrade.setReplacecoursenumber(this.getReplaceCourseNumber());
-        urpGrade.setRetakecoursemark(this.getRetakeCourseMark());
-        urpGrade.setRetakecoursemodecode(this.getRetakeCourseModeCode());
-        urpGrade.setRetakecoursemodeexplain(this.getRetakeCourseModeExplain());
+        urpGrade.setReplaceCourseNumber(this.getReplaceCourseNumber());
+        urpGrade.setRetakeCourseMark(this.getRetakeCourseMark());
+        urpGrade.setRetakecourseModeCode(this.getRetakeCourseModeCode());
+        urpGrade.setRetakeCourseModeExplain(this.getRetakeCourseModeExplain());
         urpGrade.setScore(this.getCourseScore());
-        urpGrade.setStandardpoint(this.getStandardPoint());
-        urpGrade.setUnpassedreasoncode(this.getUnpassedReasonCode());
-        urpGrade.setUnpassedreasonexplain(this.getUnpassedReasonExplain());
+        urpGrade.setStandardPoint(this.getStandardPoint());
+        urpGrade.setUnpassedReasonCode(this.getUnpassedReasonCode());
+        urpGrade.setUnpassedReasonExplain(this.getUnpassedReasonExplain());
         return urpGrade;
     }
 
     public UrpExam convertToUrpExam(){
         UrpExam urpExam = new UrpExam();
-        urpExam.setAvgcj(this.getAvgcj());
-        urpExam.setBjh(this.getBjh());
+        urpExam.setAverageScore(this.getAvgcj());
+        urpExam.setClassNumber(this.getBjh());
         urpExam.setCourseId(this.getId().getCourseNumber());
-        urpExam.setCoursepropertycode(this.getCoursePropertyCode());
-        urpExam.setCoursepropertyname(this.getCoursePropertyName());
-        urpExam.setCoursesequencenumber(this.getCoureSequenceNumber());
+        urpExam.setCoursePropertyCode(this.getCoursePropertyCode());
+        urpExam.setCoursePropertyName(this.getCoursePropertyName());
+        urpExam.setCourseSequenceNumber(this.getCoureSequenceNumber());
         urpExam.setExamtime(this.getId().getExamtime());
-        urpExam.setExecutiveeducationplannumber(this.getId().getExecutiveEducationPlanNumber());
-        urpExam.setMaxcj(this.getMaxcj());
-        urpExam.setMincj(this.getMincj());
+        urpExam.setExecutiveEducationPlanNumber(this.getId().getExecutiveEducationPlanNumber());
+        urpExam.setMaxScore(this.getMaxcj());
+        urpExam.setMinScore(this.getMincj());
         urpExam.setOperatetime(this.getOperatetime());
         urpExam.setOperator(this.getOperator());
-        urpExam.setPersentlevelpoint(this.getPersentlevlePoint());
-        urpExam.setTermcode(this.getTermCode());
-        urpExam.setTermname(this.getTermName());
-        urpExam.setXsh(this.getXsh());
+        urpExam.setPersentLevelPoint(this.getPersentlevlePoint());
+        urpExam.setTermCode(this.getTermCode());
+        urpExam.setTermName(this.getTermName());
+        urpExam.setAcademy(this.getXsh());
         return urpExam;
     }
 
     public Major convertToMajor(){
         Major major = new Major();
-        major.setZyh(this.getZyh());
-        major.setZym(this.getPlanName());
+        major.setProfessionalNumber(this.getZyh());
+        major.setProfessionalName(this.getPlanName());
         return major;
     }
 

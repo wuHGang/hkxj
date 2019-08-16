@@ -13,35 +13,35 @@ public class UrpExam {
 
     private Integer planId;
 
-    private Double avgcj;
+    private Double averageScore;
 
-    private String bjh;
+    private String classNumber;
 
-    private String coursesequencenumber;
+    private String courseSequenceNumber;
 
-    private String coursepropertycode;
+    private String coursePropertyCode;
 
-    private String coursepropertyname;
+    private String coursePropertyName;
 
     private String examtime;
 
-    private String executiveeducationplannumber;
+    private String executiveEducationPlanNumber;
 
-    private Integer maxcj;
+    private Integer maxScore;
 
-    private Integer mincj;
+    private Integer minScore;
 
     private String operator;
 
     private String operatetime;
 
-    private String persentlevelpoint;
+    private String persentLevelPoint;
 
-    private String termcode;
+    private String termCode;
 
-    private String termname;
+    private String termName;
 
-    private Integer xsh;
+    private Integer academy;
 
     private Date gmtCreate;
 
@@ -85,44 +85,44 @@ public class UrpExam {
         this.planId = planId;
     }
 
-    public Double getAvgcj() {
-        return avgcj;
+    public Double getAverageScore() {
+        return averageScore;
     }
 
-    public void setAvgcj(Double avgcj) {
-        this.avgcj = avgcj;
+    public void setAverageScore(Double averageScore) {
+        this.averageScore = averageScore;
     }
 
-    public String getBjh() {
-        return bjh;
+    public String getClassNumber() {
+        return classNumber;
     }
 
-    public void setBjh(String bjh) {
-        this.bjh = bjh == null ? null : bjh.trim();
+    public void setClassNumber(String classNumber) {
+        this.classNumber = classNumber == null ? null : classNumber.trim();
     }
 
-    public String getCoursesequencenumber() {
-        return coursesequencenumber;
+    public String getCourseSequenceNumber() {
+        return courseSequenceNumber;
     }
 
-    public void setCoursesequencenumber(String coursesequencenumber) {
-        this.coursesequencenumber = coursesequencenumber == null ? null : coursesequencenumber.trim();
+    public void setCourseSequenceNumber(String courseSequenceNumber) {
+        this.courseSequenceNumber = courseSequenceNumber == null ? null : courseSequenceNumber.trim();
     }
 
-    public String getCoursepropertycode() {
-        return coursepropertycode;
+    public String getCoursePropertyCode() {
+        return coursePropertyCode;
     }
 
-    public void setCoursepropertycode(String coursepropertycode) {
-        this.coursepropertycode = coursepropertycode == null ? null : coursepropertycode.trim();
+    public void setCoursePropertyCode(String coursePropertyCode) {
+        this.coursePropertyCode = coursePropertyCode == null ? null : coursePropertyCode.trim();
     }
 
-    public String getCoursepropertyname() {
-        return coursepropertyname;
+    public String getCoursePropertyName() {
+        return coursePropertyName;
     }
 
-    public void setCoursepropertyname(String coursepropertyname) {
-        this.coursepropertyname = coursepropertyname == null ? null : coursepropertyname.trim();
+    public void setCoursePropertyName(String coursePropertyName) {
+        this.coursePropertyName = coursePropertyName == null ? null : coursePropertyName.trim();
     }
 
     public String getExamtime() {
@@ -133,28 +133,28 @@ public class UrpExam {
         this.examtime = examtime == null ? null : examtime.trim();
     }
 
-    public String getExecutiveeducationplannumber() {
-        return executiveeducationplannumber;
+    public String getExecutiveEducationPlanNumber() {
+        return executiveEducationPlanNumber;
     }
 
-    public void setExecutiveeducationplannumber(String executiveeducationplannumber) {
-        this.executiveeducationplannumber = executiveeducationplannumber == null ? null : executiveeducationplannumber.trim();
+    public void setExecutiveEducationPlanNumber(String executiveEducationPlanNumber) {
+        this.executiveEducationPlanNumber = executiveEducationPlanNumber == null ? null : executiveEducationPlanNumber.trim();
     }
 
-    public Integer getMaxcj() {
-        return maxcj;
+    public Integer getMaxScore() {
+        return maxScore;
     }
 
-    public void setMaxcj(Integer maxcj) {
-        this.maxcj = maxcj;
+    public void setMaxScore(Integer maxScore) {
+        this.maxScore = maxScore;
     }
 
-    public Integer getMincj() {
-        return mincj;
+    public Integer getMinScore() {
+        return minScore;
     }
 
-    public void setMincj(Integer mincj) {
-        this.mincj = mincj;
+    public void setMinScore(Integer minScore) {
+        this.minScore = minScore;
     }
 
     public String getOperator() {
@@ -173,36 +173,36 @@ public class UrpExam {
         this.operatetime = operatetime == null ? null : operatetime.trim();
     }
 
-    public String getPersentlevelpoint() {
-        return persentlevelpoint;
+    public String getPersentLevelPoint() {
+        return persentLevelPoint;
     }
 
-    public void setPersentlevelpoint(String persentlevelpoint) {
-        this.persentlevelpoint = persentlevelpoint == null ? null : persentlevelpoint.trim();
+    public void setPersentLevelPoint(String persentLevelPoint) {
+        this.persentLevelPoint = persentLevelPoint == null ? null : persentLevelPoint.trim();
     }
 
-    public String getTermcode() {
-        return termcode;
+    public String getTermCode() {
+        return termCode;
     }
 
-    public void setTermcode(String termcode) {
-        this.termcode = termcode == null ? null : termcode.trim();
+    public void setTermCode(String termCode) {
+        this.termCode = termCode == null ? null : termCode.trim();
     }
 
-    public String getTermname() {
-        return termname;
+    public String getTermName() {
+        return termName;
     }
 
-    public void setTermname(String termname) {
-        this.termname = termname == null ? null : termname.trim();
+    public void setTermName(String termName) {
+        this.termName = termName == null ? null : termName.trim();
     }
 
-    public Integer getXsh() {
-        return xsh;
+    public Integer getAcademy() {
+        return academy;
     }
 
-    public void setXsh(Integer xsh) {
-        this.xsh = xsh;
+    public void setAcademy(Integer academy) {
+        this.academy = academy;
     }
 
     public Date getGmtCreate() {
