@@ -6,11 +6,13 @@ import cn.hkxj.platform.exceptions.UrpTimeoutException;
 import cn.hkxj.platform.exceptions.UrpVerifyCodeException;
 import cn.hkxj.platform.pojo.constant.RedisKeys;
 import cn.hkxj.platform.spider.model.NewUrpGradeResult;
-import cn.hkxj.platform.spider.model.UrpGrade;
 import cn.hkxj.platform.spider.model.UrpStudentInfo;
 import cn.hkxj.platform.spider.model.VerifyCode;
-import cn.hkxj.platform.spider.newmodel.*;
-import cn.hkxj.platform.spider.newmodel.UrpCourseForSpider;
+import cn.hkxj.platform.spider.newmodel.CourseForUrpGrade;
+import cn.hkxj.platform.spider.newmodel.CurrentGrade;
+import cn.hkxj.platform.spider.newmodel.UrpGrade;
+import cn.hkxj.platform.spider.newmodel.UrpGradeDetail;
+import cn.hkxj.platform.spider.newmodel.UrpCourse;
 import cn.hkxj.platform.utils.ApplicationUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -27,14 +29,9 @@ import org.jsoup.select.Elements;
 import org.slf4j.MDC;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import sun.misc.BASE64Encoder;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.*;
+import java.util.*;
 
 @Slf4j
 public class NewUrpSpider {
@@ -49,8 +46,8 @@ public class NewUrpSpider {
     private static final String COURSE_DETAIL = ROOT+ "/student/integratedQuery/course/courseSchdule/detail";
     private static final String INDEX = ROOT + "/index.jsp";
     private static final StringRedisTemplate stringRedisTemplate = ApplicationUtil.getBean("stringRedisTemplate");
-    private static final TypeReference<UrpGradeDetailForSpider> gradeDetailTypeReference
-            = new TypeReference<UrpGradeDetailForSpider>() {
+    private static final TypeReference<UrpGradeDetail> gradeDetailTypeReference
+            = new TypeReference<UrpGradeDetail>() {
     };
     private static final TypeReference<List<NewUrpGradeResult>> CURRENT_GRADE_REFERENCE =
             new TypeReference<List<NewUrpGradeResult>>() {
@@ -58,8 +55,8 @@ public class NewUrpSpider {
     private static final TypeReference<CurrentGrade> currentGradeTypeReference
             = new TypeReference<CurrentGrade>() {
     };
-    private static final TypeReference<List<UrpCourseForSpider>> courseTypeReference
-            = new TypeReference<List<UrpCourseForSpider>>() {
+    private static final TypeReference<List<UrpCourse>> courseTypeReference
+            = new TypeReference<List<UrpCourse>>() {
     };
 
     private static final OkHttpClient client = new OkHttpClient.Builder()
@@ -80,6 +77,7 @@ public class NewUrpSpider {
             .add("Referer", ": http://xsurp.usth.edu.cn/login")
             .build();
 
+
     private String account;
     private String password;
 
@@ -89,36 +87,18 @@ public class NewUrpSpider {
         this.password = password;
 
         VerifyCode verifyCode = getCaptcha();
-        BASE64Encoder encoder = new BASE64Encoder();
+        Base64.Encoder encoder = Base64.getEncoder();
+
         UUID uuid = UUID.randomUUID();
         HashOperations<String, String, String> opsForHash = stringRedisTemplate.opsForHash();
 
-        opsForHash.put(RedisKeys.KAPTCHA.getName(), uuid.toString(), encoder.encode(verifyCode.getData().clone()));
+        opsForHash.put(RedisKeys.KAPTCHA.getName(), uuid.toString(), encoder.encodeToString(verifyCode.getData().clone()));
         String code = getCode(uuid.toString());
 
         studentCheck(account, password, code);
     }
 
     public CurrentGrade getCurrentGrade(){
-        List<UrpGeneralGradeForSpider> urpGeneralGradeForSpiders = getUrpGeneralGrades();
-        List<UrpGradeForSpider> urpGradeForSpiderList = Lists.newArrayList();
-        urpGeneralGradeForSpiders.forEach(urpGeneralGradeForSpider -> {
-                UrpGradeForSpider urpGradeForSpider = getUrpGradeForSpider(urpGeneralGradeForSpider);
-                urpGradeForSpiderList.add(urpGradeForSpider);
-        });
-        CurrentGrade currentGrade = new CurrentGrade();
-        currentGrade.setList(urpGradeForSpiderList);
-        return currentGrade;
-    }
-
-    public UrpGradeForSpider getUrpGradeForSpider(UrpGeneralGradeForSpider urpGeneralGradeForSpider){
-        UrpGradeForSpider urpGradeForSpider = new UrpGradeForSpider();
-        urpGradeForSpider.setUrpGeneralGradeForSpider(urpGeneralGradeForSpider);
-        urpGradeForSpider.setUrpGradeDetailForSpider(getUrpGradeDetail(urpGeneralGradeForSpider));
-        return urpGradeForSpider;
-    }
-
-    public List<UrpGeneralGradeForSpider> getUrpGeneralGrades(){
         Request request = new Request.Builder()
                 .url(CURRENT_TERM_GRADE)
                 .get()
@@ -126,16 +106,18 @@ public class NewUrpSpider {
         String result = new String(execute(request));
         List<Map<String, Object>> list = JSON.parseObject(result, new TypeReference<List<Map<String, Object>>>(){});
         JSONArray jsonArray = (JSONArray) list.get(0).get("list");
-        return jsonArray.toJavaList(UrpGeneralGradeForSpider.class);
+        CurrentGrade currentGrade = new CurrentGrade();
+        currentGrade.setList(jsonArray.toJavaList(UrpGrade.class));
+        return currentGrade;
     }
 
-    public UrpGradeDetailForSpider getUrpGradeDetail(UrpGeneralGradeForSpider urpGeneralGradeForSpider){
+    public UrpGradeDetail getUrpGradeDetail(UrpGrade urpGrade){
         FormBody.Builder params = new FormBody.Builder();
-        GradeRelativeInfo gradeRelativeInfo = urpGeneralGradeForSpider.getId();
-        FormBody body = params.add("zxjxjhh", gradeRelativeInfo.getExecutiveEducationPlanNumber())
-                .add("kch", gradeRelativeInfo.getCourseNumber())
-                .add("kssj", gradeRelativeInfo.getExamtime())
-                .add("kxh", urpGeneralGradeForSpider.getCoureSequenceNumber())
+        CourseForUrpGrade courseForUrpGrade = urpGrade.getId();
+        FormBody body = params.add("zxjxjhh", courseForUrpGrade.getExecutiveEducationPlanNumber())
+                .add("kch", courseForUrpGrade.getCourseNumber())
+                .add("kssj", courseForUrpGrade.getExamtime())
+                .add("kxh", urpGrade.getCoureSequenceNumber())
                 .build();
 
         Request request = new Request.Builder()
@@ -146,7 +128,7 @@ public class NewUrpSpider {
         return JSON.parseObject(result, gradeDetailTypeReference);
     }
 
-    public UrpCourseForSpider getUrpCourse(String uid){
+    public UrpCourse getUrpCourse(String uid){
         FormBody.Builder params = new FormBody.Builder();
         FormBody body = params.add("kch", uid).build();
         Request request = new Request.Builder()
@@ -155,7 +137,7 @@ public class NewUrpSpider {
                 .build();
         String result = new String(execute(request));
         //因为爬虫爬取的结果是个集合，所以先转成list
-        List<UrpCourseForSpider> courses = JSONArray.parseObject(result, courseTypeReference);
+        List<UrpCourse> courses = JSONArray.parseObject(result, courseTypeReference);
         //因为用uid查询，所以取第一个元素即可
         return courses.get(0);
     }
