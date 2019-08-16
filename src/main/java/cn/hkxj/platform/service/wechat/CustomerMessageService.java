@@ -67,7 +67,7 @@ public class CustomerMessageService {
             List<UrpGradeAndUrpCourse> gradeAndCourses = searchResult.getData();
             return buildMessage(NewGradeSearchService.gradeListToText(gradeAndCourses));
         } catch (TimeoutException | InterruptedException | ExecutionException e) {
-            log.error("student {} from wechat message get grade error {}", student.getAccount(), e.getMessage());
+            log.error("student {} from wechat message get grade error {}", student.getAccount(), e);
             future.whenCompleteAsync((result, exception) -> {
                 for (List<UrpGradeAndUrpCourse> gradeAndCourseList : Lists.partition(result.getData(), 10)) {
                     sentTextMessage(wxMpXmlMessage, wxMpService,

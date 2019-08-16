@@ -42,6 +42,7 @@ public class GradeMessageHandler implements WxMpMessageHandler {
 
     private ExecutorService cacheThreadPool = Executors.newCachedThreadPool();
 
+    @Override
     public WxMpXmlOutMessage handle(WxMpXmlMessage wxMpXmlMessage,
                                     Map<String, Object> map,
                                     WxMpService wxMpService,
