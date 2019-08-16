@@ -11,7 +11,7 @@ import java.util.List;
 @Data
 public class GradeSearchResult {
 
-    private List<GradeAndCourse> data;
+    private List<UrpGradeAndUrpCourse> data;
 
     private boolean update;
 

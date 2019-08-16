@@ -21,8 +21,8 @@ import java.util.List;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class GradeSearchServiceTest {
-	@Resource(name = "gradeSearchService")
-	private GradeSearchService gradeSearchService;
+//	@Resource(name = "gradeSearchService")
+//	private GradeSearchService gradeSearchService;
 
 	@Test
 	public void getAccess_token() throws WxErrorException {
@@ -35,14 +35,14 @@ public class GradeSearchServiceTest {
         student.setAccount(2016024970);
         student.setPassword("1");
         long start = System.currentTimeMillis();
-        List<GradeAndCourse> currentTermGrade = gradeSearchService.getCurrentGradeFromSpider(student);
-        long end = System.currentTimeMillis();
-        long costtime = end - start;
-        System.out.println(CollectionUtils.isEmpty(currentTermGrade));
-        for (GradeAndCourse gradeAndCourse : currentTermGrade) {
-
-            log.info(gradeAndCourse.toString());
-        }
+//        List<GradeAndCourse> currentTermGrade = gradeSearchService.getCurrentGradeFromSpider(student);
+//        long end = System.currentTimeMillis();
+//        long costtime = end - start;
+//        System.out.println(CollectionUtils.isEmpty(currentTermGrade));
+//        for (GradeAndCourse gradeAndCourse : currentTermGrade) {
+//
+//            log.info(gradeAndCourse.toString());
+//        }
 
     }
 
@@ -51,11 +51,11 @@ public class GradeSearchServiceTest {
         Student student = new Student();
         student.setAccount(2016023726);
         student.setPassword("1");
-        List<GradeAndCourse> currentTermGrade = gradeSearchService.getEverGradeFromSpider(student);
-        for (GradeAndCourse gradeAndCourse : currentTermGrade) {
-
-            log.info(gradeAndCourse.toString());
-        }
+//        List<GradeAndCourse> currentTermGrade = gradeSearchService.getEverGradeFromSpider(student);
+//        for (GradeAndCourse gradeAndCourse : currentTermGrade) {
+//
+//            log.info(gradeAndCourse.toString());
+//        }
 
     }
 
@@ -63,7 +63,7 @@ public class GradeSearchServiceTest {
     public void getGradeFromDB(){
         Student student = new Student();
         student.setAccount(2016025735);
-        List<GradeAndCourse> gradeFromDB = gradeSearchService.getGradeFromDB(student);
-        log.info(gradeFromDB.toString());
+//        List<GradeAndCourse> gradeFromDB = gradeSearchService.getGradeFromDB(student);
+//        log.info(gradeFromDB.toString());
     }
 }

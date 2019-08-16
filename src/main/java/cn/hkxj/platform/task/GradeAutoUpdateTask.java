@@ -9,6 +9,7 @@ import cn.hkxj.platform.pojo.constant.MiniProgram;
 import cn.hkxj.platform.pojo.constant.SubscribeScene;
 import cn.hkxj.platform.pojo.wechat.Openid;
 import cn.hkxj.platform.service.GradeSearchService;
+import cn.hkxj.platform.service.NewGradeSearchService;
 import cn.hkxj.platform.service.OpenIdService;
 import cn.hkxj.platform.service.ScheduleTaskService;
 import lombok.extern.slf4j.Slf4j;
@@ -46,7 +47,7 @@ public class GradeAutoUpdateTask {
     @Resource
     private ScheduleTaskService scheduleTaskService;
     @Resource
-    private GradeSearchService gradeSearchService;
+    private NewGradeSearchService newGradeSearchService;
     @Resource
     private OpenIdService openIdService;
     @Resource
@@ -94,12 +95,12 @@ public class GradeAutoUpdateTask {
             processUrpPasswordNotCorrect(task, wxMpService, appid);
             return;
         }
-        CompletableFuture.supplyAsync(() -> {
-            //获取更新的结果，并将结果转换成一个字符串
-            List<GradeAndCourse> crawlingResult = gradeSearchService.getCurrentGradeFromSpider(student);
-            //saveGradeAndCourse会返回新更新的成绩
-            return gradeSearchService.saveGradeAndCourse(student, crawlingResult);
-        }, gradeAutoUpdatePool).whenComplete((result, exception) -> missionComplete(result, task, wxMpService, appid));
+//        CompletableFuture.supplyAsync(() -> {
+//            //获取更新的结果，并将结果转换成一个字符串
+//            List<GradeAndCourse> crawlingResult = gradeSearchService.getCurrentGradeFromSpider(student);
+//            //saveGradeAndCourse会返回新更新的成绩
+//            return gradeSearchService.saveGradeAndCourse(student, crawlingResult);
+//        }, gradeAutoUpdatePool).whenComplete((result, exception) -> missionComplete(result, task, wxMpService, appid));
     }
 
     /**
@@ -148,8 +149,8 @@ public class GradeAutoUpdateTask {
             sendTemplateMessage(task, wxMpService, result);
         } else {
             //pro处理过程
-            String content = gradeSearchService.gradeListToText(result);
-            sendKefuMessage(wxMpService, task.getOpenid(), content);
+//            String content = gradeSearchService.gradeListToText(result);
+//            sendKefuMessage(wxMpService, task.getOpenid(), content);
         }
     }
 

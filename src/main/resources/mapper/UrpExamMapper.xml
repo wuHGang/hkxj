@@ -1,0 +1,468 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.hkxj.platform.mapper.UrpExamMapper" >
+  <resultMap id="BaseResultMap" type="cn.hkxj.platform.pojo.UrpExam" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="course_id" property="courseId" jdbcType="VARCHAR" />
+    <result column="major_id" property="majorId" jdbcType="INTEGER" />
+    <result column="class_id" property="classId" jdbcType="INTEGER" />
+    <result column="plan_id" property="planId" jdbcType="INTEGER" />
+    <result column="avgcj" property="avgcj" jdbcType="DOUBLE" />
+    <result column="bjh" property="bjh" jdbcType="VARCHAR" />
+    <result column="courseSequenceNumber" property="coursesequencenumber" jdbcType="VARCHAR" />
+    <result column="coursePropertyCode" property="coursepropertycode" jdbcType="VARCHAR" />
+    <result column="coursePropertyName" property="coursepropertyname" jdbcType="VARCHAR" />
+    <result column="examtime" property="examtime" jdbcType="VARCHAR" />
+    <result column="executiveEducationPlanNumber" property="executiveeducationplannumber" jdbcType="VARCHAR" />
+    <result column="maxcj" property="maxcj" jdbcType="INTEGER" />
+    <result column="mincj" property="mincj" jdbcType="INTEGER" />
+    <result column="operator" property="operator" jdbcType="VARCHAR" />
+    <result column="operatetime" property="operatetime" jdbcType="VARCHAR" />
+    <result column="persentlevelPoint" property="persentlevelpoint" jdbcType="VARCHAR" />
+    <result column="termCode" property="termcode" jdbcType="VARCHAR" />
+    <result column="termName" property="termname" jdbcType="VARCHAR" />
+    <result column="xsh" property="xsh" jdbcType="INTEGER" />
+    <result column="gmt_create" property="gmtCreate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, course_id, major_id, class_id, plan_id, avgcj, bjh, courseSequenceNumber, coursePropertyCode,
+    coursePropertyName, examtime, executiveEducationPlanNumber, maxcj, mincj, operator,
+    operatetime, persentlevelPoint, termCode, termName, xsh, gmt_create
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="cn.hkxj.platform.pojo.example.UrpExamExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from urp_exam
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from urp_exam
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from urp_exam
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="cn.hkxj.platform.pojo.example.UrpExamExample" >
+    delete from urp_exam
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="cn.hkxj.platform.pojo.UrpExam" >
+    insert into urp_exam (id, course_id, major_id,
+    class_id, plan_id, avgcj,
+    bjh, courseSequenceNumber, coursePropertyCode,
+    coursePropertyName, examtime, executiveEducationPlanNumber,
+    maxcj, mincj, operator,
+    operatetime, persentlevelPoint, termCode,
+    termName, xsh, gmt_create
+    )
+    values (#{id,jdbcType=INTEGER}, #{courseId,jdbcType=VARCHAR}, #{majorId,jdbcType=INTEGER},
+    #{classId,jdbcType=INTEGER}, #{planId,jdbcType=INTEGER}, #{avgcj,jdbcType=DOUBLE},
+    #{bjh,jdbcType=VARCHAR}, #{coursesequencenumber,jdbcType=VARCHAR}, #{coursepropertycode,jdbcType=VARCHAR},
+    #{coursepropertyname,jdbcType=VARCHAR}, #{examtime,jdbcType=VARCHAR}, #{executiveeducationplannumber,jdbcType=VARCHAR},
+    #{maxcj,jdbcType=INTEGER}, #{mincj,jdbcType=INTEGER}, #{operator,jdbcType=VARCHAR},
+    #{operatetime,jdbcType=VARCHAR}, #{persentlevelpoint,jdbcType=VARCHAR}, #{termcode,jdbcType=VARCHAR},
+    #{termname,jdbcType=VARCHAR}, #{xsh,jdbcType=INTEGER}, #{gmtCreate,jdbcType=TIMESTAMP}
+    )
+  </insert>
+  <insert id="insertSelective" parameterType="cn.hkxj.platform.pojo.UrpExam" >
+    <selectKey order="AFTER" keyProperty="id" resultType="int">
+      select LAST_INSERT_ID();
+    </selectKey>
+    insert into urp_exam
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="courseId != null" >
+        course_id,
+      </if>
+      <if test="majorId != null" >
+        major_id,
+      </if>
+      <if test="classId != null" >
+        class_id,
+      </if>
+      <if test="planId != null" >
+        plan_id,
+      </if>
+      <if test="avgcj != null" >
+        avgcj,
+      </if>
+      <if test="bjh != null" >
+        bjh,
+      </if>
+      <if test="coursesequencenumber != null" >
+        courseSequenceNumber,
+      </if>
+      <if test="coursepropertycode != null" >
+        coursePropertyCode,
+      </if>
+      <if test="coursepropertyname != null" >
+        coursePropertyName,
+      </if>
+      <if test="examtime != null" >
+        examtime,
+      </if>
+      <if test="executiveeducationplannumber != null" >
+        executiveEducationPlanNumber,
+      </if>
+      <if test="maxcj != null" >
+        maxcj,
+      </if>
+      <if test="mincj != null" >
+        mincj,
+      </if>
+      <if test="operator != null" >
+        operator,
+      </if>
+      <if test="operatetime != null" >
+        operatetime,
+      </if>
+      <if test="persentlevelpoint != null" >
+        persentlevelPoint,
+      </if>
+      <if test="termcode != null" >
+        termCode,
+      </if>
+      <if test="termname != null" >
+        termName,
+      </if>
+      <if test="xsh != null" >
+        xsh,
+      </if>
+      <if test="gmtCreate != null" >
+        gmt_create,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="courseId != null" >
+        #{courseId,jdbcType=VARCHAR},
+      </if>
+      <if test="majorId != null" >
+        #{majorId,jdbcType=INTEGER},
+      </if>
+      <if test="classId != null" >
+        #{classId,jdbcType=INTEGER},
+      </if>
+      <if test="planId != null" >
+        #{planId,jdbcType=INTEGER},
+      </if>
+      <if test="avgcj != null" >
+        #{avgcj,jdbcType=DOUBLE},
+      </if>
+      <if test="bjh != null" >
+        #{bjh,jdbcType=VARCHAR},
+      </if>
+      <if test="coursesequencenumber != null" >
+        #{coursesequencenumber,jdbcType=VARCHAR},
+      </if>
+      <if test="coursepropertycode != null" >
+        #{coursepropertycode,jdbcType=VARCHAR},
+      </if>
+      <if test="coursepropertyname != null" >
+        #{coursepropertyname,jdbcType=VARCHAR},
+      </if>
+      <if test="examtime != null" >
+        #{examtime,jdbcType=VARCHAR},
+      </if>
+      <if test="executiveeducationplannumber != null" >
+        #{executiveeducationplannumber,jdbcType=VARCHAR},
+      </if>
+      <if test="maxcj != null" >
+        #{maxcj,jdbcType=INTEGER},
+      </if>
+      <if test="mincj != null" >
+        #{mincj,jdbcType=INTEGER},
+      </if>
+      <if test="operator != null" >
+        #{operator,jdbcType=VARCHAR},
+      </if>
+      <if test="operatetime != null" >
+        #{operatetime,jdbcType=VARCHAR},
+      </if>
+      <if test="persentlevelpoint != null" >
+        #{persentlevelpoint,jdbcType=VARCHAR},
+      </if>
+      <if test="termcode != null" >
+        #{termcode,jdbcType=VARCHAR},
+      </if>
+      <if test="termname != null" >
+        #{termname,jdbcType=VARCHAR},
+      </if>
+      <if test="xsh != null" >
+        #{xsh,jdbcType=INTEGER},
+      </if>
+      <if test="gmtCreate != null" >
+        #{gmtCreate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="cn.hkxj.platform.pojo.example.UrpExamExample" resultType="java.lang.Integer" >
+    select count(*) from urp_exam
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update urp_exam
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.courseId != null" >
+        course_id = #{record.courseId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.majorId != null" >
+        major_id = #{record.majorId,jdbcType=INTEGER},
+      </if>
+      <if test="record.classId != null" >
+        class_id = #{record.classId,jdbcType=INTEGER},
+      </if>
+      <if test="record.planId != null" >
+        plan_id = #{record.planId,jdbcType=INTEGER},
+      </if>
+      <if test="record.avgcj != null" >
+        avgcj = #{record.avgcj,jdbcType=DOUBLE},
+      </if>
+      <if test="record.bjh != null" >
+        bjh = #{record.bjh,jdbcType=VARCHAR},
+      </if>
+      <if test="record.coursesequencenumber != null" >
+        courseSequenceNumber = #{record.coursesequencenumber,jdbcType=VARCHAR},
+      </if>
+      <if test="record.coursepropertycode != null" >
+        coursePropertyCode = #{record.coursepropertycode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.coursepropertyname != null" >
+        coursePropertyName = #{record.coursepropertyname,jdbcType=VARCHAR},
+      </if>
+      <if test="record.examtime != null" >
+        examtime = #{record.examtime,jdbcType=VARCHAR},
+      </if>
+      <if test="record.executiveeducationplannumber != null" >
+        executiveEducationPlanNumber = #{record.executiveeducationplannumber,jdbcType=VARCHAR},
+      </if>
+      <if test="record.maxcj != null" >
+        maxcj = #{record.maxcj,jdbcType=INTEGER},
+      </if>
+      <if test="record.mincj != null" >
+        mincj = #{record.mincj,jdbcType=INTEGER},
+      </if>
+      <if test="record.operator != null" >
+        operator = #{record.operator,jdbcType=VARCHAR},
+      </if>
+      <if test="record.operatetime != null" >
+        operatetime = #{record.operatetime,jdbcType=VARCHAR},
+      </if>
+      <if test="record.persentlevelpoint != null" >
+        persentlevelPoint = #{record.persentlevelpoint,jdbcType=VARCHAR},
+      </if>
+      <if test="record.termcode != null" >
+        termCode = #{record.termcode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.termname != null" >
+        termName = #{record.termname,jdbcType=VARCHAR},
+      </if>
+      <if test="record.xsh != null" >
+        xsh = #{record.xsh,jdbcType=INTEGER},
+      </if>
+      <if test="record.gmtCreate != null" >
+        gmt_create = #{record.gmtCreate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update urp_exam
+    set id = #{record.id,jdbcType=INTEGER},
+    course_id = #{record.courseId,jdbcType=VARCHAR},
+    major_id = #{record.majorId,jdbcType=INTEGER},
+    class_id = #{record.classId,jdbcType=INTEGER},
+    plan_id = #{record.planId,jdbcType=INTEGER},
+    avgcj = #{record.avgcj,jdbcType=DOUBLE},
+    bjh = #{record.bjh,jdbcType=VARCHAR},
+    courseSequenceNumber = #{record.coursesequencenumber,jdbcType=VARCHAR},
+    coursePropertyCode = #{record.coursepropertycode,jdbcType=VARCHAR},
+    coursePropertyName = #{record.coursepropertyname,jdbcType=VARCHAR},
+    examtime = #{record.examtime,jdbcType=VARCHAR},
+    executiveEducationPlanNumber = #{record.executiveeducationplannumber,jdbcType=VARCHAR},
+    maxcj = #{record.maxcj,jdbcType=INTEGER},
+    mincj = #{record.mincj,jdbcType=INTEGER},
+    operator = #{record.operator,jdbcType=VARCHAR},
+    operatetime = #{record.operatetime,jdbcType=VARCHAR},
+    persentlevelPoint = #{record.persentlevelpoint,jdbcType=VARCHAR},
+    termCode = #{record.termcode,jdbcType=VARCHAR},
+    termName = #{record.termname,jdbcType=VARCHAR},
+    xsh = #{record.xsh,jdbcType=INTEGER},
+    gmt_create = #{record.gmtCreate,jdbcType=TIMESTAMP}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.hkxj.platform.pojo.UrpExam" >
+    update urp_exam
+    <set >
+      <if test="courseId != null" >
+        course_id = #{courseId,jdbcType=VARCHAR},
+      </if>
+      <if test="majorId != null" >
+        major_id = #{majorId,jdbcType=INTEGER},
+      </if>
+      <if test="classId != null" >
+        class_id = #{classId,jdbcType=INTEGER},
+      </if>
+      <if test="planId != null" >
+        plan_id = #{planId,jdbcType=INTEGER},
+      </if>
+      <if test="avgcj != null" >
+        avgcj = #{avgcj,jdbcType=DOUBLE},
+      </if>
+      <if test="bjh != null" >
+        bjh = #{bjh,jdbcType=VARCHAR},
+      </if>
+      <if test="coursesequencenumber != null" >
+        courseSequenceNumber = #{coursesequencenumber,jdbcType=VARCHAR},
+      </if>
+      <if test="coursepropertycode != null" >
+        coursePropertyCode = #{coursepropertycode,jdbcType=VARCHAR},
+      </if>
+      <if test="coursepropertyname != null" >
+        coursePropertyName = #{coursepropertyname,jdbcType=VARCHAR},
+      </if>
+      <if test="examtime != null" >
+        examtime = #{examtime,jdbcType=VARCHAR},
+      </if>
+      <if test="executiveeducationplannumber != null" >
+        executiveEducationPlanNumber = #{executiveeducationplannumber,jdbcType=VARCHAR},
+      </if>
+      <if test="maxcj != null" >
+        maxcj = #{maxcj,jdbcType=INTEGER},
+      </if>
+      <if test="mincj != null" >
+        mincj = #{mincj,jdbcType=INTEGER},
+      </if>
+      <if test="operator != null" >
+        operator = #{operator,jdbcType=VARCHAR},
+      </if>
+      <if test="operatetime != null" >
+        operatetime = #{operatetime,jdbcType=VARCHAR},
+      </if>
+      <if test="persentlevelpoint != null" >
+        persentlevelPoint = #{persentlevelpoint,jdbcType=VARCHAR},
+      </if>
+      <if test="termcode != null" >
+        termCode = #{termcode,jdbcType=VARCHAR},
+      </if>
+      <if test="termname != null" >
+        termName = #{termname,jdbcType=VARCHAR},
+      </if>
+      <if test="xsh != null" >
+        xsh = #{xsh,jdbcType=INTEGER},
+      </if>
+      <if test="gmtCreate != null" >
+        gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.hkxj.platform.pojo.UrpExam" >
+    update urp_exam
+    set course_id = #{courseId,jdbcType=VARCHAR},
+    major_id = #{majorId,jdbcType=INTEGER},
+    class_id = #{classId,jdbcType=INTEGER},
+    plan_id = #{planId,jdbcType=INTEGER},
+    avgcj = #{avgcj,jdbcType=DOUBLE},
+    bjh = #{bjh,jdbcType=VARCHAR},
+    courseSequenceNumber = #{coursesequencenumber,jdbcType=VARCHAR},
+    coursePropertyCode = #{coursepropertycode,jdbcType=VARCHAR},
+    coursePropertyName = #{coursepropertyname,jdbcType=VARCHAR},
+    examtime = #{examtime,jdbcType=VARCHAR},
+    executiveEducationPlanNumber = #{executiveeducationplannumber,jdbcType=VARCHAR},
+    maxcj = #{maxcj,jdbcType=INTEGER},
+    mincj = #{mincj,jdbcType=INTEGER},
+    operator = #{operator,jdbcType=VARCHAR},
+    operatetime = #{operatetime,jdbcType=VARCHAR},
+    persentlevelPoint = #{persentlevelpoint,jdbcType=VARCHAR},
+    termCode = #{termcode,jdbcType=VARCHAR},
+    termName = #{termname,jdbcType=VARCHAR},
+    xsh = #{xsh,jdbcType=INTEGER},
+    gmt_create = #{gmtCreate,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

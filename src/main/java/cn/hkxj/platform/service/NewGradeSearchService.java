@@ -1,25 +1,20 @@
 package cn.hkxj.platform.service;
 
-import cn.hkxj.platform.dao.CourseDao;
-import cn.hkxj.platform.dao.GradeDao;
+import cn.hkxj.platform.dao.*;
 import cn.hkxj.platform.mapper.CourseMapper;
-import cn.hkxj.platform.mapper.GradeMapper;
 import cn.hkxj.platform.pojo.*;
-import cn.hkxj.platform.spider.NewUrpSpider;
-import cn.hkxj.platform.spider.model.VerifyCode;
 import cn.hkxj.platform.spider.newmodel.CurrentGrade;
-import cn.hkxj.platform.spider.newmodel.UrpGrade;
+import cn.hkxj.platform.spider.newmodel.UrpGeneralGradeForSpider;
+import cn.hkxj.platform.spider.newmodel.UrpGradeForSpider;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.MDC;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
-import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 /**
@@ -33,113 +28,89 @@ public class NewGradeSearchService {
     @Resource
     private NewUrpSpiderService newUrpSpiderService;
     @Resource
-    private GradeMapper gradeMapper;
-    @Resource
     private CourseMapper courseMapper;
     @Resource
     private GradeDao gradeDao;
     @Resource
     private CourseDao courseDao;
+    @Resource
+    private UrpCourseDao urpCourseDao;
+    @Resource
+    private UrpGradeDao urpGradeDao;
+    @Resource
+    private UrpGradeDetailDao urpGradeDetailDao;
+    @Resource
+    private UrpExamDao urpExamDao;
 
     private static final Term currentTerm = new Term(2018, 2019, 2);
 
-    public GradeSearchResult getCurrentGrade(Student student){
+    public GradeSearchResult getCurrentGrade(Student student) {
         CurrentGrade currentGrade = getCurrentGradeFromSpider(student);
         GradeSearchResult result = new GradeSearchResult();
-        if(currentGrade == null){
-            result.setData(getGradeFromDB(student));
+        if (currentGrade == null) {
+            result.setData(getUrpGradeAndUrpCourse(student));
             result.setUpdate(false);
             return result;
         }
-        boolean update = saveCurrentGradeToDb(student, currentGrade);
-        result.setData(urpGradeConvertToGradeAndCourse(currentGrade));
-        result.setUpdate(update);
+        result = urpGradeDao.saveCurrentGradeToDb(student, currentGrade);
         return result;
     }
 
-    List<GradeAndCourse> getGradeFromDB(Student student){
-        List<Grade> currentGrade = gradeDao.getCurrentGrade(student);
-        currentGrade.removeIf(grade -> !grade.getYear().equals(2018) || !grade.getTerm().equals((byte) 2));
-
-        if(currentGrade.isEmpty()){
-            return Lists.newArrayListWithExpectedSize(0);
-        }
-
-        List<String> courseUidList = currentGrade.stream()
-                .map(Grade::getCourseId)
-                .collect(Collectors.toList());
-        final List<Course> courseList = courseDao.selectCourseByUid(courseUidList);
-
-        return currentGrade.stream()
-                .flatMap(grade -> courseList.stream()
-                        .filter(course -> grade.getCourseId().equals(course.getUid()))
-                        .map(course -> new GradeAndCourse(grade, course, currentTerm)))
-                .collect(Collectors.toList());
+    public List<UrpGradeAndUrpCourse> getUrpGradeAndUrpCourse(Student student) {
+        Map<String, NewGrade> courseAndGrade = getGradeFromDb(student);
+        List<UrpGradeAndUrpCourse> urpGradeAndUrpCourses = Lists.newArrayList();
+        courseAndGrade.forEach((courseId, newGrade) -> {
+            UrpCourse urpCourse = urpCourseDao.getUrpCourseByUid(courseId);
+            UrpGradeAndUrpCourse urpGradeAndUrpCourse = new UrpGradeAndUrpCourse();
+            urpGradeAndUrpCourse.setNewGrade(newGrade);
+            urpGradeAndUrpCourse.setUrpCourse(urpCourse);
+            urpGradeAndUrpCourse.setTerm(currentTerm);
+            urpGradeAndUrpCourses.add(urpGradeAndUrpCourse);
+        });
+        return urpGradeAndUrpCourses;
     }
 
-    public CurrentGrade getCurrentGradeFromSpider(Student student){
+    public Map<String, NewGrade> getGradeFromDb(Student student) {
+        List<UrpExam> urpExamList = urpExamDao.getOneClassCurrentTermAllUrpExam(student.getClasses().getId(), currentTerm);
+        List<UrpGrade> urpGradeList = urpGradeDao.getCurrentTermAllUrpGrade(student.getAccount(),
+                urpExamList.stream().map(UrpExam::getId).collect(Collectors.toList()));
+        Map<String, NewGrade> results = Maps.newHashMap();
+        for (int i = 0, length = urpExamList.size(); i < length; i++) {
+            UrpExam exam = urpExamList.get(i);
+            UrpGrade grade = urpGradeList.get(i);
+            NewGrade newGrade = new NewGrade();
+            newGrade.setUrpGrade(grade);
+            newGrade.setDetails(urpGradeDetailDao.getUrpGradeDetail(grade.getId()));
+            results.put(exam.getCourseId(), newGrade);
+        }
+        return results;
+    }
+
+    public CurrentGrade getCurrentGradeFromSpider(Student student) {
         CurrentGrade currentGrade = newUrpSpiderService.getCurrentTermGrade(student.getAccount().toString(),
                 student.getPassword());
-        if(currentGrade.getList() == null){
+        if (CollectionUtils.isEmpty(currentGrade.getList())) {
             return null;
         }
         return currentGrade;
     }
 
-    public boolean saveCurrentGradeToDb(Student student, CurrentGrade currentGrade){
-        //返回是否有更新的标识位
-        boolean haveUpdate = false;
-        for(UrpGrade urpGrade : currentGrade.getList()){
-            String uid = urpGrade.getId().getCourseNumber();
-            if(!courseMapper.ifExistCourse(uid)){
-                Course course = newUrpSpiderService.getCourseFromSpider(student, uid);
-                courseMapper.insert(course);
-            }
-            if(gradeMapper.ifExistGrade(student.getAccount(), uid) == 0){
-                haveUpdate = true;
-                Grade grade = urpGrade.convertToGrade();
-                gradeMapper.insert(grade);
-            }
-        }
-        return haveUpdate;
-    }
-
-    private List<GradeAndCourse> urpGradeConvertToGradeAndCourse(CurrentGrade currentGrade){
-        List<UrpGrade> urpGrades = currentGrade.getList();
-        List<GradeAndCourse> result = Lists.newArrayList();
-        for (UrpGrade urpGrade : urpGrades) {
-            GradeAndCourse gradeAndCourse = new GradeAndCourse();
-            Grade grade = urpGrade.convertToGrade();
-            Course course = courseMapper.selectNameByUid(urpGrade.getId().getCourseNumber()).get(0);
-            Term term = urpGrade.getTermForUrpGrade();
-            gradeAndCourse.setGrade(grade);
-            gradeAndCourse.setCourse(course);
-            gradeAndCourse.setTerm(term);
-            result.add(gradeAndCourse);
-        }
-        return result;
-    }
-
-    public static String gradeListToText(List<GradeAndCourse> studentGrades) {
+    public static String gradeListToText(List<UrpGradeAndUrpCourse> studentGrades) {
         StringBuilder buffer = new StringBuilder();
-        boolean i = true;
         if (studentGrades.size() == 0) {
             buffer.append("尚无本学期成绩");
         } else {
-            AllGradeAndCourse allGradeAndCourse = new AllGradeAndCourse();
-            allGradeAndCourse.addGradeAndCourse(studentGrades);
-            for (GradeAndCourse gradeAndCourse : allGradeAndCourse.getCurrentTermGrade()) {
-                if (i) {
-                    i = false;
-                    buffer.append("- - - - - - - - - - - - - -\n");
-                    buffer.append("|").append(gradeAndCourse.getGrade().getYear()).append("学年，第").append(gradeAndCourse.getGrade().getTerm()).append("学期|\n");
-                    buffer.append("- - - - - - - - - - - - - -\n\n");
-                }
-                int grade = gradeAndCourse.getGrade().getScore();
-                buffer.append("考试名称：").append(gradeAndCourse.getCourse().getName()).append("\n")
+            //因为查询的都是同学期的，所以取第一个元素即可
+            Term term = studentGrades.get(0).getTerm();
+            buffer.append("- - - - - - - - - - - - - -\n");
+            buffer.append("|").append(term.getTermCode()).append("学年，").append(term.getTermName()).append("|\n");
+            for (UrpGradeAndUrpCourse urpGradeAndUrpCourse : studentGrades) {
+                int grade = urpGradeAndUrpCourse.getNewGrade().getUrpGrade().getScore();
+                buffer.append("考试名称：").append(urpGradeAndUrpCourse.getUrpCourse().getKcm()).append("\n")
                         .append("成绩：").append(grade == -1 ? "" : grade).append("   学分：")
-                        .append(((float) gradeAndCourse.getGrade().getPoint())).append("\n\n");
+                        .append((urpGradeAndUrpCourse.getUrpCourse().getXf())).append("\n\n");
             }
+            buffer.append("- - - - - - - - - - - - - -\n\n");
         }
         return buffer.toString();
     }

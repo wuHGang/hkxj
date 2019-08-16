@@ -1,0 +1,873 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.hkxj.platform.mapper.UrpCourseMapper" >
+  <resultMap id="BaseResultMap" type="cn.hkxj.platform.pojo.UrpCourse" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="bybz" property="bybz" jdbcType="VARCHAR" />
+    <result column="bz" property="bz" jdbcType="VARCHAR" />
+    <result column="bzrs" property="bzrs" jdbcType="INTEGER" />
+    <result column="cks" property="cks" jdbcType="VARCHAR" />
+    <result column="jc" property="jc" jdbcType="VARCHAR" />
+    <result column="jkzxs" property="jkzxs" jdbcType="INTEGER" />
+    <result column="jsm" property="jsm" jdbcType="VARCHAR" />
+    <result column="jsrq" property="jsrq" jdbcType="VARCHAR" />
+    <result column="jxdg" property="jxdg" jdbcType="VARCHAR" />
+    <result column="jxfssm" property="jxfssm" jdbcType="VARCHAR" />
+    <result column="kch" property="kch" jdbcType="VARCHAR" />
+    <result column="kcjbmc" property="kcjbmc" jdbcType="VARCHAR" />
+    <result column="kclbmc" property="kclbmc" jdbcType="VARCHAR" />
+    <result column="kcm" property="kcm" jdbcType="VARCHAR" />
+    <result column="kcsm" property="kcsm" jdbcType="VARCHAR" />
+    <result column="kcztdm" property="kcztdm" jdbcType="VARCHAR" />
+    <result column="kkxq" property="kkxq" jdbcType="VARCHAR" />
+    <result column="knzxs" property="knzxs" jdbcType="INTEGER" />
+    <result column="ksflbdm" property="ksflbdm" jdbcType="VARCHAR" />
+    <result column="kslxmc" property="kslxmc" jdbcType="VARCHAR" />
+    <result column="ksrq" property="ksrq" jdbcType="VARCHAR" />
+    <result column="kwxf" property="kwxf" jdbcType="INTEGER" />
+    <result column="kwzxs" property="kwzxs" jdbcType="INTEGER" />
+    <result column="nrjj" property="nrjj" jdbcType="VARCHAR" />
+    <result column="qzsjzxs" property="qzsjzxs" jdbcType="INTEGER" />
+    <result column="sjzs" property="sjzs" jdbcType="INTEGER" />
+    <result column="rsxsdm" property="rsxsdm" jdbcType="VARCHAR" />
+    <result column="sflbmc" property="sflbmc" jdbcType="VARCHAR" />
+    <result column="sjzxs" property="sjzxs" jdbcType="INTEGER" />
+    <result column="sjzyzxs" property="sjzyzxs" jdbcType="INTEGER" />
+    <result column="syzxs" property="syzxs" jdbcType="INTEGER" />
+    <result column="szdw" property="szdw" jdbcType="VARCHAR" />
+    <result column="tlfdzxs" property="tlfdzxs" jdbcType="INTEGER" />
+    <result column="xf" property="xf" jdbcType="DOUBLE" />
+    <result column="xkmlh" property="xkmlh" jdbcType="VARCHAR" />
+    <result column="xkmlm" property="xkmlm" jdbcType="VARCHAR" />
+    <result column="xqh" property="xqh" jdbcType="VARCHAR" />
+    <result column="xqm" property="xqm" jdbcType="VARCHAR" />
+    <result column="xs" property="xs" jdbcType="INTEGER" />
+    <result column="xsh" property="xsh" jdbcType="INTEGER" />
+    <result column="xxkch" property="xxkch" jdbcType="VARCHAR" />
+    <result column="ywjxdg" property="ywjxdg" jdbcType="VARCHAR" />
+    <result column="ywkcm" property="ywkcm" jdbcType="VARCHAR" />
+    <result column="ywnrjj" property="ywnrjj" jdbcType="VARCHAR" />
+    <result column="zyxkdx" property="zyxkdx" jdbcType="VARCHAR" />
+    <result column="gmt_create" property="gmtCreate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, bybz, bz, bzrs, cks, jc, jkzxs, jsm, jsrq, jxdg, jxfssm, kch, kcjbmc, kclbmc, 
+    kcm, kcsm, kcztdm, kkxq, knzxs, ksflbdm, kslxmc, ksrq, kwxf, kwzxs, nrjj, qzsjzxs, 
+    sjzs, rsxsdm, sflbmc, sjzxs, sjzyzxs, syzxs, szdw, tlfdzxs, xf, xkmlh, xkmlm, xqh, 
+    xqm, xs, xsh, xxkch, ywjxdg, ywkcm, ywnrjj, zyxkdx, gmt_create
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="cn.hkxj.platform.pojo.example.UrpCourseExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from urp_course
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from urp_course
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from urp_course
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="cn.hkxj.platform.pojo.example.UrpCourseExample" >
+    delete from urp_course
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="cn.hkxj.platform.pojo.UrpCourse" >
+    insert into urp_course (id, bybz, bz, 
+      bzrs, cks, jc, jkzxs, 
+      jsm, jsrq, jxdg, jxfssm, 
+      kch, kcjbmc, kclbmc, 
+      kcm, kcsm, kcztdm, 
+      kkxq, knzxs, ksflbdm, 
+      kslxmc, ksrq, kwxf, 
+      kwzxs, nrjj, qzsjzxs, 
+      sjzs, rsxsdm, sflbmc, 
+      sjzxs, sjzyzxs, syzxs, 
+      szdw, tlfdzxs, xf, xkmlh, 
+      xkmlm, xqh, xqm, xs, 
+      xsh, xxkch, ywjxdg, 
+      ywkcm, ywnrjj, zyxkdx, 
+      gmt_create)
+    values (#{id,jdbcType=INTEGER}, #{bybz,jdbcType=VARCHAR}, #{bz,jdbcType=VARCHAR}, 
+      #{bzrs,jdbcType=INTEGER}, #{cks,jdbcType=VARCHAR}, #{jc,jdbcType=VARCHAR}, #{jkzxs,jdbcType=INTEGER}, 
+      #{jsm,jdbcType=VARCHAR}, #{jsrq,jdbcType=VARCHAR}, #{jxdg,jdbcType=VARCHAR}, #{jxfssm,jdbcType=VARCHAR}, 
+      #{kch,jdbcType=VARCHAR}, #{kcjbmc,jdbcType=VARCHAR}, #{kclbmc,jdbcType=VARCHAR}, 
+      #{kcm,jdbcType=VARCHAR}, #{kcsm,jdbcType=VARCHAR}, #{kcztdm,jdbcType=VARCHAR}, 
+      #{kkxq,jdbcType=VARCHAR}, #{knzxs,jdbcType=INTEGER}, #{ksflbdm,jdbcType=VARCHAR}, 
+      #{kslxmc,jdbcType=VARCHAR}, #{ksrq,jdbcType=VARCHAR}, #{kwxf,jdbcType=INTEGER}, 
+      #{kwzxs,jdbcType=INTEGER}, #{nrjj,jdbcType=VARCHAR}, #{qzsjzxs,jdbcType=INTEGER}, 
+      #{sjzs,jdbcType=INTEGER}, #{rsxsdm,jdbcType=VARCHAR}, #{sflbmc,jdbcType=VARCHAR}, 
+      #{sjzxs,jdbcType=INTEGER}, #{sjzyzxs,jdbcType=INTEGER}, #{syzxs,jdbcType=INTEGER}, 
+      #{szdw,jdbcType=VARCHAR}, #{tlfdzxs,jdbcType=INTEGER}, #{xf,jdbcType=DOUBLE}, #{xkmlh,jdbcType=VARCHAR}, 
+      #{xkmlm,jdbcType=VARCHAR}, #{xqh,jdbcType=VARCHAR}, #{xqm,jdbcType=VARCHAR}, #{xs,jdbcType=INTEGER}, 
+      #{xsh,jdbcType=INTEGER}, #{xxkch,jdbcType=VARCHAR}, #{ywjxdg,jdbcType=VARCHAR}, 
+      #{ywkcm,jdbcType=VARCHAR}, #{ywnrjj,jdbcType=VARCHAR}, #{zyxkdx,jdbcType=VARCHAR}, 
+      #{gmtCreate,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="cn.hkxj.platform.pojo.UrpCourse" >
+    insert into urp_course
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="bybz != null" >
+        bybz,
+      </if>
+      <if test="bz != null" >
+        bz,
+      </if>
+      <if test="bzrs != null" >
+        bzrs,
+      </if>
+      <if test="cks != null" >
+        cks,
+      </if>
+      <if test="jc != null" >
+        jc,
+      </if>
+      <if test="jkzxs != null" >
+        jkzxs,
+      </if>
+      <if test="jsm != null" >
+        jsm,
+      </if>
+      <if test="jsrq != null" >
+        jsrq,
+      </if>
+      <if test="jxdg != null" >
+        jxdg,
+      </if>
+      <if test="jxfssm != null" >
+        jxfssm,
+      </if>
+      <if test="kch != null" >
+        kch,
+      </if>
+      <if test="kcjbmc != null" >
+        kcjbmc,
+      </if>
+      <if test="kclbmc != null" >
+        kclbmc,
+      </if>
+      <if test="kcm != null" >
+        kcm,
+      </if>
+      <if test="kcsm != null" >
+        kcsm,
+      </if>
+      <if test="kcztdm != null" >
+        kcztdm,
+      </if>
+      <if test="kkxq != null" >
+        kkxq,
+      </if>
+      <if test="knzxs != null" >
+        knzxs,
+      </if>
+      <if test="ksflbdm != null" >
+        ksflbdm,
+      </if>
+      <if test="kslxmc != null" >
+        kslxmc,
+      </if>
+      <if test="ksrq != null" >
+        ksrq,
+      </if>
+      <if test="kwxf != null" >
+        kwxf,
+      </if>
+      <if test="kwzxs != null" >
+        kwzxs,
+      </if>
+      <if test="nrjj != null" >
+        nrjj,
+      </if>
+      <if test="qzsjzxs != null" >
+        qzsjzxs,
+      </if>
+      <if test="sjzs != null" >
+        sjzs,
+      </if>
+      <if test="rsxsdm != null" >
+        rsxsdm,
+      </if>
+      <if test="sflbmc != null" >
+        sflbmc,
+      </if>
+      <if test="sjzxs != null" >
+        sjzxs,
+      </if>
+      <if test="sjzyzxs != null" >
+        sjzyzxs,
+      </if>
+      <if test="syzxs != null" >
+        syzxs,
+      </if>
+      <if test="szdw != null" >
+        szdw,
+      </if>
+      <if test="tlfdzxs != null" >
+        tlfdzxs,
+      </if>
+      <if test="xf != null" >
+        xf,
+      </if>
+      <if test="xkmlh != null" >
+        xkmlh,
+      </if>
+      <if test="xkmlm != null" >
+        xkmlm,
+      </if>
+      <if test="xqh != null" >
+        xqh,
+      </if>
+      <if test="xqm != null" >
+        xqm,
+      </if>
+      <if test="xs != null" >
+        xs,
+      </if>
+      <if test="xsh != null" >
+        xsh,
+      </if>
+      <if test="xxkch != null" >
+        xxkch,
+      </if>
+      <if test="ywjxdg != null" >
+        ywjxdg,
+      </if>
+      <if test="ywkcm != null" >
+        ywkcm,
+      </if>
+      <if test="ywnrjj != null" >
+        ywnrjj,
+      </if>
+      <if test="zyxkdx != null" >
+        zyxkdx,
+      </if>
+      <if test="gmtCreate != null" >
+        gmt_create,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="bybz != null" >
+        #{bybz,jdbcType=VARCHAR},
+      </if>
+      <if test="bz != null" >
+        #{bz,jdbcType=VARCHAR},
+      </if>
+      <if test="bzrs != null" >
+        #{bzrs,jdbcType=INTEGER},
+      </if>
+      <if test="cks != null" >
+        #{cks,jdbcType=VARCHAR},
+      </if>
+      <if test="jc != null" >
+        #{jc,jdbcType=VARCHAR},
+      </if>
+      <if test="jkzxs != null" >
+        #{jkzxs,jdbcType=INTEGER},
+      </if>
+      <if test="jsm != null" >
+        #{jsm,jdbcType=VARCHAR},
+      </if>
+      <if test="jsrq != null" >
+        #{jsrq,jdbcType=VARCHAR},
+      </if>
+      <if test="jxdg != null" >
+        #{jxdg,jdbcType=VARCHAR},
+      </if>
+      <if test="jxfssm != null" >
+        #{jxfssm,jdbcType=VARCHAR},
+      </if>
+      <if test="kch != null" >
+        #{kch,jdbcType=VARCHAR},
+      </if>
+      <if test="kcjbmc != null" >
+        #{kcjbmc,jdbcType=VARCHAR},
+      </if>
+      <if test="kclbmc != null" >
+        #{kclbmc,jdbcType=VARCHAR},
+      </if>
+      <if test="kcm != null" >
+        #{kcm,jdbcType=VARCHAR},
+      </if>
+      <if test="kcsm != null" >
+        #{kcsm,jdbcType=VARCHAR},
+      </if>
+      <if test="kcztdm != null" >
+        #{kcztdm,jdbcType=VARCHAR},
+      </if>
+      <if test="kkxq != null" >
+        #{kkxq,jdbcType=VARCHAR},
+      </if>
+      <if test="knzxs != null" >
+        #{knzxs,jdbcType=INTEGER},
+      </if>
+      <if test="ksflbdm != null" >
+        #{ksflbdm,jdbcType=VARCHAR},
+      </if>
+      <if test="kslxmc != null" >
+        #{kslxmc,jdbcType=VARCHAR},
+      </if>
+      <if test="ksrq != null" >
+        #{ksrq,jdbcType=VARCHAR},
+      </if>
+      <if test="kwxf != null" >
+        #{kwxf,jdbcType=INTEGER},
+      </if>
+      <if test="kwzxs != null" >
+        #{kwzxs,jdbcType=INTEGER},
+      </if>
+      <if test="nrjj != null" >
+        #{nrjj,jdbcType=VARCHAR},
+      </if>
+      <if test="qzsjzxs != null" >
+        #{qzsjzxs,jdbcType=INTEGER},
+      </if>
+      <if test="sjzs != null" >
+        #{sjzs,jdbcType=INTEGER},
+      </if>
+      <if test="rsxsdm != null" >
+        #{rsxsdm,jdbcType=VARCHAR},
+      </if>
+      <if test="sflbmc != null" >
+        #{sflbmc,jdbcType=VARCHAR},
+      </if>
+      <if test="sjzxs != null" >
+        #{sjzxs,jdbcType=INTEGER},
+      </if>
+      <if test="sjzyzxs != null" >
+        #{sjzyzxs,jdbcType=INTEGER},
+      </if>
+      <if test="syzxs != null" >
+        #{syzxs,jdbcType=INTEGER},
+      </if>
+      <if test="szdw != null" >
+        #{szdw,jdbcType=VARCHAR},
+      </if>
+      <if test="tlfdzxs != null" >
+        #{tlfdzxs,jdbcType=INTEGER},
+      </if>
+      <if test="xf != null" >
+        #{xf,jdbcType=DOUBLE},
+      </if>
+      <if test="xkmlh != null" >
+        #{xkmlh,jdbcType=VARCHAR},
+      </if>
+      <if test="xkmlm != null" >
+        #{xkmlm,jdbcType=VARCHAR},
+      </if>
+      <if test="xqh != null" >
+        #{xqh,jdbcType=VARCHAR},
+      </if>
+      <if test="xqm != null" >
+        #{xqm,jdbcType=VARCHAR},
+      </if>
+      <if test="xs != null" >
+        #{xs,jdbcType=INTEGER},
+      </if>
+      <if test="xsh != null" >
+        #{xsh,jdbcType=INTEGER},
+      </if>
+      <if test="xxkch != null" >
+        #{xxkch,jdbcType=VARCHAR},
+      </if>
+      <if test="ywjxdg != null" >
+        #{ywjxdg,jdbcType=VARCHAR},
+      </if>
+      <if test="ywkcm != null" >
+        #{ywkcm,jdbcType=VARCHAR},
+      </if>
+      <if test="ywnrjj != null" >
+        #{ywnrjj,jdbcType=VARCHAR},
+      </if>
+      <if test="zyxkdx != null" >
+        #{zyxkdx,jdbcType=VARCHAR},
+      </if>
+      <if test="gmtCreate != null" >
+        #{gmtCreate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="cn.hkxj.platform.pojo.example.UrpCourseExample" resultType="java.lang.Integer" >
+    select count(*) from urp_course
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update urp_course
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.bybz != null" >
+        bybz = #{record.bybz,jdbcType=VARCHAR},
+      </if>
+      <if test="record.bz != null" >
+        bz = #{record.bz,jdbcType=VARCHAR},
+      </if>
+      <if test="record.bzrs != null" >
+        bzrs = #{record.bzrs,jdbcType=INTEGER},
+      </if>
+      <if test="record.cks != null" >
+        cks = #{record.cks,jdbcType=VARCHAR},
+      </if>
+      <if test="record.jc != null" >
+        jc = #{record.jc,jdbcType=VARCHAR},
+      </if>
+      <if test="record.jkzxs != null" >
+        jkzxs = #{record.jkzxs,jdbcType=INTEGER},
+      </if>
+      <if test="record.jsm != null" >
+        jsm = #{record.jsm,jdbcType=VARCHAR},
+      </if>
+      <if test="record.jsrq != null" >
+        jsrq = #{record.jsrq,jdbcType=VARCHAR},
+      </if>
+      <if test="record.jxdg != null" >
+        jxdg = #{record.jxdg,jdbcType=VARCHAR},
+      </if>
+      <if test="record.jxfssm != null" >
+        jxfssm = #{record.jxfssm,jdbcType=VARCHAR},
+      </if>
+      <if test="record.kch != null" >
+        kch = #{record.kch,jdbcType=VARCHAR},
+      </if>
+      <if test="record.kcjbmc != null" >
+        kcjbmc = #{record.kcjbmc,jdbcType=VARCHAR},
+      </if>
+      <if test="record.kclbmc != null" >
+        kclbmc = #{record.kclbmc,jdbcType=VARCHAR},
+      </if>
+      <if test="record.kcm != null" >
+        kcm = #{record.kcm,jdbcType=VARCHAR},
+      </if>
+      <if test="record.kcsm != null" >
+        kcsm = #{record.kcsm,jdbcType=VARCHAR},
+      </if>
+      <if test="record.kcztdm != null" >
+        kcztdm = #{record.kcztdm,jdbcType=VARCHAR},
+      </if>
+      <if test="record.kkxq != null" >
+        kkxq = #{record.kkxq,jdbcType=VARCHAR},
+      </if>
+      <if test="record.knzxs != null" >
+        knzxs = #{record.knzxs,jdbcType=INTEGER},
+      </if>
+      <if test="record.ksflbdm != null" >
+        ksflbdm = #{record.ksflbdm,jdbcType=VARCHAR},
+      </if>
+      <if test="record.kslxmc != null" >
+        kslxmc = #{record.kslxmc,jdbcType=VARCHAR},
+      </if>
+      <if test="record.ksrq != null" >
+        ksrq = #{record.ksrq,jdbcType=VARCHAR},
+      </if>
+      <if test="record.kwxf != null" >
+        kwxf = #{record.kwxf,jdbcType=INTEGER},
+      </if>
+      <if test="record.kwzxs != null" >
+        kwzxs = #{record.kwzxs,jdbcType=INTEGER},
+      </if>
+      <if test="record.nrjj != null" >
+        nrjj = #{record.nrjj,jdbcType=VARCHAR},
+      </if>
+      <if test="record.qzsjzxs != null" >
+        qzsjzxs = #{record.qzsjzxs,jdbcType=INTEGER},
+      </if>
+      <if test="record.sjzs != null" >
+        sjzs = #{record.sjzs,jdbcType=INTEGER},
+      </if>
+      <if test="record.rsxsdm != null" >
+        rsxsdm = #{record.rsxsdm,jdbcType=VARCHAR},
+      </if>
+      <if test="record.sflbmc != null" >
+        sflbmc = #{record.sflbmc,jdbcType=VARCHAR},
+      </if>
+      <if test="record.sjzxs != null" >
+        sjzxs = #{record.sjzxs,jdbcType=INTEGER},
+      </if>
+      <if test="record.sjzyzxs != null" >
+        sjzyzxs = #{record.sjzyzxs,jdbcType=INTEGER},
+      </if>
+      <if test="record.syzxs != null" >
+        syzxs = #{record.syzxs,jdbcType=INTEGER},
+      </if>
+      <if test="record.szdw != null" >
+        szdw = #{record.szdw,jdbcType=VARCHAR},
+      </if>
+      <if test="record.tlfdzxs != null" >
+        tlfdzxs = #{record.tlfdzxs,jdbcType=INTEGER},
+      </if>
+      <if test="record.xf != null" >
+        xf = #{record.xf,jdbcType=DOUBLE},
+      </if>
+      <if test="record.xkmlh != null" >
+        xkmlh = #{record.xkmlh,jdbcType=VARCHAR},
+      </if>
+      <if test="record.xkmlm != null" >
+        xkmlm = #{record.xkmlm,jdbcType=VARCHAR},
+      </if>
+      <if test="record.xqh != null" >
+        xqh = #{record.xqh,jdbcType=VARCHAR},
+      </if>
+      <if test="record.xqm != null" >
+        xqm = #{record.xqm,jdbcType=VARCHAR},
+      </if>
+      <if test="record.xs != null" >
+        xs = #{record.xs,jdbcType=INTEGER},
+      </if>
+      <if test="record.xsh != null" >
+        xsh = #{record.xsh,jdbcType=INTEGER},
+      </if>
+      <if test="record.xxkch != null" >
+        xxkch = #{record.xxkch,jdbcType=VARCHAR},
+      </if>
+      <if test="record.ywjxdg != null" >
+        ywjxdg = #{record.ywjxdg,jdbcType=VARCHAR},
+      </if>
+      <if test="record.ywkcm != null" >
+        ywkcm = #{record.ywkcm,jdbcType=VARCHAR},
+      </if>
+      <if test="record.ywnrjj != null" >
+        ywnrjj = #{record.ywnrjj,jdbcType=VARCHAR},
+      </if>
+      <if test="record.zyxkdx != null" >
+        zyxkdx = #{record.zyxkdx,jdbcType=VARCHAR},
+      </if>
+      <if test="record.gmtCreate != null" >
+        gmt_create = #{record.gmtCreate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update urp_course
+    set id = #{record.id,jdbcType=INTEGER},
+      bybz = #{record.bybz,jdbcType=VARCHAR},
+      bz = #{record.bz,jdbcType=VARCHAR},
+      bzrs = #{record.bzrs,jdbcType=INTEGER},
+      cks = #{record.cks,jdbcType=VARCHAR},
+      jc = #{record.jc,jdbcType=VARCHAR},
+      jkzxs = #{record.jkzxs,jdbcType=INTEGER},
+      jsm = #{record.jsm,jdbcType=VARCHAR},
+      jsrq = #{record.jsrq,jdbcType=VARCHAR},
+      jxdg = #{record.jxdg,jdbcType=VARCHAR},
+      jxfssm = #{record.jxfssm,jdbcType=VARCHAR},
+      kch = #{record.kch,jdbcType=VARCHAR},
+      kcjbmc = #{record.kcjbmc,jdbcType=VARCHAR},
+      kclbmc = #{record.kclbmc,jdbcType=VARCHAR},
+      kcm = #{record.kcm,jdbcType=VARCHAR},
+      kcsm = #{record.kcsm,jdbcType=VARCHAR},
+      kcztdm = #{record.kcztdm,jdbcType=VARCHAR},
+      kkxq = #{record.kkxq,jdbcType=VARCHAR},
+      knzxs = #{record.knzxs,jdbcType=INTEGER},
+      ksflbdm = #{record.ksflbdm,jdbcType=VARCHAR},
+      kslxmc = #{record.kslxmc,jdbcType=VARCHAR},
+      ksrq = #{record.ksrq,jdbcType=VARCHAR},
+      kwxf = #{record.kwxf,jdbcType=INTEGER},
+      kwzxs = #{record.kwzxs,jdbcType=INTEGER},
+      nrjj = #{record.nrjj,jdbcType=VARCHAR},
+      qzsjzxs = #{record.qzsjzxs,jdbcType=INTEGER},
+      sjzs = #{record.sjzs,jdbcType=INTEGER},
+      rsxsdm = #{record.rsxsdm,jdbcType=VARCHAR},
+      sflbmc = #{record.sflbmc,jdbcType=VARCHAR},
+      sjzxs = #{record.sjzxs,jdbcType=INTEGER},
+      sjzyzxs = #{record.sjzyzxs,jdbcType=INTEGER},
+      syzxs = #{record.syzxs,jdbcType=INTEGER},
+      szdw = #{record.szdw,jdbcType=VARCHAR},
+      tlfdzxs = #{record.tlfdzxs,jdbcType=INTEGER},
+      xf = #{record.xf,jdbcType=DOUBLE},
+      xkmlh = #{record.xkmlh,jdbcType=VARCHAR},
+      xkmlm = #{record.xkmlm,jdbcType=VARCHAR},
+      xqh = #{record.xqh,jdbcType=VARCHAR},
+      xqm = #{record.xqm,jdbcType=VARCHAR},
+      xs = #{record.xs,jdbcType=INTEGER},
+      xsh = #{record.xsh,jdbcType=INTEGER},
+      xxkch = #{record.xxkch,jdbcType=VARCHAR},
+      ywjxdg = #{record.ywjxdg,jdbcType=VARCHAR},
+      ywkcm = #{record.ywkcm,jdbcType=VARCHAR},
+      ywnrjj = #{record.ywnrjj,jdbcType=VARCHAR},
+      zyxkdx = #{record.zyxkdx,jdbcType=VARCHAR},
+      gmt_create = #{record.gmtCreate,jdbcType=TIMESTAMP}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.hkxj.platform.pojo.UrpCourse" >
+    update urp_course
+    <set >
+      <if test="bybz != null" >
+        bybz = #{bybz,jdbcType=VARCHAR},
+      </if>
+      <if test="bz != null" >
+        bz = #{bz,jdbcType=VARCHAR},
+      </if>
+      <if test="bzrs != null" >
+        bzrs = #{bzrs,jdbcType=INTEGER},
+      </if>
+      <if test="cks != null" >
+        cks = #{cks,jdbcType=VARCHAR},
+      </if>
+      <if test="jc != null" >
+        jc = #{jc,jdbcType=VARCHAR},
+      </if>
+      <if test="jkzxs != null" >
+        jkzxs = #{jkzxs,jdbcType=INTEGER},
+      </if>
+      <if test="jsm != null" >
+        jsm = #{jsm,jdbcType=VARCHAR},
+      </if>
+      <if test="jsrq != null" >
+        jsrq = #{jsrq,jdbcType=VARCHAR},
+      </if>
+      <if test="jxdg != null" >
+        jxdg = #{jxdg,jdbcType=VARCHAR},
+      </if>
+      <if test="jxfssm != null" >
+        jxfssm = #{jxfssm,jdbcType=VARCHAR},
+      </if>
+      <if test="kch != null" >
+        kch = #{kch,jdbcType=VARCHAR},
+      </if>
+      <if test="kcjbmc != null" >
+        kcjbmc = #{kcjbmc,jdbcType=VARCHAR},
+      </if>
+      <if test="kclbmc != null" >
+        kclbmc = #{kclbmc,jdbcType=VARCHAR},
+      </if>
+      <if test="kcm != null" >
+        kcm = #{kcm,jdbcType=VARCHAR},
+      </if>
+      <if test="kcsm != null" >
+        kcsm = #{kcsm,jdbcType=VARCHAR},
+      </if>
+      <if test="kcztdm != null" >
+        kcztdm = #{kcztdm,jdbcType=VARCHAR},
+      </if>
+      <if test="kkxq != null" >
+        kkxq = #{kkxq,jdbcType=VARCHAR},
+      </if>
+      <if test="knzxs != null" >
+        knzxs = #{knzxs,jdbcType=INTEGER},
+      </if>
+      <if test="ksflbdm != null" >
+        ksflbdm = #{ksflbdm,jdbcType=VARCHAR},
+      </if>
+      <if test="kslxmc != null" >
+        kslxmc = #{kslxmc,jdbcType=VARCHAR},
+      </if>
+      <if test="ksrq != null" >
+        ksrq = #{ksrq,jdbcType=VARCHAR},
+      </if>
+      <if test="kwxf != null" >
+        kwxf = #{kwxf,jdbcType=INTEGER},
+      </if>
+      <if test="kwzxs != null" >
+        kwzxs = #{kwzxs,jdbcType=INTEGER},
+      </if>
+      <if test="nrjj != null" >
+        nrjj = #{nrjj,jdbcType=VARCHAR},
+      </if>
+      <if test="qzsjzxs != null" >
+        qzsjzxs = #{qzsjzxs,jdbcType=INTEGER},
+      </if>
+      <if test="sjzs != null" >
+        sjzs = #{sjzs,jdbcType=INTEGER},
+      </if>
+      <if test="rsxsdm != null" >
+        rsxsdm = #{rsxsdm,jdbcType=VARCHAR},
+      </if>
+      <if test="sflbmc != null" >
+        sflbmc = #{sflbmc,jdbcType=VARCHAR},
+      </if>
+      <if test="sjzxs != null" >
+        sjzxs = #{sjzxs,jdbcType=INTEGER},
+      </if>
+      <if test="sjzyzxs != null" >
+        sjzyzxs = #{sjzyzxs,jdbcType=INTEGER},
+      </if>
+      <if test="syzxs != null" >
+        syzxs = #{syzxs,jdbcType=INTEGER},
+      </if>
+      <if test="szdw != null" >
+        szdw = #{szdw,jdbcType=VARCHAR},
+      </if>
+      <if test="tlfdzxs != null" >
+        tlfdzxs = #{tlfdzxs,jdbcType=INTEGER},
+      </if>
+      <if test="xf != null" >
+        xf = #{xf,jdbcType=DOUBLE},
+      </if>
+      <if test="xkmlh != null" >
+        xkmlh = #{xkmlh,jdbcType=VARCHAR},
+      </if>
+      <if test="xkmlm != null" >
+        xkmlm = #{xkmlm,jdbcType=VARCHAR},
+      </if>
+      <if test="xqh != null" >
+        xqh = #{xqh,jdbcType=VARCHAR},
+      </if>
+      <if test="xqm != null" >
+        xqm = #{xqm,jdbcType=VARCHAR},
+      </if>
+      <if test="xs != null" >
+        xs = #{xs,jdbcType=INTEGER},
+      </if>
+      <if test="xsh != null" >
+        xsh = #{xsh,jdbcType=INTEGER},
+      </if>
+      <if test="xxkch != null" >
+        xxkch = #{xxkch,jdbcType=VARCHAR},
+      </if>
+      <if test="ywjxdg != null" >
+        ywjxdg = #{ywjxdg,jdbcType=VARCHAR},
+      </if>
+      <if test="ywkcm != null" >
+        ywkcm = #{ywkcm,jdbcType=VARCHAR},
+      </if>
+      <if test="ywnrjj != null" >
+        ywnrjj = #{ywnrjj,jdbcType=VARCHAR},
+      </if>
+      <if test="zyxkdx != null" >
+        zyxkdx = #{zyxkdx,jdbcType=VARCHAR},
+      </if>
+      <if test="gmtCreate != null" >
+        gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.hkxj.platform.pojo.UrpCourse" >
+    update urp_course
+    set bybz = #{bybz,jdbcType=VARCHAR},
+      bz = #{bz,jdbcType=VARCHAR},
+      bzrs = #{bzrs,jdbcType=INTEGER},
+      cks = #{cks,jdbcType=VARCHAR},
+      jc = #{jc,jdbcType=VARCHAR},
+      jkzxs = #{jkzxs,jdbcType=INTEGER},
+      jsm = #{jsm,jdbcType=VARCHAR},
+      jsrq = #{jsrq,jdbcType=VARCHAR},
+      jxdg = #{jxdg,jdbcType=VARCHAR},
+      jxfssm = #{jxfssm,jdbcType=VARCHAR},
+      kch = #{kch,jdbcType=VARCHAR},
+      kcjbmc = #{kcjbmc,jdbcType=VARCHAR},
+      kclbmc = #{kclbmc,jdbcType=VARCHAR},
+      kcm = #{kcm,jdbcType=VARCHAR},
+      kcsm = #{kcsm,jdbcType=VARCHAR},
+      kcztdm = #{kcztdm,jdbcType=VARCHAR},
+      kkxq = #{kkxq,jdbcType=VARCHAR},
+      knzxs = #{knzxs,jdbcType=INTEGER},
+      ksflbdm = #{ksflbdm,jdbcType=VARCHAR},
+      kslxmc = #{kslxmc,jdbcType=VARCHAR},
+      ksrq = #{ksrq,jdbcType=VARCHAR},
+      kwxf = #{kwxf,jdbcType=INTEGER},
+      kwzxs = #{kwzxs,jdbcType=INTEGER},
+      nrjj = #{nrjj,jdbcType=VARCHAR},
+      qzsjzxs = #{qzsjzxs,jdbcType=INTEGER},
+      sjzs = #{sjzs,jdbcType=INTEGER},
+      rsxsdm = #{rsxsdm,jdbcType=VARCHAR},
+      sflbmc = #{sflbmc,jdbcType=VARCHAR},
+      sjzxs = #{sjzxs,jdbcType=INTEGER},
+      sjzyzxs = #{sjzyzxs,jdbcType=INTEGER},
+      syzxs = #{syzxs,jdbcType=INTEGER},
+      szdw = #{szdw,jdbcType=VARCHAR},
+      tlfdzxs = #{tlfdzxs,jdbcType=INTEGER},
+      xf = #{xf,jdbcType=DOUBLE},
+      xkmlh = #{xkmlh,jdbcType=VARCHAR},
+      xkmlm = #{xkmlm,jdbcType=VARCHAR},
+      xqh = #{xqh,jdbcType=VARCHAR},
+      xqm = #{xqm,jdbcType=VARCHAR},
+      xs = #{xs,jdbcType=INTEGER},
+      xsh = #{xsh,jdbcType=INTEGER},
+      xxkch = #{xxkch,jdbcType=VARCHAR},
+      ywjxdg = #{ywjxdg,jdbcType=VARCHAR},
+      ywkcm = #{ywkcm,jdbcType=VARCHAR},
+      ywnrjj = #{ywnrjj,jdbcType=VARCHAR},
+      zyxkdx = #{zyxkdx,jdbcType=VARCHAR},
+      gmt_create = #{gmtCreate,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="ifExistCourse" resultType="boolean">
+    select ifnull ((select count(1)  from urp_course where kch=#{uid,jdbcType=VARCHAR}), 0)
+  </select>
+</mapper>

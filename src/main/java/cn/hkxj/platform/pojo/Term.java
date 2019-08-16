@@ -53,6 +53,20 @@ public class Term {
         this.order = order;
     }
 
+    public String getTermCode(){
+        return this.getStartYear() + "-" + this.getEndYear();
+    }
+
+    public String getTermName(){
+        if(this.order == 1){
+            return "第一学期";
+        } else if (this.order == 2){
+            return "第二学期";
+        } else {
+            return "未知学期";
+        }
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -19,4 +19,12 @@ public class CourseDao {
     public List<Course> selectCourseByUid(List<String> courseIdList){
         return courseMapper.selectCourseByUid(courseIdList);
     }
+
+    public boolean ifExistCourse(String uid){
+        return courseMapper.ifExistCourse(uid);
+    }
+
+    public int insert(Course course){
+        return courseMapper.insert(course);
+    }
 }

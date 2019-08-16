@@ -3,7 +3,6 @@ package cn.hkxj.platform.spider.newmodel;
 import lombok.Data;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author Yuki
@@ -12,5 +11,5 @@ import java.util.Map;
 @Data
 public class CurrentGrade {
 
-    private List<UrpGrade> list;
+    private List<UrpGradeForSpider> list;
 }

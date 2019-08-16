@@ -7,7 +7,7 @@ import lombok.Data;
  * @date 2019/7/31 20:12
  */
 @Data
-public class CourseForUrpGrade {
+public class GradeRelativeInfo {
 
     private String courseNumber;
 
@@ -16,4 +16,6 @@ public class CourseForUrpGrade {
     private String executiveEducationPlanNumber;
 
     private String studentNumber;
+
+    private String scoreTypeCode;
 }

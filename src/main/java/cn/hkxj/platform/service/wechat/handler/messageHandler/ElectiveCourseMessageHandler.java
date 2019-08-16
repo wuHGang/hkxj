@@ -4,6 +4,7 @@ import cn.hkxj.platform.pojo.GradeAndCourse;
 import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.pojo.constant.Academy;
 import cn.hkxj.platform.service.GradeSearchService;
+import cn.hkxj.platform.service.NewGradeSearchService;
 import cn.hkxj.platform.service.OpenIdService;
 import cn.hkxj.platform.service.wechat.CustomerMessageService;
 import lombok.extern.slf4j.Slf4j;
@@ -49,7 +50,7 @@ public class ElectiveCourseMessageHandler implements WxMpMessageHandler {
         return messageService.sendMessage(completableFuture, student);
     }
 
-
+    //TODO 添加过往成绩的接口
     private String getResult(Student student) {
         List<GradeAndCourse> electiveCourse = gradeSearchService.getEverGradeFromSpider(student).stream()
                 .filter(gradeAndCourse -> gradeAndCourse.getCourse().getAcademy() == Academy.Web)

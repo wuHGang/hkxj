@@ -1,0 +1,406 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.hkxj.platform.mapper.UrpGradeMapper" >
+  <resultMap id="BaseResultMap" type="cn.hkxj.platform.pojo.UrpGrade" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="exam_id" property="examId" jdbcType="INTEGER" />
+    <result column="account" property="account" jdbcType="INTEGER" />
+    <result column="score" property="score" jdbcType="INTEGER" />
+    <result column="grade_point" property="gradePoint" jdbcType="DOUBLE" />
+    <result column="level_name" property="levelName" jdbcType="VARCHAR" />
+    <result column="level_point" property="levelPoint" jdbcType="VARCHAR" />
+    <result column="rank" property="rank" jdbcType="INTEGER" />
+    <result column="unpassedReasonCode" property="unpassedreasoncode" jdbcType="VARCHAR" />
+    <result column="unpassedReasonExplain" property="unpassedreasonexplain" jdbcType="VARCHAR" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="replaceCourseNumber" property="replacecoursenumber" jdbcType="VARCHAR" />
+    <result column="retakeCourseMark" property="retakecoursemark" jdbcType="VARCHAR" />
+    <result column="retakeCourseModeCode" property="retakecoursemodecode" jdbcType="VARCHAR" />
+    <result column="retakeCourseModeExplain" property="retakecoursemodeexplain" jdbcType="VARCHAR" />
+    <result column="standardPoint" property="standardpoint" jdbcType="VARCHAR" />
+    <result column="gmt_create" property="gmtCreate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, exam_id, account, score, grade_point, level_name, level_point, rank, unpassedReasonCode, 
+    unpassedReasonExplain, remark, replaceCourseNumber, retakeCourseMark, retakeCourseModeCode, 
+    retakeCourseModeExplain, standardPoint, gmt_create
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="cn.hkxj.platform.pojo.example.UrpGradeExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from urp_grade
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from urp_grade
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from urp_grade
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="cn.hkxj.platform.pojo.example.UrpGradeExample" >
+    delete from urp_grade
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="cn.hkxj.platform.pojo.UrpGrade" >
+    insert into urp_grade (id, exam_id, account, 
+      score, grade_point, level_name, 
+      level_point, rank, unpassedReasonCode, 
+      unpassedReasonExplain, remark, replaceCourseNumber, 
+      retakeCourseMark, retakeCourseModeCode, 
+      retakeCourseModeExplain, standardPoint, 
+      gmt_create)
+    values (#{id,jdbcType=INTEGER}, #{examId,jdbcType=INTEGER}, #{account,jdbcType=INTEGER}, 
+      #{score,jdbcType=INTEGER}, #{gradePoint,jdbcType=DOUBLE}, #{levelName,jdbcType=VARCHAR}, 
+      #{levelPoint,jdbcType=VARCHAR}, #{rank,jdbcType=INTEGER}, #{unpassedreasoncode,jdbcType=VARCHAR}, 
+      #{unpassedreasonexplain,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{replacecoursenumber,jdbcType=VARCHAR}, 
+      #{retakecoursemark,jdbcType=VARCHAR}, #{retakecoursemodecode,jdbcType=VARCHAR}, 
+      #{retakecoursemodeexplain,jdbcType=VARCHAR}, #{standardpoint,jdbcType=VARCHAR}, 
+      #{gmtCreate,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="cn.hkxj.platform.pojo.UrpGrade" >
+    <selectKey order="AFTER" keyProperty="id" resultType="int">
+      select LAST_INSERT_ID();
+    </selectKey>
+    insert into urp_grade
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="examId != null" >
+        exam_id,
+      </if>
+      <if test="account != null" >
+        account,
+      </if>
+      <if test="score != null" >
+        score,
+      </if>
+      <if test="gradePoint != null" >
+        grade_point,
+      </if>
+      <if test="levelName != null" >
+        level_name,
+      </if>
+      <if test="levelPoint != null" >
+        level_point,
+      </if>
+      <if test="rank != null" >
+        rank,
+      </if>
+      <if test="unpassedreasoncode != null" >
+        unpassedReasonCode,
+      </if>
+      <if test="unpassedreasonexplain != null" >
+        unpassedReasonExplain,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+      <if test="replacecoursenumber != null" >
+        replaceCourseNumber,
+      </if>
+      <if test="retakecoursemark != null" >
+        retakeCourseMark,
+      </if>
+      <if test="retakecoursemodecode != null" >
+        retakeCourseModeCode,
+      </if>
+      <if test="retakecoursemodeexplain != null" >
+        retakeCourseModeExplain,
+      </if>
+      <if test="standardpoint != null" >
+        standardPoint,
+      </if>
+      <if test="gmtCreate != null" >
+        gmt_create,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="examId != null" >
+        #{examId,jdbcType=INTEGER},
+      </if>
+      <if test="account != null" >
+        #{account,jdbcType=INTEGER},
+      </if>
+      <if test="score != null" >
+        #{score,jdbcType=INTEGER},
+      </if>
+      <if test="gradePoint != null" >
+        #{gradePoint,jdbcType=DOUBLE},
+      </if>
+      <if test="levelName != null" >
+        #{levelName,jdbcType=VARCHAR},
+      </if>
+      <if test="levelPoint != null" >
+        #{levelPoint,jdbcType=VARCHAR},
+      </if>
+      <if test="rank != null" >
+        #{rank,jdbcType=INTEGER},
+      </if>
+      <if test="unpassedreasoncode != null" >
+        #{unpassedreasoncode,jdbcType=VARCHAR},
+      </if>
+      <if test="unpassedreasonexplain != null" >
+        #{unpassedreasonexplain,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="replacecoursenumber != null" >
+        #{replacecoursenumber,jdbcType=VARCHAR},
+      </if>
+      <if test="retakecoursemark != null" >
+        #{retakecoursemark,jdbcType=VARCHAR},
+      </if>
+      <if test="retakecoursemodecode != null" >
+        #{retakecoursemodecode,jdbcType=VARCHAR},
+      </if>
+      <if test="retakecoursemodeexplain != null" >
+        #{retakecoursemodeexplain,jdbcType=VARCHAR},
+      </if>
+      <if test="standardpoint != null" >
+        #{standardpoint,jdbcType=VARCHAR},
+      </if>
+      <if test="gmtCreate != null" >
+        #{gmtCreate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="cn.hkxj.platform.pojo.example.UrpGradeExample" resultType="java.lang.Integer" >
+    select count(*) from urp_grade
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update urp_grade
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.examId != null" >
+        exam_id = #{record.examId,jdbcType=INTEGER},
+      </if>
+      <if test="record.account != null" >
+        account = #{record.account,jdbcType=INTEGER},
+      </if>
+      <if test="record.score != null" >
+        score = #{record.score,jdbcType=INTEGER},
+      </if>
+      <if test="record.gradePoint != null" >
+        grade_point = #{record.gradePoint,jdbcType=DOUBLE},
+      </if>
+      <if test="record.levelName != null" >
+        level_name = #{record.levelName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.levelPoint != null" >
+        level_point = #{record.levelPoint,jdbcType=VARCHAR},
+      </if>
+      <if test="record.rank != null" >
+        rank = #{record.rank,jdbcType=INTEGER},
+      </if>
+      <if test="record.unpassedreasoncode != null" >
+        unpassedReasonCode = #{record.unpassedreasoncode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.unpassedreasonexplain != null" >
+        unpassedReasonExplain = #{record.unpassedreasonexplain,jdbcType=VARCHAR},
+      </if>
+      <if test="record.remark != null" >
+        remark = #{record.remark,jdbcType=VARCHAR},
+      </if>
+      <if test="record.replacecoursenumber != null" >
+        replaceCourseNumber = #{record.replacecoursenumber,jdbcType=VARCHAR},
+      </if>
+      <if test="record.retakecoursemark != null" >
+        retakeCourseMark = #{record.retakecoursemark,jdbcType=VARCHAR},
+      </if>
+      <if test="record.retakecoursemodecode != null" >
+        retakeCourseModeCode = #{record.retakecoursemodecode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.retakecoursemodeexplain != null" >
+        retakeCourseModeExplain = #{record.retakecoursemodeexplain,jdbcType=VARCHAR},
+      </if>
+      <if test="record.standardpoint != null" >
+        standardPoint = #{record.standardpoint,jdbcType=VARCHAR},
+      </if>
+      <if test="record.gmtCreate != null" >
+        gmt_create = #{record.gmtCreate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update urp_grade
+    set id = #{record.id,jdbcType=INTEGER},
+      exam_id = #{record.examId,jdbcType=INTEGER},
+      account = #{record.account,jdbcType=INTEGER},
+      score = #{record.score,jdbcType=INTEGER},
+      grade_point = #{record.gradePoint,jdbcType=DOUBLE},
+      level_name = #{record.levelName,jdbcType=VARCHAR},
+      level_point = #{record.levelPoint,jdbcType=VARCHAR},
+      rank = #{record.rank,jdbcType=INTEGER},
+      unpassedReasonCode = #{record.unpassedreasoncode,jdbcType=VARCHAR},
+      unpassedReasonExplain = #{record.unpassedreasonexplain,jdbcType=VARCHAR},
+      remark = #{record.remark,jdbcType=VARCHAR},
+      replaceCourseNumber = #{record.replacecoursenumber,jdbcType=VARCHAR},
+      retakeCourseMark = #{record.retakecoursemark,jdbcType=VARCHAR},
+      retakeCourseModeCode = #{record.retakecoursemodecode,jdbcType=VARCHAR},
+      retakeCourseModeExplain = #{record.retakecoursemodeexplain,jdbcType=VARCHAR},
+      standardPoint = #{record.standardpoint,jdbcType=VARCHAR},
+      gmt_create = #{record.gmtCreate,jdbcType=TIMESTAMP}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.hkxj.platform.pojo.UrpGrade" >
+    update urp_grade
+    <set >
+      <if test="examId != null" >
+        exam_id = #{examId,jdbcType=INTEGER},
+      </if>
+      <if test="account != null" >
+        account = #{account,jdbcType=INTEGER},
+      </if>
+      <if test="score != null" >
+        score = #{score,jdbcType=INTEGER},
+      </if>
+      <if test="gradePoint != null" >
+        grade_point = #{gradePoint,jdbcType=DOUBLE},
+      </if>
+      <if test="levelName != null" >
+        level_name = #{levelName,jdbcType=VARCHAR},
+      </if>
+      <if test="levelPoint != null" >
+        level_point = #{levelPoint,jdbcType=VARCHAR},
+      </if>
+      <if test="rank != null" >
+        rank = #{rank,jdbcType=INTEGER},
+      </if>
+      <if test="unpassedreasoncode != null" >
+        unpassedReasonCode = #{unpassedreasoncode,jdbcType=VARCHAR},
+      </if>
+      <if test="unpassedreasonexplain != null" >
+        unpassedReasonExplain = #{unpassedreasonexplain,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="replacecoursenumber != null" >
+        replaceCourseNumber = #{replacecoursenumber,jdbcType=VARCHAR},
+      </if>
+      <if test="retakecoursemark != null" >
+        retakeCourseMark = #{retakecoursemark,jdbcType=VARCHAR},
+      </if>
+      <if test="retakecoursemodecode != null" >
+        retakeCourseModeCode = #{retakecoursemodecode,jdbcType=VARCHAR},
+      </if>
+      <if test="retakecoursemodeexplain != null" >
+        retakeCourseModeExplain = #{retakecoursemodeexplain,jdbcType=VARCHAR},
+      </if>
+      <if test="standardpoint != null" >
+        standardPoint = #{standardpoint,jdbcType=VARCHAR},
+      </if>
+      <if test="gmtCreate != null" >
+        gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.hkxj.platform.pojo.UrpGrade" >
+    update urp_grade
+    set exam_id = #{examId,jdbcType=INTEGER},
+      account = #{account,jdbcType=INTEGER},
+      score = #{score,jdbcType=INTEGER},
+      grade_point = #{gradePoint,jdbcType=DOUBLE},
+      level_name = #{levelName,jdbcType=VARCHAR},
+      level_point = #{levelPoint,jdbcType=VARCHAR},
+      rank = #{rank,jdbcType=INTEGER},
+      unpassedReasonCode = #{unpassedreasoncode,jdbcType=VARCHAR},
+      unpassedReasonExplain = #{unpassedreasonexplain,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR},
+      replaceCourseNumber = #{replacecoursenumber,jdbcType=VARCHAR},
+      retakeCourseMark = #{retakecoursemark,jdbcType=VARCHAR},
+      retakeCourseModeCode = #{retakecoursemodecode,jdbcType=VARCHAR},
+      retakeCourseModeExplain = #{retakecoursemodeexplain,jdbcType=VARCHAR},
+      standardPoint = #{standardpoint,jdbcType=VARCHAR},
+      gmt_create = #{gmtCreate,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

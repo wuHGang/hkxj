@@ -8,7 +8,7 @@ import org.junit.Test;
  * @author JR Chan
  * @date 2019/5/2
  */
-public class UrpCourseSpiderTest {
+public class UrpCourseForSpiderSpiderTest {
     private UrpCourseSpider spider;
 
     @Before

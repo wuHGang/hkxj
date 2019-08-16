@@ -1,0 +1,531 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.hkxj.platform.mapper.UrpGradeDetailMapper" >
+  <resultMap id="BaseResultMap" type="cn.hkxj.platform.pojo.UrpGradeDetail" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="grade_id" property="gradeId" jdbcType="INTEGER" />
+    <result column="usualScoreCoefficient" property="usualscorecoefficient" jdbcType="VARCHAR" />
+    <result column="midtermScoreCoefficient" property="midtermscorecoefficient" jdbcType="VARCHAR" />
+    <result column="endtermScoreCoefficient" property="endtermscorecoefficient" jdbcType="VARCHAR" />
+    <result column="scoreCoefficient" property="scorecoefficient" jdbcType="VARCHAR" />
+    <result column="xs_remark" property="xsRemark" jdbcType="VARCHAR" />
+    <result column="zcj" property="zcj" jdbcType="DOUBLE" />
+    <result column="pscj" property="pscj" jdbcType="DOUBLE" />
+    <result column="qzcj" property="qzcj" jdbcType="DOUBLE" />
+    <result column="qmcj" property="qmcj" jdbcType="DOUBLE" />
+    <result column="rounding" property="rounding" jdbcType="VARCHAR" />
+    <result column="mx_remark" property="mxRemark" jdbcType="VARCHAR" />
+    <result column="mx_remark1" property="mxRemark1" jdbcType="VARCHAR" />
+    <result column="mx_remark2" property="mxRemark2" jdbcType="VARCHAR" />
+    <result column="firstcjxs" property="firstcjxs" jdbcType="VARCHAR" />
+    <result column="firstpscjxs" property="firstpscjxs" jdbcType="VARCHAR" />
+    <result column="firstqzcjxs" property="firstqzcjxs" jdbcType="VARCHAR" />
+    <result column="firstqmcjxs" property="firstqmcjxs" jdbcType="VARCHAR" />
+    <result column="secondcjxs" property="secondcjxs" jdbcType="VARCHAR" />
+    <result column="secondpscjxs" property="secondpscjxs" jdbcType="VARCHAR" />
+    <result column="secondqzcjxs" property="secondqzcjxs" jdbcType="VARCHAR" />
+    <result column="secondqmcjxs" property="secondqmcjxs" jdbcType="VARCHAR" />
+    <result column="scoreTypeCode" property="scoretypecode" jdbcType="VARCHAR" />
+    <result column="gmt_create" property="gmtCreate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, grade_id, usualScoreCoefficient, midtermScoreCoefficient, endtermScoreCoefficient, 
+    scoreCoefficient, xs_remark, zcj, pscj, qzcj, qmcj, rounding, mx_remark, mx_remark1, 
+    mx_remark2, firstcjxs, firstpscjxs, firstqzcjxs, firstqmcjxs, secondcjxs, secondpscjxs, 
+    secondqzcjxs, secondqmcjxs, scoreTypeCode, gmt_create
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="cn.hkxj.platform.pojo.example.UrpGradeDetailExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from urp_grade_detail
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from urp_grade_detail
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from urp_grade_detail
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="cn.hkxj.platform.pojo.example.UrpGradeDetailExample" >
+    delete from urp_grade_detail
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="cn.hkxj.platform.pojo.UrpGradeDetail" >
+    insert into urp_grade_detail (id, grade_id, usualScoreCoefficient, 
+      midtermScoreCoefficient, endtermScoreCoefficient, 
+      scoreCoefficient, xs_remark, zcj, 
+      pscj, qzcj, qmcj, rounding, 
+      mx_remark, mx_remark1, mx_remark2, 
+      firstcjxs, firstpscjxs, firstqzcjxs, 
+      firstqmcjxs, secondcjxs, secondpscjxs, 
+      secondqzcjxs, secondqmcjxs, scoreTypeCode, 
+      gmt_create)
+    values (#{id,jdbcType=INTEGER}, #{gradeId,jdbcType=INTEGER}, #{usualscorecoefficient,jdbcType=VARCHAR}, 
+      #{midtermscorecoefficient,jdbcType=VARCHAR}, #{endtermscorecoefficient,jdbcType=VARCHAR}, 
+      #{scorecoefficient,jdbcType=VARCHAR}, #{xsRemark,jdbcType=VARCHAR}, #{zcj,jdbcType=DOUBLE}, 
+      #{pscj,jdbcType=DOUBLE}, #{qzcj,jdbcType=DOUBLE}, #{qmcj,jdbcType=DOUBLE}, #{rounding,jdbcType=VARCHAR}, 
+      #{mxRemark,jdbcType=VARCHAR}, #{mxRemark1,jdbcType=VARCHAR}, #{mxRemark2,jdbcType=VARCHAR}, 
+      #{firstcjxs,jdbcType=VARCHAR}, #{firstpscjxs,jdbcType=VARCHAR}, #{firstqzcjxs,jdbcType=VARCHAR}, 
+      #{firstqmcjxs,jdbcType=VARCHAR}, #{secondcjxs,jdbcType=VARCHAR}, #{secondpscjxs,jdbcType=VARCHAR}, 
+      #{secondqzcjxs,jdbcType=VARCHAR}, #{secondqmcjxs,jdbcType=VARCHAR}, #{scoretypecode,jdbcType=VARCHAR}, 
+      #{gmtCreate,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="cn.hkxj.platform.pojo.UrpGradeDetail" >
+    <selectKey order="AFTER" keyProperty="id" resultType="int">
+      select LAST_INSERT_ID();
+    </selectKey>
+    insert into urp_grade_detail
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="gradeId != null" >
+        grade_id,
+      </if>
+      <if test="usualscorecoefficient != null" >
+        usualScoreCoefficient,
+      </if>
+      <if test="midtermscorecoefficient != null" >
+        midtermScoreCoefficient,
+      </if>
+      <if test="endtermscorecoefficient != null" >
+        endtermScoreCoefficient,
+      </if>
+      <if test="scorecoefficient != null" >
+        scoreCoefficient,
+      </if>
+      <if test="xsRemark != null" >
+        xs_remark,
+      </if>
+      <if test="zcj != null" >
+        zcj,
+      </if>
+      <if test="pscj != null" >
+        pscj,
+      </if>
+      <if test="qzcj != null" >
+        qzcj,
+      </if>
+      <if test="qmcj != null" >
+        qmcj,
+      </if>
+      <if test="rounding != null" >
+        rounding,
+      </if>
+      <if test="mxRemark != null" >
+        mx_remark,
+      </if>
+      <if test="mxRemark1 != null" >
+        mx_remark1,
+      </if>
+      <if test="mxRemark2 != null" >
+        mx_remark2,
+      </if>
+      <if test="firstcjxs != null" >
+        firstcjxs,
+      </if>
+      <if test="firstpscjxs != null" >
+        firstpscjxs,
+      </if>
+      <if test="firstqzcjxs != null" >
+        firstqzcjxs,
+      </if>
+      <if test="firstqmcjxs != null" >
+        firstqmcjxs,
+      </if>
+      <if test="secondcjxs != null" >
+        secondcjxs,
+      </if>
+      <if test="secondpscjxs != null" >
+        secondpscjxs,
+      </if>
+      <if test="secondqzcjxs != null" >
+        secondqzcjxs,
+      </if>
+      <if test="secondqmcjxs != null" >
+        secondqmcjxs,
+      </if>
+      <if test="scoretypecode != null" >
+        scoreTypeCode,
+      </if>
+      <if test="gmtCreate != null" >
+        gmt_create,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="gradeId != null" >
+        #{gradeId,jdbcType=INTEGER},
+      </if>
+      <if test="usualscorecoefficient != null" >
+        #{usualscorecoefficient,jdbcType=VARCHAR},
+      </if>
+      <if test="midtermscorecoefficient != null" >
+        #{midtermscorecoefficient,jdbcType=VARCHAR},
+      </if>
+      <if test="endtermscorecoefficient != null" >
+        #{endtermscorecoefficient,jdbcType=VARCHAR},
+      </if>
+      <if test="scorecoefficient != null" >
+        #{scorecoefficient,jdbcType=VARCHAR},
+      </if>
+      <if test="xsRemark != null" >
+        #{xsRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="zcj != null" >
+        #{zcj,jdbcType=DOUBLE},
+      </if>
+      <if test="pscj != null" >
+        #{pscj,jdbcType=DOUBLE},
+      </if>
+      <if test="qzcj != null" >
+        #{qzcj,jdbcType=DOUBLE},
+      </if>
+      <if test="qmcj != null" >
+        #{qmcj,jdbcType=DOUBLE},
+      </if>
+      <if test="rounding != null" >
+        #{rounding,jdbcType=VARCHAR},
+      </if>
+      <if test="mxRemark != null" >
+        #{mxRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="mxRemark1 != null" >
+        #{mxRemark1,jdbcType=VARCHAR},
+      </if>
+      <if test="mxRemark2 != null" >
+        #{mxRemark2,jdbcType=VARCHAR},
+      </if>
+      <if test="firstcjxs != null" >
+        #{firstcjxs,jdbcType=VARCHAR},
+      </if>
+      <if test="firstpscjxs != null" >
+        #{firstpscjxs,jdbcType=VARCHAR},
+      </if>
+      <if test="firstqzcjxs != null" >
+        #{firstqzcjxs,jdbcType=VARCHAR},
+      </if>
+      <if test="firstqmcjxs != null" >
+        #{firstqmcjxs,jdbcType=VARCHAR},
+      </if>
+      <if test="secondcjxs != null" >
+        #{secondcjxs,jdbcType=VARCHAR},
+      </if>
+      <if test="secondpscjxs != null" >
+        #{secondpscjxs,jdbcType=VARCHAR},
+      </if>
+      <if test="secondqzcjxs != null" >
+        #{secondqzcjxs,jdbcType=VARCHAR},
+      </if>
+      <if test="secondqmcjxs != null" >
+        #{secondqmcjxs,jdbcType=VARCHAR},
+      </if>
+      <if test="scoretypecode != null" >
+        #{scoretypecode,jdbcType=VARCHAR},
+      </if>
+      <if test="gmtCreate != null" >
+        #{gmtCreate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="cn.hkxj.platform.pojo.example.UrpGradeDetailExample" resultType="java.lang.Integer" >
+    select count(*) from urp_grade_detail
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update urp_grade_detail
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.gradeId != null" >
+        grade_id = #{record.gradeId,jdbcType=INTEGER},
+      </if>
+      <if test="record.usualscorecoefficient != null" >
+        usualScoreCoefficient = #{record.usualscorecoefficient,jdbcType=VARCHAR},
+      </if>
+      <if test="record.midtermscorecoefficient != null" >
+        midtermScoreCoefficient = #{record.midtermscorecoefficient,jdbcType=VARCHAR},
+      </if>
+      <if test="record.endtermscorecoefficient != null" >
+        endtermScoreCoefficient = #{record.endtermscorecoefficient,jdbcType=VARCHAR},
+      </if>
+      <if test="record.scorecoefficient != null" >
+        scoreCoefficient = #{record.scorecoefficient,jdbcType=VARCHAR},
+      </if>
+      <if test="record.xsRemark != null" >
+        xs_remark = #{record.xsRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="record.zcj != null" >
+        zcj = #{record.zcj,jdbcType=DOUBLE},
+      </if>
+      <if test="record.pscj != null" >
+        pscj = #{record.pscj,jdbcType=DOUBLE},
+      </if>
+      <if test="record.qzcj != null" >
+        qzcj = #{record.qzcj,jdbcType=DOUBLE},
+      </if>
+      <if test="record.qmcj != null" >
+        qmcj = #{record.qmcj,jdbcType=DOUBLE},
+      </if>
+      <if test="record.rounding != null" >
+        rounding = #{record.rounding,jdbcType=VARCHAR},
+      </if>
+      <if test="record.mxRemark != null" >
+        mx_remark = #{record.mxRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="record.mxRemark1 != null" >
+        mx_remark1 = #{record.mxRemark1,jdbcType=VARCHAR},
+      </if>
+      <if test="record.mxRemark2 != null" >
+        mx_remark2 = #{record.mxRemark2,jdbcType=VARCHAR},
+      </if>
+      <if test="record.firstcjxs != null" >
+        firstcjxs = #{record.firstcjxs,jdbcType=VARCHAR},
+      </if>
+      <if test="record.firstpscjxs != null" >
+        firstpscjxs = #{record.firstpscjxs,jdbcType=VARCHAR},
+      </if>
+      <if test="record.firstqzcjxs != null" >
+        firstqzcjxs = #{record.firstqzcjxs,jdbcType=VARCHAR},
+      </if>
+      <if test="record.firstqmcjxs != null" >
+        firstqmcjxs = #{record.firstqmcjxs,jdbcType=VARCHAR},
+      </if>
+      <if test="record.secondcjxs != null" >
+        secondcjxs = #{record.secondcjxs,jdbcType=VARCHAR},
+      </if>
+      <if test="record.secondpscjxs != null" >
+        secondpscjxs = #{record.secondpscjxs,jdbcType=VARCHAR},
+      </if>
+      <if test="record.secondqzcjxs != null" >
+        secondqzcjxs = #{record.secondqzcjxs,jdbcType=VARCHAR},
+      </if>
+      <if test="record.secondqmcjxs != null" >
+        secondqmcjxs = #{record.secondqmcjxs,jdbcType=VARCHAR},
+      </if>
+      <if test="record.scoretypecode != null" >
+        scoreTypeCode = #{record.scoretypecode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.gmtCreate != null" >
+        gmt_create = #{record.gmtCreate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update urp_grade_detail
+    set id = #{record.id,jdbcType=INTEGER},
+      grade_id = #{record.gradeId,jdbcType=INTEGER},
+      usualScoreCoefficient = #{record.usualscorecoefficient,jdbcType=VARCHAR},
+      midtermScoreCoefficient = #{record.midtermscorecoefficient,jdbcType=VARCHAR},
+      endtermScoreCoefficient = #{record.endtermscorecoefficient,jdbcType=VARCHAR},
+      scoreCoefficient = #{record.scorecoefficient,jdbcType=VARCHAR},
+      xs_remark = #{record.xsRemark,jdbcType=VARCHAR},
+      zcj = #{record.zcj,jdbcType=DOUBLE},
+      pscj = #{record.pscj,jdbcType=DOUBLE},
+      qzcj = #{record.qzcj,jdbcType=DOUBLE},
+      qmcj = #{record.qmcj,jdbcType=DOUBLE},
+      rounding = #{record.rounding,jdbcType=VARCHAR},
+      mx_remark = #{record.mxRemark,jdbcType=VARCHAR},
+      mx_remark1 = #{record.mxRemark1,jdbcType=VARCHAR},
+      mx_remark2 = #{record.mxRemark2,jdbcType=VARCHAR},
+      firstcjxs = #{record.firstcjxs,jdbcType=VARCHAR},
+      firstpscjxs = #{record.firstpscjxs,jdbcType=VARCHAR},
+      firstqzcjxs = #{record.firstqzcjxs,jdbcType=VARCHAR},
+      firstqmcjxs = #{record.firstqmcjxs,jdbcType=VARCHAR},
+      secondcjxs = #{record.secondcjxs,jdbcType=VARCHAR},
+      secondpscjxs = #{record.secondpscjxs,jdbcType=VARCHAR},
+      secondqzcjxs = #{record.secondqzcjxs,jdbcType=VARCHAR},
+      secondqmcjxs = #{record.secondqmcjxs,jdbcType=VARCHAR},
+      scoreTypeCode = #{record.scoretypecode,jdbcType=VARCHAR},
+      gmt_create = #{record.gmtCreate,jdbcType=TIMESTAMP}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.hkxj.platform.pojo.UrpGradeDetail" >
+    update urp_grade_detail
+    <set >
+      <if test="gradeId != null" >
+        grade_id = #{gradeId,jdbcType=INTEGER},
+      </if>
+      <if test="usualscorecoefficient != null" >
+        usualScoreCoefficient = #{usualscorecoefficient,jdbcType=VARCHAR},
+      </if>
+      <if test="midtermscorecoefficient != null" >
+        midtermScoreCoefficient = #{midtermscorecoefficient,jdbcType=VARCHAR},
+      </if>
+      <if test="endtermscorecoefficient != null" >
+        endtermScoreCoefficient = #{endtermscorecoefficient,jdbcType=VARCHAR},
+      </if>
+      <if test="scorecoefficient != null" >
+        scoreCoefficient = #{scorecoefficient,jdbcType=VARCHAR},
+      </if>
+      <if test="xsRemark != null" >
+        xs_remark = #{xsRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="zcj != null" >
+        zcj = #{zcj,jdbcType=DOUBLE},
+      </if>
+      <if test="pscj != null" >
+        pscj = #{pscj,jdbcType=DOUBLE},
+      </if>
+      <if test="qzcj != null" >
+        qzcj = #{qzcj,jdbcType=DOUBLE},
+      </if>
+      <if test="qmcj != null" >
+        qmcj = #{qmcj,jdbcType=DOUBLE},
+      </if>
+      <if test="rounding != null" >
+        rounding = #{rounding,jdbcType=VARCHAR},
+      </if>
+      <if test="mxRemark != null" >
+        mx_remark = #{mxRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="mxRemark1 != null" >
+        mx_remark1 = #{mxRemark1,jdbcType=VARCHAR},
+      </if>
+      <if test="mxRemark2 != null" >
+        mx_remark2 = #{mxRemark2,jdbcType=VARCHAR},
+      </if>
+      <if test="firstcjxs != null" >
+        firstcjxs = #{firstcjxs,jdbcType=VARCHAR},
+      </if>
+      <if test="firstpscjxs != null" >
+        firstpscjxs = #{firstpscjxs,jdbcType=VARCHAR},
+      </if>
+      <if test="firstqzcjxs != null" >
+        firstqzcjxs = #{firstqzcjxs,jdbcType=VARCHAR},
+      </if>
+      <if test="firstqmcjxs != null" >
+        firstqmcjxs = #{firstqmcjxs,jdbcType=VARCHAR},
+      </if>
+      <if test="secondcjxs != null" >
+        secondcjxs = #{secondcjxs,jdbcType=VARCHAR},
+      </if>
+      <if test="secondpscjxs != null" >
+        secondpscjxs = #{secondpscjxs,jdbcType=VARCHAR},
+      </if>
+      <if test="secondqzcjxs != null" >
+        secondqzcjxs = #{secondqzcjxs,jdbcType=VARCHAR},
+      </if>
+      <if test="secondqmcjxs != null" >
+        secondqmcjxs = #{secondqmcjxs,jdbcType=VARCHAR},
+      </if>
+      <if test="scoretypecode != null" >
+        scoreTypeCode = #{scoretypecode,jdbcType=VARCHAR},
+      </if>
+      <if test="gmtCreate != null" >
+        gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.hkxj.platform.pojo.UrpGradeDetail" >
+    update urp_grade_detail
+    set grade_id = #{gradeId,jdbcType=INTEGER},
+      usualScoreCoefficient = #{usualscorecoefficient,jdbcType=VARCHAR},
+      midtermScoreCoefficient = #{midtermscorecoefficient,jdbcType=VARCHAR},
+      endtermScoreCoefficient = #{endtermscorecoefficient,jdbcType=VARCHAR},
+      scoreCoefficient = #{scorecoefficient,jdbcType=VARCHAR},
+      xs_remark = #{xsRemark,jdbcType=VARCHAR},
+      zcj = #{zcj,jdbcType=DOUBLE},
+      pscj = #{pscj,jdbcType=DOUBLE},
+      qzcj = #{qzcj,jdbcType=DOUBLE},
+      qmcj = #{qmcj,jdbcType=DOUBLE},
+      rounding = #{rounding,jdbcType=VARCHAR},
+      mx_remark = #{mxRemark,jdbcType=VARCHAR},
+      mx_remark1 = #{mxRemark1,jdbcType=VARCHAR},
+      mx_remark2 = #{mxRemark2,jdbcType=VARCHAR},
+      firstcjxs = #{firstcjxs,jdbcType=VARCHAR},
+      firstpscjxs = #{firstpscjxs,jdbcType=VARCHAR},
+      firstqzcjxs = #{firstqzcjxs,jdbcType=VARCHAR},
+      firstqmcjxs = #{firstqmcjxs,jdbcType=VARCHAR},
+      secondcjxs = #{secondcjxs,jdbcType=VARCHAR},
+      secondpscjxs = #{secondpscjxs,jdbcType=VARCHAR},
+      secondqzcjxs = #{secondqzcjxs,jdbcType=VARCHAR},
+      secondqmcjxs = #{secondqmcjxs,jdbcType=VARCHAR},
+      scoreTypeCode = #{scoretypecode,jdbcType=VARCHAR},
+      gmt_create = #{gmtCreate,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

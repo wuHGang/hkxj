@@ -1,10 +1,8 @@
 package cn.hkxj.platform.service.wechat;
 
-import cn.hkxj.platform.pojo.Grade;
-import cn.hkxj.platform.pojo.GradeAndCourse;
-import cn.hkxj.platform.pojo.GradeSearchResult;
-import cn.hkxj.platform.pojo.Student;
+import cn.hkxj.platform.pojo.*;
 import cn.hkxj.platform.service.GradeSearchService;
+import cn.hkxj.platform.service.NewGradeSearchService;
 import cn.hkxj.platform.service.OpenIdService;
 import com.google.common.collect.Lists;
 import lombok.NoArgsConstructor;
@@ -66,14 +64,14 @@ public class CustomerMessageService {
             if(searchResult.isUpdate()){
                 gradeUpdateNotice.submit(() -> sendGradeUpdateNotice(wxMpService, student, wxMpXmlMessage.getFromUser()));
             }
-            List<GradeAndCourse> gradeAndCourses = searchResult.getData();
-            return buildMessage(GradeSearchService.gradeListToText(gradeAndCourses));
+            List<UrpGradeAndUrpCourse> gradeAndCourses = searchResult.getData();
+            return buildMessage(NewGradeSearchService.gradeListToText(gradeAndCourses));
         } catch (TimeoutException | InterruptedException | ExecutionException e) {
             log.error("student {} from wechat message get grade error {}", student.getAccount(), e.getMessage());
             future.whenCompleteAsync((result, exception) -> {
-                for (List<GradeAndCourse> gradeAndCourseList : Lists.partition(result.getData(), 10)) {
+                for (List<UrpGradeAndUrpCourse> gradeAndCourseList : Lists.partition(result.getData(), 10)) {
                     sentTextMessage(wxMpXmlMessage, wxMpService,
-                            GradeSearchService.gradeListToText(gradeAndCourseList));
+                            NewGradeSearchService.gradeListToText(gradeAndCourseList));
                 }
             });
         }
