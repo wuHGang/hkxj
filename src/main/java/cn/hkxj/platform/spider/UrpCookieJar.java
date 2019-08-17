@@ -30,17 +30,22 @@ import java.util.concurrent.ConcurrentHashMap;
 public class UrpCookieJar implements ClearableCookieJar {
     private final ConcurrentHashMap<String, CookieCache> accountCookieCache;
 
-    private RedisCookiePersistor persistor = new RedisCookiePersistor();
+    private final RedisCookiePersistor persistor;
 
     UrpCookieJar() {
         accountCookieCache = new ConcurrentHashMap<>();
-
-        Map<String, List<Cookie>> accountCookieMap = persistor.loadAll();
-        for (Map.Entry<String, List<Cookie>> entry : accountCookieMap.entrySet()) {
-            CookieCache cookieCache = new SetCookieCache();
-            cookieCache.addAll(entry.getValue());
-            accountCookieCache.put(entry.getKey(), cookieCache);
+        persistor = new RedisCookiePersistor();
+        try{
+            Map<String, List<Cookie>> accountCookieMap = persistor.loadAll();
+            for (Map.Entry<String, List<Cookie>> entry : accountCookieMap.entrySet()) {
+                CookieCache cookieCache = new SetCookieCache();
+                cookieCache.addAll(entry.getValue());
+                accountCookieCache.put(entry.getKey(), cookieCache);
+            }
+        }catch (Exception e){
+            log.error("UrpCookieJar init error ", e);
         }
+
 
     }
 

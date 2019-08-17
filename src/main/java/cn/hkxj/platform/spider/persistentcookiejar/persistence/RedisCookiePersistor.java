@@ -4,18 +4,25 @@ import cn.hkxj.platform.pojo.constant.RedisKeys;
 import cn.hkxj.platform.utils.ApplicationUtil;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import lombok.extern.slf4j.Slf4j;
 import okhttp3.Cookie;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import java.util.*;
 
+@Slf4j
 public class RedisCookiePersistor{
 
     private static RedisTemplate<String, String> redisTemplate;
 
     static {
-        redisTemplate = ApplicationUtil.getBean("redisTemplate");
+        try{
+            redisTemplate = ApplicationUtil.getBean("redisTemplate");
+        }catch (Exception e){
+            log.error("inject error", e);
+        }
+
     }
 
     synchronized public Map<String, List<Cookie>> loadAll() {

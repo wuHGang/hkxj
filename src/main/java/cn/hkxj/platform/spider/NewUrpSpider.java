@@ -41,7 +41,7 @@ public class NewUrpSpider {
     private static final String CURRENT_TERM_GRADE_DETAIL = ROOT + "/student/integratedQuery/scoreQuery/coursePropertyScores/serchScoreDetail";
     private static final String COURSE_DETAIL = ROOT+ "/student/integratedQuery/course/courseSchdule/detail";
     private static final String INDEX = ROOT + "/index.jsp";
-    private static final StringRedisTemplate stringRedisTemplate = ApplicationUtil.getBean("stringRedisTemplate");
+    private static StringRedisTemplate stringRedisTemplate;
     private static final TypeReference<UrpGradeDetailForSpider> gradeDetailTypeReference
             = new TypeReference<UrpGradeDetailForSpider>() {
     };
@@ -75,6 +75,16 @@ public class NewUrpSpider {
 
     private String account;
     private String password;
+
+
+    static {
+        try{
+            stringRedisTemplate = ApplicationUtil.getBean("stringRedisTemplate");
+        }catch (Exception e){
+            log.error("inject error ", e);
+        }
+
+    }
 
     /**
      *
