@@ -32,7 +32,6 @@ import java.util.*;
 @Slf4j
 public class NewUrpSpider {
     private static final String ROOT = "http://xsurp.usth.edu.cn";
-    private static final String TENSORFLOW = "http://spider.hackerda.com/valid";
     private static final String CAPTCHA = ROOT + "/img/captcha.jpg";
     private static final String CHECK = ROOT + "/j_spring_security_check";
     private static final String LOGIN = ROOT + "/getStudentInfo";
@@ -104,7 +103,7 @@ public class NewUrpSpider {
         HashOperations<String, String, String> opsForHash = stringRedisTemplate.opsForHash();
 
         opsForHash.put(RedisKeys.KAPTCHA.getName(), uuid.toString(), encoder.encodeToString(verifyCode.getData().clone()));
-        String code = getCode(uuid.toString());
+        String code = CaptchaBreaker.getCode(uuid.toString());
 
         studentCheck(account, password, code);
     }
@@ -353,17 +352,6 @@ public class NewUrpSpider {
     private boolean isResponseFail(Response response){
         return response.body() == null ||
                 (!response.isSuccessful() && !response.isRedirect());
-    }
-
-
-    public String getCode(String key){
-        String url = TENSORFLOW+"?key="+key;
-        Request request = new Request.Builder()
-                .url(url)
-                .get()
-                .build();
-
-        return new String(execute(request));
     }
 
 

@@ -21,9 +21,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 
 /**
  * @author Yuki
@@ -40,7 +38,8 @@ public class GradeMessageHandler implements WxMpMessageHandler {
     @Resource
     private ScheduleTaskService scheduleTaskService;
 
-    private ExecutorService cacheThreadPool = Executors.newCachedThreadPool();
+    private ExecutorService cacheThreadPool = new ThreadPoolExecutor(3, 3, 0L, TimeUnit.SECONDS,
+            new LinkedBlockingQueue<>(), r -> new Thread(r, "GradeMessageThread"));
 
     @Override
     public WxMpXmlOutMessage handle(WxMpXmlMessage wxMpXmlMessage,
@@ -62,7 +61,6 @@ public class GradeMessageHandler implements WxMpMessageHandler {
         completableFuture.whenComplete((gradeSearchResult, throwable) -> {
             try {
                 String text = NewGradeSearchService.gradeListToText(gradeSearchResult.getData());
-                log.info("future complete result {}", text);
                 messageService.sentTextMessage(text);
             }catch (Exception e){
                 log.error("", e);
