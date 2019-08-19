@@ -12,7 +12,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import java.util.*;
 
 @Slf4j
-public class RedisCookiePersistor{
+public class RedisCookiePersistor implements AccountCookiePersistor{
 
     private static RedisTemplate<String, String> redisTemplate;
 
@@ -25,6 +25,7 @@ public class RedisCookiePersistor{
 
     }
 
+    @Override
     synchronized public Map<String, List<Cookie>> loadAll() {
         Set<String> accountSet =
                 Optional.ofNullable(redisTemplate.opsForSet().members(RedisKeys.URP_COOKIE_ACCOUNT.getName())).orElse(new HashSet<>());
@@ -47,6 +48,7 @@ public class RedisCookiePersistor{
         return accountCookieMap;
     }
 
+    @Override
     synchronized public void saveByAccount(Collection<Cookie> cookies, String account) {
         redisTemplate.opsForSet().add(RedisKeys.URP_COOKIE_ACCOUNT.getName(), account);
 
@@ -59,6 +61,7 @@ public class RedisCookiePersistor{
         opsForHash.putAll(RedisKeys.URP_COOKIE.genKey(account), cookieMap);
     }
 
+    @Override
     synchronized public void removeByAccount(Collection<Cookie> cookies, String account){
         HashOperations<String, String, String> opsForHash = redisTemplate.opsForHash();
 
@@ -69,6 +72,7 @@ public class RedisCookiePersistor{
     }
 
 
+    @Override
     synchronized public void clearByAccount(String account) {
         redisTemplate.opsForSet().remove(RedisKeys.URP_COOKIE_ACCOUNT.getName(), account);
         redisTemplate.delete(RedisKeys.URP_COOKIE.genKey(account));
