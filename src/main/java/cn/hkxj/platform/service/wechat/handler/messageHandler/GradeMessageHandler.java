@@ -67,6 +67,7 @@ public class GradeMessageHandler implements WxMpMessageHandler {
                 log.error("send grade message error", throwable);
             }
         });
+        log.info("send message finish {}", openid);
 
         return null;
     }
