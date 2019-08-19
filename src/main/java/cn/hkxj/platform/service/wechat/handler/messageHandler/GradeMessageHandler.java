@@ -60,8 +60,14 @@ public class GradeMessageHandler implements WxMpMessageHandler {
         CustomerMessageService messageService = new CustomerMessageService(wxMpXmlMessage, wxMpService);
 
         completableFuture.whenComplete((gradeSearchResult, throwable) -> {
-            String text = NewGradeSearchService.gradeListToText(gradeSearchResult.getData());
-            messageService.sentTextMessage(text);
+            try {
+                String text = NewGradeSearchService.gradeListToText(gradeSearchResult.getData());
+                log.info("future complete result {}", text);
+                messageService.sentTextMessage(text);
+            }catch (Exception e){
+                log.error("", e);
+            }
+
 
             if(throwable != null){
                 log.error("send grade message error", throwable);
