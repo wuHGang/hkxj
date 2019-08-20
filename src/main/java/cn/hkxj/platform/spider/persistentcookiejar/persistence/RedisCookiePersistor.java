@@ -10,7 +10,11 @@ import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
+/**
+ * @author junrong.chen
+ */
 @Slf4j
 public class RedisCookiePersistor{
 
@@ -54,9 +58,10 @@ public class RedisCookiePersistor{
         for (Cookie cookie : cookies) {
             cookieMap.put(createCookieKey(cookie), new SerializableCookie().encode(cookie));
         }
-
+        String key = RedisKeys.URP_COOKIE.genKey(account);
         HashOperations<String, String, String> opsForHash = redisTemplate.opsForHash();
-        opsForHash.putAll(RedisKeys.URP_COOKIE.genKey(account), cookieMap);
+        redisTemplate.expire(key, 30L, TimeUnit.MINUTES);
+        opsForHash.putAll(key, cookieMap);
     }
 
     synchronized public void removeByAccount(Collection<Cookie> cookies, String account){

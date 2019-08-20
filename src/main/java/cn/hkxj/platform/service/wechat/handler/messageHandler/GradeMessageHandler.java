@@ -16,6 +16,7 @@ import me.chanjar.weixin.mp.api.WxMpMessageHandler;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -59,17 +60,26 @@ public class GradeMessageHandler implements WxMpMessageHandler {
         CustomerMessageService messageService = new CustomerMessageService(wxMpXmlMessage, wxMpService);
 
         completableFuture.whenComplete((gradeSearchResult, throwable) -> {
+            if(throwable != null){
+                log.error("send grade message error", throwable);
+                return;
+            }
+
             try {
                 String text = NewGradeSearchService.gradeListToText(gradeSearchResult.getData());
+
+                if(StringUtils.isEmpty(text)){
+                    messageService.sentTextMessage("暂时没查到成绩，请稍后重试");
+                    return;
+                }
+
                 messageService.sentTextMessage(text);
             }catch (Exception e){
                 log.error("", e);
             }
 
 
-            if(throwable != null){
-                log.error("send grade message error", throwable);
-            }
+
         });
         log.info("send message finish {}", openid);
 

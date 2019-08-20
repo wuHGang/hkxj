@@ -1,18 +1,18 @@
 package cn.hkxj.platform.spider;
 
-import cn.hkxj.platform.exceptions.PasswordUncorrectException;
-import cn.hkxj.platform.exceptions.UrpRequestException;
-import cn.hkxj.platform.exceptions.UrpTimeoutException;
-import cn.hkxj.platform.exceptions.UrpVerifyCodeException;
+import cn.hkxj.platform.exceptions.*;
 import cn.hkxj.platform.pojo.constant.RedisKeys;
 import cn.hkxj.platform.spider.model.NewUrpGradeResult;
 import cn.hkxj.platform.spider.model.UrpStudentInfo;
 import cn.hkxj.platform.spider.model.VerifyCode;
 import cn.hkxj.platform.spider.newmodel.*;
+import cn.hkxj.platform.spider.persistentcookiejar.cache.CookieCache;
 import cn.hkxj.platform.utils.ApplicationUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.TypeReference;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
@@ -28,6 +28,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author junrong.chen
@@ -47,18 +48,14 @@ public class NewUrpSpider {
     private static final TypeReference<UrpGradeDetailForSpider> gradeDetailTypeReference
             = new TypeReference<UrpGradeDetailForSpider>() {
     };
-    private static final TypeReference<List<NewUrpGradeResult>> CURRENT_GRADE_REFERENCE =
-            new TypeReference<List<NewUrpGradeResult>>() {
-            };
-    private static final TypeReference<CurrentGrade> currentGradeTypeReference
-            = new TypeReference<CurrentGrade>() {
-    };
     private static final TypeReference<List<UrpCourseForSpider>> courseTypeReference
             = new TypeReference<List<UrpCourseForSpider>>() {
     };
 
+    private static final UrpCookieJar cookieJar = new UrpCookieJar();
+
     private static final OkHttpClient client = new OkHttpClient.Builder()
-            .cookieJar(new UrpCookieJar())
+            .cookieJar(cookieJar)
             .retryOnConnectionFailure(true)
             .addInterceptor(new RetryInterceptor(5))
             .followRedirects(false)
@@ -109,6 +106,8 @@ public class NewUrpSpider {
         String code = CaptchaBreaker.getCode(uuid.toString());
 
         studentCheck(account, password, code, uuid.toString());
+
+
     }
 
     public CurrentGrade getCurrentGrade(){
@@ -206,14 +205,14 @@ public class NewUrpSpider {
         String location = response.header("Location");
 
         if(StringUtils.isEmpty(location)){
-            log.warn("url: "+ request.url().toString()+ " code: "+response.code()+" cause: "+ response.message());
-//            throw new UrpRequestException("url: "+ request.url().toString()+ " code: "+response.code()+" cause: "+ response.message());
+            throw new UrpRequestException("url: "+ request.url().toString()+ " code: "+response.code()+" cause: "+ response.message());
         }else if(location.contains("badCaptcha")){
             throw new UrpVerifyCodeException("captcha: "+ captcha + " code uuid :"+ uuid);
         }else if(location.contains("badCredentials")){
             throw new PasswordUncorrectException();
         }else if(location.contains("concurrentSessionExpired")){
-            log.warn(account+ " session expired");
+            cookieJar.clearSession();
+            throw new UrpSessionExpiredException("account: "+ account+ "session expired");
         }
 
     }
@@ -326,6 +325,11 @@ public class NewUrpSpider {
     private boolean isResponseFail(Response response){
         return response.body() == null ||
                 (!response.isSuccessful() && !response.isRedirect());
+    }
+
+
+    private boolean isLogin(String account){
+        return false;
     }
 
 
