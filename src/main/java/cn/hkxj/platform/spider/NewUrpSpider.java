@@ -25,6 +25,7 @@ import org.jsoup.select.Elements;
 import org.slf4j.MDC;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 
 import java.io.IOException;
 import java.util.*;
@@ -95,6 +96,9 @@ public class NewUrpSpider {
         MDC.put("account", account);
         this.account = account;
         this.password = password;
+        if(hasLoginCookieCache(account)){
+            return;
+        }
 
         VerifyCode verifyCode = getCaptcha();
         Base64.Encoder encoder = Base64.getEncoder();
@@ -215,6 +219,9 @@ public class NewUrpSpider {
             throw new UrpSessionExpiredException("account: "+ account+ "session expired");
         }
 
+        ValueOperations<String, String> opsForValue = stringRedisTemplate.opsForValue();
+        opsForValue.set(RedisKeys.URP_LOGIN_COOKIE.genKey(account), uuid, 20L, TimeUnit.MINUTES);
+
     }
 
 
@@ -287,6 +294,12 @@ public class NewUrpSpider {
         } catch (IOException e) {
             throw new UrpTimeoutException(request.url().toString(), e);
         }
+    }
+
+    private boolean hasLoginCookieCache(String account){
+
+        return stringRedisTemplate.hasKey(RedisKeys.URP_COOKIE.genKey(account))
+                && stringRedisTemplate.hasKey(RedisKeys.URP_LOGIN_COOKIE.genKey(account));
     }
 
     public boolean isCookieExpire(){
