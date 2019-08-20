@@ -5,4 +5,7 @@ package cn.hkxj.platform.exceptions;
  * @date 2019/7/18
  */
 public class UrpVerifyCodeException extends RuntimeException{
+    public UrpVerifyCodeException(String desc){
+        super(desc);
+    }
 }

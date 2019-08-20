@@ -29,6 +29,9 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import java.io.IOException;
 import java.util.*;
 
+/**
+ * @author junrong.chen
+ */
 @Slf4j
 public class NewUrpSpider {
     private static final String ROOT = "http://xsurp.usth.edu.cn";
@@ -105,7 +108,7 @@ public class NewUrpSpider {
         opsForHash.put(RedisKeys.KAPTCHA.getName(), uuid.toString(), encoder.encodeToString(verifyCode.getData().clone()));
         String code = CaptchaBreaker.getCode(uuid.toString());
 
-        studentCheck(account, password, code);
+        studentCheck(account, password, code, uuid.toString());
     }
 
     public CurrentGrade getCurrentGrade(){
@@ -184,7 +187,7 @@ public class NewUrpSpider {
     /**
      * 登陆校验
      */
-    private void studentCheck(String account, String password, String captcha){
+    private void studentCheck(String account, String password, String captcha, String uuid){
 
 
         FormBody.Builder params = new FormBody.Builder();
@@ -203,49 +206,20 @@ public class NewUrpSpider {
         String location = response.header("Location");
 
         if(StringUtils.isEmpty(location)){
-            throw new UrpRequestException("url: "+ request.url().toString()+ " code: "+response.code()+" cause: "+ response.message());
+            log.warn("url: "+ request.url().toString()+ " code: "+response.code()+" cause: "+ response.message());
+//            throw new UrpRequestException("url: "+ request.url().toString()+ " code: "+response.code()+" cause: "+ response.message());
         }else if(location.contains("badCaptcha")){
-            throw new UrpVerifyCodeException();
+            throw new UrpVerifyCodeException("captcha: "+ captcha + " code uuid :"+ uuid);
         }else if(location.contains("badCredentials")){
             throw new PasswordUncorrectException();
         }else if(location.contains("concurrentSessionExpired")){
-
+            log.warn(account+ " session expired");
         }
 
-    }
-
-    public NewUrpGradeResult getCurrentGrade0(){
-        if(this.account == null){
-            throw new UnsupportedOperationException("spider haven`t login");
-        }
-
-        Request request = new Request.Builder()
-                .url(CURRENT_TERM_GRADE)
-                .headers(HEADERS)
-                .get()
-                .build();
-
-        String result = new String(execute(request));
-
-        List<NewUrpGradeResult> newUrpGradeResults = JSON.parseObject(result, CURRENT_GRADE_REFERENCE);
-
-        if(CollectionUtils.isNotEmpty(newUrpGradeResults)){
-            if(newUrpGradeResults.size() >1){
-                log.error("account {} current grade result size {}", account, newUrpGradeResults.size());
-            }
-
-            return newUrpGradeResults.get(0);
-        }
-
-        return null;
     }
 
 
     public UrpStudentInfo getStudentInfo(){
-        if(this.account == null){
-            throw new UnsupportedOperationException("spider haven`t  login");
-        }
-
 
         Request request = new Request.Builder()
                 .url(STUDENT_INFO)
