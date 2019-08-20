@@ -10,6 +10,7 @@ import cn.hkxj.platform.service.NewGradeSearchService;
 import cn.hkxj.platform.service.OpenIdService;
 import cn.hkxj.platform.service.ScheduleTaskService;
 import cn.hkxj.platform.service.wechat.CustomerMessageService;
+import com.alibaba.ttl.threadpool.TtlExecutors;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.session.WxSessionManager;
 import me.chanjar.weixin.mp.api.WxMpMessageHandler;
@@ -39,8 +40,9 @@ public class GradeMessageHandler implements WxMpMessageHandler {
     @Resource
     private ScheduleTaskService scheduleTaskService;
 
-    private ExecutorService cacheThreadPool = new ThreadPoolExecutor(3, 3, 0L, TimeUnit.SECONDS,
-            new LinkedBlockingQueue<>(), r -> new Thread(r, "GradeMessageThread"));
+    private ExecutorService cacheThreadPool = TtlExecutors.getTtlExecutorService(
+            new ThreadPoolExecutor(3, 3, 0L,TimeUnit.SECONDS,
+            new LinkedBlockingQueue<>(), r -> new Thread(r, "GradeMessageThread")));
 
     @Override
     public WxMpXmlOutMessage handle(WxMpXmlMessage wxMpXmlMessage,
@@ -78,10 +80,7 @@ public class GradeMessageHandler implements WxMpMessageHandler {
                 log.error("", e);
             }
 
-
-
         });
-        log.info("send message finish {}", openid);
 
         return null;
     }
