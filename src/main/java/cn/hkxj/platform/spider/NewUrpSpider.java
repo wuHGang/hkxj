@@ -10,6 +10,7 @@ import cn.hkxj.platform.spider.persistentcookiejar.cache.CookieCache;
 import cn.hkxj.platform.utils.ApplicationUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.TypeReference;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -139,9 +140,14 @@ public class NewUrpSpider {
                 .get()
                 .build();
         String result = new String(execute(request));
-        List<Map<String, Object>> list = JSON.parseObject(result, new TypeReference<List<Map<String, Object>>>(){});
-        JSONArray jsonArray = (JSONArray) list.get(0).get("list");
-        return jsonArray.toJavaList(UrpGeneralGradeForSpider.class);
+        try {
+            List<Map<String, Object>> list = JSON.parseObject(result, new TypeReference<List<Map<String, Object>>>(){});
+            JSONArray jsonArray = (JSONArray) list.get(0).get("list");
+            return jsonArray.toJavaList(UrpGeneralGradeForSpider.class);
+        }catch (JSONException e){
+            log.error("parse grade error {}", result, e);
+            return Lists.newArrayListWithExpectedSize(0);
+        }
     }
 
     public UrpGradeDetailForSpider getUrpGradeDetail(UrpGeneralGradeForSpider urpGeneralGradeForSpider){

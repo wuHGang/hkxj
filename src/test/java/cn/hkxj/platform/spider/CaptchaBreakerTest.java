@@ -18,6 +18,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.Assert.*;
 
@@ -28,16 +29,32 @@ import static org.junit.Assert.*;
 public class CaptchaBreakerTest {
     @Resource
     private StringRedisTemplate stringRedisTemplate;
-    private static LinkedBlockingQueue queue =  new LinkedBlockingQueue<>();
-    private static final ExecutorService pool = new ThreadPoolExecutor(4, 4, 0L, TimeUnit.SECONDS, queue);
+    private static LinkedBlockingQueue<Runnable> queue =  new LinkedBlockingQueue<>();
+    private static final ExecutorService pool = new ThreadPoolExecutor(2, 2, 0L, TimeUnit.SECONDS, queue);
 
     @Test
     public void getCode() {
+        AtomicInteger sum = new AtomicInteger();
+        AtomicInteger success = new AtomicInteger();
+        AtomicInteger fail = new AtomicInteger();
         HashOperations<String, String, String> hash = stringRedisTemplate.opsForHash();
         Set<String> keys = hash.keys(RedisKeys.KAPTCHA.getName());
         for (String key : keys) {
-            pool.execute(() -> CaptchaBreaker.getCode(key));
-            log.info("{}", queue.size());
+            pool.execute(() -> {
+                try {
+                    CaptchaBreaker.getCode(key);
+                    log.info("key {} success", key);
+                    success.getAndIncrement();
+                }catch (Exception e){
+                    log.info("key {} fail", key);
+                    fail.getAndIncrement();
+                }finally {
+                    sum.getAndIncrement();
+                    log.info("sum {} success {} fail {}", sum.get(), success.get(), fail.get());
+                }
+
+            });
+
         }
         while (true){
 
