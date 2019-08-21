@@ -40,7 +40,7 @@ public class UrpGeneralGradeForSpider {
     /**
      * 课程成绩
      */
-    private int courseScore;
+    private Double courseScore;
     /**
      * 学分
      */
