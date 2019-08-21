@@ -1,5 +1,6 @@
 package cn.hkxj.platform.service.wechat.handler.messageHandler;
 
+import cn.hkxj.platform.MDCThreadPool;
 import cn.hkxj.platform.pojo.GradeAndCourse;
 import cn.hkxj.platform.pojo.GradeSearchResult;
 import cn.hkxj.platform.pojo.ScheduleTask;
@@ -10,6 +11,7 @@ import cn.hkxj.platform.service.NewGradeSearchService;
 import cn.hkxj.platform.service.OpenIdService;
 import cn.hkxj.platform.service.ScheduleTaskService;
 import cn.hkxj.platform.service.wechat.CustomerMessageService;
+import com.alibaba.ttl.TransmittableThreadLocal;
 import com.alibaba.ttl.threadpool.TtlExecutors;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.session.WxSessionManager;
@@ -18,6 +20,7 @@ import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.MDC;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -40,8 +43,8 @@ public class GradeMessageHandler implements WxMpMessageHandler {
     @Resource
     private ScheduleTaskService scheduleTaskService;
 
-    private ExecutorService cacheThreadPool = TtlExecutors.getTtlExecutorService(
-            new ThreadPoolExecutor(3, 3, 0L,TimeUnit.SECONDS,
+    private static ExecutorService cacheThreadPool = TtlExecutors.getTtlExecutorService(
+            new MDCThreadPool(3, 3, 0L,TimeUnit.SECONDS,
             new LinkedBlockingQueue<>(), r -> new Thread(r, "GradeMessageThread")));
 
     @Override
@@ -84,7 +87,6 @@ public class GradeMessageHandler implements WxMpMessageHandler {
 
         return null;
     }
-
 
 
 }
