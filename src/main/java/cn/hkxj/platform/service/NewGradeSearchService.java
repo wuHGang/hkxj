@@ -156,7 +156,7 @@ public class NewGradeSearchService {
             buffer.append("- - - - - - - - - - - - - -\n");
             buffer.append("|").append(term.getTermCode()).append("学年，").append(term.getTermName()).append("|\n");
             for (UrpGradeAndUrpCourse urpGradeAndUrpCourse : studentGrades) {
-                Integer grade = urpGradeAndUrpCourse.getNewGrade().getUrpGrade().getScore();
+                Double grade = urpGradeAndUrpCourse.getNewGrade().getUrpGrade().getScore();
                 //如果分数为空，就直接跳过当前元素
                 if(Objects.isNull(grade)) continue;
                 buffer.append("考试名称：").append(urpGradeAndUrpCourse.getUrpCourse().getCourseName()).append("\n")
