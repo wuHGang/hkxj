@@ -14,8 +14,8 @@
     <result column="course_property_name" property="coursePropertyName" jdbcType="VARCHAR" />
     <result column="examtime" property="examtime" jdbcType="VARCHAR" />
     <result column="executive_education_plan_number" property="executiveEducationPlanNumber" jdbcType="VARCHAR" />
-    <result column="max_score" property="maxScore" jdbcType="INTEGER" />
-    <result column="min_score" property="minScore" jdbcType="INTEGER" />
+    <result column="max_score" property="maxScore" jdbcType="DOUBLE" />
+    <result column="min_score" property="minScore" jdbcType="DOUBLE" />
     <result column="operator" property="operator" jdbcType="VARCHAR" />
     <result column="operatetime" property="operatetime" jdbcType="VARCHAR" />
     <result column="persent_level_point" property="persentLevelPoint" jdbcType="VARCHAR" />
@@ -131,7 +131,7 @@
     #{classId,jdbcType=INTEGER}, #{planId,jdbcType=INTEGER}, #{averageScore,jdbcType=DOUBLE},
     #{classNumber,jdbcType=VARCHAR}, #{courseSequenceNumber,jdbcType=VARCHAR}, #{coursePropertyCode,jdbcType=VARCHAR},
     #{coursePropertyName,jdbcType=VARCHAR}, #{examtime,jdbcType=VARCHAR}, #{executiveEducationPlanNumber,jdbcType=VARCHAR},
-    #{maxScore,jdbcType=INTEGER}, #{minScore,jdbcType=INTEGER}, #{operator,jdbcType=VARCHAR},
+    #{maxScore,jdbcType=DOUBLE}, #{minScore,jdbcType=DOUBLE}, #{operator,jdbcType=VARCHAR},
     #{operatetime,jdbcType=VARCHAR}, #{persentLevelPoint,jdbcType=VARCHAR}, #{termCode,jdbcType=VARCHAR},
     #{termName,jdbcType=VARCHAR}, #{academy,jdbcType=INTEGER}, #{gmtCreate,jdbcType=TIMESTAMP}
     )
@@ -244,10 +244,10 @@
         #{executiveEducationPlanNumber,jdbcType=VARCHAR},
       </if>
       <if test="maxScore != null" >
-        #{maxScore,jdbcType=INTEGER},
+        #{maxScore,jdbcType=DOUBLE},
       </if>
       <if test="minScore != null" >
-        #{minScore,jdbcType=INTEGER},
+        #{minScore,jdbcType=DOUBLE},
       </if>
       <if test="operator != null" >
         #{operator,jdbcType=VARCHAR},
@@ -318,10 +318,10 @@
         executive_education_plan_number = #{record.executiveEducationPlanNumber,jdbcType=VARCHAR},
       </if>
       <if test="record.maxScore != null" >
-        max_score = #{record.maxScore,jdbcType=INTEGER},
+        max_score = #{record.maxScore,jdbcType=DOUBLE},
       </if>
       <if test="record.minScore != null" >
-        min_score = #{record.minScore,jdbcType=INTEGER},
+        min_score = #{record.minScore,jdbcType=DOUBLE},
       </if>
       <if test="record.operator != null" >
         operator = #{record.operator,jdbcType=VARCHAR},
@@ -363,8 +363,8 @@
     course_property_name = #{record.coursePropertyName,jdbcType=VARCHAR},
     examtime = #{record.examtime,jdbcType=VARCHAR},
     executive_education_plan_number = #{record.executiveEducationPlanNumber,jdbcType=VARCHAR},
-    max_score = #{record.maxScore,jdbcType=INTEGER},
-    min_score = #{record.minScore,jdbcType=INTEGER},
+    max_score = #{record.maxScore,jdbcType=DOUBLE},
+    min_score = #{record.minScore,jdbcType=DOUBLE},
     operator = #{record.operator,jdbcType=VARCHAR},
     operatetime = #{record.operatetime,jdbcType=VARCHAR},
     persent_level_point = #{record.persentLevelPoint,jdbcType=VARCHAR},
@@ -413,10 +413,10 @@
         executive_education_plan_number = #{executiveEducationPlanNumber,jdbcType=VARCHAR},
       </if>
       <if test="maxScore != null" >
-        max_score = #{maxScore,jdbcType=INTEGER},
+        max_score = #{maxScore,jdbcType=DOUBLE},
       </if>
       <if test="minScore != null" >
-        min_score = #{minScore,jdbcType=INTEGER},
+        min_score = #{minScore,jdbcType=DOUBLE},
       </if>
       <if test="operator != null" >
         operator = #{operator,jdbcType=VARCHAR},
@@ -455,8 +455,8 @@
       course_property_name = #{coursePropertyName,jdbcType=VARCHAR},
       examtime = #{examtime,jdbcType=VARCHAR},
       executive_education_plan_number = #{executiveEducationPlanNumber,jdbcType=VARCHAR},
-      max_score = #{maxScore,jdbcType=INTEGER},
-      min_score = #{minScore,jdbcType=INTEGER},
+      max_score = #{maxScore,jdbcType=DOUBLE},
+      min_score = #{minScore,jdbcType=DOUBLE},
       operator = #{operator,jdbcType=VARCHAR},
       operatetime = #{operatetime,jdbcType=VARCHAR},
       persent_level_point = #{persentLevelPoint,jdbcType=VARCHAR},

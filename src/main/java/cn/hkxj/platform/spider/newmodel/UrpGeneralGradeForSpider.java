@@ -64,11 +64,11 @@ public class UrpGeneralGradeForSpider {
     /**
      * 最高成绩
      */
-    private int maxcj;
+    private Double maxcj;
     /**
      * 最低成绩
      */
-    private int mincj;
+    private Double mincj;
     /**
      * 排名
      */
