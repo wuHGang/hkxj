@@ -52,7 +52,7 @@ public class CustomerMessageService {
             return buildMessage(result);
         } catch (TimeoutException | InterruptedException | ExecutionException e) {
             log.error("student {} from wechat message get grade error {}", student.getAccount(), e.getMessage());
-            future.whenCompleteAsync((result, exception) -> sentTextMessage(wxMpXmlMessage, wxMpService, result));
+            future.whenCompleteAsync((result, exception) -> sentTextMessage(result));
         }
         return buildMessage("服务器正在努力查询中");
     }
@@ -67,11 +67,10 @@ public class CustomerMessageService {
             List<UrpGradeAndUrpCourse> gradeAndCourses = searchResult.getData();
             return buildMessage(NewGradeSearchService.gradeListToText(gradeAndCourses));
         } catch (TimeoutException | InterruptedException | ExecutionException e) {
-            log.error("student {} from wechat message get grade error {}", student.getAccount(), e.getMessage());
             future.whenCompleteAsync((result, exception) -> {
-                for (List<UrpGradeAndUrpCourse> gradeAndCourseList : Lists.partition(result.getData(), 10)) {
-                    sentTextMessage(wxMpXmlMessage, wxMpService,
-                            NewGradeSearchService.gradeListToText(gradeAndCourseList));
+                sentTextMessage(NewGradeSearchService.gradeListToText(result.getData()));
+                if(exception != null){
+                    log.error("student {} from wechat message get grade error {}", student.getAccount(), exception);
                 }
             });
         }
@@ -95,7 +94,7 @@ public class CustomerMessageService {
         }
     }
 
-    private void sentTextMessage(WxMpXmlMessage wxMpXmlMessage, WxMpService wxMpService, String result) {
+    public void sentTextMessage(String result) {
 
         WxMpKefuMessage wxMpKefuMessage = new WxMpKefuMessage();
         wxMpKefuMessage.setContent(result);

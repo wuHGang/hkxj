@@ -1,5 +1,6 @@
 package cn.hkxj.platform.service;
 
+import cn.hkxj.platform.exceptions.UrpException;
 import cn.hkxj.platform.pojo.Classes;
 import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.spider.NewUrpSpider;
@@ -7,6 +8,7 @@ import cn.hkxj.platform.spider.model.UrpStudentInfo;
 import cn.hkxj.platform.spider.newmodel.CurrentGrade;
 import cn.hkxj.platform.spider.newmodel.UrpCourseForSpider;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -26,8 +28,8 @@ public class NewUrpSpiderService {
     @Resource
     private ClassService classService;
 
-
-    public CurrentGrade getCurrentTermGrade(String account, String password){
+    @Retryable(value = UrpException.class, maxAttempts = 3)
+    CurrentGrade getCurrentTermGrade(String account, String password){
         NewUrpSpider spider = new NewUrpSpider(account, password);
         return spider.getCurrentGrade();
     }

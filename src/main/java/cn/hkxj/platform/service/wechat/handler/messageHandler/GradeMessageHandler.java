@@ -1,5 +1,6 @@
 package cn.hkxj.platform.service.wechat.handler.messageHandler;
 
+import cn.hkxj.platform.MDCThreadPool;
 import cn.hkxj.platform.pojo.GradeAndCourse;
 import cn.hkxj.platform.pojo.GradeSearchResult;
 import cn.hkxj.platform.pojo.ScheduleTask;
@@ -10,20 +11,22 @@ import cn.hkxj.platform.service.NewGradeSearchService;
 import cn.hkxj.platform.service.OpenIdService;
 import cn.hkxj.platform.service.ScheduleTaskService;
 import cn.hkxj.platform.service.wechat.CustomerMessageService;
+import com.alibaba.ttl.TransmittableThreadLocal;
+import com.alibaba.ttl.threadpool.TtlExecutors;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.session.WxSessionManager;
 import me.chanjar.weixin.mp.api.WxMpMessageHandler;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.MDC;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 
 /**
  * @author Yuki
@@ -40,8 +43,11 @@ public class GradeMessageHandler implements WxMpMessageHandler {
     @Resource
     private ScheduleTaskService scheduleTaskService;
 
-    private ExecutorService cacheThreadPool = Executors.newCachedThreadPool();
+    private static ExecutorService cacheThreadPool = TtlExecutors.getTtlExecutorService(
+            new MDCThreadPool(3, 3, 0L,TimeUnit.SECONDS,
+            new LinkedBlockingQueue<>(), r -> new Thread(r, "GradeMessageThread")));
 
+    @Override
     public WxMpXmlOutMessage handle(WxMpXmlMessage wxMpXmlMessage,
                                     Map<String, Object> map,
                                     WxMpService wxMpService,
@@ -58,9 +64,29 @@ public class GradeMessageHandler implements WxMpMessageHandler {
 
         CustomerMessageService messageService = new CustomerMessageService(wxMpXmlMessage, wxMpService);
 
-        return messageService.sendGradeMessage(completableFuture, student);
-    }
+        completableFuture.whenComplete((gradeSearchResult, throwable) -> {
+            if(throwable != null){
+                log.error("send grade message error", throwable);
+                return;
+            }
 
+            try {
+                String text = NewGradeSearchService.gradeListToText(gradeSearchResult.getData());
+
+                if(StringUtils.isEmpty(text)){
+                    messageService.sentTextMessage("暂时没查到成绩，请稍后重试");
+                    return;
+                }
+
+                messageService.sentTextMessage(text);
+            }catch (Exception e){
+                log.error("", e);
+            }
+
+        });
+
+        return null;
+    }
 
 
 }

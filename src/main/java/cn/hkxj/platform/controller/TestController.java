@@ -16,9 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
-//@RestController
+@RestController
 @Slf4j
-@Controller
 public class TestController {
 
     @Resource

@@ -4,6 +4,8 @@ import cn.hkxj.platform.spider.persistentcookiejar.ClearableCookieJar;
 import cn.hkxj.platform.spider.persistentcookiejar.cache.CookieCache;
 import cn.hkxj.platform.spider.persistentcookiejar.cache.SetCookieCache;
 import cn.hkxj.platform.spider.persistentcookiejar.persistence.RedisCookiePersistor;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.Cookie;
 import okhttp3.HttpUrl;
@@ -16,6 +18,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 实现okHttp的cookieJar接口需要实现的两个方法saveFromResponse和loadForRequest
@@ -28,19 +31,29 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 @EverythingIsNonNull
 public class UrpCookieJar implements ClearableCookieJar {
-    private final ConcurrentHashMap<String, CookieCache> accountCookieCache;
 
-    private RedisCookiePersistor persistor = new RedisCookiePersistor();
+    private final Cache<String,CookieCache> accountCookieCache;
+
+
+    private final RedisCookiePersistor persistor;
 
     UrpCookieJar() {
-        accountCookieCache = new ConcurrentHashMap<>();
-
-        Map<String, List<Cookie>> accountCookieMap = persistor.loadAll();
-        for (Map.Entry<String, List<Cookie>> entry : accountCookieMap.entrySet()) {
-            CookieCache cookieCache = new SetCookieCache();
-            cookieCache.addAll(entry.getValue());
-            accountCookieCache.put(entry.getKey(), cookieCache);
+        persistor = new RedisCookiePersistor();
+        accountCookieCache = CacheBuilder.newBuilder()
+                .maximumSize(100)
+                .expireAfterAccess(20L, TimeUnit.MINUTES)
+                .build();
+        try{
+            Map<String, List<Cookie>> accountCookieMap = persistor.loadAll();
+            for (Map.Entry<String, List<Cookie>> entry : accountCookieMap.entrySet()) {
+                CookieCache cookieCache = new SetCookieCache();
+                cookieCache.addAll(entry.getValue());
+                accountCookieCache.put(entry.getKey(), cookieCache);
+            }
+        }catch (Exception e){
+            log.error("UrpCookieJar init error ", e);
         }
+
 
     }
 
@@ -49,6 +62,7 @@ public class UrpCookieJar implements ClearableCookieJar {
 
         CookieCache cookieCache = selectCookieCache();
         cookieCache.addAll(cookies);
+        persistor.saveByAccount(cookies, MDC.get("account"));
     }
 
     @Override
@@ -77,18 +91,20 @@ public class UrpCookieJar implements ClearableCookieJar {
     /**
      * 这里是concurrentHashMap的一个特性使然
      * 为了保证putIfAbsent这个操作的原子性，当put的key不存在的时候，该方法会返回null
-     * @return
      */
     private CookieCache selectCookieCache() {
         CookieCache cookieCache = new SetCookieCache();
         CookieCache result;
         if (StringUtils.isNotEmpty(MDC.get("account"))) {
-            result = accountCookieCache.putIfAbsent(MDC.get("account"), cookieCache);
+            result = accountCookieCache.getIfPresent(MDC.get("account"));
+            if(result == null){
+                accountCookieCache.put(MDC.get("account"), cookieCache);
+                return cookieCache;
+            }
+            return result;
         } else {
             throw new RuntimeException("no cookie jar can use");
         }
-
-        return result == null ? cookieCache : result;
     }
 
 
@@ -98,16 +114,21 @@ public class UrpCookieJar implements ClearableCookieJar {
 
     @Override
     public void clearSession() {
+        String account = MDC.get("account");
+        if(StringUtils.isNotEmpty(account)){
+            accountCookieCache.invalidate(account);
+            persistor.clearByAccount(account);
+        }
+    }
 
+    boolean isCookieExpiredByAccount(String account){
+        return accountCookieCache.getIfPresent(account) == null;
     }
 
     @Override
     public void clear() {
-        accountCookieCache.clear();
+        accountCookieCache.cleanUp();
     }
 
 
-    public boolean canUseCookie(String account){
-        return accountCookieCache.containsKey(account);
-    }
 }

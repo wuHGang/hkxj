@@ -1,18 +1,19 @@
 package cn.hkxj.platform.spider;
 
-import cn.hkxj.platform.exceptions.PasswordUncorrectException;
-import cn.hkxj.platform.exceptions.UrpRequestException;
-import cn.hkxj.platform.exceptions.UrpTimeoutException;
-import cn.hkxj.platform.exceptions.UrpVerifyCodeException;
+import cn.hkxj.platform.exceptions.*;
 import cn.hkxj.platform.pojo.constant.RedisKeys;
 import cn.hkxj.platform.spider.model.NewUrpGradeResult;
 import cn.hkxj.platform.spider.model.UrpStudentInfo;
 import cn.hkxj.platform.spider.model.VerifyCode;
 import cn.hkxj.platform.spider.newmodel.*;
+import cn.hkxj.platform.spider.persistentcookiejar.cache.CookieCache;
 import cn.hkxj.platform.utils.ApplicationUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.TypeReference;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
@@ -25,14 +26,18 @@ import org.jsoup.select.Elements;
 import org.slf4j.MDC;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
+/**
+ * @author junrong.chen
+ */
 @Slf4j
 public class NewUrpSpider {
     private static final String ROOT = "http://xsurp.usth.edu.cn";
-    private static final String TENSORFLOW = "http://spider.hackerda.com/valid";
     private static final String CAPTCHA = ROOT + "/img/captcha.jpg";
     private static final String CHECK = ROOT + "/j_spring_security_check";
     private static final String LOGIN = ROOT + "/getStudentInfo";
@@ -41,22 +46,18 @@ public class NewUrpSpider {
     private static final String CURRENT_TERM_GRADE_DETAIL = ROOT + "/student/integratedQuery/scoreQuery/coursePropertyScores/serchScoreDetail";
     private static final String COURSE_DETAIL = ROOT+ "/student/integratedQuery/course/courseSchdule/detail";
     private static final String INDEX = ROOT + "/index.jsp";
-    private static final StringRedisTemplate stringRedisTemplate = ApplicationUtil.getBean("stringRedisTemplate");
+    private static StringRedisTemplate stringRedisTemplate;
     private static final TypeReference<UrpGradeDetailForSpider> gradeDetailTypeReference
             = new TypeReference<UrpGradeDetailForSpider>() {
-    };
-    private static final TypeReference<List<NewUrpGradeResult>> CURRENT_GRADE_REFERENCE =
-            new TypeReference<List<NewUrpGradeResult>>() {
-            };
-    private static final TypeReference<CurrentGrade> currentGradeTypeReference
-            = new TypeReference<CurrentGrade>() {
     };
     private static final TypeReference<List<UrpCourseForSpider>> courseTypeReference
             = new TypeReference<List<UrpCourseForSpider>>() {
     };
 
+    private static final UrpCookieJar cookieJar = new UrpCookieJar();
+
     private static final OkHttpClient client = new OkHttpClient.Builder()
-            .cookieJar(new UrpCookieJar())
+            .cookieJar(cookieJar)
             .retryOnConnectionFailure(true)
             .addInterceptor(new RetryInterceptor(5))
             .followRedirects(false)
@@ -76,6 +77,16 @@ public class NewUrpSpider {
     private String account;
     private String password;
 
+
+    static {
+        try{
+            stringRedisTemplate = ApplicationUtil.getBean("stringRedisTemplate");
+        }catch (Exception e){
+            log.error("inject error ", e);
+        }
+
+    }
+
     /**
      *
      * @param account  学号
@@ -86,6 +97,9 @@ public class NewUrpSpider {
         MDC.put("account", account);
         this.account = account;
         this.password = password;
+        if(hasLoginCookieCache(account)){
+            return;
+        }
 
         VerifyCode verifyCode = getCaptcha();
         Base64.Encoder encoder = Base64.getEncoder();
@@ -94,9 +108,11 @@ public class NewUrpSpider {
         HashOperations<String, String, String> opsForHash = stringRedisTemplate.opsForHash();
 
         opsForHash.put(RedisKeys.KAPTCHA.getName(), uuid.toString(), encoder.encodeToString(verifyCode.getData().clone()));
-        String code = getCode(uuid.toString());
+        String code = CaptchaBreaker.getCode(uuid.toString());
 
-        studentCheck(account, password, code);
+        studentCheck(account, password, code, uuid.toString());
+
+
     }
 
     public CurrentGrade getCurrentGrade(){
@@ -124,9 +140,14 @@ public class NewUrpSpider {
                 .get()
                 .build();
         String result = new String(execute(request));
-        List<Map<String, Object>> list = JSON.parseObject(result, new TypeReference<List<Map<String, Object>>>(){});
-        JSONArray jsonArray = (JSONArray) list.get(0).get("list");
-        return jsonArray.toJavaList(UrpGeneralGradeForSpider.class);
+        try {
+            List<Map<String, Object>> list = JSON.parseObject(result, new TypeReference<List<Map<String, Object>>>(){});
+            JSONArray jsonArray = (JSONArray) list.get(0).get("list");
+            return jsonArray.toJavaList(UrpGeneralGradeForSpider.class);
+        }catch (JSONException e){
+            log.error("parse grade error {}", result, e);
+            return Lists.newArrayListWithExpectedSize(0);
+        }
     }
 
     public UrpGradeDetailForSpider getUrpGradeDetail(UrpGeneralGradeForSpider urpGeneralGradeForSpider){
@@ -175,7 +196,7 @@ public class NewUrpSpider {
     /**
      * 登陆校验
      */
-    private void studentCheck(String account, String password, String captcha){
+    private void studentCheck(String account, String password, String captcha, String uuid){
 
 
         FormBody.Builder params = new FormBody.Builder();
@@ -196,47 +217,21 @@ public class NewUrpSpider {
         if(StringUtils.isEmpty(location)){
             throw new UrpRequestException("url: "+ request.url().toString()+ " code: "+response.code()+" cause: "+ response.message());
         }else if(location.contains("badCaptcha")){
-            throw new UrpVerifyCodeException();
+            throw new UrpVerifyCodeException("captcha: "+ captcha + " code uuid :"+ uuid);
         }else if(location.contains("badCredentials")){
             throw new PasswordUncorrectException();
         }else if(location.contains("concurrentSessionExpired")){
-
+            cookieJar.clearSession();
+            throw new UrpSessionExpiredException("account: "+ account+ "session expired");
         }
 
-    }
+        ValueOperations<String, String> opsForValue = stringRedisTemplate.opsForValue();
+        opsForValue.set(RedisKeys.URP_LOGIN_COOKIE.genKey(account), uuid, 20L, TimeUnit.MINUTES);
 
-    public NewUrpGradeResult getCurrentGrade0(){
-        if(this.account == null){
-            throw new UnsupportedOperationException("spider haven`t login");
-        }
-
-        Request request = new Request.Builder()
-                .url(CURRENT_TERM_GRADE)
-                .headers(HEADERS)
-                .get()
-                .build();
-
-        String result = new String(execute(request));
-
-        List<NewUrpGradeResult> newUrpGradeResults = JSON.parseObject(result, CURRENT_GRADE_REFERENCE);
-
-        if(CollectionUtils.isNotEmpty(newUrpGradeResults)){
-            if(newUrpGradeResults.size() >1){
-                log.error("account {} current grade result size {}", account, newUrpGradeResults.size());
-            }
-
-            return newUrpGradeResults.get(0);
-        }
-
-        return null;
     }
 
 
     public UrpStudentInfo getStudentInfo(){
-        if(this.account == null){
-            throw new UnsupportedOperationException("spider haven`t  login");
-        }
-
 
         Request request = new Request.Builder()
                 .url(STUDENT_INFO)
@@ -307,6 +302,12 @@ public class NewUrpSpider {
         }
     }
 
+    private boolean hasLoginCookieCache(String account){
+
+        return stringRedisTemplate.hasKey(RedisKeys.URP_COOKIE.genKey(account))
+                && stringRedisTemplate.hasKey(RedisKeys.URP_LOGIN_COOKIE.genKey(account));
+    }
+
     public boolean isCookieExpire(){
 
         Request request = new Request.Builder()
@@ -346,14 +347,8 @@ public class NewUrpSpider {
     }
 
 
-    public String getCode(String key){
-        String url = TENSORFLOW+"?key="+key;
-        Request request = new Request.Builder()
-                .url(url)
-                .get()
-                .build();
-
-        return new String(execute(request));
+    private boolean isLogin(String account){
+        return false;
     }
 
 
