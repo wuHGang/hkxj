@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -39,6 +40,8 @@ public class NewGradeSearchService {
     private NewUrpSpiderService newUrpSpiderService;
 
     private static final Term currentTerm = new Term(2018, 2019, 2);
+
+    private static DecimalFormat decimalFormat = new DecimalFormat("###################.###########");
 
     public GradeSearchResult getCurrentGrade(Student student) {
         CurrentGrade currentGrade = getCurrentGradeFromSpider(student);
@@ -160,10 +163,10 @@ public class NewGradeSearchService {
                 //如果分数为空，就直接跳过当前元素
                 if(Objects.isNull(grade)) continue;
                 buffer.append("考试名称：").append(urpGradeAndUrpCourse.getUrpCourse().getCourseName()).append("\n")
-                        .append("成绩：").append(grade == -1 ? "" : grade).append("   学分：")
-                        .append((urpGradeAndUrpCourse.getUrpCourse().getCredit())).append("\n\n");
+                        .append("成绩：").append(grade == -1 ? "" : decimalFormat.format(grade)).append("   学分：")
+                        .append((decimalFormat.format(urpGradeAndUrpCourse.getUrpCourse().getCredit()))).append("\n\n");
             }
-            buffer.append("- - - - - - - - - - - - - -\n\n");
+            buffer.append("- - - - - - - - - - - - - -");
         }
         return buffer.toString();
     }
