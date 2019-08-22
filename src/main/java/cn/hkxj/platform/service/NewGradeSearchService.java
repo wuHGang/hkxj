@@ -44,15 +44,15 @@ public class NewGradeSearchService {
     private static DecimalFormat decimalFormat = new DecimalFormat("###################.###########");
 
     public GradeSearchResult getCurrentGrade(Student student) {
-        CurrentGrade currentGrade = getCurrentGradeFromSpider(student);
-        GradeSearchResult result = new GradeSearchResult();
-        if (currentGrade == null) {
-            result.setData(getUrpGradeAndUrpCourseFromDb(student));
-            result.setUpdate(false);
-            return result;
+        CurrentGrade currentGrade = newUrpSpiderService.getCurrentTermGrade(student.getAccount().toString(),
+                student.getPassword());
+
+        if(CollectionUtils.isEmpty(currentGrade.getList())){
+            return new GradeSearchResult(Lists.newArrayListWithCapacity(0), false);
         }
-        result = saveCurrentGradeToDb(student, currentGrade);
-        return result;
+
+
+        return saveCurrentGradeToDb(student, currentGrade);
     }
 
     public List<UrpGradeAndUrpCourse> getUrpGradeAndUrpCourseFromDb(Student student) {
@@ -119,7 +119,7 @@ public class NewGradeSearchService {
      * @param currentGrade 从爬虫爬取的当前学期的成绩
      * @return 所有内容
      */
-    public List<UrpGradeAndUrpCourse> getUrpGradeAndUrpCourse(Student student, CurrentGrade currentGrade){
+    private List<UrpGradeAndUrpCourse> getUrpGradeAndUrpCourse(Student student, CurrentGrade currentGrade){
         return currentGrade.getList().stream().map(urpGradeForSpider -> {
             UrpGeneralGradeForSpider generalGradeForSpider = urpGradeForSpider.getUrpGeneralGradeForSpider();
             String uid = generalGradeForSpider.getId().getCourseNumber();

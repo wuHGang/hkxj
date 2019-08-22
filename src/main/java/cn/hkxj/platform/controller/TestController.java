@@ -11,6 +11,7 @@ import org.jboss.logging.MDC;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
@@ -32,11 +33,11 @@ public class TestController {
     }
 
     @RequestMapping("/testGrade")
-    public String testGrade(){
+    public String testGrade(@RequestParam("account") int account,@RequestParam("password") String password){
 
         Student student = new Student();
-        student.setAccount(2016024170);
-        student.setPassword("1");
+        student.setAccount(account);
+        student.setPassword(password);
         Classes classes = new Classes();
         classes.setId(316);
         student.setClasses(classes);

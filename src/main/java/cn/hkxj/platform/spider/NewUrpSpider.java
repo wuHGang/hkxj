@@ -127,14 +127,14 @@ public class NewUrpSpider {
         return currentGrade;
     }
 
-    public UrpGradeForSpider getUrpGradeForSpider(UrpGeneralGradeForSpider urpGeneralGradeForSpider){
+    private UrpGradeForSpider getUrpGradeForSpider(UrpGeneralGradeForSpider urpGeneralGradeForSpider){
         UrpGradeForSpider urpGradeForSpider = new UrpGradeForSpider();
         urpGradeForSpider.setUrpGeneralGradeForSpider(urpGeneralGradeForSpider);
         urpGradeForSpider.setUrpGradeDetailForSpider(getUrpGradeDetail(urpGeneralGradeForSpider));
         return urpGradeForSpider;
     }
 
-    public List<UrpGeneralGradeForSpider> getUrpGeneralGrades(){
+    private List<UrpGeneralGradeForSpider> getUrpGeneralGrades(){
         Request request = new Request.Builder()
                 .url(CURRENT_TERM_GRADE)
                 .get()
@@ -146,7 +146,8 @@ public class NewUrpSpider {
             return jsonArray.toJavaList(UrpGeneralGradeForSpider.class);
         }catch (JSONException e){
             log.error("parse grade error {}", result, e);
-            return Lists.newArrayListWithExpectedSize(0);
+            cookieJar.clearSession();
+            throw new UrpSessionExpiredException("account: "+ account+ "session expired");
         }
     }
 
@@ -215,8 +216,10 @@ public class NewUrpSpider {
         String location = response.header("Location");
 
         if(StringUtils.isEmpty(location)){
+            cookieJar.clearSession();
             throw new UrpRequestException("url: "+ request.url().toString()+ " code: "+response.code()+" cause: "+ response.message());
         }else if(location.contains("badCaptcha")){
+            cookieJar.clearSession();
             throw new UrpVerifyCodeException("captcha: "+ captcha + " code uuid :"+ uuid);
         }else if(location.contains("badCredentials")){
             throw new PasswordUncorrectException();
@@ -344,11 +347,6 @@ public class NewUrpSpider {
     private boolean isResponseFail(Response response){
         return response.body() == null ||
                 (!response.isSuccessful() && !response.isRedirect());
-    }
-
-
-    private boolean isLogin(String account){
-        return false;
     }
 
 
