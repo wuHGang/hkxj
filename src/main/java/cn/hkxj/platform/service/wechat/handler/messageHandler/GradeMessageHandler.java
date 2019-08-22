@@ -61,16 +61,19 @@ public class GradeMessageHandler implements WxMpMessageHandler {
 
         cacheThreadPool.execute(() -> scheduleTaskService.checkAndSetSubscribeStatus(scheduleTask, true));
 
-        CompletableFuture<GradeSearchResult> completableFuture = CompletableFuture.supplyAsync(() -> newGradeSearchService.getCurrentGrade(student), cacheThreadPool);
-
         CustomerMessageService messageService = new CustomerMessageService(wxMpXmlMessage, wxMpService);
+
+        CompletableFuture<GradeSearchResult> completableFuture =
+                CompletableFuture.supplyAsync(() -> {try {
+                    return newGradeSearchService.getCurrentGrade(student);
+                }catch (UrpEvaluationException e){
+                    messageService.sentTextMessage("评估未完成 请到教务网完成评估\n\n  地址： http://xsurp.usth.edu.cn");
+                    throw e;
+                }
+                }, cacheThreadPool);
 
         completableFuture.whenComplete((gradeSearchResult, throwable) -> {
             if(throwable != null){
-                if(throwable instanceof UrpEvaluationException){
-                    messageService.sentTextMessage("评估未完成 请到教务网完成评估\n\n  地址： http://xsurp.usth.edu.cn");
-                    return;
-                }
                 log.error("send grade message error", throwable);
                 return;
             }
