@@ -145,6 +145,10 @@ public class NewUrpSpider {
             JSONArray jsonArray = (JSONArray) list.get(0).get("list");
             return jsonArray.toJavaList(UrpGeneralGradeForSpider.class);
         }catch (JSONException e){
+            if(result.length() > 1000){
+                throw new UrpEvaluationException("account: "+ account+ " 未完成评估无法查成绩");
+            }
+
             log.error("parse grade error {}", result, e);
             cookieJar.clearSession();
             throw new UrpSessionExpiredException("account: "+ account+ "session expired");

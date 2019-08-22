@@ -1,6 +1,7 @@
 package cn.hkxj.platform.service.wechat.handler.messageHandler;
 
 import cn.hkxj.platform.MDCThreadPool;
+import cn.hkxj.platform.exceptions.UrpEvaluationException;
 import cn.hkxj.platform.pojo.GradeAndCourse;
 import cn.hkxj.platform.pojo.GradeSearchResult;
 import cn.hkxj.platform.pojo.ScheduleTask;
@@ -66,6 +67,10 @@ public class GradeMessageHandler implements WxMpMessageHandler {
 
         completableFuture.whenComplete((gradeSearchResult, throwable) -> {
             if(throwable != null){
+                if(throwable instanceof UrpEvaluationException){
+                    messageService.sentTextMessage("评估未完成 请到教务网完成评估\n\n  地址： http://xsurp.usth.edu.cn");
+                    return;
+                }
                 log.error("send grade message error", throwable);
                 return;
             }
