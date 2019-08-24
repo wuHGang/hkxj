@@ -14,6 +14,7 @@ import cn.hkxj.platform.pojo.example.OpenidExample;
 import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.service.CourseService;
 import cn.hkxj.platform.service.NewUrpSpiderService;
+import cn.hkxj.platform.spider.NewUrpSpider;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.mp.api.WxMpService;
@@ -72,11 +73,13 @@ public class StudentBindService {
         } else {
             result = openidMapper.isOpenidExist(openid) != null && openidMapper.isOpenidBind(openid) == 0;
         }
+        newUrpSpiderService.checkStudentPassword(account, password);
         if (result) {
             //可以重新绑定
             Student student = null;
             if (isStudentExist(account)) {
                 updateOpenid(openid, account, appid);
+                studentDao.updatePassword(account, password);
             } else {
                 student = newUrpSpiderService.getStudentInfo(account, password);
                 studentDao.insertStudent(student);

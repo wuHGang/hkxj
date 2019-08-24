@@ -39,6 +39,10 @@ public class NewUrpSpiderService {
         return spider.getUrpCourse(uid);
     }
 
+    public void checkStudentPassword(String account, String password){
+        NewUrpSpider spider = new NewUrpSpider(account, password);
+    }
+
 
     /**
      * 获取学生信息
