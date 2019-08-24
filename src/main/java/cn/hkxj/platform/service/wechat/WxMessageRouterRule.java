@@ -1,6 +1,9 @@
 package cn.hkxj.platform.service.wechat;
 
+import cn.hkxj.platform.exceptions.PasswordUncorrectException;
 import cn.hkxj.platform.interceptor.WxMessageInterceptor;
+import cn.hkxj.platform.service.OpenIdService;
+import cn.hkxj.platform.utils.ApplicationUtil;
 import me.chanjar.weixin.common.api.WxErrorExceptionHandler;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.common.session.WxSessionManager;
@@ -24,7 +27,8 @@ import java.util.Map;
 public class WxMessageRouterRule extends WxMpMessageRouterRule {
 	private List<WxMessageInterceptor> interceptors = new ArrayList<>();
     private final WxMessageRouter routerBuilder;
-    private boolean reEnter = false;
+	private OpenIdService openIdService = ApplicationUtil.getBean("openIdService");
+	private static final String PATTERN = "<a href=\"%s/bind?openid=%s&appid=%s\">点击我绑定</a>";
 
     public WxMessageRouterRule(WxMessageRouter routerBuilder) {
         super(routerBuilder);
@@ -156,8 +160,7 @@ public class WxMessageRouterRule extends WxMpMessageRouterRule {
      */
     @Override
     public WxMessageRouter next() {
-        this.reEnter = true;
-        return end();
+		return end();
     }
 
 
@@ -182,7 +185,20 @@ public class WxMessageRouterRule extends WxMpMessageRouterRule {
 				if (handler == null) {
 					continue;
 				}
-				res = handler.handle(wxMessage, context, wxMpService, sessionManager);
+				try {
+					res = handler.handle(wxMessage, context, wxMpService, sessionManager);
+				}catch (PasswordUncorrectException e) {
+					String fromUser = wxMessage.getFromUser();
+					String appId = wxMpService.getWxMpConfigStorage().getAppId();
+					openIdService.openIdUnbind(fromUser, appId);
+
+					for (WxMessageInterceptor interceptor : this.interceptors) {
+						if (!interceptor.intercept(wxMessage, context, wxMpService, sessionManager)) {
+							return interceptor.handle(wxMessage, context, wxMpService, sessionManager);
+						}
+					}
+				}
+
 			}
 			return res;
 		} catch (WxErrorException e) {

@@ -1,9 +1,11 @@
 package cn.hkxj.platform.utils;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 public class ApplicationUtil {
     private static ApplicationContext applicationContext;
@@ -34,7 +36,13 @@ public class ApplicationUtil {
     @SuppressWarnings("unchecked")
     public static <T> T getBean(String name) {
         checkApplicationContext();
-        return (T) applicationContext.getBean(name);
+        try {
+            return (T) applicationContext.getBean(name);
+        }catch (Exception e){
+            log.error("get bean {} error", name, e);
+            return null;
+        }
+
     }
 
     /**

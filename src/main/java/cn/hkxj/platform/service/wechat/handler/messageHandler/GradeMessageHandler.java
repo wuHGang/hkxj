@@ -1,6 +1,7 @@
 package cn.hkxj.platform.service.wechat.handler.messageHandler;
 
 import cn.hkxj.platform.MDCThreadPool;
+import cn.hkxj.platform.exceptions.PasswordUncorrectException;
 import cn.hkxj.platform.exceptions.UrpEvaluationException;
 import cn.hkxj.platform.pojo.GradeAndCourse;
 import cn.hkxj.platform.pojo.GradeSearchResult;
@@ -22,6 +23,7 @@ import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.MDC;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -43,9 +45,12 @@ public class GradeMessageHandler implements WxMpMessageHandler {
     private OpenIdService openIdService;
     @Resource
     private ScheduleTaskService scheduleTaskService;
+    @Value("${domain}")
+    private String domain;
+    private static final String PATTERN = "<a href=\"%s/bind?openid=%s&appid=%s\">点击我绑定</a>";
 
     private static ExecutorService cacheThreadPool = TtlExecutors.getTtlExecutorService(
-            new MDCThreadPool(3, 3, 0L,TimeUnit.SECONDS,
+            new MDCThreadPool(7, 7, 0L,TimeUnit.SECONDS,
             new LinkedBlockingQueue<>(), r -> new Thread(r, "GradeMessageThread")));
 
     @Override
@@ -53,21 +58,26 @@ public class GradeMessageHandler implements WxMpMessageHandler {
                                     Map<String, Object> map,
                                     WxMpService wxMpService,
                                     WxSessionManager wxSessionManager) {
-        String appid = wxMpService.getWxMpConfigStorage().getAppId();
+        String appId = wxMpService.getWxMpConfigStorage().getAppId();
         String openid = wxMpXmlMessage.getFromUser();
 
-        Student student = openIdService.getStudentByOpenId(openid, appid);
-        ScheduleTask scheduleTask = new ScheduleTask(appid, openid, SubscribeScene.GRADE_AUTO_UPDATE.getScene());
+        Student student = openIdService.getStudentByOpenId(openid, appId);
+        ScheduleTask scheduleTask = new ScheduleTask(appId, openid, SubscribeScene.GRADE_AUTO_UPDATE.getScene());
 
         cacheThreadPool.execute(() -> scheduleTaskService.checkAndSetSubscribeStatus(scheduleTask, true));
 
         CustomerMessageService messageService = new CustomerMessageService(wxMpXmlMessage, wxMpService);
 
         CompletableFuture<GradeSearchResult> completableFuture =
-                CompletableFuture.supplyAsync(() -> {try {
+                CompletableFuture.supplyAsync(() -> { try {
                     return newGradeSearchService.getCurrentGrade(student);
                 }catch (UrpEvaluationException e){
-                    messageService.sentTextMessage("评估未完成 请到教务网完成评估\n\n  地址： http://xsurp.usth.edu.cn");
+                    messageService.sentTextMessage("评估未完成 请到教务网完成评估\n\n地址： http://xsurp.usth.edu.cn");
+                    throw e;
+                }catch (PasswordUncorrectException e){
+                    openIdService.openIdUnbind(openid, appId);
+                    String content = String.format(PATTERN, domain, openid, appId);
+                    messageService.sentTextMessage(content);
                     throw e;
                 }
                 }, cacheThreadPool);
@@ -96,5 +106,17 @@ public class GradeMessageHandler implements WxMpMessageHandler {
         return null;
     }
 
+
+    public static void main(String[] args) {
+        CompletableFuture<Void> test = CompletableFuture.runAsync(() -> {
+            throw new UrpEvaluationException("test");
+        });
+
+        test.whenComplete((aVoid, throwable) -> {
+           if(throwable != null){
+               System.out.println(throwable.getClass());
+           }
+        });
+    }
 
 }

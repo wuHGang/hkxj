@@ -23,6 +23,7 @@ public class UnbindMessageHandler implements WxMpMessageHandler {
     @Resource
     private OpenIdService openIdService;
 
+    @Override
     public WxMpXmlOutMessage handle(WxMpXmlMessage wxMpXmlMessage,
                                     Map<String, Object> map,
                                     WxMpService wxMpService,

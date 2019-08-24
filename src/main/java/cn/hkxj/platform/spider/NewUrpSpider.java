@@ -180,6 +180,7 @@ public class NewUrpSpider {
                 .post(body)
                 .build();
         String result = new String(execute(request));
+        flashCache();
         //因为爬虫爬取的结果是个集合，所以先转成list
         List<UrpCourseForSpider> courses = JSONArray.parseObject(result, courseTypeReference);
         //因为用uid查询，所以取第一个元素即可
@@ -226,7 +227,7 @@ public class NewUrpSpider {
             cookieJar.clearSession();
             throw new UrpVerifyCodeException("captcha: "+ captcha + " code uuid :"+ uuid);
         }else if(location.contains("badCredentials")){
-            throw new PasswordUncorrectException();
+            throw new PasswordUncorrectException("account: "+ account);
         }else if(location.contains("concurrentSessionExpired")){
             cookieJar.clearSession();
             throw new UrpSessionExpiredException("account: "+ account+ "session expired");
@@ -257,7 +258,7 @@ public class NewUrpSpider {
         student.setAcademy(userInfo.get("院系"));
         student.setClassname(userInfo.get("班级"));
         student.setPassword(password);
-
+        flashCache();
         return student;
     }
 
@@ -353,6 +354,9 @@ public class NewUrpSpider {
                 (!response.isSuccessful() && !response.isRedirect());
     }
 
+    private void flashCache(){
+        stringRedisTemplate.expire(RedisKeys.URP_LOGIN_COOKIE.genKey(account), 20L, TimeUnit.MINUTES);
+    }
 
     public static void main(String[] args) {
 
