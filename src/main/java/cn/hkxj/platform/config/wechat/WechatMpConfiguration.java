@@ -132,7 +132,7 @@ public class WechatMpConfiguration {
 				.async(false)
 				.interceptor(wechatOpenIdInterceptor)
                 .interceptor(studentInfoInterceptor)
-				.content("解绑|解除绑定")
+				.rContent("解绑|解除绑定")
 				.handler(unbindMessageHandler)
 				.end()
 				.rule()
