@@ -7,11 +7,13 @@ import cn.hkxj.platform.spider.NewUrpSpider;
 import cn.hkxj.platform.spider.model.UrpStudentInfo;
 import cn.hkxj.platform.spider.newmodel.CurrentGrade;
 import cn.hkxj.platform.spider.newmodel.UrpCourseForSpider;
+import cn.hkxj.platform.spider.newmodel.UrpExamTime;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * 第一次登录成功后，将学号对应session的cookie持久化
@@ -54,6 +56,16 @@ public class NewUrpSpiderService {
         return getUserInfo(spider.getStudentInfo());
     }
 
+
+    /**
+     * 考试安排
+     * @return
+     */
+    public List<UrpExamTime> getExamTime(String account, String password){
+        NewUrpSpider spider = new NewUrpSpider(account, password);
+
+        return spider.getExamTime();
+    }
     private Student getUserInfo(UrpStudentInfo studentInfo){
 
         Classes classes = classService.parseSpiderResult(studentInfo);

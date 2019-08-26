@@ -4,18 +4,15 @@ import cn.hkxj.platform.pojo.Classes;
 import cn.hkxj.platform.pojo.GradeSearchResult;
 import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.service.NewGradeSearchService;
-import cn.hkxj.platform.service.NewUrpSpiderService;
 import cn.hkxj.platform.spider.NewUrpSpider;
 import lombok.extern.slf4j.Slf4j;
-import org.jboss.logging.MDC;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpSession;
+import java.io.IOException;
 
 @RestController
 @Slf4j
@@ -52,4 +49,16 @@ public class TestController {
         return echostr;
     }
 
+
+    @RequestMapping("/exam")
+    public String exam(){
+        NewUrpSpider spider = new NewUrpSpider("2017021517", "1");
+        return "ok";
+    }
+
+    public static void main(String[] args) throws IOException {
+
+
+
+    }
 }

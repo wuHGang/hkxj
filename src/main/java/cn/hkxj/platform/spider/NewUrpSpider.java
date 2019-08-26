@@ -2,22 +2,18 @@ package cn.hkxj.platform.spider;
 
 import cn.hkxj.platform.exceptions.*;
 import cn.hkxj.platform.pojo.constant.RedisKeys;
-import cn.hkxj.platform.spider.model.NewUrpGradeResult;
 import cn.hkxj.platform.spider.model.UrpStudentInfo;
 import cn.hkxj.platform.spider.model.VerifyCode;
 import cn.hkxj.platform.spider.newmodel.*;
-import cn.hkxj.platform.spider.persistentcookiejar.cache.CookieCache;
 import cn.hkxj.platform.utils.ApplicationUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.TypeReference;
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
+import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -45,6 +41,7 @@ public class NewUrpSpider {
     private static final String CURRENT_TERM_GRADE = ROOT + "/student/integratedQuery/scoreQuery/thisTermScores/data";
     private static final String CURRENT_TERM_GRADE_DETAIL = ROOT + "/student/integratedQuery/scoreQuery/coursePropertyScores/serchScoreDetail";
     private static final String COURSE_DETAIL = ROOT+ "/student/integratedQuery/course/courseSchdule/detail";
+    private static final String EXAM_TIME = ROOT + "/student/examinationManagement/examPlan/index";
     private static final String INDEX = ROOT + "/index.jsp";
     private static StringRedisTemplate stringRedisTemplate;
     private static final TypeReference<UrpGradeDetailForSpider> gradeDetailTypeReference
@@ -53,6 +50,8 @@ public class NewUrpSpider {
     private static final TypeReference<List<UrpCourseForSpider>> courseTypeReference
             = new TypeReference<List<UrpCourseForSpider>>() {
     };
+
+    private static final Splitter SPACE_SPLITTER = Splitter.on(" ").omitEmptyStrings().trimResults();
 
     private static final UrpCookieJar cookieJar = new UrpCookieJar();
 
@@ -238,6 +237,39 @@ public class NewUrpSpider {
 
     }
 
+    public List<UrpExamTime> getExamTime(){
+        Request request = new Request.Builder()
+                .url(EXAM_TIME)
+                .headers(HEADERS)
+                .get()
+                .build();
+        String s = new String(execute(request));
+        log.info(s);
+        Document document = Jsoup.parse(s);
+        Elements elements = document.getElementsByClass("clearfix");
+        List<UrpExamTime> result = Lists.newArrayListWithExpectedSize(elements.size());
+        for (Element element : elements) {
+            List<String> list = SPACE_SPLITTER.splitToList(element.text());
+            if(list.size() == 7){
+                result.add(new UrpExamTime()
+                        .setCourseName(list.get(0))
+                        .setExamName(list.get(1)));
+            }
+            if(list.size() == 11){
+                result.add(new UrpExamTime()
+                        .setCourseName(list.get(1))
+                        .setExamName(list.get(2))
+                        .setWeekOfTerm(list.get(4))
+                        .setDate(list.get(5))
+                        .setWeek(list.get(6))
+                        .setExamTime(list.get(7))
+                        .setLocation(list.get(8)));
+            }
+
+        }
+        return result;
+    }
+
 
     public UrpStudentInfo getStudentInfo(){
 
@@ -358,7 +390,4 @@ public class NewUrpSpider {
         stringRedisTemplate.expire(RedisKeys.URP_LOGIN_COOKIE.genKey(account), 20L, TimeUnit.MINUTES);
     }
 
-    public static void main(String[] args) {
-
-    }
 }

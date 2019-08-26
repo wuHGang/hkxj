@@ -2,7 +2,10 @@ package cn.hkxj.platform.service;
 
 import cn.hkxj.platform.dao.*;
 import cn.hkxj.platform.pojo.*;
-import cn.hkxj.platform.spider.newmodel.*;
+import cn.hkxj.platform.spider.newmodel.CurrentGrade;
+import cn.hkxj.platform.spider.newmodel.UrpCourseForSpider;
+import cn.hkxj.platform.spider.newmodel.UrpGeneralGradeForSpider;
+import cn.hkxj.platform.spider.newmodel.UrpGradeDetailForSpider;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
