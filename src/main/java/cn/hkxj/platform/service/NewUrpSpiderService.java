@@ -61,6 +61,7 @@ public class NewUrpSpiderService {
      * 考试安排
      * @return
      */
+    @Retryable(value = UrpException.class, maxAttempts = 3)
     public List<UrpExamTime> getExamTime(String account, String password){
         NewUrpSpider spider = new NewUrpSpider(account, password);
 
