@@ -98,7 +98,7 @@ public class NewUrpSpiderServiceTest {
 
     @Test
     public void test(){
-        NewUrpSpider spider = new NewUrpSpider("2017021517", "1");
+        NewUrpSpider spider = new NewUrpSpider("2016020685", "1");
         spider.getExamTime();
     }
 

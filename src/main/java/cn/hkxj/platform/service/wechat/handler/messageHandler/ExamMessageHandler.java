@@ -1,6 +1,7 @@
 package cn.hkxj.platform.service.wechat.handler.messageHandler;
 
 import cn.hkxj.platform.MDCThreadPool;
+import cn.hkxj.platform.exceptions.PasswordUncorrectException;
 import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.pojo.timetable.ExamTimeTable;
 import cn.hkxj.platform.service.ExamTimeTableService;
@@ -17,6 +18,7 @@ import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
 import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -43,6 +45,9 @@ public class ExamMessageHandler implements WxMpMessageHandler {
     private ExamTimeTableService examTimeTableService;
     @Resource
     private NewUrpSpiderService newUrpSpiderService;
+    @Value("${domain}")
+    private String domain;
+    private static final String PATTERN = "<a href=\"%s/bind?openid=%s&appid=%s\">点击我绑定</a>";
 
     private static final String DATA_NOT_FOUND = "还没有你的考试时间，可以过段时间再来查询";
 
@@ -53,14 +58,20 @@ public class ExamMessageHandler implements WxMpMessageHandler {
 
     @Override
     public WxMpXmlOutMessage handle(WxMpXmlMessage wxMpXmlMessage, Map<String, Object> map, WxMpService wxMpService, WxSessionManager wxSessionManager) throws WxErrorException {
-        String appid = wxMpService.getWxMpConfigStorage().getAppId();
-        Student student = openIdService.getStudentByOpenId(wxMpXmlMessage.getFromUser(), appid);
-
+        String appId = wxMpService.getWxMpConfigStorage().getAppId();
+        String openid = wxMpXmlMessage.getFromUser();
+        Student student = openIdService.getStudentByOpenId(wxMpXmlMessage.getFromUser(), appId);
+        CustomerMessageService messageService = new CustomerMessageService(wxMpXmlMessage, wxMpService);
         CompletableFuture.runAsync(() ->{
             try {
                 List<UrpExamTime> examTime = newUrpSpiderService.getExamTime(student.getAccount().toString(), student.getPassword());
-                CustomerMessageService messageService = new CustomerMessageService(wxMpXmlMessage, wxMpService);
+
                 messageService.sentTextMessage(examListToText(examTime));
+
+            }catch (PasswordUncorrectException e){
+                openIdService.openIdUnbind(openid, appId);
+                String content = String.format(PATTERN, domain, openid, appId);
+                messageService.sentTextMessage(content);
             }catch (Exception e){
                 log.error("send exam message error", e);
             }
