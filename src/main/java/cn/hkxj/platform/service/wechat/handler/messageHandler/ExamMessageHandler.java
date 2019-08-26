@@ -64,7 +64,7 @@ public class ExamMessageHandler implements WxMpMessageHandler {
             }catch (Exception e){
                 log.error("send exam message error", e);
             }
-        });
+        }, cacheThreadPool);
 
         return null;
     }

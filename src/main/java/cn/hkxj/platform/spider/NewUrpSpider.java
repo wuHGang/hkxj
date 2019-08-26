@@ -244,7 +244,10 @@ public class NewUrpSpider {
                 .get()
                 .build();
         String s = new String(execute(request));
-        log.info(s);
+        if(s.contains("invalidSession")){
+            cookieJar.clearSession();
+            throw new UrpSessionExpiredException("account: "+ account+ "session expired");
+        }
         Document document = Jsoup.parse(s);
         Elements elements = document.getElementsByClass("clearfix");
         List<UrpExamTime> result = Lists.newArrayListWithExpectedSize(elements.size());
