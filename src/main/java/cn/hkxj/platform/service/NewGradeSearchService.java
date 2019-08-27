@@ -42,7 +42,7 @@ public class NewGradeSearchService {
     @Resource
     private NewUrpSpiderService newUrpSpiderService;
 
-    private static final Term currentTerm = new Term(2018, 2019, 2);
+    private static final Term currentTerm = new Term(2019, 2020, 1);
 
     private static DecimalFormat decimalFormat = new DecimalFormat("###################.###########");
 
