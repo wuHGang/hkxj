@@ -2,8 +2,6 @@
 package cn.hkxj.platform.config;
 
 
-import de.codecentric.boot.admin.server.config.AdminServerMarkerConfiguration;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -16,8 +14,4 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class BasicsConfig {
 
-    @Bean
-    public AdminServerMarkerConfiguration.Marker adminServerMarker() {
-        return new AdminServerMarkerConfiguration.Marker();
-    }
 }

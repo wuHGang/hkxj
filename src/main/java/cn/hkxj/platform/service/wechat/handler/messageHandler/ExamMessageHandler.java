@@ -1,15 +1,11 @@
 package cn.hkxj.platform.service.wechat.handler.messageHandler;
 
-import cn.hkxj.platform.MDCThreadPool;
-import cn.hkxj.platform.exceptions.PasswordUncorrectException;
+import cn.hkxj.platform.builder.TextBuilder;
 import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.pojo.timetable.ExamTimeTable;
-import cn.hkxj.platform.service.ExamTimeTableService;
 import cn.hkxj.platform.service.NewUrpSpiderService;
 import cn.hkxj.platform.service.OpenIdService;
-import cn.hkxj.platform.service.wechat.CustomerMessageService;
 import cn.hkxj.platform.spider.newmodel.UrpExamTime;
-import com.alibaba.ttl.threadpool.TtlExecutors;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.common.session.WxSessionManager;
@@ -18,7 +14,6 @@ import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
 import org.joda.time.DateTime;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -26,10 +21,6 @@ import org.springframework.util.StringUtils;
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author JR Chan
@@ -40,44 +31,21 @@ import java.util.concurrent.TimeUnit;
 public class ExamMessageHandler implements WxMpMessageHandler {
 
     @Resource
+    private TextBuilder textBuilder;
+    @Resource
     private OpenIdService openIdService;
     @Resource
-    private ExamTimeTableService examTimeTableService;
-    @Resource
     private NewUrpSpiderService newUrpSpiderService;
-    @Value("${domain}")
-    private String domain;
-    private static final String PATTERN = "<a href=\"%s/bind?openid=%s&appid=%s\">点击我绑定</a>";
 
     private static final String DATA_NOT_FOUND = "还没有你的考试时间，可以过段时间再来查询";
-
-
-    private static ExecutorService cacheThreadPool = TtlExecutors.getTtlExecutorService(
-            new MDCThreadPool(7, 7, 0L, TimeUnit.SECONDS,
-                    new LinkedBlockingQueue<>(), r -> new Thread(r, "ExamMessageThread")));
 
     @Override
     public WxMpXmlOutMessage handle(WxMpXmlMessage wxMpXmlMessage, Map<String, Object> map, WxMpService wxMpService, WxSessionManager wxSessionManager) throws WxErrorException {
         String appId = wxMpService.getWxMpConfigStorage().getAppId();
-        String openid = wxMpXmlMessage.getFromUser();
         Student student = openIdService.getStudentByOpenId(wxMpXmlMessage.getFromUser(), appId);
-        CustomerMessageService messageService = new CustomerMessageService(wxMpXmlMessage, wxMpService);
-        CompletableFuture.runAsync(() ->{
-            try {
-                List<UrpExamTime> examTime = newUrpSpiderService.getExamTime(student.getAccount().toString(), student.getPassword());
+        List<UrpExamTime> examTime = newUrpSpiderService.getExamTime(student.getAccount().toString(), student.getPassword());
 
-                messageService.sentTextMessage(examListToText(examTime));
-
-            }catch (PasswordUncorrectException e){
-                openIdService.openIdUnbind(openid, appId);
-                String content = String.format(PATTERN, domain, openid, appId);
-                messageService.sentTextMessage(content);
-            }catch (Exception e){
-                log.error("send exam message error", e);
-            }
-        }, cacheThreadPool);
-
-        return null;
+        return textBuilder.build(examListToText(examTime), wxMpXmlMessage, wxMpService);
     }
 
     private String newExamListToText(List<ExamTimeTable> examTimeTables,Student student) {

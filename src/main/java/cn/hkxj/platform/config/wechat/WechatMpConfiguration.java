@@ -9,7 +9,6 @@ import me.chanjar.weixin.mp.api.WxMpInMemoryConfigStorage;
 import me.chanjar.weixin.mp.api.WxMpMessageRouter;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.api.impl.WxMpServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -108,7 +107,7 @@ public class WechatMpConfiguration {
 				.handler(subscribeMessageHandler)
 				.end()
 				.rule()
-				.async(false)
+				.async(true)
 				.interceptor(wechatOpenIdInterceptor)
 				.interceptor(studentInfoInterceptor)
 				.rContent(".*?成绩.*?")
@@ -136,7 +135,7 @@ public class WechatMpConfiguration {
 				.handler(unbindMessageHandler)
 				.end()
 				.rule()
-				.async(false)
+				.async(true)
 				.rContent(".*?考试.*?")
 				.interceptor(wechatOpenIdInterceptor)
                 .interceptor(studentInfoInterceptor)

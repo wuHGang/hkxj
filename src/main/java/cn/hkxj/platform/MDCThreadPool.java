@@ -9,6 +9,8 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * 将当前线程的trace传入任务线程
+ * 是的，只需要复写execute就行了
  * @author junrong.chen
  */
 public class MDCThreadPool extends ThreadPoolExecutor {

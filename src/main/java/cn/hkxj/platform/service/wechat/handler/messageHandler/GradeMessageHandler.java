@@ -1,19 +1,15 @@
 package cn.hkxj.platform.service.wechat.handler.messageHandler;
 
 import cn.hkxj.platform.MDCThreadPool;
-import cn.hkxj.platform.exceptions.PasswordUncorrectException;
+import cn.hkxj.platform.builder.TextBuilder;
 import cn.hkxj.platform.exceptions.UrpEvaluationException;
-import cn.hkxj.platform.pojo.GradeAndCourse;
 import cn.hkxj.platform.pojo.GradeSearchResult;
 import cn.hkxj.platform.pojo.ScheduleTask;
 import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.pojo.constant.SubscribeScene;
-import cn.hkxj.platform.service.GradeSearchService;
 import cn.hkxj.platform.service.NewGradeSearchService;
 import cn.hkxj.platform.service.OpenIdService;
 import cn.hkxj.platform.service.ScheduleTaskService;
-import cn.hkxj.platform.service.wechat.CustomerMessageService;
-import com.alibaba.ttl.TransmittableThreadLocal;
 import com.alibaba.ttl.threadpool.TtlExecutors;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.session.WxSessionManager;
@@ -22,14 +18,14 @@ import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.MDC;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.util.List;
 import java.util.Map;
-import java.util.concurrent.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Yuki
@@ -45,9 +41,8 @@ public class GradeMessageHandler implements WxMpMessageHandler {
     private OpenIdService openIdService;
     @Resource
     private ScheduleTaskService scheduleTaskService;
-    @Value("${domain}")
-    private String domain;
-    private static final String PATTERN = "<a href=\"%s/bind?openid=%s&appid=%s\">点击我绑定</a>";
+    @Resource
+    private TextBuilder textBuilder;
 
     private static ExecutorService cacheThreadPool = TtlExecutors.getTtlExecutorService(
             new MDCThreadPool(7, 7, 0L,TimeUnit.SECONDS,
@@ -66,44 +61,20 @@ public class GradeMessageHandler implements WxMpMessageHandler {
 
         cacheThreadPool.execute(() -> scheduleTaskService.checkAndSetSubscribeStatus(scheduleTask, true));
 
-        CustomerMessageService messageService = new CustomerMessageService(wxMpXmlMessage, wxMpService);
+        try {
+            GradeSearchResult currentGrade = newGradeSearchService.getCurrentGrade(student);
+            String text = NewGradeSearchService.gradeListToText(currentGrade.getData());
 
-        CompletableFuture<GradeSearchResult> completableFuture =
-                CompletableFuture.supplyAsync(() -> { try {
-                    return newGradeSearchService.getCurrentGrade(student);
-                }catch (UrpEvaluationException e){
-                    messageService.sentTextMessage("评估未完成 请到教务网完成评估\n\n地址： http://xsurp.usth.edu.cn");
-                    throw e;
-                }catch (PasswordUncorrectException e){
-                    openIdService.openIdUnbind(openid, appId);
-                    String content = String.format(PATTERN, domain, openid, appId);
-                    messageService.sentTextMessage(content);
-                    throw e;
-                }
-                }, cacheThreadPool);
-
-        completableFuture.whenComplete((gradeSearchResult, throwable) -> {
-            if(throwable != null){
-                log.error("send grade message error", throwable);
-                return;
+            if(StringUtils.isEmpty(text)){
+                return textBuilder.build("暂时没查到成绩，请稍后重试", wxMpXmlMessage, wxMpService);
             }
 
-            try {
-                String text = NewGradeSearchService.gradeListToText(gradeSearchResult.getData());
+            return textBuilder.build(text, wxMpXmlMessage, wxMpService);
+        }catch (UrpEvaluationException e){
+            return textBuilder.build("问卷未完成", wxMpXmlMessage, wxMpService);
+        }
 
-                if(StringUtils.isEmpty(text)){
-                    messageService.sentTextMessage("暂时没查到成绩，请稍后重试");
-                    return;
-                }
 
-                messageService.sentTextMessage(text);
-            }catch (Exception e){
-                log.error("", e);
-            }
-
-        });
-
-        return null;
     }
 
 

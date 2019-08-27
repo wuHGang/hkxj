@@ -1,12 +1,13 @@
 package cn.hkxj.platform.service.wechat;
 
-import cn.hkxj.platform.pojo.*;
-import cn.hkxj.platform.service.GradeSearchService;
+import cn.hkxj.platform.pojo.GradeSearchResult;
+import cn.hkxj.platform.pojo.Student;
+import cn.hkxj.platform.pojo.UrpGradeAndUrpCourse;
 import cn.hkxj.platform.service.NewGradeSearchService;
 import cn.hkxj.platform.service.OpenIdService;
-import com.google.common.collect.Lists;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import me.chanjar.weixin.common.api.WxConsts;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.kefu.WxMpKefuMessage;
@@ -108,9 +109,30 @@ public class CustomerMessageService {
         }
     }
 
+    void sendMessage(WxMpXmlOutMessage message) {
+        WxMpKefuMessage wxMpKefuMessage = new WxMpKefuMessage();
+        wxMpKefuMessage.setToUser(wxMpXmlMessage.getFromUser());
+        if(message.getMsgType().equals(WxConsts.MassMsgType.TEXT)){
+            WxMpXmlOutTextMessage textMessage = (WxMpXmlOutTextMessage) message;
+            wxMpKefuMessage.setContent(textMessage.getContent());
+            wxMpKefuMessage.setMsgType("text");
+            log.info("send customer message {}", textMessage.getContent());
+        }else {
+            throw new RuntimeException("unSupport message type");
+        }
+
+        try {
+
+            wxMpService.getKefuService().sendKefuMessage(wxMpKefuMessage);
+        } catch (WxErrorException e) {
+            log.error("send customer message error", e);
+        }
+    }
+
     private WxMpXmlOutTextMessage buildMessage(String content) {
         return WxMpXmlOutMessage.TEXT().content(content)
                 .fromUser(wxMpXmlMessage.getToUser()).toUser(wxMpXmlMessage.getFromUser())
                 .build();
     }
+
 }
