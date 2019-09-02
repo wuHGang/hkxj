@@ -1,5 +1,7 @@
 package cn.hkxj.platform.spider.newmodel;
 
+import com.alibaba.fastjson.annotation.JSONField;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.Data;
 
 /**
@@ -7,8 +9,9 @@ import lombok.Data;
  * @date 2019/7/31 20:12
  */
 @Data
-public class GradeRelativeInfo {
+public class CourseRelativeInfo {
 
+    @JSONField(name = "courseNumber", alternateNames = {"coureNumber"})
     private String courseNumber;
 
     private String examtime;

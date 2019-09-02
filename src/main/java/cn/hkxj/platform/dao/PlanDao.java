@@ -39,16 +39,15 @@ public class PlanDao {
     /**
      * 将从爬虫爬取到的数据判断是需要存入数据库还是从数据库中进行获取
      * @param convertFromSpider 从爬虫爬取的信息中转化的计划实体
-     * @param planNumber 项目编号
      * @return 教学计划实体
      */
-    public Plan saveOrGetPlanFromDb(Plan convertFromSpider, String planNumber){
+    public Plan saveOrGetPlanFromDb(Plan convertFromSpider){
         //如果不存在相应的教学计划，就先插入再返回
-        if(!ifExistPlan(planNumber)){
+        if(!ifExistPlan(convertFromSpider.getPlanNumber())){
             insertPlan(convertFromSpider);
         } else {
             //如果存在从数据库中获取后返回
-            convertFromSpider = getPlanByPlanNumber(planNumber);
+            convertFromSpider = getPlanByPlanNumber(convertFromSpider.getPlanNumber());
         }
         return convertFromSpider;
     }

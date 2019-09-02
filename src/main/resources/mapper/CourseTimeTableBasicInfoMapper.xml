@@ -1,0 +1,403 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.hkxj.platform.mapper.CourseTimeTableBasicInfoMapper" >
+  <resultMap id="BaseResultMap" type="cn.hkxj.platform.pojo.CourseTimeTableBasicInfo" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="plan_id" property="planId" jdbcType="INTEGER" />
+    <result column="course_id" property="courseId" jdbcType="VARCHAR" />
+    <result column="course_properties_code" property="coursePropertiesCode" jdbcType="VARCHAR" />
+    <result column="course_properties_name" property="coursePropertiesName" jdbcType="VARCHAR" />
+    <result column="restricted_condition" property="restrictedCondition" jdbcType="VARCHAR" />
+    <result column="select_course_status_code" property="selectCourseStatusCode" jdbcType="VARCHAR" />
+    <result column="select_course_status_name" property="selectCourseStatusName" jdbcType="VARCHAR" />
+    <result column="study_mode_code" property="studyModeCode" jdbcType="VARCHAR" />
+    <result column="study_mode_name" property="studyModeName" jdbcType="VARCHAR" />
+    <result column="flag" property="flag" jdbcType="VARCHAR" />
+    <result column="dg_flag" property="dgFlag" jdbcType="VARCHAR" />
+    <result column="ywdg_flag" property="ywdgFlag" jdbcType="VARCHAR" />
+    <result column="rl_flag" property="rlFlag" jdbcType="VARCHAR" />
+    <result column="term_year" property="termYear" jdbcType="CHAR" />
+    <result column="term_order" property="termOrder" jdbcType="INTEGER" />
+    <result column="gmt_create" property="gmtCreate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, plan_id, course_id, course_properties_code, course_properties_name, restricted_condition,
+    select_course_status_code, select_course_status_name, study_mode_code, study_mode_name,
+    flag, dg_flag, ywdg_flag, rl_flag, term_year, term_order, gmt_create
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="cn.hkxj.platform.pojo.example.CourseTimeTableBasicInfoExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from course_time_table_basic_info
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from course_time_table_basic_info
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from course_time_table_basic_info
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="cn.hkxj.platform.pojo.example.CourseTimeTableBasicInfoExample" >
+    delete from course_time_table_basic_info
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="cn.hkxj.platform.pojo.CourseTimeTableBasicInfo" >
+    insert into course_time_table_basic_info (id, plan_id, course_id,
+    course_properties_code, course_properties_name,
+    restricted_condition, select_course_status_code,
+    select_course_status_name, study_mode_code,
+    study_mode_name, flag, dg_flag,
+    ywdg_flag, rl_flag, term_year,
+    term_order, gmt_create)
+    values (#{id,jdbcType=INTEGER}, #{planId,jdbcType=INTEGER}, #{courseId,jdbcType=VARCHAR},
+    #{coursePropertiesCode,jdbcType=VARCHAR}, #{coursePropertiesName,jdbcType=VARCHAR},
+    #{restrictedCondition,jdbcType=VARCHAR}, #{selectCourseStatusCode,jdbcType=VARCHAR},
+    #{selectCourseStatusName,jdbcType=VARCHAR}, #{studyModeCode,jdbcType=VARCHAR},
+    #{studyModeName,jdbcType=VARCHAR}, #{flag,jdbcType=VARCHAR}, #{dgFlag,jdbcType=VARCHAR},
+    #{ywdgFlag,jdbcType=VARCHAR}, #{rlFlag,jdbcType=VARCHAR}, #{termYear,jdbcType=CHAR},
+    #{termOrder,jdbcType=INTEGER}, #{gmtCreate,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="cn.hkxj.platform.pojo.CourseTimeTableBasicInfo" >
+    insert into course_time_table_basic_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="planId != null" >
+        plan_id,
+      </if>
+      <if test="courseId != null" >
+        course_id,
+      </if>
+      <if test="coursePropertiesCode != null" >
+        course_properties_code,
+      </if>
+      <if test="coursePropertiesName != null" >
+        course_properties_name,
+      </if>
+      <if test="restrictedCondition != null" >
+        restricted_condition,
+      </if>
+      <if test="selectCourseStatusCode != null" >
+        select_course_status_code,
+      </if>
+      <if test="selectCourseStatusName != null" >
+        select_course_status_name,
+      </if>
+      <if test="studyModeCode != null" >
+        study_mode_code,
+      </if>
+      <if test="studyModeName != null" >
+        study_mode_name,
+      </if>
+      <if test="flag != null" >
+        flag,
+      </if>
+      <if test="dgFlag != null" >
+        dg_flag,
+      </if>
+      <if test="ywdgFlag != null" >
+        ywdg_flag,
+      </if>
+      <if test="rlFlag != null" >
+        rl_flag,
+      </if>
+      <if test="termYear != null" >
+        term_year,
+      </if>
+      <if test="termOrder != null" >
+        term_order,
+      </if>
+      <if test="gmtCreate != null" >
+        gmt_create,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="planId != null" >
+        #{planId,jdbcType=INTEGER},
+      </if>
+      <if test="courseId != null" >
+        #{courseId,jdbcType=VARCHAR},
+      </if>
+      <if test="coursePropertiesCode != null" >
+        #{coursePropertiesCode,jdbcType=VARCHAR},
+      </if>
+      <if test="coursePropertiesName != null" >
+        #{coursePropertiesName,jdbcType=VARCHAR},
+      </if>
+      <if test="restrictedCondition != null" >
+        #{restrictedCondition,jdbcType=VARCHAR},
+      </if>
+      <if test="selectCourseStatusCode != null" >
+        #{selectCourseStatusCode,jdbcType=VARCHAR},
+      </if>
+      <if test="selectCourseStatusName != null" >
+        #{selectCourseStatusName,jdbcType=VARCHAR},
+      </if>
+      <if test="studyModeCode != null" >
+        #{studyModeCode,jdbcType=VARCHAR},
+      </if>
+      <if test="studyModeName != null" >
+        #{studyModeName,jdbcType=VARCHAR},
+      </if>
+      <if test="flag != null" >
+        #{flag,jdbcType=VARCHAR},
+      </if>
+      <if test="dgFlag != null" >
+        #{dgFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="ywdgFlag != null" >
+        #{ywdgFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="rlFlag != null" >
+        #{rlFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="termYear != null" >
+        #{termYear,jdbcType=CHAR},
+      </if>
+      <if test="termOrder != null" >
+        #{termOrder,jdbcType=INTEGER},
+      </if>
+      <if test="gmtCreate != null" >
+        #{gmtCreate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="cn.hkxj.platform.pojo.example.CourseTimeTableBasicInfoExample" resultType="java.lang.Integer" >
+    select count(*) from course_time_table_basic_info
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update course_time_table_basic_info
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.planId != null" >
+        plan_id = #{record.planId,jdbcType=INTEGER},
+      </if>
+      <if test="record.courseId != null" >
+        course_id = #{record.courseId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.coursePropertiesCode != null" >
+        course_properties_code = #{record.coursePropertiesCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.coursePropertiesName != null" >
+        course_properties_name = #{record.coursePropertiesName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.restrictedCondition != null" >
+        restricted_condition = #{record.restrictedCondition,jdbcType=VARCHAR},
+      </if>
+      <if test="record.selectCourseStatusCode != null" >
+        select_course_status_code = #{record.selectCourseStatusCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.selectCourseStatusName != null" >
+        select_course_status_name = #{record.selectCourseStatusName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.studyModeCode != null" >
+        study_mode_code = #{record.studyModeCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.studyModeName != null" >
+        study_mode_name = #{record.studyModeName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.flag != null" >
+        flag = #{record.flag,jdbcType=VARCHAR},
+      </if>
+      <if test="record.dgFlag != null" >
+        dg_flag = #{record.dgFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="record.ywdgFlag != null" >
+        ywdg_flag = #{record.ywdgFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="record.rlFlag != null" >
+        rl_flag = #{record.rlFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="record.termYear != null" >
+        term_year = #{record.termYear,jdbcType=CHAR},
+      </if>
+      <if test="record.termOrder != null" >
+        term_order = #{record.termOrder,jdbcType=INTEGER},
+      </if>
+      <if test="record.gmtCreate != null" >
+        gmt_create = #{record.gmtCreate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update course_time_table_basic_info
+    set id = #{record.id,jdbcType=INTEGER},
+    plan_id = #{record.planId,jdbcType=INTEGER},
+    course_id = #{record.courseId,jdbcType=VARCHAR},
+    course_properties_code = #{record.coursePropertiesCode,jdbcType=VARCHAR},
+    course_properties_name = #{record.coursePropertiesName,jdbcType=VARCHAR},
+    restricted_condition = #{record.restrictedCondition,jdbcType=VARCHAR},
+    select_course_status_code = #{record.selectCourseStatusCode,jdbcType=VARCHAR},
+    select_course_status_name = #{record.selectCourseStatusName,jdbcType=VARCHAR},
+    study_mode_code = #{record.studyModeCode,jdbcType=VARCHAR},
+    study_mode_name = #{record.studyModeName,jdbcType=VARCHAR},
+    flag = #{record.flag,jdbcType=VARCHAR},
+    dg_flag = #{record.dgFlag,jdbcType=VARCHAR},
+    ywdg_flag = #{record.ywdgFlag,jdbcType=VARCHAR},
+    rl_flag = #{record.rlFlag,jdbcType=VARCHAR},
+    term_year = #{record.termYear,jdbcType=CHAR},
+    term_order = #{record.termOrder,jdbcType=INTEGER},
+    gmt_create = #{record.gmtCreate,jdbcType=TIMESTAMP}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.hkxj.platform.pojo.CourseTimeTableBasicInfo" >
+    update course_time_table_basic_info
+    <set >
+      <if test="planId != null" >
+        plan_id = #{planId,jdbcType=INTEGER},
+      </if>
+      <if test="courseId != null" >
+        course_id = #{courseId,jdbcType=VARCHAR},
+      </if>
+      <if test="coursePropertiesCode != null" >
+        course_properties_code = #{coursePropertiesCode,jdbcType=VARCHAR},
+      </if>
+      <if test="coursePropertiesName != null" >
+        course_properties_name = #{coursePropertiesName,jdbcType=VARCHAR},
+      </if>
+      <if test="restrictedCondition != null" >
+        restricted_condition = #{restrictedCondition,jdbcType=VARCHAR},
+      </if>
+      <if test="selectCourseStatusCode != null" >
+        select_course_status_code = #{selectCourseStatusCode,jdbcType=VARCHAR},
+      </if>
+      <if test="selectCourseStatusName != null" >
+        select_course_status_name = #{selectCourseStatusName,jdbcType=VARCHAR},
+      </if>
+      <if test="studyModeCode != null" >
+        study_mode_code = #{studyModeCode,jdbcType=VARCHAR},
+      </if>
+      <if test="studyModeName != null" >
+        study_mode_name = #{studyModeName,jdbcType=VARCHAR},
+      </if>
+      <if test="flag != null" >
+        flag = #{flag,jdbcType=VARCHAR},
+      </if>
+      <if test="dgFlag != null" >
+        dg_flag = #{dgFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="ywdgFlag != null" >
+        ywdg_flag = #{ywdgFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="rlFlag != null" >
+        rl_flag = #{rlFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="termYear != null" >
+        term_year = #{termYear,jdbcType=CHAR},
+      </if>
+      <if test="termOrder != null" >
+        term_order = #{termOrder,jdbcType=INTEGER},
+      </if>
+      <if test="gmtCreate != null" >
+        gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.hkxj.platform.pojo.CourseTimeTableBasicInfo" >
+    update course_time_table_basic_info
+    set plan_id = #{planId,jdbcType=INTEGER},
+      course_id = #{courseId,jdbcType=VARCHAR},
+      course_properties_code = #{coursePropertiesCode,jdbcType=VARCHAR},
+      course_properties_name = #{coursePropertiesName,jdbcType=VARCHAR},
+      restricted_condition = #{restrictedCondition,jdbcType=VARCHAR},
+      select_course_status_code = #{selectCourseStatusCode,jdbcType=VARCHAR},
+      select_course_status_name = #{selectCourseStatusName,jdbcType=VARCHAR},
+      study_mode_code = #{studyModeCode,jdbcType=VARCHAR},
+      study_mode_name = #{studyModeName,jdbcType=VARCHAR},
+      flag = #{flag,jdbcType=VARCHAR},
+      dg_flag = #{dgFlag,jdbcType=VARCHAR},
+      ywdg_flag = #{ywdgFlag,jdbcType=VARCHAR},
+      rl_flag = #{rlFlag,jdbcType=VARCHAR},
+      term_year = #{termYear,jdbcType=CHAR},
+      term_order = #{termOrder,jdbcType=INTEGER},
+      gmt_create = #{gmtCreate,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

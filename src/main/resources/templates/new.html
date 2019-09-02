@@ -205,7 +205,7 @@
     function theWeek() {
 
         var x = new Date();
-        var y = x.setFullYear(2019, 2, 4);
+        var y = x.setFullYear(2019, 7, 26);
         var today = new Date();
         return Math.ceil((today - y) / (24 * 60 * 60 * 1000) / 7);
 
@@ -248,7 +248,7 @@
         $.ajax({
 
             type:"get",
-            url:"/platform/course/timetable",
+            url:"/platform/course/newtimetable",
             timeout:10000,
             success:function (json) {
                 if (json.status != 200){
@@ -261,17 +261,17 @@
                 arrClass=json.data;
                 function getText(a,b) {
                     var raN=Math.floor(Math.random() *23+1);
-                    $(arrTd[a]).text(arrClass[b].course.name+"#"+"@"+arrClass[b].room.name)
+                    $(arrTd[a]).text(arrClass[b].urpCourse.courseName+"#"+"@"+arrClass[b].detail.roomName)
                         .css({"background-color":"#"+arrBlue[raN]});
                 }
                 for (var k=0;k<arrClass.length;k++) {
                     //判断是否开课;
-                    if(arrClass[k].start <= week && arrClass[k].end >= week&&(arrClass[k].distinct==0||(arrClass[k].distinct+week)%2==0)){
+                    if(arrClass[k].detail.startWeek <= week && arrClass[k].detail.endWeek >= week&&(arrClass[k].detail.distinct==0||(arrClass[k].detail.distinct+week)%2==0)){
                         //实现数据放置;
                         for (var i = 1; i <= 7; i++) {
                             //判断是周几的课;
-                            if (arrClass[k].week == i) {
-                                switch (arrClass[k].order) {
+                            if (arrClass[k].detail.day == i) {
+                                switch (arrClass[k].detail.order) {
                                     case 1:
                                         getText(i,k);
                                         brText(arrTd[i]);

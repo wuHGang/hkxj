@@ -102,6 +102,12 @@ public class NewUrpSpiderServiceTest {
         spider.getExamTime();
     }
 
+    @Test
+    public void testCourseTimeTable(){
+        NewUrpSpider spider = new NewUrpSpider("2017023115", "134340");
+        System.out.println(spider.getUrpCourseTimeTable());
+    }
+
 
 
 

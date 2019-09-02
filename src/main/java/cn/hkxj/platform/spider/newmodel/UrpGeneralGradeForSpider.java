@@ -172,7 +172,7 @@ public class UrpGeneralGradeForSpider {
     /**
      * 相关课程信息
      */
-    private GradeRelativeInfo id;
+    private CourseRelativeInfo id;
 
 
     public Term getTermForUrpGrade(){

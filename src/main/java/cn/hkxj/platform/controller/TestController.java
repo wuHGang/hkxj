@@ -1,9 +1,12 @@
 package cn.hkxj.platform.controller;
 
 import cn.hkxj.platform.pojo.Classes;
+import cn.hkxj.platform.pojo.CourseTimeTableDetail;
 import cn.hkxj.platform.pojo.GradeSearchResult;
 import cn.hkxj.platform.pojo.Student;
+import cn.hkxj.platform.service.CourseTimeTableService;
 import cn.hkxj.platform.service.NewGradeSearchService;
+import cn.hkxj.platform.service.NewUrpSpiderService;
 import cn.hkxj.platform.spider.NewUrpSpider;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,13 +16,18 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @Slf4j
 public class TestController {
 
+//    @Resource
+//    private NewGradeSearchService newGradeSearchService;
     @Resource
-    private NewGradeSearchService newGradeSearchService;
+    private NewUrpSpiderService newUrpSpiderService;
+    @Resource
+    private CourseTimeTableService courseTimeTableService;
 
     public TestController() {
     }
@@ -38,9 +46,35 @@ public class TestController {
         Classes classes = new Classes();
         classes.setId(316);
         student.setClasses(classes);
-        GradeSearchResult gradeSearchResult = newGradeSearchService.getCurrentGrade(student);
-        log.info(NewGradeSearchService.gradeListToText(gradeSearchResult.getData()));
-        return NewGradeSearchService.gradeListToText(gradeSearchResult.getData());
+//        GradeSearchResult gradeSearchResult = newGradeSearchService.getCurrentGrade(student);
+//        log.info(NewGradeSearchService.gradeListToText(gradeSearchResult.getData()));
+        return newUrpSpiderService.getUrpCourseTimeTable(student).toString();
+    }
+
+    @RequestMapping("/testctt")
+    public void testCourseTimeTable(){
+
+        Student student = new Student();
+        student.setAccount(2017023115);
+        student.setPassword("134340");
+        Classes classes = new Classes();
+        classes.setId(316);
+        student.setClasses(classes);
+        System.out.println(courseTimeTableService.convertToText(courseTimeTableService.getDetailsForCurrentDay(student)));
+    }
+
+    @RequestMapping("/testcttweek")
+    public void testCourseTimeTableWeek(){
+
+        Student student = new Student();
+        student.setAccount(2016024170);
+        student.setPassword("1");
+        Classes classes = new Classes();
+        classes.setId(316);
+        student.setClasses(classes);
+        List<CourseTimeTableDetail> details = courseTimeTableService.getDetailsForCurrentWeek(student);
+        System.out.println("size = " + details.size());
+        System.out.println(courseTimeTableService.convertToText(details));
     }
 
     @RequestMapping("tests")

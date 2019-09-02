@@ -4,11 +4,14 @@ import cn.hkxj.platform.builder.TemplateBuilder;
 import cn.hkxj.platform.builder.TextBuilder;
 import cn.hkxj.platform.config.wechat.WechatMpPlusProperties;
 import cn.hkxj.platform.config.wechat.WechatTemplateProperties;
+import cn.hkxj.platform.pojo.CourseTimeTableDetail;
 import cn.hkxj.platform.pojo.ScheduleTask;
+import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.pojo.constant.SubscribeScene;
 import cn.hkxj.platform.pojo.timetable.CourseTimeTable;
 import cn.hkxj.platform.pojo.wechat.Openid;
 import cn.hkxj.platform.service.CourseService;
+import cn.hkxj.platform.service.CourseTimeTableService;
 import cn.hkxj.platform.service.OpenIdService;
 import cn.hkxj.platform.service.ScheduleTaskService;
 import cn.hkxj.platform.utils.OneOffSubcriptionUtil;
@@ -45,7 +48,7 @@ public class CourseMessageHandler implements WxMpMessageHandler {
     @Resource
     private TemplateBuilder templateBuilder;
     @Resource
-    private CourseService courseService;
+    private CourseTimeTableService courseTimeTableService;
     @Resource
     private WechatMpPlusProperties wechatMpPlusProperties;
     @Resource
@@ -75,8 +78,9 @@ public class CourseMessageHandler implements WxMpMessageHandler {
     //plus的处理逻辑
     private void plusProcessing(WxMpXmlMessage wxMpXmlMessage, WxMpService wxMpService){
         Openid openid = openIdService.getOpenid(wxMpXmlMessage.getFromUser(), wxMpService.getWxMpConfigStorage().getAppId()).get(0);
-        List<CourseTimeTable> courseTimeTables = courseService.getCoursesCurrentDay(openid.getAccount());
-        List<WxMpTemplateData> templateData = templateBuilder.assemblyTemplateContentForCourse(courseService.toText(courseTimeTables));
+        Student student = openIdService.getStudentByOpenId(openid.getOpenid(), wechatMpPlusProperties.getAppId());
+        List<CourseTimeTableDetail> details = courseTimeTableService.getDetailsForCurrentDay(student);
+        List<WxMpTemplateData> templateData = templateBuilder.assemblyTemplateContentForCourse(courseTimeTableService.convertToText(details));
         WxMpTemplateMessage templateMessage =
                 templateBuilder.buildWithNoMiniProgram(wxMpXmlMessage.getFromUser(), templateData,
                         wechatTemplateProperties.getPlusCourseTemplateId(), TEMPLATE_REDIRECT_URL);

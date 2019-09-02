@@ -14,6 +14,7 @@ import cn.hkxj.platform.pojo.timetable.CourseTimeTable;
 import com.google.common.collect.Maps;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.CharUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
@@ -94,11 +95,11 @@ public class ExcelService {
         int end = 0;//提取方向时用到的下标
         for(int i = 0; i < location.length(); i++){
             //判断是否英文字符
-            if(isAlphabet(location.charAt(i))){
+            if(CharUtils.isAsciiAlpha(location.charAt(i))){
                 start = i;
                 end = i + 1;
                 //判断当前字符的下一个字符是不是英文字符
-                if(isAlphabet(location.charAt(end))) {
+                if(CharUtils.isAsciiAlpha(location.charAt(end))) {
                     end++;
                 }
                 break;
@@ -123,14 +124,13 @@ public class ExcelService {
         String building = location.substring(0, numbers[0]);
         if(building.equals("科")) building = "科厦";
         String direction = location.substring(numbers[0], numbers[1]);
-        int code = getCodeByDirection(direction);
         //计算楼层和房间号
         int floorAndNumber = Integer.parseInt(location.substring(numbers[1], location.length()));
         int floor = floorAndNumber / 100;
         int number = floorAndNumber % 100;
         room = new Room();
         room.setArea(Building.getBuildingByName(building));
-        room.setDirection(Direction.getDirectionByCode(code));
+        room.setDirection(Direction.getDirectionObjectByDirection(direction));
         room.setFloor(floor);
         room.setNumber(number);
         room.setName(location);
@@ -153,7 +153,7 @@ public class ExcelService {
             int floorAndNumber = Integer.parseInt(location.substring(numbers[1], location.length()));
             int floor = floorAndNumber / 1000;
             int number = floorAndNumber % 100;
-            room.setDirection(Direction.getDirectionByCode(getCodeByDirection(direction)));
+            room.setDirection(Direction.getDirectionObjectByDirection(direction));
             room.setIsAllow((byte)0);
             room.setNumber(number);
             room.setFloor(floor);
@@ -600,9 +600,6 @@ public class ExcelService {
         return '0' <= a && a <= '9';
     }
 
-    private boolean isAlphabet(char a){
-        return (a >= 'a' && a <= 'z') || (a >= 'A' && a <= 'Z');
-    }
 
     private int isNormalOrSingleOrDouble(char i){
         if(i == '单'){
@@ -626,29 +623,6 @@ public class ExcelService {
             }
         }
         return index;
-    }
-
-    private int getCodeByDirection(String direction){
-        switch (direction){
-            case "N":
-                return 1;
-            case "S":
-                return 2;
-            case "E":
-                return 3;
-            case "W":
-                return 4;
-            case "EN":
-                return 5;
-            case "ES":
-                return 6;
-            case "WN":
-                return 7;
-            case "WS":
-                return 8;
-            default:
-                throw new IllegalArgumentException("no code match");
-        }
     }
 
 }

@@ -3,7 +3,6 @@ package cn.hkxj.platform.service;
 import cn.hkxj.platform.dao.*;
 import cn.hkxj.platform.pojo.*;
 import cn.hkxj.platform.spider.newmodel.CurrentGrade;
-import cn.hkxj.platform.spider.newmodel.UrpCourseForSpider;
 import cn.hkxj.platform.spider.newmodel.UrpGeneralGradeForSpider;
 import cn.hkxj.platform.spider.newmodel.UrpGradeDetailForSpider;
 import com.google.common.collect.Lists;
@@ -36,7 +35,7 @@ public class NewGradeSearchService {
     @Resource
     private UrpGradeDao urpGradeDao;
     @Resource
-    private UrpCourseDao urpCourseDao;
+    private UrpCourseService urpCourseService;
     @Resource
     private UrpGradeDetailDao urpGradeDetailDao;
     @Resource
@@ -62,7 +61,7 @@ public class NewGradeSearchService {
         Map<String, NewGrade> courseAndGrade = getGradeFromDb(student);
         List<UrpGradeAndUrpCourse> urpGradeAndUrpCourses = Lists.newArrayList();
         courseAndGrade.forEach((courseId, newGrade) -> {
-            UrpCourse urpCourse = urpCourseDao.getUrpCourseByUid(courseId);
+            UrpCourse urpCourse = urpCourseService.getUrpCourseByCourseId(courseId);
             UrpGradeAndUrpCourse urpGradeAndUrpCourse = new UrpGradeAndUrpCourse();
             urpGradeAndUrpCourse.setNewGrade(newGrade);
             urpGradeAndUrpCourse.setUrpCourse(urpCourse);
@@ -99,20 +98,20 @@ public class NewGradeSearchService {
 
     /**
      * 生成一个UrpGradeAndUrpCourse
-     * @param uid 课程号
+     * @param courseId 课程号
      * @param term 学期
      * @param urpGrade 成绩实体
      * @param urpGradeDetailList 成绩详情实体
      * @return UrpGradeAndUrpCourse
      */
-    private UrpGradeAndUrpCourse generateUrpGradeAndUrpCourse(String uid, Term term, UrpGrade urpGrade, List<UrpGradeDetail> urpGradeDetailList){
+    private UrpGradeAndUrpCourse generateUrpGradeAndUrpCourse(String courseId, Term term, UrpGrade urpGrade, List<UrpGradeDetail> urpGradeDetailList){
         UrpGradeAndUrpCourse target = new UrpGradeAndUrpCourse();
         NewGrade newGrade = new NewGrade();
         newGrade.setDetails(urpGradeDetailList);
         newGrade.setUrpGrade(urpGrade);
         target.setNewGrade(newGrade);
         target.setTerm(term);
-        target.setUrpCourse(urpCourseDao.getUrpCourseByUid(uid));
+        target.setUrpCourse(urpCourseService.getUrpCourseByCourseId(courseId));
         return target;
     }
 
@@ -127,10 +126,7 @@ public class NewGradeSearchService {
             UrpGeneralGradeForSpider generalGradeForSpider = urpGradeForSpider.getUrpGeneralGradeForSpider();
             String uid = generalGradeForSpider.getId().getCourseNumber();
             //判断对应的课程是否存在，不存在就从爬虫获取后保存到数据库
-            if(!urpCourseDao.ifExistCourse(uid)){
-                UrpCourseForSpider urpCourseForSpider = newUrpSpiderService.getCourseFromSpider(student, uid);
-                urpCourseDao.insertUrpCourse(urpCourseForSpider.convertToUrpCourse());
-            }
+            urpCourseService.checkOrSaveUrpCourseToDb(uid, student);
             //对教学计划相关的信息进行判断是否需要保存
             Plan plan = getPlan(generalGradeForSpider);
             //对专业相关的信息进行判断是否需要保存
@@ -199,7 +195,7 @@ public class NewGradeSearchService {
     }
 
     private Plan getPlan(UrpGeneralGradeForSpider generalGradeForSpider){
-        return planDao.saveOrGetPlanFromDb(generalGradeForSpider.convertToPlan(), generalGradeForSpider.getPlanNumber());
+        return planDao.saveOrGetPlanFromDb(generalGradeForSpider.convertToPlan());
     }
 
     private Major getMajor(UrpGeneralGradeForSpider generalGradeForSpider){

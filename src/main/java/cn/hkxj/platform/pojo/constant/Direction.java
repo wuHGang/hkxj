@@ -50,6 +50,31 @@ public enum Direction {
 
 	}
 
+	public static Direction getDirectionObjectByDirection(String direction){
+		switch (direction){
+			case "":
+				return CORRECT;
+			case "N":
+				return N;
+			case "S":
+				return S;
+			case "E":
+				return E;
+			case "W":
+				return W;
+			case "EN":
+				return EN;
+			case "ES":
+				return ES;
+			case "WN":
+				return WN;
+			case "WS":
+				return WS;
+			default:
+				throw new IllegalArgumentException("no code match");
+		}
+	}
+
 	public int getCode() {
 		return code;
 	}

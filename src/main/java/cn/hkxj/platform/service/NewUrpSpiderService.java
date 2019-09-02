@@ -7,6 +7,7 @@ import cn.hkxj.platform.spider.NewUrpSpider;
 import cn.hkxj.platform.spider.model.UrpStudentInfo;
 import cn.hkxj.platform.spider.newmodel.CurrentGrade;
 import cn.hkxj.platform.spider.newmodel.UrpCourseForSpider;
+import cn.hkxj.platform.spider.newmodel.UrpCourseTimeTableForSpider;
 import cn.hkxj.platform.spider.newmodel.UrpExamTime;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.retry.annotation.Retryable;
@@ -45,6 +46,10 @@ public class NewUrpSpiderService {
         NewUrpSpider spider = new NewUrpSpider(account, password);
     }
 
+    public UrpCourseTimeTableForSpider getUrpCourseTimeTable(Student student){
+        NewUrpSpider spider = new NewUrpSpider(student.getAccount().toString(), student.getPassword());
+        return spider.getUrpCourseTimeTable();
+    }
 
     /**
      * 获取学生信息

@@ -1,6 +1,9 @@
 package cn.hkxj.platform.utils;
 
+import cn.hkxj.platform.pojo.SchoolTime;
+import cn.hkxj.platform.pojo.Term;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.CharUtils;
 import org.springframework.stereotype.Component;
 
 import java.text.DateFormat;
@@ -11,9 +14,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
+import java.util.*;
 
 /**
  * @author Yuki
@@ -24,7 +25,7 @@ import java.util.Locale;
 @Slf4j
 public class DateUtils {
 
-    private final static String term_start = "2019-03-04";
+    private final static String term_start = "2019-08-26";
 
     public final static String YYYY_MM_DD_PATTERN = "yyyyMMdd";
 
@@ -101,6 +102,19 @@ public class DateUtils {
         return LocalDate.parse(time, DateTimeFormatter.ofPattern(pattern)).atStartOfDay();
     }
 
+   public static SchoolTime getCurrentSchoolTime(){
+        SchoolTime schoolTime = new SchoolTime();
+        schoolTime.setDay(getCurrentDay());
+        schoolTime.setWeek(getCurrentWeek());
+        schoolTime.setTerm(new Term(2019, 2020, 1));
+        return schoolTime;
+   }
 
+   public static byte getDistinct(){
+        return (byte) (getCurrentWeek() % 2 == 0 ? 2 : 1);
+   }
 
+   public static byte getContraryDistinct(){
+       return (byte) (getCurrentWeek() % 2 == 0 ? 1 : 2);
+   }
 }
