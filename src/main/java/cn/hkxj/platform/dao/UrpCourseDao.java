@@ -22,10 +22,10 @@ public class UrpCourseDao {
         urpCourseMapper.insertSelective(urpCourse);
     }
 
-    public UrpCourse getUrpCourseByUid(String uid){
+    public UrpCourse getUrpCourseByCourseId(String courseId){
         UrpCourseExample urpCourseExample = new UrpCourseExample();
         urpCourseExample.createCriteria()
-                .andCourseNumberEqualTo(uid);
+                .andCourseNumberEqualTo(courseId);
         return urpCourseMapper.selectByExample(urpCourseExample).stream().findFirst().orElse(null);
     }
 

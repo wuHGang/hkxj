@@ -30,7 +30,14 @@ public class RedisTests {
         redisTemplate.opsForValue().set(RedisKeys.OPENID_TO_ACCOUNT + "11", "2014025838");
         String account = redisTemplate.opsForValue().get(RedisKeys.OPENID_TO_ACCOUNT + "11");
 
-        System.out.println(account);
+    }
+
+    @Test
+    public void expire() {
+        boolean key = redisTemplate.hasKey(RedisKeys.URP_COOKIE.genKey("2017021458"))
+                && redisTemplate.hasKey(RedisKeys.URP_LOGIN_COOKIE.genKey("2017021458"));
+        System.out.println(key);
 
     }
+
 }

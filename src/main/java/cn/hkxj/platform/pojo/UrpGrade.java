@@ -12,7 +12,7 @@ public class UrpGrade {
 
     private Integer account;
 
-    private Integer score;
+    private Double score;
 
     private Double gradePoint;
 

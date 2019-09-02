@@ -67,6 +67,10 @@ public class Term {
         }
     }
 
+    public String getTermYear(){
+        return this.startYear + "-" + this.endYear;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

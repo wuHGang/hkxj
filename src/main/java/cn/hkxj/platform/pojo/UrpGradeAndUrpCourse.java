@@ -14,6 +14,4 @@ public class UrpGradeAndUrpCourse {
     private UrpCourse urpCourse;
 
     private Term term;
-
-    private boolean update;
 }

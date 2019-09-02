@@ -40,7 +40,7 @@ public class UrpGeneralGradeForSpider {
     /**
      * 课程成绩
      */
-    private int courseScore;
+    private Double courseScore;
     /**
      * 学分
      */
@@ -64,11 +64,11 @@ public class UrpGeneralGradeForSpider {
     /**
      * 最高成绩
      */
-    private int maxcj;
+    private Double maxcj;
     /**
      * 最低成绩
      */
-    private int mincj;
+    private Double mincj;
     /**
      * 排名
      */
@@ -172,7 +172,7 @@ public class UrpGeneralGradeForSpider {
     /**
      * 相关课程信息
      */
-    private GradeRelativeInfo id;
+    private CourseRelativeInfo id;
 
 
     public Term getTermForUrpGrade(){

@@ -1,5 +1,7 @@
 package cn.hkxj.platform.service.wechat;
 
+import cn.hkxj.platform.MDCThreadPool;
+import com.alibaba.ttl.threadpool.TtlExecutors;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.api.WxErrorExceptionHandler;
 import me.chanjar.weixin.common.api.WxMessageDuplicateChecker;
@@ -15,10 +17,9 @@ import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author junrong.chen
@@ -26,7 +27,6 @@ import java.util.concurrent.Future;
  */
 @Slf4j
 public class WxMessageRouter extends WxMpMessageRouter {
-    private static final int DEFAULT_THREAD_POOL_SIZE = 100;
     private final WxMpService wxMpService;
     private final List<WxMessageRouterRule> rules = new ArrayList<>();
     private ExecutorService executorService;
@@ -39,7 +39,9 @@ public class WxMessageRouter extends WxMpMessageRouter {
 	public WxMessageRouter(WxMpService wxMpService) {
 		super(wxMpService);
         this.wxMpService = wxMpService;
-        this.executorService = Executors.newFixedThreadPool(DEFAULT_THREAD_POOL_SIZE);
+        this.executorService = TtlExecutors.getTtlExecutorService(
+                new MDCThreadPool(7, 7, 0L, TimeUnit.SECONDS,
+                        new LinkedBlockingQueue<>(), r -> new Thread(r, "WechatMessage")));
         this.messageDuplicateChecker = new WxMessageInMemoryDuplicateChecker();
         this.sessionManager = new StandardSessionManager();
         this.exceptionHandler = new LogExceptionHandler();
@@ -57,7 +59,13 @@ public class WxMessageRouter extends WxMpMessageRouter {
 
     /**
      * 处理微信消息
+     *
+     * 原来对于异步的支持是将任务提交到线程池中 然后最好get这个结果
+     * 这个做法显然是不太好的，如果这个get的动作时间特别长回导致这个线程就block住了
+     * 查阅微信的API文档可以发现，客服接口每天允许发50W条的消息，这个量目前来说绝对够用了
+     * 现在把所有需要异步的处理提交到线程池让客服接口去返回，可以有效提升系统的吞吐并且把线程池有效管理起来
      */
+    @Override
     public WxMpXmlOutMessage route(final WxMpXmlMessage wxMessage, final Map<String, Object> context, WxMpService wxMpService) {
         if (wxMpService == null) {
             wxMpService = this.wxMpService;
@@ -84,39 +92,21 @@ public class WxMessageRouter extends WxMpMessageRouter {
         }
 
         WxMpXmlOutMessage res = null;
-        final List<Future<?>> futures = new ArrayList<>();
+
         for (final WxMessageRouterRule rule : matchRules) {
             // 返回最后一个非异步的rule的执行结果
             if (rule.isAsync()) {
-                futures.add(
-                        this.executorService.submit(new Runnable() {
-                            @Override
-                            public void run() {
-                                rule.service(wxMessage, context, mpService, WxMessageRouter.this.sessionManager, WxMessageRouter.this.exceptionHandler);
-                            }
-                        })
-                );
+                this.executorService.submit(() -> {
+                    WxMpXmlOutMessage message = rule.service(wxMessage, context, mpService, WxMessageRouter.this.sessionManager, WxMessageRouter.this.exceptionHandler);
+                    CustomerMessageService service = new CustomerMessageService(wxMessage, mpService);
+                    service.sendMessage(message);
+                });
             } else {
                 res = rule.service(wxMessage, context, mpService, this.sessionManager, this.exceptionHandler);
                 // 在同步操作结束，session访问结束
                 log.debug("End session access: async=false, sessionId={}", wxMessage.getFromUser());
                 sessionEndAccess(wxMessage);
             }
-        }
-
-        if (futures.size() > 0) {
-            this.executorService.submit(() -> {
-                for (Future<?> future : futures) {
-                    try {
-                        future.get();
-                        log.debug("End session access: async=true, sessionId={}", wxMessage.getFromUser());
-                        // 异步操作结束，session访问结束
-                        sessionEndAccess(wxMessage);
-                    } catch (InterruptedException | ExecutionException e) {
-                        log.error("Error happened when wait task finish", e);
-                    }
-                }
-            });
         }
         return res;
     }

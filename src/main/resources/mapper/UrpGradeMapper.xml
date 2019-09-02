@@ -5,7 +5,7 @@
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="exam_id" property="examId" jdbcType="INTEGER" />
     <result column="account" property="account" jdbcType="INTEGER" />
-    <result column="score" property="score" jdbcType="INTEGER" />
+    <result column="score" property="score" jdbcType="DOUBLE" />
     <result column="grade_point" property="gradePoint" jdbcType="DOUBLE" />
     <result column="level_name" property="levelName" jdbcType="VARCHAR" />
     <result column="level_point" property="levelPoint" jdbcType="VARCHAR" />
@@ -122,7 +122,7 @@
     retake_course_mode_explain, standard_point,
     gmt_create)
     values (#{id,jdbcType=INTEGER}, #{examId,jdbcType=INTEGER}, #{account,jdbcType=INTEGER},
-    #{score,jdbcType=INTEGER}, #{gradePoint,jdbcType=DOUBLE}, #{levelName,jdbcType=VARCHAR},
+    #{score,jdbcType=DOUBLE}, #{gradePoint,jdbcType=DOUBLE}, #{levelName,jdbcType=VARCHAR},
     #{levelPoint,jdbcType=VARCHAR}, #{rank,jdbcType=INTEGER}, #{unpassedReasonCode,jdbcType=VARCHAR},
     #{unpassedReasonExplain,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{replaceCourseNumber,jdbcType=VARCHAR},
     #{retakeCourseMark,jdbcType=VARCHAR}, #{retakecourseModeCode,jdbcType=VARCHAR},
@@ -198,7 +198,7 @@
         #{account,jdbcType=INTEGER},
       </if>
       <if test="score != null" >
-        #{score,jdbcType=INTEGER},
+        #{score,jdbcType=DOUBLE},
       </if>
       <if test="gradePoint != null" >
         #{gradePoint,jdbcType=DOUBLE},
@@ -260,7 +260,7 @@
         account = #{record.account,jdbcType=INTEGER},
       </if>
       <if test="record.score != null" >
-        score = #{record.score,jdbcType=INTEGER},
+        score = #{record.score,jdbcType=DOUBLE},
       </if>
       <if test="record.gradePoint != null" >
         grade_point = #{record.gradePoint,jdbcType=DOUBLE},
@@ -311,7 +311,7 @@
     set id = #{record.id,jdbcType=INTEGER},
     exam_id = #{record.examId,jdbcType=INTEGER},
     account = #{record.account,jdbcType=INTEGER},
-    score = #{record.score,jdbcType=INTEGER},
+    score = #{record.score,jdbcType=DOUBLE},
     grade_point = #{record.gradePoint,jdbcType=DOUBLE},
     level_name = #{record.levelName,jdbcType=VARCHAR},
     level_point = #{record.levelPoint,jdbcType=VARCHAR},
@@ -339,7 +339,7 @@
         account = #{account,jdbcType=INTEGER},
       </if>
       <if test="score != null" >
-        score = #{score,jdbcType=INTEGER},
+        score = #{score,jdbcType=DOUBLE},
       </if>
       <if test="gradePoint != null" >
         grade_point = #{gradePoint,jdbcType=DOUBLE},
@@ -387,7 +387,7 @@
     update urp_grade
     set exam_id = #{examId,jdbcType=INTEGER},
       account = #{account,jdbcType=INTEGER},
-      score = #{score,jdbcType=INTEGER},
+      score = #{score,jdbcType=DOUBLE},
       grade_point = #{gradePoint,jdbcType=DOUBLE},
       level_name = #{levelName,jdbcType=VARCHAR},
       level_point = #{levelPoint,jdbcType=VARCHAR},

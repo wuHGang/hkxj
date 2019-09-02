@@ -4,7 +4,13 @@ import cn.hkxj.platform.pojo.constant.Building;
 import cn.hkxj.platform.pojo.constant.Direction;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
+import lombok.Data;
+import org.apache.commons.lang3.CharUtils;
+import org.apache.commons.lang3.StringUtils;
 
+import java.util.Optional;
+
+@Data
 public class Room {
     private Integer id;
 
@@ -110,4 +116,5 @@ public class Room {
 		return Objects.hashCode(id, area, direction, floor, number, name,
 				isAllow);
 	}
+
 }

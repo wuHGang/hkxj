@@ -9,7 +9,6 @@ import me.chanjar.weixin.mp.api.WxMpInMemoryConfigStorage;
 import me.chanjar.weixin.mp.api.WxMpMessageRouter;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.api.impl.WxMpServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -108,19 +107,19 @@ public class WechatMpConfiguration {
 				.handler(subscribeMessageHandler)
 				.end()
 				.rule()
-				.async(false)
+				.async(true)
 				.interceptor(wechatOpenIdInterceptor)
 				.interceptor(studentInfoInterceptor)
 				.rContent(".*?成绩.*?")
 				.handler(gradeMessageHandler)
 				.end()
-				.rule()
-				.async(false)
-				.interceptor(wechatOpenIdInterceptor)
-                .interceptor(studentInfoInterceptor)
-				.rContent("准考证号|四级|六级|准考证|四六级")
-				.handler(cetSearchHandler)
-				.end()
+//				.rule()
+//				.async(false)
+//				.interceptor(wechatOpenIdInterceptor)
+//                .interceptor(studentInfoInterceptor)
+//				.rContent("准考证号|四级|六级|准考证|四六级")
+//				.handler(cetSearchHandler)
+//				.end()
 				.rule()
 				.async(false)
 				.interceptor(wechatOpenIdInterceptor)
@@ -132,11 +131,11 @@ public class WechatMpConfiguration {
 				.async(false)
 				.interceptor(wechatOpenIdInterceptor)
                 .interceptor(studentInfoInterceptor)
-				.content("解绑")
+				.rContent("解绑|解除绑定")
 				.handler(unbindMessageHandler)
 				.end()
 				.rule()
-				.async(false)
+				.async(true)
 				.rContent(".*?考试.*?")
 				.interceptor(wechatOpenIdInterceptor)
                 .interceptor(studentInfoInterceptor)

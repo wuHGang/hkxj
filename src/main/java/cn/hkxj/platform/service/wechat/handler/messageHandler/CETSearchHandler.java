@@ -27,6 +27,7 @@ public class CETSearchHandler implements WxMpMessageHandler {
     private CETService cetService;
 
 
+    @Override
     public WxMpXmlOutMessage handle(WxMpXmlMessage wxMpXmlMessage,
                                     Map<String, Object> map,
                                     WxMpService wxMpService,

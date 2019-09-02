@@ -15,4 +15,13 @@ public class GradeSearchResult {
 
     private boolean update;
 
+    public GradeSearchResult(){
+
+    }
+
+    public GradeSearchResult(List<UrpGradeAndUrpCourse> data, boolean update){
+        this.data = data;
+        this.update = update;
+    }
+
 }

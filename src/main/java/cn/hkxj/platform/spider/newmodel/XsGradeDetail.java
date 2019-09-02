@@ -16,7 +16,7 @@ public class XsGradeDetail {
     /**
      * 成绩相关信息
      */
-    private GradeRelativeInfo id;
+    private CourseRelativeInfo id;
     /**
      * 平时成绩系数
      * 示例： "usualScoreCoefficient": ".5"

@@ -24,20 +24,26 @@ public class UrpGradeDetailDao {
         urpGradeDetailMapper.insertSelective(urpGradeDetail);
     }
 
-    public List<UrpGradeDetail> insertForSpider(UrpGradeForSpider urpGradeForSpider, UrpGrade urpGrade){
-        List<UrpGradeDetail> urpGradeDetailList = urpGradeForSpider.getUrpGradeDetailForSpider().convertToUrpGradeDetail();
-        //urpGradeDetailList为空的情况就是成绩没有明细
-        if(urpGradeDetailList == null) return null;
-        //因为convertToUrpGradeDetail返回的UrpGradeDetail中都是没有gradeId的，所以需要设置后才进行成绩详情的插入
-        urpGradeDetailList.stream().peek(gradeDetail -> gradeDetail.setGradeId(urpGrade.getId()))
-                .forEach(this::insertUrpGradeDetail);
-        return urpGradeDetailList;
-    }
-
     public List<UrpGradeDetail> getUrpGradeDetail(int gradeId){
         UrpGradeDetailExample example = new UrpGradeDetailExample();
         example.createCriteria()
                 .andGradeIdEqualTo(gradeId);
         return urpGradeDetailMapper.selectByExample(example);
+    }
+
+    /**
+     * 将从爬虫爬取到的数据判断是需要存入数据库还是从数据库中进行获取
+     * 因为成绩详情都是三个元素，所以返回一个集合
+     * @param convertFromSpider 从爬虫爬取的信息中转化的成绩详情实体
+     * @param urpGradeId 成绩编号
+     * @return 成绩详情
+     */
+    public List<UrpGradeDetail> saveOrGetUrpGradeDetailFromDb(List<UrpGradeDetail> convertFromSpider, int urpGradeId){
+        //urpGradeDetailList为空的情况就是成绩没有明细
+        if(convertFromSpider == null) return null;
+        //因为convertToUrpGradeDetail返回的UrpGradeDetail中都是没有gradeId的，所以需要设置后才进行成绩详情的插入
+        convertFromSpider.stream().peek(gradeDetail -> gradeDetail.setGradeId(urpGradeId))
+                .forEach(this::insertUrpGradeDetail);
+        return convertFromSpider;
     }
 }

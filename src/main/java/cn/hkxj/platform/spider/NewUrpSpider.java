@@ -1,22 +1,19 @@
 package cn.hkxj.platform.spider;
 
-import cn.hkxj.platform.exceptions.PasswordUncorrectException;
-import cn.hkxj.platform.exceptions.UrpRequestException;
-import cn.hkxj.platform.exceptions.UrpTimeoutException;
-import cn.hkxj.platform.exceptions.UrpVerifyCodeException;
+import cn.hkxj.platform.exceptions.*;
 import cn.hkxj.platform.pojo.constant.RedisKeys;
-import cn.hkxj.platform.spider.model.NewUrpGradeResult;
 import cn.hkxj.platform.spider.model.UrpStudentInfo;
 import cn.hkxj.platform.spider.model.VerifyCode;
 import cn.hkxj.platform.spider.newmodel.*;
 import cn.hkxj.platform.utils.ApplicationUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.TypeReference;
+import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -25,14 +22,18 @@ import org.jsoup.select.Elements;
 import org.slf4j.MDC;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
+/**
+ * @author junrong.chen
+ */
 @Slf4j
 public class NewUrpSpider {
     private static final String ROOT = "http://xsurp.usth.edu.cn";
-    private static final String TENSORFLOW = "http://spider.hackerda.com/valid";
     private static final String CAPTCHA = ROOT + "/img/captcha.jpg";
     private static final String CHECK = ROOT + "/j_spring_security_check";
     private static final String LOGIN = ROOT + "/getStudentInfo";
@@ -40,23 +41,26 @@ public class NewUrpSpider {
     private static final String CURRENT_TERM_GRADE = ROOT + "/student/integratedQuery/scoreQuery/thisTermScores/data";
     private static final String CURRENT_TERM_GRADE_DETAIL = ROOT + "/student/integratedQuery/scoreQuery/coursePropertyScores/serchScoreDetail";
     private static final String COURSE_DETAIL = ROOT+ "/student/integratedQuery/course/courseSchdule/detail";
+    private static final String EXAM_TIME = ROOT + "/student/examinationManagement/examPlan/index";
+    private static final String COURSE_TIME_TABLE = ROOT + "/student/courseSelect/thisSemesterCurriculum/ajaxStudentSchedule/callback";
     private static final String INDEX = ROOT + "/index.jsp";
     private static StringRedisTemplate stringRedisTemplate;
     private static final TypeReference<UrpGradeDetailForSpider> gradeDetailTypeReference
             = new TypeReference<UrpGradeDetailForSpider>() {
     };
-    private static final TypeReference<List<NewUrpGradeResult>> CURRENT_GRADE_REFERENCE =
-            new TypeReference<List<NewUrpGradeResult>>() {
-            };
-    private static final TypeReference<CurrentGrade> currentGradeTypeReference
-            = new TypeReference<CurrentGrade>() {
-    };
     private static final TypeReference<List<UrpCourseForSpider>> courseTypeReference
             = new TypeReference<List<UrpCourseForSpider>>() {
     };
+    private static final TypeReference<Map<String, String>> keyValueReference
+            = new TypeReference<Map<String, String>>(){
+
+    };
+    private static final Splitter SPACE_SPLITTER = Splitter.on(" ").omitEmptyStrings().trimResults();
+
+    private static final UrpCookieJar cookieJar = new UrpCookieJar();
 
     private static final OkHttpClient client = new OkHttpClient.Builder()
-            .cookieJar(new UrpCookieJar())
+            .cookieJar(cookieJar)
             .retryOnConnectionFailure(true)
             .addInterceptor(new RetryInterceptor(5))
             .followRedirects(false)
@@ -90,12 +94,15 @@ public class NewUrpSpider {
      *
      * @param account  学号
      * @param password 密码
-     * @throws UrpRequestException
+     * @throws UrpRequestException 请求异常
      */
     public NewUrpSpider(String account, String password){
         MDC.put("account", account);
         this.account = account;
         this.password = password;
+        if(hasLoginCookieCache(account)){
+            return;
+        }
 
         VerifyCode verifyCode = getCaptcha();
         Base64.Encoder encoder = Base64.getEncoder();
@@ -104,9 +111,11 @@ public class NewUrpSpider {
         HashOperations<String, String, String> opsForHash = stringRedisTemplate.opsForHash();
 
         opsForHash.put(RedisKeys.KAPTCHA.getName(), uuid.toString(), encoder.encodeToString(verifyCode.getData().clone()));
-        String code = getCode(uuid.toString());
+        String code = CaptchaBreaker.getCode(uuid.toString());
 
-        studentCheck(account, password, code);
+        studentCheck(account, password, code, uuid.toString());
+
+
     }
 
     public CurrentGrade getCurrentGrade(){
@@ -121,30 +130,40 @@ public class NewUrpSpider {
         return currentGrade;
     }
 
-    public UrpGradeForSpider getUrpGradeForSpider(UrpGeneralGradeForSpider urpGeneralGradeForSpider){
+    private UrpGradeForSpider getUrpGradeForSpider(UrpGeneralGradeForSpider urpGeneralGradeForSpider){
         UrpGradeForSpider urpGradeForSpider = new UrpGradeForSpider();
         urpGradeForSpider.setUrpGeneralGradeForSpider(urpGeneralGradeForSpider);
         urpGradeForSpider.setUrpGradeDetailForSpider(getUrpGradeDetail(urpGeneralGradeForSpider));
         return urpGradeForSpider;
     }
 
-    public List<UrpGeneralGradeForSpider> getUrpGeneralGrades(){
+    private List<UrpGeneralGradeForSpider> getUrpGeneralGrades(){
         Request request = new Request.Builder()
                 .url(CURRENT_TERM_GRADE)
                 .get()
                 .build();
         String result = new String(execute(request));
-        List<Map<String, Object>> list = JSON.parseObject(result, new TypeReference<List<Map<String, Object>>>(){});
-        JSONArray jsonArray = (JSONArray) list.get(0).get("list");
-        return jsonArray.toJavaList(UrpGeneralGradeForSpider.class);
+        try {
+            List<Map<String, Object>> list = JSON.parseObject(result, new TypeReference<List<Map<String, Object>>>(){});
+            JSONArray jsonArray = (JSONArray) list.get(0).get("list");
+            return jsonArray.toJavaList(UrpGeneralGradeForSpider.class);
+        }catch (JSONException e){
+            if(result.length() > 1000){
+                throw new UrpEvaluationException("account: "+ account+ " 未完成评估无法查成绩");
+            }
+
+            log.error("parse grade error {}", result, e);
+            cookieJar.clearSession();
+            throw new UrpSessionExpiredException("account: "+ account+ "session expired");
+        }
     }
 
     public UrpGradeDetailForSpider getUrpGradeDetail(UrpGeneralGradeForSpider urpGeneralGradeForSpider){
         FormBody.Builder params = new FormBody.Builder();
-        GradeRelativeInfo gradeRelativeInfo = urpGeneralGradeForSpider.getId();
-        FormBody body = params.add("zxjxjhh", gradeRelativeInfo.getExecutiveEducationPlanNumber())
-                .add("kch", gradeRelativeInfo.getCourseNumber())
-                .add("kssj", gradeRelativeInfo.getExamtime())
+        CourseRelativeInfo courseRelativeInfo = urpGeneralGradeForSpider.getId();
+        FormBody body = params.add("zxjxjhh", courseRelativeInfo.getExecutiveEducationPlanNumber())
+                .add("kch", courseRelativeInfo.getCourseNumber())
+                .add("kssj", courseRelativeInfo.getExamtime())
                 .add("kxh", urpGeneralGradeForSpider.getCoureSequenceNumber())
                 .build();
 
@@ -164,6 +183,7 @@ public class NewUrpSpider {
                 .post(body)
                 .build();
         String result = new String(execute(request));
+        flashCache();
         //因为爬虫爬取的结果是个集合，所以先转成list
         List<UrpCourseForSpider> courses = JSONArray.parseObject(result, courseTypeReference);
         //因为用uid查询，所以取第一个元素即可
@@ -185,7 +205,7 @@ public class NewUrpSpider {
     /**
      * 登陆校验
      */
-    private void studentCheck(String account, String password, String captcha){
+    private void studentCheck(String account, String password, String captcha, String uuid){
 
 
         FormBody.Builder params = new FormBody.Builder();
@@ -204,49 +224,89 @@ public class NewUrpSpider {
         String location = response.header("Location");
 
         if(StringUtils.isEmpty(location)){
+            cookieJar.clearSession();
             throw new UrpRequestException("url: "+ request.url().toString()+ " code: "+response.code()+" cause: "+ response.message());
         }else if(location.contains("badCaptcha")){
-            throw new UrpVerifyCodeException();
+            cookieJar.clearSession();
+            throw new UrpVerifyCodeException("captcha: "+ captcha + " code uuid :"+ uuid);
         }else if(location.contains("badCredentials")){
-            throw new PasswordUncorrectException();
+            throw new PasswordUncorrectException("account: "+ account);
         }else if(location.contains("concurrentSessionExpired")){
-
+            cookieJar.clearSession();
+            throw new UrpSessionExpiredException("account: "+ account+ "session expired");
         }
+
+        ValueOperations<String, String> opsForValue = stringRedisTemplate.opsForValue();
+        opsForValue.set(RedisKeys.URP_LOGIN_COOKIE.genKey(account), uuid, 20L, TimeUnit.MINUTES);
 
     }
 
-    public NewUrpGradeResult getCurrentGrade0(){
-        if(this.account == null){
-            throw new UnsupportedOperationException("spider haven`t login");
-        }
-
+    public List<UrpExamTime> getExamTime(){
         Request request = new Request.Builder()
-                .url(CURRENT_TERM_GRADE)
+                .url(EXAM_TIME)
                 .headers(HEADERS)
                 .get()
                 .build();
-
-        String result = new String(execute(request));
-
-        List<NewUrpGradeResult> newUrpGradeResults = JSON.parseObject(result, CURRENT_GRADE_REFERENCE);
-
-        if(CollectionUtils.isNotEmpty(newUrpGradeResults)){
-            if(newUrpGradeResults.size() >1){
-                log.error("account {} current grade result size {}", account, newUrpGradeResults.size());
+        String s = new String(execute(request));
+        if(s.contains("invalidSession")){
+            cookieJar.clearSession();
+            throw new UrpSessionExpiredException("account: "+ account+ "session expired");
+        }
+        Document document = Jsoup.parse(s);
+        Elements elements = document.getElementsByClass("clearfix");
+        List<UrpExamTime> result = Lists.newArrayListWithExpectedSize(elements.size());
+        for (Element element : elements) {
+            List<String> list = SPACE_SPLITTER.splitToList(element.text());
+            if(list.size() == 7){
+                result.add(new UrpExamTime()
+                        .setCourseName(list.get(0))
+                        .setExamName(list.get(1)));
+            }
+            if(list.size() == 11){
+                result.add(new UrpExamTime()
+                        .setCourseName(list.get(1))
+                        .setExamName(list.get(2))
+                        .setWeekOfTerm(list.get(4))
+                        .setDate(list.get(5))
+                        .setWeek(list.get(6))
+                        .setExamTime(list.get(7))
+                        .setLocation(list.get(8)));
             }
 
-            return newUrpGradeResults.get(0);
         }
-
-        return null;
+        return result;
     }
 
+    public UrpCourseTimeTableForSpider getUrpCourseTimeTable(){
+        Headers headers = new Headers.Builder()
+                .add("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3")
+                .add("Host", "xsurp.usth.edu.cn")
+                .add("Connection", "keep-alive")
+                .add("User-Agent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36")
+                .add("Upgrade-Insecure-Requests", "1")
+                .add("Accept-Language", "zh-CN,zh;q=0.9,en;q=0.8")
+                .add("Cache-Control", "max-age=0")
+                .add("Referer", "http://222.171.146.55/student/courseSelect/thisSemesterCurriculum/index")
+                .build();
+        Request request = new Request.Builder()
+                .url(COURSE_TIME_TABLE)
+                .headers(headers)
+                .get()
+                .build();
+        String result = new String(execute(request));
+        String regex="\"dateList\": [.*]}$";
+        result = result.replaceAll(regex,"");
+        System.out.println(result);
+        try {
+            return JSON.parseObject(result, UrpCourseTimeTableForSpider.class);
+        } catch (JSONException e) {
+            log.error("parse grade error {}", result, e);
+            cookieJar.clearSession();
+            throw new UrpSessionExpiredException("account: " + account + " session expired");
+        }
+    }
 
     public UrpStudentInfo getStudentInfo(){
-        if(this.account == null){
-            throw new UnsupportedOperationException("spider haven`t  login");
-        }
-
 
         Request request = new Request.Builder()
                 .url(STUDENT_INFO)
@@ -265,7 +325,7 @@ public class NewUrpSpider {
         student.setAcademy(userInfo.get("院系"));
         student.setClassname(userInfo.get("班级"));
         student.setPassword(password);
-
+        flashCache();
         return student;
     }
 
@@ -317,6 +377,12 @@ public class NewUrpSpider {
         }
     }
 
+    private boolean hasLoginCookieCache(String account){
+
+        return stringRedisTemplate.hasKey(RedisKeys.URP_COOKIE.genKey(account))
+                && stringRedisTemplate.hasKey(RedisKeys.URP_LOGIN_COOKIE.genKey(account));
+    }
+
     public boolean isCookieExpire(){
 
         Request request = new Request.Builder()
@@ -355,19 +421,8 @@ public class NewUrpSpider {
                 (!response.isSuccessful() && !response.isRedirect());
     }
 
-
-    public String getCode(String key){
-        String url = TENSORFLOW+"?key="+key;
-        Request request = new Request.Builder()
-                .url(url)
-                .get()
-                .build();
-
-        return new String(execute(request));
+    private void flashCache(){
+        stringRedisTemplate.expire(RedisKeys.URP_LOGIN_COOKIE.genKey(account), 20L, TimeUnit.MINUTES);
     }
 
-
-    public static void main(String[] args) {
-
-    }
 }
