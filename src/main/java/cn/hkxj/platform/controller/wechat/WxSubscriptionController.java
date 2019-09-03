@@ -2,10 +2,12 @@ package cn.hkxj.platform.controller.wechat;
 
 import cn.hkxj.platform.config.wechat.WechatMpConfiguration;
 import cn.hkxj.platform.config.wechat.WechatMpPlusProperties;
+import cn.hkxj.platform.pojo.CourseTimeTableDetail;
 import cn.hkxj.platform.pojo.ScheduleTask;
 import cn.hkxj.platform.pojo.Student;
+import cn.hkxj.platform.pojo.constant.SubscribeScene;
 import cn.hkxj.platform.pojo.wechat.OneOffSubscription;
-import cn.hkxj.platform.service.CourseService;
+import cn.hkxj.platform.service.CourseTimeTableService;
 import cn.hkxj.platform.service.ScheduleTaskService;
 import cn.hkxj.platform.service.wechat.StudentBindService;
 import cn.hkxj.platform.utils.OneOffSubcriptionUtil;
@@ -24,6 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -40,7 +43,7 @@ public class WxSubscriptionController {
     @Resource
     private ScheduleTaskService scheduleTaskService;
     @Resource
-    private CourseService courseService;
+    private CourseTimeTableService courseTimeTableService;
     @Resource
     private HttpSession httpSession;
     @Resource
@@ -51,8 +54,6 @@ public class WxSubscriptionController {
      * @param templateId 订阅消息模板ID
      * @param action     用户点击动作，”confirm”代表用户确认授权，”cancel”代表用户取消授权
      * @param scene      点击的具体场景类型
-     * @param response   用于重定向
-     * @throws IOException 页面重定向异常
      */
     @GetMapping("/test")
     public String testSubscription(
@@ -60,8 +61,7 @@ public class WxSubscriptionController {
             @RequestParam(name = "openid", required = false) String openid,
             @RequestParam(name = "template_id", required = false) String templateId,
             @RequestParam(name = "action", required = false) String action,
-            @RequestParam(name = "scene", required = false) String scene,
-            HttpServletResponse response, HttpServletRequest request) throws IOException {
+            @RequestParam(name = "scene", required = false) String scene) {
         log.info("{},{},{},{}", openid, templateId, action, scene);
 
         httpSession.setAttribute(openid + "_subscribe_scene", scene);
@@ -116,10 +116,11 @@ public class WxSubscriptionController {
         //使用该接口时自动将订阅状态置为可用
         scheduleTaskService.checkAndSetSubscribeStatus(scheduleTask, true);
         //判断场景值来决定更具体的处理
-        if (Objects.equals("1005", scene)) {
+        if (Objects.equals(SubscribeScene.COURSE_PUSH.getScene(), scene)) {
             //场景为1005时
             //发送一条包含当天课表信息的客服信息给指定的用户
-            String messageContent = courseService.getCurrentDayCoursesForString(student.getAccount());
+            List<CourseTimeTableDetail> detailList = courseTimeTableService.getDetailsForCurrentDay(student);
+            String messageContent = courseTimeTableService.convertToText(detailList);
             //发送一条客服消息
             sendKefuMessageForPro(wxMpService, scheduleTask, messageContent);
         }
@@ -129,9 +130,10 @@ public class WxSubscriptionController {
     private void wxMpPlusToProcessing(WxMpService wxMpService, String openid, String scene, Student student) {
         //因为plus是服务号，所以直接通过一次性订阅接口来返回模板消息，无需发送客服消息
         //根据scene来决定更具体的查理过程
-        if (Objects.equals("1005", scene)) {
+        if (Objects.equals(SubscribeScene.COURSE_PUSH.getScene(), scene)) {
             //直接返回包含课表消息的模板消息
-            String messageContent = courseService.getCurrentDayCoursesForString(student.getAccount());
+            List<CourseTimeTableDetail> detailList = courseTimeTableService.getDetailsForCurrentDay(student);
+            String messageContent = courseTimeTableService.convertToText(detailList);
             sendTemplateMessageForPlus(wxMpService, openid, scene, messageContent);
         }
     }
