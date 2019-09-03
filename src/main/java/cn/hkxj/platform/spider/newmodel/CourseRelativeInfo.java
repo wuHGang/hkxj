@@ -13,6 +13,8 @@ public class CourseRelativeInfo {
 
     @JSONField(name = "courseNumber", alternateNames = {"coureNumber"})
     private String courseNumber;
+    @JSONField(name = "courseSequenceNumber", alternateNames = "{coureSequenceNumber}")
+    private String courseSequenceNumber;
 
     private String examtime;
 
@@ -21,4 +23,5 @@ public class CourseRelativeInfo {
     private String studentNumber;
 
     private String scoreTypeCode;
+
 }

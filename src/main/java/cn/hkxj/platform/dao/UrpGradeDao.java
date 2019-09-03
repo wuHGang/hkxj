@@ -3,12 +3,6 @@ package cn.hkxj.platform.dao;
 import cn.hkxj.platform.mapper.UrpGradeMapper;
 import cn.hkxj.platform.pojo.*;
 import cn.hkxj.platform.pojo.example.UrpGradeExample;
-import cn.hkxj.platform.service.NewUrpSpiderService;
-import cn.hkxj.platform.spider.newmodel.CurrentGrade;
-import cn.hkxj.platform.spider.newmodel.UrpCourseForSpider;
-import cn.hkxj.platform.spider.newmodel.UrpGeneralGradeForSpider;
-import cn.hkxj.platform.spider.newmodel.UrpGradeForSpider;
-import com.google.common.collect.Lists;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

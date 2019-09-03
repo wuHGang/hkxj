@@ -3,7 +3,7 @@ package cn.hkxj.platform.service;
 import cn.hkxj.platform.dao.UrpCourseDao;
 import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.pojo.UrpCourse;
-import cn.hkxj.platform.spider.newmodel.UrpCourseForSpider;
+import cn.hkxj.platform.spider.newmodel.course.UrpCourseForSpider;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 

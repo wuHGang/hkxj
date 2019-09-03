@@ -1,6 +1,8 @@
-package cn.hkxj.platform.spider.newmodel;
+package cn.hkxj.platform.spider.newmodel.grade.detail;
 
 import cn.hkxj.platform.pojo.UrpGradeDetail;
+import cn.hkxj.platform.spider.newmodel.grade.detail.MxGradeDetail;
+import cn.hkxj.platform.spider.newmodel.grade.detail.XsGradeDetail;
 import com.google.common.collect.Lists;
 import lombok.Data;
 import org.springframework.util.CollectionUtils;
@@ -43,14 +45,14 @@ public class UrpGradeDetailForSpider {
             urpGradeDetail.setXsRemark(xsGradeDetail.getRemark());
             urpGradeDetail.setScoreTypeCode(xsGradeDetail.getId().getScoreTypeCode());
             //cjxs为first,cjxs_为second，first和second只是为了区分，没有特殊含义
-            urpGradeDetail.setFirstcjxs(mxGradeDetail.getCjxs());
-            urpGradeDetail.setFirstpscjxs(mxGradeDetail.getPscjxs());
-            urpGradeDetail.setFirstqmcjxs(mxGradeDetail.getQmcjxs());
-            urpGradeDetail.setFirstqzcjxs(mxGradeDetail.getQzcjxs());
-            urpGradeDetail.setSecondcjxs(mxGradeDetail.getCjxs_());
-            urpGradeDetail.setSecondpscjxs(mxGradeDetail.getPscjxs_());
-            urpGradeDetail.setSecondqmcjxs(mxGradeDetail.getQmcjxs_());
-            urpGradeDetail.setSecondqzcjxs(mxGradeDetail.getQzcjxs_());
+            urpGradeDetail.setFirstcjxs(mxGradeDetail.getFirstcjxs());
+            urpGradeDetail.setFirstpscjxs(mxGradeDetail.getFirstpscjxs());
+            urpGradeDetail.setFirstqmcjxs(mxGradeDetail.getFirstqmcjxs());
+            urpGradeDetail.setFirstqzcjxs(mxGradeDetail.getFirstqzcjxs());
+            urpGradeDetail.setSecondcjxs(mxGradeDetail.getSecondcjxs());
+            urpGradeDetail.setSecondpscjxs(mxGradeDetail.getSecondpscjxs());
+            urpGradeDetail.setSecondqmcjxs(mxGradeDetail.getSecondqmcjxs());
+            urpGradeDetail.setSecondqzcjxs(mxGradeDetail.getSecondqzcjxs());
             urpGradeDetail.setMxRemark(mxGradeDetail.getRemark());
             urpGradeDetail.setMxRemark1(mxGradeDetail.getRemark1());
             urpGradeDetail.setMxRemark2(mxGradeDetail.getRemark2());

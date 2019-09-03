@@ -53,4 +53,11 @@ public class CourseTimeTableDetail {
         return term;
     }
 
+    public boolean isActiveWeek(int week){
+        if(this.getStartWeek() > week) {return false;}
+        int binaryResult = Integer.valueOf(this.getWeek(), 2);
+        binaryResult = binaryResult >> (24 - week);
+        return (binaryResult & 1) == 1;
+    }
+
 }

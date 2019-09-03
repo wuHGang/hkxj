@@ -32,7 +32,7 @@ public class CourseTimeTableDetailDao {
 
     public List<CourseTimeTableDetail> getCourseTimeTableDetailForCurrentDay(int classesId, SchoolTime schoolTime){
         List<Integer> detailIds = courseTimeTableDetailMapper.getCourseTimeTableDetailIdsByClassId(classesId);
-        if(detailIds.size() == 0) return Lists.newArrayList();
+        if(detailIds.size() == 0) {return Lists.newArrayList();}
         CourseTimeTableDetailExample example = new CourseTimeTableDetailExample();
         example.createCriteria()
                 .andIdIn(detailIds)
@@ -47,7 +47,7 @@ public class CourseTimeTableDetailDao {
 
     public List<CourseTimeTableDetail> getCourseTimeTableDetailForCurrentTerm(int classesId, SchoolTime schoolTime){
         List<Integer> detailIds = courseTimeTableDetailMapper.getCourseTimeTableDetailIdsByClassId(classesId);
-        if(detailIds.size() == 0) return Lists.newArrayList();
+        if(detailIds.size() == 0) {return Lists.newArrayList();}
         CourseTimeTableDetailExample example = new CourseTimeTableDetailExample();
         example.createCriteria()
                 .andIdIn(detailIds)
@@ -58,7 +58,7 @@ public class CourseTimeTableDetailDao {
 
     public List<CourseTimeTableDetail> getCourseTimeTableDetailForCurrentWeek(int classesId, SchoolTime schoolTime){
         List<Integer> detailIds = courseTimeTableDetailMapper.getCourseTimeTableDetailIdsByClassId(classesId);
-        if(detailIds.size() == 0) return Lists.newArrayList();
+        if(detailIds.size() == 0) {return Lists.newArrayList();}
         CourseTimeTableDetailExample example = new CourseTimeTableDetailExample();
         example.createCriteria()
                 .andIdIn(detailIds)

@@ -1,5 +1,6 @@
-package cn.hkxj.platform.spider.newmodel;
+package cn.hkxj.platform.spider.newmodel.grade.detail;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import lombok.Data;
 
 /**
@@ -12,7 +13,8 @@ public class MxGradeDetail {
     /**
      * 课序号
      */
-    private int coureSequenceNumber;
+    @JSONField(name = "coureSequenceNumber")
+    private int courseSequenceNumber;
     /**
      * 总成绩,显示时要向上取整
      */
@@ -44,34 +46,42 @@ public class MxGradeDetail {
     /**
      *
      */
-    private String cjxs_;
+    @JSONField(name = "cjxs_")
+    private String secondcjxs;
     /**
      *
      */
-    private String pscjxs_;
+    @JSONField(name = "pscjxs_")
+    private String secondpscjxs;
     /**
      *
      */
-    private String qzcjxs_;
+    @JSONField(name = "qzcjxs_")
+    private String secondqzcjxs;
     /**
      *
      */
-    private String qmcjxs_;
+    @JSONField(name = "qmcjxs_")
+    private String secondqmcjxs;
     /**
      *
      */
-    private String cjxs;
+    @JSONField(name = "cjxs")
+    private String firstcjxs;
     /**
      *
      */
-    private String pscjxs;
+    @JSONField(name = "pscjxs")
+    private String firstpscjxs;
     /**
      *
      */
-    private String qzcjxs;
+    @JSONField(name = "qzcjxs")
+    private String firstqzcjxs;
     /**
      *
      */
-    private String qmcjxs;
+    @JSONField(name = "qmcjxs")
+    private String firstqmcjxs;
 
 }

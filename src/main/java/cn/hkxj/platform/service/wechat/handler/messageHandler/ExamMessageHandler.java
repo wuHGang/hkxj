@@ -5,7 +5,7 @@ import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.pojo.timetable.ExamTimeTable;
 import cn.hkxj.platform.service.NewUrpSpiderService;
 import cn.hkxj.platform.service.OpenIdService;
-import cn.hkxj.platform.spider.newmodel.UrpExamTime;
+import cn.hkxj.platform.spider.newmodel.examtime.UrpExamTime;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.common.session.WxSessionManager;

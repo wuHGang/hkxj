@@ -5,6 +5,7 @@ import cn.hkxj.platform.pojo.Classes;
 import cn.hkxj.platform.pojo.GradeSearchResult;
 import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.spider.NewUrpSpider;
+import cn.hkxj.platform.spider.newmodel.coursetimetable.UrpCourseTimeTableForSpider;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -104,8 +105,26 @@ public class NewUrpSpiderServiceTest {
 
     @Test
     public void testCourseTimeTable(){
-        NewUrpSpider spider = new NewUrpSpider("2017023115", "134340");
-        System.out.println(spider.getUrpCourseTimeTable());
+        Student student = new Student();
+        student.setAccount(2016024170);
+        student.setPassword("1");
+        Classes classes = new Classes();
+        classes.setId(316);
+        student.setClasses(classes);
+        Future<UrpCourseTimeTableForSpider> submit =
+                cacheThreadPool.submit(new Callable<UrpCourseTimeTableForSpider>() {
+                    @Override
+                    public UrpCourseTimeTableForSpider call() throws Exception {
+                        return newUrpSpiderService.getUrpCourseTimeTable(student);
+                    }
+                });
+        try {
+            System.out.println(submit.get().getDetails());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
     }
 
 

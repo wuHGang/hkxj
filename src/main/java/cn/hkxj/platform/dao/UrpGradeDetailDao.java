@@ -1,10 +1,8 @@
 package cn.hkxj.platform.dao;
 
 import cn.hkxj.platform.mapper.UrpGradeDetailMapper;
-import cn.hkxj.platform.pojo.UrpGrade;
 import cn.hkxj.platform.pojo.UrpGradeDetail;
 import cn.hkxj.platform.pojo.example.UrpGradeDetailExample;
-import cn.hkxj.platform.spider.newmodel.UrpGradeForSpider;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

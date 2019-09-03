@@ -1,5 +1,6 @@
-package cn.hkxj.platform.spider.newmodel;
+package cn.hkxj.platform.spider.newmodel.grade.general;
 
+import cn.hkxj.platform.spider.newmodel.grade.detail.UrpGradeDetailForSpider;
 import lombok.Data;
 
 

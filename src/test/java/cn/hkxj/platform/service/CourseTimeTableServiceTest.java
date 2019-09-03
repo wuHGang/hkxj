@@ -3,7 +3,7 @@ package cn.hkxj.platform.service;
 import cn.hkxj.platform.PlatformApplication;
 import cn.hkxj.platform.pojo.SchoolTime;
 import cn.hkxj.platform.pojo.Student;
-import cn.hkxj.platform.spider.newmodel.UrpCourseTimeTableForSpider;
+import cn.hkxj.platform.spider.newmodel.coursetimetable.UrpCourseTimeTableForSpider;
 import cn.hkxj.platform.utils.DateUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,8 +12,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import javax.annotation.Resource;
-
-import static org.junit.Assert.*;
 
 /**
  * @author Yuki

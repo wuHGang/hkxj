@@ -3,8 +3,7 @@ package cn.hkxj.platform.dao;
 import cn.hkxj.platform.mapper.GradeMapper;
 import cn.hkxj.platform.pojo.*;
 import cn.hkxj.platform.service.NewUrpSpiderService;
-import cn.hkxj.platform.spider.newmodel.CurrentGrade;
-import cn.hkxj.platform.spider.newmodel.UrpGeneralGradeForSpider;
+import cn.hkxj.platform.spider.newmodel.grade.CurrentGrade;
 import com.google.common.collect.Lists;
 import org.springframework.stereotype.Service;
 

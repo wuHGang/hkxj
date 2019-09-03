@@ -1,6 +1,7 @@
-package cn.hkxj.platform.spider.newmodel;
+package cn.hkxj.platform.spider.newmodel.grade.general;
 
 import cn.hkxj.platform.pojo.*;
+import cn.hkxj.platform.spider.newmodel.CourseRelativeInfo;
 import lombok.Data;
 
 /**
@@ -178,7 +179,6 @@ public class UrpGeneralGradeForSpider {
     public Term getTermForUrpGrade(){
         String target = this.termCode;
         String[] years = target.split("-");
-        int order;
         Term term = new Term();
         term.setStartYear(Integer.parseInt(years[0]));
         term.setEndYear(Integer.parseInt(years[1]));

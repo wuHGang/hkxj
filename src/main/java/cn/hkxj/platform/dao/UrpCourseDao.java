@@ -3,7 +3,6 @@ package cn.hkxj.platform.dao;
 import cn.hkxj.platform.mapper.UrpCourseMapper;
 import cn.hkxj.platform.pojo.UrpCourse;
 import cn.hkxj.platform.pojo.example.UrpCourseExample;
-import cn.hkxj.platform.spider.newmodel.UrpCourseForSpider;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
