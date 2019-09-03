@@ -1,5 +1,6 @@
-package cn.hkxj.platform.spider.newmodel;
+package cn.hkxj.platform.spider.newmodel.grade.detail;
 
+import cn.hkxj.platform.spider.newmodel.CourseRelativeInfo;
 import lombok.Data;
 
 /**

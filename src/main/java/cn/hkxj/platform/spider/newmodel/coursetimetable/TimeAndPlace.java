@@ -1,6 +1,9 @@
-package cn.hkxj.platform.spider.newmodel;
+package cn.hkxj.platform.spider.newmodel.coursetimetable;
 
 import cn.hkxj.platform.pojo.CourseTimeTableDetail;
+import cn.hkxj.platform.pojo.constant.Building;
+import cn.hkxj.platform.spider.newmodel.CourseRelativeInfo;
+import com.alibaba.fastjson.annotation.JSONField;
 import com.google.common.collect.Lists;
 import lombok.Data;
 import org.apache.commons.lang3.CharUtils;
@@ -41,15 +44,18 @@ public class TimeAndPlace {
     /**
      * 课程名
      */
-    private String coureName;
+    @JSONField(name = "coureName")
+    private String courseName;
     /**
      * 课程号
      */
-    private String coureNumber;
+    @JSONField(name = "coureNumber")
+    private String courseNumber;
     /**
      * 课序号
      */
-    private String coureSequenceNumber;
+    @JSONField(name = "coureSequenceNumber")
+    private String courseSequenceNumber;
     /**
      * 课程属性名
      */
@@ -99,7 +105,7 @@ public class TimeAndPlace {
                 detail.setAttendClassTeacher(attendClassTeacher);
                 detail.setContinuingSession(this.getContinuingSession());
                 detail.setCourseId(relativeInfo.getCourseNumber());
-                detail.setCourseSequenceNumber(this.getCoureSequenceNumber());
+                detail.setCourseSequenceNumber(this.getCourseSequenceNumber());
                 detail.setDay(this.getClassDay());
                 detail.setSksj(this.getSksj());
                 detail.setWeek(this.getClassWeek());
@@ -116,8 +122,8 @@ public class TimeAndPlace {
     }
 
     private String specialProcess(String classroomName, String teachingBuildingName){
-        if(teachingBuildingName.startsWith("主楼")){
-            return "主楼" + classroomName;
+        if(teachingBuildingName.startsWith(Building.MAIN.getChinese())){
+            return Building.MAIN.getChinese() + classroomName;
         }
         return classroomName;
     }
@@ -130,8 +136,9 @@ public class TimeAndPlace {
     private List<int[]> parseWeek(String weekDescription) {
         String[] weeks = weekDescription.split(",");
         List<int[]> results = Lists.newArrayList();
+        String key = "第";
         if (weeks.length == 1) {
-            if (weekDescription.startsWith("第")) {
+            if (weekDescription.startsWith(key)) {
                 String number = weekDescription.substring(1, weekDescription.length() - 1);
                 int result = Integer.parseInt(number);
                 results.add(new int[]{result, result});

@@ -3,9 +3,12 @@ package cn.hkxj.platform.service;
 import cn.hkxj.platform.dao.*;
 import cn.hkxj.platform.pojo.*;
 import cn.hkxj.platform.pojo.vo.CourseTimeTableDetailVo;
-import cn.hkxj.platform.spider.newmodel.*;
+import cn.hkxj.platform.spider.newmodel.coursetimetable.TimeAndPlace;
+import cn.hkxj.platform.spider.newmodel.coursetimetable.UrpCourseTimeTable;
+import cn.hkxj.platform.spider.newmodel.coursetimetable.UrpCourseTimeTableForSpider;
 import cn.hkxj.platform.utils.DateUtils;
 import com.google.common.collect.Lists;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -23,9 +26,13 @@ import java.util.stream.Collectors;
 @Service
 public class CourseTimeTableService {
 
+    private static final String NO_COURSE_TEXT = "今天没有课呐，可以出去浪了~\n";
+
+    private static ThreadFactory courseTimeTableThreadFactory = new ThreadFactoryBuilder().setNameFormat("courseTimeTable-pool-%d").build();
+
     private static ExecutorService dbExecutorPool = new ThreadPoolExecutor(1, 1,
             0L, TimeUnit.MILLISECONDS,
-            new LinkedBlockingQueue<>(20));
+            new LinkedBlockingQueue<>(20), courseTimeTableThreadFactory);
 
     @Resource
     private RoomService roomService;
@@ -44,14 +51,19 @@ public class CourseTimeTableService {
     @Resource
     private NewUrpSpiderService newUrpSpiderService;
 
+    /**
+     * 这个方法只能将一天的数据转换成当日课表所需要的文本
+     * @param details 当天的课程时间表详情
+     * @return 课表
+     */
     public String convertToText(List<CourseTimeTableDetail> details) {
-        if (CollectionUtils.isEmpty(details)) return "今天没有课呐，可以出去浪了~\n";
+        if (CollectionUtils.isEmpty(details)) {return NO_COURSE_TEXT;}
         StringBuilder builder = new StringBuilder();
         details.sort(Comparator.comparing(CourseTimeTableDetail::getOrder));
         int count = 0;
         int length = details.size();
         for (CourseTimeTableDetail detail : details) {
-            if (detail == null) continue;
+            if (detail == null) {continue;}
             count++;
             builder.append(computationOfKnots(detail)).append("节").append("\n")
                     .append(urpCourseService.getUrpCourseByCourseId(detail.getCourseId()).getCourseName()).append("\n")
@@ -65,7 +77,7 @@ public class CourseTimeTableService {
 
     public List<CourseTimeTableDetailVo> getAllCourseTimeTableDetailVos(String account){
         Student student = studentDao.selectStudentByAccount(Integer.parseInt(account));
-        List<CourseTimeTableDetail> details = getAllDetails(student);
+        List<CourseTimeTableDetail> details = getAllCourseTimeTableDetails(student);
         return details.stream().map(detail -> {
             CourseTimeTableDetailVo detailVo = new CourseTimeTableDetailVo();
             detailVo.setDetail(detail);
@@ -79,7 +91,7 @@ public class CourseTimeTableService {
      * @param student 学生实体
      * @return 课程时间表详情
      */
-    public List<CourseTimeTableDetail> getAllDetails(Student student){
+    public List<CourseTimeTableDetail> getAllCourseTimeTableDetails(Student student){
         SchoolTime schoolTime = DateUtils.getCurrentSchoolTime();
         List<CourseTimeTableDetail> dbResult =
                 courseTimeTableDetailDao.getCourseTimeTableDetailForCurrentTerm(student.getClasses().getId(), schoolTime);
@@ -133,16 +145,16 @@ public class CourseTimeTableService {
      */
     private List<CourseTimeTableDetail> getCurrentTermDataFromSpider(UrpCourseTimeTableForSpider spiderResult, SchoolTime schoolTime){
         List<CourseTimeTableDetail> result = Lists.newArrayListWithCapacity(16);
-        for (Map<String, UrpCourseTimeTable> map : spiderResult.getXkxx()) {
+        for (Map<String, UrpCourseTimeTable> map : spiderResult.getDetails()) {
             for (Map.Entry<String, UrpCourseTimeTable> entry : map.entrySet()) {
                 UrpCourseTimeTable urpCourseTimeTable = entry.getValue();
-                if(CollectionUtils.isEmpty(urpCourseTimeTable.getTimeAndPlaceList())) continue;
+                if(CollectionUtils.isEmpty(urpCourseTimeTable.getTimeAndPlaceList())) {continue;}
                 for (int i = 0, length = urpCourseTimeTable.getTimeAndPlaceList().size(); i < length; i++) {
                     TimeAndPlace timeAndPlace = urpCourseTimeTable.getTimeAndPlaceList().get(i);
                     //TimeAndPlace保存了上课的地点和时间，因为周数有时候存在多个的情况，如1-5, 8-16周等情况
                     //所以TimeAndPlace转换的CourseTimeTableDetail返回的是一个集合
                     List<CourseTimeTableDetail> details =
-                            timeAndPlace.convertToCourseTimeTableDetail(urpCourseTimeTable.getId(), urpCourseTimeTable.getAttendClassTeacher());
+                            timeAndPlace.convertToCourseTimeTableDetail(urpCourseTimeTable.getCourseRelativeInfo(), urpCourseTimeTable.getAttendClassTeacher());
                     details.stream().filter(detail -> Objects.equals(detail.getTermYear(), schoolTime.getTerm().getTermYear()))
                             .filter(detail -> detail.getTermOrder() == schoolTime.getTerm().getOrder())
                             .forEach(result::add);
@@ -160,18 +172,17 @@ public class CourseTimeTableService {
      */
     private List<CourseTimeTableDetail> getCurrentWeekDataFromSpider(UrpCourseTimeTableForSpider spiderResult, SchoolTime schoolTime) {
         List<CourseTimeTableDetail> result = Lists.newArrayListWithCapacity(16);
-        for (Map<String, UrpCourseTimeTable> map : spiderResult.getXkxx()) {
+        for (Map<String, UrpCourseTimeTable> map : spiderResult.getDetails()) {
             for (Map.Entry<String, UrpCourseTimeTable> entry : map.entrySet()) {
                 UrpCourseTimeTable urpCourseTimeTable = entry.getValue();
-                if(CollectionUtils.isEmpty(urpCourseTimeTable.getTimeAndPlaceList())) continue;
+                if(CollectionUtils.isEmpty(urpCourseTimeTable.getTimeAndPlaceList())) {continue;}
                 for (int i = 0, length = urpCourseTimeTable.getTimeAndPlaceList().size(); i < length; i++) {
                     TimeAndPlace timeAndPlace = urpCourseTimeTable.getTimeAndPlaceList().get(i);
                     //TimeAndPlace保存了上课的地点和时间，因为周数有时候存在多个的情况，如1-5, 8-16周等情况
                     //所以TimeAndPlace转换的CourseTimeTableDetail返回的是一个集合
                     List<CourseTimeTableDetail> details =
-                            timeAndPlace.convertToCourseTimeTableDetail(urpCourseTimeTable.getId(), urpCourseTimeTable.getAttendClassTeacher());
-                    details.stream().filter(detail -> detail.getStartWeek() <= schoolTime.getWeek())
-                            .filter(detail -> detail.getEndWeek() >= schoolTime.getWeek())
+                            timeAndPlace.convertToCourseTimeTableDetail(urpCourseTimeTable.getCourseRelativeInfo(), urpCourseTimeTable.getAttendClassTeacher());
+                    details.stream().filter(detail -> detail.isActiveWeek(schoolTime.getWeek()))
                             .filter(detail -> Objects.equals(detail.getTermYear(), schoolTime.getTerm().getTermYear()))
                             .filter(detail -> detail.getTermOrder() == schoolTime.getTerm().getOrder())
                             .forEach(result::add);
@@ -189,19 +200,18 @@ public class CourseTimeTableService {
      */
     private List<CourseTimeTableDetail> getCurrentDayDataFromSpider(UrpCourseTimeTableForSpider spiderResult, SchoolTime schoolTime) {
         List<CourseTimeTableDetail> result = Lists.newArrayListWithCapacity(4);
-        for (Map<String, UrpCourseTimeTable> map : spiderResult.getXkxx()) {
+        for (Map<String, UrpCourseTimeTable> map : spiderResult.getDetails()) {
             for (Map.Entry<String, UrpCourseTimeTable> entry : map.entrySet()) {
                 UrpCourseTimeTable urpCourseTimeTable = entry.getValue();
-                if (CollectionUtils.isEmpty(urpCourseTimeTable.getTimeAndPlaceList())) continue;
+                if (CollectionUtils.isEmpty(urpCourseTimeTable.getTimeAndPlaceList())) {continue;}
                 for (int i = 0, length = urpCourseTimeTable.getTimeAndPlaceList().size(); i < length; i++) {
                     TimeAndPlace timeAndPlace = urpCourseTimeTable.getTimeAndPlaceList().get(i);
                     //TimeAndPlace保存了上课的地点和时间，因为周数有时候存在多个的情况，如1-5, 8-16周等情况
                     //所以TimeAndPlace转换的CourseTimeTableDetail返回的是一个集合
                     List<CourseTimeTableDetail> details =
-                            timeAndPlace.convertToCourseTimeTableDetail(urpCourseTimeTable.getId(), urpCourseTimeTable.getAttendClassTeacher());
+                            timeAndPlace.convertToCourseTimeTableDetail(urpCourseTimeTable.getCourseRelativeInfo(), urpCourseTimeTable.getAttendClassTeacher());
                     details.stream().filter(detail -> detail.getDay() == schoolTime.getDay())
-                            .filter(detail -> detail.getStartWeek() <= schoolTime.getWeek())
-                            .filter(detail -> detail.getEndWeek() >= schoolTime.getWeek())
+                            .filter(detail -> detail.isActiveWeek(schoolTime.getWeek()))
                             .filter(detail -> Objects.equals(detail.getTermYear(), schoolTime.getTerm().getTermYear()))
                             .filter(detail -> detail.getTermOrder() == schoolTime.getTerm().getOrder())
                             .forEach(result::add);
@@ -212,10 +222,10 @@ public class CourseTimeTableService {
     }
 
     private void saveCourseTimeTableToDb(UrpCourseTimeTableForSpider spiderResult, Student student) {
-        for (Map<String, UrpCourseTimeTable> map : spiderResult.getXkxx()) {
+        for (Map<String, UrpCourseTimeTable> map : spiderResult.getDetails()) {
             for (Map.Entry<String, UrpCourseTimeTable> entry : map.entrySet()) {
                 UrpCourseTimeTable urpCourseTimeTable = entry.getValue();
-                String courseId = urpCourseTimeTable.getId().getCourseNumber();
+                String courseId = urpCourseTimeTable.getCourseRelativeInfo().getCourseNumber();
                 //查看课程是否存在，不存在就插入数据库
                 urpCourseService.checkOrSaveUrpCourseToDb(courseId, student);
                 CourseTimeTableBasicInfo basicInfo = getCourseTimeTableBasicInfo(urpCourseTimeTable);
@@ -226,13 +236,13 @@ public class CourseTimeTableService {
     }
 
     private void saveCourseTimeTableDetailsToDb(UrpCourseTimeTable urpCourseTimeTable, CourseTimeTableBasicInfo basicInfo, Student student){
-        if(CollectionUtils.isEmpty(urpCourseTimeTable.getTimeAndPlaceList())) return;
+        if(CollectionUtils.isEmpty(urpCourseTimeTable.getTimeAndPlaceList())) {return;}
         for (int i = 0, length = urpCourseTimeTable.getTimeAndPlaceList().size(); i < length; i++) {
             TimeAndPlace timeAndPlace = urpCourseTimeTable.getTimeAndPlaceList().get(i);
             //TimeAndPlace保存了上课的地点和时间，因为周数有时候存在多个的情况，如1-5, 8-16周等情况
             //所以TimeAndPlace转换的CourseTimeTableDetail返回的是一个集合
             List<CourseTimeTableDetail> details =
-                    timeAndPlace.convertToCourseTimeTableDetail(urpCourseTimeTable.getId(), urpCourseTimeTable.getAttendClassTeacher());
+                    timeAndPlace.convertToCourseTimeTableDetail(urpCourseTimeTable.getCourseRelativeInfo(), urpCourseTimeTable.getAttendClassTeacher());
             //把已经存在的课程详情过滤掉，将剩下的课程详情入库
             List<CourseTimeTableDetail> needInsertDetails = details.stream()
                     .filter(detail -> !courseTimeTableDetailDao.ifExistCourseTimeTableDetail(detail))

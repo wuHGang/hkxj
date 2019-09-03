@@ -4,7 +4,6 @@ import cn.hkxj.platform.mapper.UrpExamMapper;
 import cn.hkxj.platform.pojo.Term;
 import cn.hkxj.platform.pojo.UrpExam;
 import cn.hkxj.platform.pojo.example.UrpExamExample;
-import cn.hkxj.platform.spider.newmodel.UrpGeneralGradeForSpider;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

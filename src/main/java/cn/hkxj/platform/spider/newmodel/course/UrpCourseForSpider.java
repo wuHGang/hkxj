@@ -1,4 +1,4 @@
-package cn.hkxj.platform.spider.newmodel;
+package cn.hkxj.platform.spider.newmodel.course;
 
 import cn.hkxj.platform.pojo.UrpCourse;
 import lombok.Data;

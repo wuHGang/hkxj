@@ -3,7 +3,6 @@ package cn.hkxj.platform.dao;
 import cn.hkxj.platform.mapper.MajorMapper;
 import cn.hkxj.platform.pojo.Major;
 import cn.hkxj.platform.pojo.example.MajorExample;
-import cn.hkxj.platform.spider.newmodel.UrpGeneralGradeForSpider;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

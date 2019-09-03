@@ -1,4 +1,4 @@
-package cn.hkxj.platform.spider.newmodel;
+package cn.hkxj.platform.spider.newmodel.examtime;
 
 import lombok.Data;
 import lombok.experimental.Accessors;

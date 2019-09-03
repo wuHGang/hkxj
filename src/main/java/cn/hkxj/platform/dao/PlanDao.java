@@ -3,7 +3,6 @@ package cn.hkxj.platform.dao;
 import cn.hkxj.platform.mapper.PlanMapper;
 import cn.hkxj.platform.pojo.Plan;
 import cn.hkxj.platform.pojo.example.PlanExample;
-import cn.hkxj.platform.spider.newmodel.UrpGeneralGradeForSpider;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

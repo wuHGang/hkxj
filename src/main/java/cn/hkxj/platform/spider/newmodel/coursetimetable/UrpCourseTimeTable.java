@@ -1,7 +1,9 @@
-package cn.hkxj.platform.spider.newmodel;
+package cn.hkxj.platform.spider.newmodel.coursetimetable;
 
 import cn.hkxj.platform.pojo.CourseTimeTableBasicInfo;
 import cn.hkxj.platform.pojo.Plan;
+import cn.hkxj.platform.spider.newmodel.CourseRelativeInfo;
+import com.alibaba.fastjson.annotation.JSONField;
 import lombok.Data;
 
 import java.util.List;
@@ -55,7 +57,8 @@ public class UrpCourseTimeTable {
     /**
      * 课程相关信息
      */
-    private CourseRelativeInfo id;
+    @JSONField(name = "id")
+    private CourseRelativeInfo courseRelativeInfo;
     /**
      * 项目计划名称
      */
@@ -102,7 +105,7 @@ public class UrpCourseTimeTable {
     private String ywdgFlag;
 
     public CourseTimeTableBasicInfo convertToCourseTimeTableBasicInfo() {
-        String[] termYearAndTermOrder = parseTermYearAndTermOrder(this.id.getExecutiveEducationPlanNumber());
+        String[] termYearAndTermOrder = parseTermYearAndTermOrder(this.courseRelativeInfo.getExecutiveEducationPlanNumber());
         CourseTimeTableBasicInfo basicInfo = new CourseTimeTableBasicInfo();
         basicInfo.setCoursePropertiesCode(this.getCoursePropertiesCode());
         basicInfo.setCoursePropertiesName(this.getCoursePropertiesName());
@@ -115,8 +118,7 @@ public class UrpCourseTimeTable {
         basicInfo.setStudyModeCode(this.getStudyModeCode());
         basicInfo.setStudyModeName(this.getStudyModeName());
         basicInfo.setYwdgFlag(this.getYwdgFlag());
-        basicInfo.setCourseId(this.getId().getCourseNumber());
-        //以下三个只是赋了初始值
+        basicInfo.setCourseId(this.getCourseRelativeInfo().getCourseNumber());
         basicInfo.setTermYear(termYearAndTermOrder[0]);
         basicInfo.setTermOrder(Integer.parseInt(termYearAndTermOrder[1]));
         return basicInfo;
@@ -134,4 +136,5 @@ public class UrpCourseTimeTable {
         plan.setProgramName(this.getProgramPlanName());
         return plan;
     }
+
 }
