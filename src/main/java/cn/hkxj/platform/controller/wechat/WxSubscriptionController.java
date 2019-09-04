@@ -1,20 +1,16 @@
 package cn.hkxj.platform.controller.wechat;
 
 import cn.hkxj.platform.config.wechat.WechatMpConfiguration;
-import cn.hkxj.platform.config.wechat.WechatMpPlusProperties;
 import cn.hkxj.platform.pojo.CourseTimeTableDetail;
-import cn.hkxj.platform.pojo.ScheduleTask;
 import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.pojo.constant.SubscribeScene;
 import cn.hkxj.platform.pojo.wechat.OneOffSubscription;
 import cn.hkxj.platform.service.CourseTimeTableService;
-import cn.hkxj.platform.service.ScheduleTaskService;
 import cn.hkxj.platform.service.wechat.StudentBindService;
 import cn.hkxj.platform.utils.OneOffSubcriptionUtil;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.mp.api.WxMpService;
-import me.chanjar.weixin.mp.bean.kefu.WxMpKefuMessage;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,10 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 
@@ -38,16 +31,15 @@ import java.util.Objects;
 @Slf4j
 public class WxSubscriptionController {
 
+    private final static String ACTION_CONFIRM = "confirm";
+    private final static String ACTION_CANCEL = "cancel";
+
     @Resource(name = "studentBindService")
     private StudentBindService studentBindService;
-    @Resource
-    private ScheduleTaskService scheduleTaskService;
     @Resource
     private CourseTimeTableService courseTimeTableService;
     @Resource
     private HttpSession httpSession;
-    @Resource
-    private WechatMpPlusProperties wechatMpPlusProperties;
 
     /**
      * @param openid     微信平台用户唯一标识
@@ -97,44 +89,22 @@ public class WxSubscriptionController {
      * @param scene 订阅的场景值
      */
     private void actionEqualToConfirm(Student student, String action, String appid, String openid, String scene){
-        if (Objects.equals("confirm", action)) {
+        if (Objects.equals(ACTION_CONFIRM, action)) {
             WxMpService wxMpService = WechatMpConfiguration.getMpServices().get(appid);
-            //没有订阅的话，进行插入
-            if (Objects.equals(wechatMpPlusProperties.getAppId(), appid)) {
-                //plus的处理过程
-                wxMpPlusToProcessing(wxMpService, openid, scene, student);
-            } else {
-                //pro的处理过程
-                wxMpProToProcessing(wxMpService, openid, scene, student);
+            if(Objects.equals(SubscribeScene.COURSE_PUSH.getScene(), scene)){
+                processCourseSubscription(wxMpService, openid, scene, student);
             }
         }
     }
 
-    private void wxMpProToProcessing(WxMpService wxMpService, String openid, String scene, Student student) {
-        String appid = wxMpService.getWxMpConfigStorage().getAppId();
-        ScheduleTask scheduleTask = new ScheduleTask(appid, openid, scene);
-        //使用该接口时自动将订阅状态置为可用
-        scheduleTaskService.checkAndSetSubscribeStatus(scheduleTask, true);
+    private void processCourseSubscription(WxMpService wxMpService, String openid, String scene, Student student) {
         //判断场景值来决定更具体的处理
         if (Objects.equals(SubscribeScene.COURSE_PUSH.getScene(), scene)) {
             //场景为1005时
-            //发送一条包含当天课表信息的客服信息给指定的用户
             List<CourseTimeTableDetail> detailList = courseTimeTableService.getDetailsForCurrentDay(student);
             String messageContent = courseTimeTableService.convertToText(detailList);
             //发送一条客服消息
-            sendKefuMessageForPro(wxMpService, scheduleTask, messageContent);
-        }
-    }
-
-
-    private void wxMpPlusToProcessing(WxMpService wxMpService, String openid, String scene, Student student) {
-        //因为plus是服务号，所以直接通过一次性订阅接口来返回模板消息，无需发送客服消息
-        //根据scene来决定更具体的查理过程
-        if (Objects.equals(SubscribeScene.COURSE_PUSH.getScene(), scene)) {
-            //直接返回包含课表消息的模板消息
-            List<CourseTimeTableDetail> detailList = courseTimeTableService.getDetailsForCurrentDay(student);
-            String messageContent = courseTimeTableService.convertToText(detailList);
-            sendTemplateMessageForPlus(wxMpService, openid, scene, messageContent);
+            sendTemplateMessage(wxMpService, openid, scene, messageContent);
         }
     }
 
@@ -145,7 +115,7 @@ public class WxSubscriptionController {
      * @param scene 订阅场景值
      * @param content 消息内容
      */
-    private void sendTemplateMessageForPlus(WxMpService wxMpService, String openid, String scene, String content){
+    private void sendTemplateMessage(WxMpService wxMpService, String openid, String scene, String content){
         String appid = wxMpService.getWxMpConfigStorage().getAppId();
         //通过wxMpConfigStorage来获取一次性订阅的模板消息id
         String templateId = wxMpService.getWxMpConfigStorage().getTemplateId();
@@ -164,23 +134,4 @@ public class WxSubscriptionController {
         }
     }
 
-    /**
-     * 为pro发送一条客服消息
-     * @param wxMpService wxMpService
-     * @param scheduleTask 这里用这个参数，是因为这个实体内刚好含有openid,appid等属性
-     * @param content 客服消息的内容
-     */
-    private void sendKefuMessageForPro(WxMpService wxMpService, ScheduleTask scheduleTask, String content){
-        WxMpKefuMessage wxMpKefuMessage = new WxMpKefuMessage();
-        wxMpKefuMessage.setMsgType("text");
-        wxMpKefuMessage.setContent(content);
-        wxMpKefuMessage.setToUser(scheduleTask.getOpenid());
-        try {
-            wxMpService.getKefuService().sendKefuMessage(wxMpKefuMessage);
-            log.info("send kefuMessage about course success openid:{} appid:{}", scheduleTask.getOpenid(), scheduleTask.getAppid());
-        } catch (WxErrorException e) {
-            log.error("send kefuMessage about course failed openid:{} appid:{} message:{}",
-                    scheduleTask.getOpenid(), scheduleTask.getAppid(), e.getMessage());
-        }
-    }
 }

@@ -50,8 +50,8 @@ public class CourseServiceImplTest {
 
     @Test
     public void getCoursesForCurrentDay(){
-        List<CourseTimeTable> msgList = courseSubscribeService.getCourseTimeTables();
-        System.out.println(msgList);
+//        List<CourseTimeTable> msgList = courseSubscribeService.getCourseTimeTables();
+//        System.out.println(msgList);
 //        if(Objects.isNull(msgList)){
 //            System.out.println("good!");
 //            return;

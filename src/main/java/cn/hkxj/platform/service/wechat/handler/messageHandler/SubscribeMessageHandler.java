@@ -42,7 +42,7 @@ public class SubscribeMessageHandler implements WxMpMessageHandler{
             return textBuilder.build(PATTERN, wxMessage, wxMpService);
         }
         String scene = subscribeScene.getScene();
-        if(!Objects.isNull(scene)){
+        if(Objects.nonNull(scene)){
             String openid = wxMessage.getFromUser();
             String appid = wxMpService.getWxMpConfigStorage().getAppId();
             ScheduleTask scheduleTask = new ScheduleTask(appid, openid, scene);

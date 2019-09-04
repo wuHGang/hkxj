@@ -4,13 +4,11 @@ import cn.hkxj.platform.config.wechat.WechatMpPlusProperties;
 import cn.hkxj.platform.mapper.*;
 import cn.hkxj.platform.pojo.*;
 import cn.hkxj.platform.pojo.constant.SubscribeScene;
-import cn.hkxj.platform.pojo.example.CourseTimeTableExample;
+import cn.hkxj.platform.pojo.dto.CourseTimeTableDetailDto;
 import cn.hkxj.platform.pojo.example.OpenidExample;
 import cn.hkxj.platform.pojo.example.StudentExample;
-import cn.hkxj.platform.pojo.timetable.CourseTimeTable;
 import cn.hkxj.platform.pojo.wechat.CourseGroupMsg;
 import cn.hkxj.platform.pojo.wechat.Openid;
-import cn.hkxj.platform.utils.DateUtils;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -30,12 +28,8 @@ import java.util.stream.Collectors;
 @Service
 public class CourseSubscribeService {
 
-    private static final int SUBSCRIBE_SCENE = 1005;
-
     @Resource
     private StudentMapper studentMapper;
-    @Resource
-    private CourseTimeTableMapper courseTimeTableMapper;
     @Resource
     private OpenidMapper openidMapper;
     @Resource
@@ -45,7 +39,7 @@ public class CourseSubscribeService {
     @Resource
     private OpenidPlusMapper openidPlusMapper;
     @Resource
-    private ClassTimeTableMapper classTimeTableMapper;
+    private CourseTimeTableService courseTimeTableService;
 
     /**
      * 获取一个appid和CourseGroupMsg的映射关系
@@ -66,7 +60,7 @@ public class CourseSubscribeService {
             //组装classes和scheduleTask的映射关系
             Map<Classes, List<ScheduleTask>> classesMapping = getClassesMappingMap(students, openidObjects, scheduleTasks);
             //组装appid和CourseGroupMsg的映射关系
-            Set<CourseGroupMsg> courseGroupMsgSet = getCourseGroupMsgs(classesMapping);
+            Set<CourseGroupMsg> courseGroupMsgSet = getCourseGroupMsgs(classesMapping, openidObjects);
             courseGroupMsgMap.put(appid, courseGroupMsgSet);
         });
         return courseGroupMsgMap;
@@ -93,7 +87,7 @@ public class CourseSubscribeService {
      * @param classesMappingMap classes和scheduleTask的映射关系
      * @return CourseGroupMsg的集合
      */
-    private Set<CourseGroupMsg> getCourseGroupMsgs(Map<Classes, List<ScheduleTask>> classesMappingMap) {
+    private Set<CourseGroupMsg> getCourseGroupMsgs(Map<Classes, List<ScheduleTask>> classesMappingMap, List<Openid> openidObjects) {
         if (classesMappingMap == null) {
             return null;
         }
@@ -101,46 +95,45 @@ public class CourseSubscribeService {
         //每一个CourseGroupMsg都对应着一个班级的课程和订阅者的信息
         classesMappingMap.forEach((classes, scheduleTasks) -> {
             CourseGroupMsg courseGroupMsg = new CourseGroupMsg();
+            //获取班级的课程时间表，只需要从班级中随机获取一个人的学号即可，这里确定取第一个
+            Openid openid = getOpenidFromList(openidObjects, scheduleTasks.get(0).getOpenid());
             //根据班级来获取当天的课程信息
-            List<CourseTimeTable> courseTimeTables = getCourseTimeTablesCurrentDay(classes);
+            List<CourseTimeTableDetailDto> detailDtos = getCourseTimeTablesCurrentDay(openid);
             //设置班级信息
             courseGroupMsg.setClasses(classes);
             //设置关联的定时任务信息
             courseGroupMsg.setScheduleTasks(scheduleTasks);
             //设置课程信息
-            courseGroupMsg.setCourseTimeTables(courseTimeTables);
+            courseGroupMsg.setDetailDtos(detailDtos);
             courseGroupMsgs.add(courseGroupMsg);
         });
         return courseGroupMsgs;
     }
 
     /**
-     * 根据班级信息获取当天的课程时间表
-     * @param classes 班级信息
-     * @return 课表时间表实体列表
+     * 因为是从已有数据中去找对应的openid对象，所以这个方法是不会返回空的
+     * @param openidObjects openid对象列表
+     * @param openid 目标openid
+     * @return openid对象
      */
-    private List<CourseTimeTable> getCourseTimeTablesCurrentDay(Classes classes) {
-        int year = DateUtils.getCurrentYear();
-        int week = DateUtils.getCurrentWeek();
-        int day = DateUtils.getCurrentDay();
-        //根据班级id获取所有关联的课程时间表的id
-        List<Integer> timeTableIds = getClassTimeTables(classes);
-        CourseTimeTableExample example = new CourseTimeTableExample();
-        example.createCriteria()
-                .andIdIn(timeTableIds);
-        //获取所有关联的课程时间表的实体
-        List<CourseTimeTable> courseTimeTables = courseTimeTableMapper.selectByExample(example);
-        //筛选出所有符合条件的课程时间表实体，并组成列表返回
-        return courseTimeTables.stream().filter(timetable -> isValidCourseTimeTable(timetable, year, week, day)).collect(Collectors.toList());
+    private Openid getOpenidFromList(List<Openid> openidObjects, String openid){
+        for (Openid openidObject : openidObjects) {
+            if (Objects.equals(openidObject.getOpenid(), openid)) {
+                return openidObject;
+            }
+        }
+        return null;
     }
 
     /**
-     * 根据班级id来获取关联的课程时间表的id
-     * @param classes 班级信息
-     * @return 课程时间表id列表
+     * 根据班级信息获取当天的课程时间表
+     * @param openid openid对象
+     * @return 课表时间表实体列表
      */
-    private List<Integer> getClassTimeTables(Classes classes) {
-        return classTimeTableMapper.getTimeTableIdByClassId(classes.getId());
+    private List<CourseTimeTableDetailDto> getCourseTimeTablesCurrentDay(Openid openid) {
+        //获取所有关联的课程时间表的实体
+        return courseTimeTableService.getCurrentDayCourseTimeTableDetailDtos(openid.getAccount());
+        //筛选出所有符合条件的课程时间表实体，并组成列表返回
     }
 
     /**
@@ -208,41 +201,6 @@ public class CourseSubscribeService {
         studentExample.createCriteria()
                 .andAccountIn(accounts);
         return studentMapper.selectByExample(studentExample);
-    }
-
-    /**
-     * 获取当天的课程时间表
-     * @return 课程时间表列表
-     */
-    public List<CourseTimeTable> getCourseTimeTables() {
-        int year = DateUtils.getCurrentYear();
-        int week = DateUtils.getCurrentWeek();
-        int day = DateUtils.getCurrentDay();
-        log.info("get all courses of --year{} week{} day{}", year, week, day);
-        CourseTimeTableExample example = new CourseTimeTableExample();
-        example.createCriteria()
-                .andYearEqualTo(year)
-                .andStartLessThanOrEqualTo(week)
-                .andEndGreaterThanOrEqualTo(week)
-                .andTermEqualTo(2)
-                .andWeekEqualTo(day);
-        return courseTimeTableMapper.selectByExample(example);
-    }
-
-    /**
-     * 是否是当天的课程时间表
-     * @param courseTimeTable 课程时间表实体
-     * @param year 年份
-     * @param week 周数
-     * @param day 星期
-     * @return true为合法，false为不合法
-     */
-    private boolean isValidCourseTimeTable(CourseTimeTable courseTimeTable, int year, int week, int day) {
-        return courseTimeTable.getYear() == year
-                && courseTimeTable.getTerm() == 2
-                && courseTimeTable.getWeek() == day
-                && courseTimeTable.getStart() <= week
-                && courseTimeTable.getEnd() >= week;
     }
 
 }
