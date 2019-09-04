@@ -27,92 +27,102 @@ import java.util.Map;
 @EnableConfigurationProperties(value = {WechatMpProProperties.class, WechatMpPlusProperties.class, WechatTemplateProperties.class})
 public class WechatMpConfiguration {
 
-	@Resource
-	private WechatMpProProperties wechatMpProProperties;
+    @Resource
+    private WechatMpProProperties wechatMpProProperties;
 
-	@Resource
-	private WechatMpPlusProperties wechatMpPlusProperties;
+    @Resource
+    private WechatMpPlusProperties wechatMpPlusProperties;
 
-	@Resource
-	private CourseMessageHandler courseMessageHandler;
+    @Resource
+    private CourseMessageHandler courseMessageHandler;
 
-	@Resource
-	private GradeMessageHandler gradeMessageHandler;
+    @Resource
+    private MakeUpGradeHandler makeUpGradeHandler;
 
-	@Resource
-	private OpenidMessageHandler openidMessageHandler;
+    @Resource
+    private GradeMessageHandler gradeMessageHandler;
 
-	@Resource
-	private UnbindMessageHandler unbindMessageHandler;
+    @Resource
+    private OpenidMessageHandler openidMessageHandler;
 
-	@Resource
-	private EmptyRoomHandler emptyRoomHandler;
+    @Resource
+    private UnbindMessageHandler unbindMessageHandler;
 
-	@Resource
-	private ExamMessageHandler examMessageHandler;
+    @Resource
+    private EmptyRoomHandler emptyRoomHandler;
 
-	@Resource
-	private WechatOpenIdInterceptor wechatOpenIdInterceptor;
+    @Resource
+    private ExamMessageHandler examMessageHandler;
 
-	@Resource
-	private CETSearchHandler cetSearchHandler;
+    @Resource
+    private WechatOpenIdInterceptor wechatOpenIdInterceptor;
 
-	@Resource
-	private ElectiveCourseMessageHandler electiveCourseMessageHandler;
+    @Resource
+    private CETSearchHandler cetSearchHandler;
 
-	@Resource
-	private UnsubscribeMessageHandler unsubscribeMessageHandler;
+    @Resource
+    private ElectiveCourseMessageHandler electiveCourseMessageHandler;
 
-	@Resource
-	private SubscribeMessageHandler subscribeMessageHandler;
+    @Resource
+    private UnsubscribeMessageHandler unsubscribeMessageHandler;
 
-	@Resource
+    @Resource
+    private SubscribeMessageHandler subscribeMessageHandler;
+
+    @Resource
     private StudentInfoInterceptor studentInfoInterceptor;
 
-	private static Map<String, WxMpMessageRouter> routers = Maps.newHashMap();
-	private static Map<String, WxMpService> mpServices = Maps.newHashMap();
+    private static Map<String, WxMpMessageRouter> routers = Maps.newHashMap();
+    private static Map<String, WxMpService> mpServices = Maps.newHashMap();
 
-	@Bean
-	public Object services(){
-		//plus的配置
-		WxMpInMemoryConfigStorage proConfig = wechatMpPlusProperties.getWxMpInMemoryConfigStorage();
-		WxMpService wxPlusMpService = new WxMpServiceImpl();
-		wxPlusMpService.setWxMpConfigStorage(proConfig);
-		routers.put(wechatMpPlusProperties.getAppId(), this.newRouter(wxPlusMpService));
-		mpServices.put(wechatMpPlusProperties.getAppId(), wxPlusMpService);
+    @Bean
+    public Object services() {
+        //plus的配置
+        WxMpInMemoryConfigStorage proConfig = wechatMpPlusProperties.getWxMpInMemoryConfigStorage();
+        WxMpService wxPlusMpService = new WxMpServiceImpl();
+        wxPlusMpService.setWxMpConfigStorage(proConfig);
+        routers.put(wechatMpPlusProperties.getAppId(), this.newRouter(wxPlusMpService));
+        mpServices.put(wechatMpPlusProperties.getAppId(), wxPlusMpService);
 
-		//pro的配置
-		WxMpInMemoryConfigStorage plusConfig = wechatMpProProperties.getWxMpInMemoryConfigStorage();
-		WxMpService wxProMpService = new WxMpServiceImpl();
-		wxProMpService.setWxMpConfigStorage(plusConfig);
-		routers.put(wechatMpProProperties.getAppId(), this.newRouter(wxProMpService));
-		mpServices.put(wechatMpProProperties.getAppId(), wxProMpService);
-		return Boolean.TRUE;
-	}
+        //pro的配置
+        WxMpInMemoryConfigStorage plusConfig = wechatMpProProperties.getWxMpInMemoryConfigStorage();
+        WxMpService wxProMpService = new WxMpServiceImpl();
+        wxProMpService.setWxMpConfigStorage(plusConfig);
+        routers.put(wechatMpProProperties.getAppId(), this.newRouter(wxProMpService));
+        mpServices.put(wechatMpProProperties.getAppId(), wxProMpService);
+        return Boolean.TRUE;
+    }
 
-	private WxMpMessageRouter newRouter(WxMpService wxMpService){
-		final WxMessageRouter newRouter = new WxMessageRouter(wxMpService);
-		newRouter.rule()
-				.async(false)
-				.rContent("(课表|课程|今日课表)")
-				.interceptor(wechatOpenIdInterceptor)
+    private WxMpMessageRouter newRouter(WxMpService wxMpService) {
+        final WxMessageRouter newRouter = new WxMessageRouter(wxMpService);
+        newRouter.rule()
+                .async(false)
+                .rContent("(课表|课程|今日课表)")
+                .interceptor(wechatOpenIdInterceptor)
                 .interceptor(studentInfoInterceptor)
-				.handler(courseMessageHandler)
-				.end()
-				.rule()
-				.async(false)
-				.rContent("课表推送|成绩推送|考试推送")
-				.interceptor(wechatOpenIdInterceptor)
+                .handler(courseMessageHandler)
+                .end()
+                .rule()
+                .async(false)
+                .rContent("课表推送|成绩推送|考试推送")
+                .interceptor(wechatOpenIdInterceptor)
                 .interceptor(studentInfoInterceptor)
-				.handler(subscribeMessageHandler)
-				.end()
-				.rule()
-				.async(true)
-				.interceptor(wechatOpenIdInterceptor)
-				.interceptor(studentInfoInterceptor)
-				.rContent(".*?成绩.*?")
-				.handler(gradeMessageHandler)
-				.end()
+                .handler(subscribeMessageHandler)
+                .end()
+                .rule()
+                .async(true)
+                .interceptor(wechatOpenIdInterceptor)
+                .interceptor(studentInfoInterceptor)
+                .rContent("补考成绩.*?")
+                .handler(makeUpGradeHandler)
+                .end()
+                .rule()
+                .async(true)
+                .interceptor(wechatOpenIdInterceptor)
+                .interceptor(studentInfoInterceptor)
+                .rContent(".*?成绩.*?")
+                .handler(gradeMessageHandler)
+                .end()
 //				.rule()
 //				.async(false)
 //				.interceptor(wechatOpenIdInterceptor)
@@ -120,55 +130,55 @@ public class WechatMpConfiguration {
 //				.rContent("准考证号|四级|六级|准考证|四六级")
 //				.handler(cetSearchHandler)
 //				.end()
-				.rule()
-				.async(false)
-				.interceptor(wechatOpenIdInterceptor)
+                .rule()
+                .async(false)
+                .interceptor(wechatOpenIdInterceptor)
                 .interceptor(studentInfoInterceptor)
-				.content("openid")
-				.handler(openidMessageHandler)
-				.end()
-				.rule()
-				.async(false)
-				.interceptor(wechatOpenIdInterceptor)
+                .content("openid")
+                .handler(openidMessageHandler)
+                .end()
+                .rule()
+                .async(false)
+                .interceptor(wechatOpenIdInterceptor)
                 .interceptor(studentInfoInterceptor)
-				.rContent("解绑|解除绑定")
-				.handler(unbindMessageHandler)
-				.end()
-				.rule()
-				.async(true)
-				.rContent(".*?考试.*?")
-				.interceptor(wechatOpenIdInterceptor)
+                .rContent("解绑|解除绑定")
+                .handler(unbindMessageHandler)
+                .end()
+                .rule()
+                .async(true)
+                .rContent(".*?考试.*?")
+                .interceptor(wechatOpenIdInterceptor)
                 .interceptor(studentInfoInterceptor)
-				.handler(examMessageHandler)
-				.end()
-				.rule()
-				.async(false)
-				.rContent(".*?选修.*?")
-				.interceptor(wechatOpenIdInterceptor)
+                .handler(examMessageHandler)
+                .end()
+                .rule()
+                .async(false)
+                .rContent(".*?选修.*?")
+                .interceptor(wechatOpenIdInterceptor)
                 .interceptor(studentInfoInterceptor)
-				.handler(electiveCourseMessageHandler)
-				.end()
-				.rule()
-				.async(false)
-				.rContent("空教室.*?")
-				.handler(emptyRoomHandler)
-				.end()
-				.rule()
-				.async(false)
-				.rContent("退订.*?")
-				.interceptor(wechatOpenIdInterceptor)
+                .handler(electiveCourseMessageHandler)
+                .end()
+                .rule()
+                .async(false)
+                .rContent("空教室.*?")
+                .handler(emptyRoomHandler)
+                .end()
+                .rule()
+                .async(false)
+                .rContent("退订.*?")
+                .interceptor(wechatOpenIdInterceptor)
                 .interceptor(studentInfoInterceptor)
-				.handler(unsubscribeMessageHandler)
-				.end();
-		return newRouter;
-	}
+                .handler(unsubscribeMessageHandler)
+                .end();
+        return newRouter;
+    }
 
-	public static Map<String, WxMpMessageRouter> getRouters() {
-		return routers;
-	}
+    public static Map<String, WxMpMessageRouter> getRouters() {
+        return routers;
+    }
 
-	public static Map<String, WxMpService> getMpServices() {
-		return mpServices;
-	}
+    public static Map<String, WxMpService> getMpServices() {
+        return mpServices;
+    }
 
 }

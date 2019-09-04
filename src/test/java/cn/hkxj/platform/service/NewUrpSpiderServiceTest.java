@@ -40,15 +40,16 @@ public class NewUrpSpiderServiceTest {
                 CompletableFuture.supplyAsync(() ->
                 {
                     System.out.println("test");
-                    try{
+                    try {
                         GradeSearchResult currentGrade = newGradeSearchService.getCurrentGrade(student);
                         System.out.println(currentGrade.toString());
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
 
 
-                    return null; });
+                    return null;
+                });
         try {
             completableFuture.get();
         } catch (InterruptedException e) {
@@ -76,7 +77,7 @@ public class NewUrpSpiderServiceTest {
                         try {
                             System.out.println("test");
                             newUrpSpiderService.getCurrentTermGrade("2016024170", "1");
-                        }catch (Exception e){
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
 
@@ -84,7 +85,7 @@ public class NewUrpSpiderServiceTest {
                         return null;
                     }
                 });
-        while (!submit.isDone()){
+        while (!submit.isDone()) {
 
         }
 
@@ -98,12 +99,13 @@ public class NewUrpSpiderServiceTest {
     }
 
     @Test
-    public void test(){
+    public void test() {
         NewUrpSpider spider = new NewUrpSpider("2016020685", "1");
         spider.getExamTime();
     }
 
     @Test
+<<<<<<< Updated upstream
     public void testCourseTimeTable(){
         Student student = new Student();
         student.setAccount(2016024170);
@@ -125,10 +127,19 @@ public class NewUrpSpiderServiceTest {
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
+=======
+    public void testCourseTimeTable() {
+        NewUrpSpider spider = new NewUrpSpider("2017023115", "134340");
+        System.out.println(spider.getUrpCourseTimeTable());
+>>>>>>> Stashed changes
     }
 
-
-
+    @Test
+    public void testMakeUpGrade() {
+//        NewUrpSpider spider = new NewUrpSpider("2017023081", "1");
+        MakeUpService makeUpService=new MakeUpService();
+        System.out.println(makeUpService.getMakeUpService("2017023081", "1"));
+    }
 
 
 }
