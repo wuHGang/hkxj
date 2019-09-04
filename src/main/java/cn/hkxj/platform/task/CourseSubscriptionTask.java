@@ -48,9 +48,9 @@ public class CourseSubscriptionTask {
     @Resource
     private WechatTemplateProperties wechatTemplateProperties;
 
-//    @Async
+    @Async
 ////    @Scheduled(cron = "0/60 * * * * ?")
-//    @Scheduled(cron = "0 0 8 ? * MON-FRI")      //这个cron表达式的意思是星期一到星期五的早上8点执行一次
+    @Scheduled(cron = "0 0 8 ? * MON-FRI")      //这个cron表达式的意思是星期一到星期五的早上8点执行一次
     void sendCourseRemindMsg() {
         Map<String, Set<CourseGroupMsg>> courseGroupMsgMap = courseSubscribeService.getCoursesSubscribeForCurrentDay();
         courseGroupMsgMap.forEach((appid, courseGroupMsgSet) -> {

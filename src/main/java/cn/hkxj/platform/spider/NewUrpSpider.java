@@ -138,11 +138,8 @@ public class NewUrpSpider {
                 .build();
         String result = new String(execute(request));
         try {
-            List<Map<String, Object>> list = JSON.parseObject(result, new TypeReference<List<Map<String, Object>>>() {
+            return JSON.parseObject(result, new TypeReference<List<Map<String, Object>>>() {
             });
-//            JSONArray jsonArray = (JSONArray) list.get(0).get("list");
-//            return jsonArray.toJavaList(UrpGeneralGradeForSpider.class);
-            return list;
         } catch (JSONException e) {
             if (result.length() > 1000) {
                 throw new UrpEvaluationException("account: " + account + " 未完成评估无法查成绩");
