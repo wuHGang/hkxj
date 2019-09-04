@@ -105,7 +105,6 @@ public class NewUrpSpiderServiceTest {
     }
 
     @Test
-<<<<<<< Updated upstream
     public void testCourseTimeTable(){
         Student student = new Student();
         student.setAccount(2016024170);
@@ -127,11 +126,6 @@ public class NewUrpSpiderServiceTest {
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-=======
-    public void testCourseTimeTable() {
-        NewUrpSpider spider = new NewUrpSpider("2017023115", "134340");
-        System.out.println(spider.getUrpCourseTimeTable());
->>>>>>> Stashed changes
     }
 
     @Test

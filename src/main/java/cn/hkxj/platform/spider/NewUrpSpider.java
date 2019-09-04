@@ -34,7 +34,6 @@ import org.springframework.data.redis.core.ValueOperations;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Pattern;
 
 /**
  * @author junrong.chen
@@ -60,13 +59,6 @@ public class NewUrpSpider {
     private static final TypeReference<List<UrpCourseForSpider>> courseTypeReference
             = new TypeReference<List<UrpCourseForSpider>>() {
     };
-<<<<<<< Updated upstream
-=======
-    private static final TypeReference<Map<String, String>> keyValueReference
-            = new TypeReference<Map<String, String>>() {
-
-    };
->>>>>>> Stashed changes
     private static final Splitter SPACE_SPLITTER = Splitter.on(" ").omitEmptyStrings().trimResults();
 
     private static final UrpCookieJar cookieJar = new UrpCookieJar();
@@ -321,35 +313,15 @@ public class NewUrpSpider {
         return result;
     }
 
-<<<<<<< Updated upstream
-    public UrpCourseTimeTableForSpider getUrpCourseTimeTable(){
-=======
     public UrpCourseTimeTableForSpider getUrpCourseTimeTable() {
-        Headers headers = new Headers.Builder()
-                .add("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3")
-                .add("Host", "xsurp.usth.edu.cn")
-                .add("Connection", "keep-alive")
-                .add("User-Agent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36")
-                .add("Upgrade-Insecure-Requests", "1")
-                .add("Accept-Language", "zh-CN,zh;q=0.9,en;q=0.8")
-                .add("Cache-Control", "max-age=0")
-                .add("Referer", "http://222.171.146.55/student/courseSelect/thisSemesterCurriculum/index")
-                .build();
->>>>>>> Stashed changes
         Request request = new Request.Builder()
                 .url(COURSE_TIME_TABLE)
                 .headers(HEADERS)
                 .get()
                 .build();
         String result = new String(execute(request));
-<<<<<<< Updated upstream
-        String regex="\"dateList\": [.*]}$";
-        result = result.replaceAll(regex,"");
-=======
         String regex = "\"dateList\": [.*]}$";
         result = result.replaceAll(regex, "");
-        System.out.println(result);
->>>>>>> Stashed changes
         try {
             return JSON.parseObject(result, UrpCourseTimeTableForSpider.class);
         } catch (JSONException e) {
@@ -464,14 +436,8 @@ public class NewUrpSpider {
 
 
     /**
-<<<<<<< Updated upstream
-     *
      * @param response 响应
      * @return 是否成功响应
-=======
-     * @param response
-     * @return
->>>>>>> Stashed changes
      */
     private boolean isResponseFail(Response response) {
         return response.body() == null ||
