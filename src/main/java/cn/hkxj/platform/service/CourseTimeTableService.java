@@ -2,7 +2,8 @@ package cn.hkxj.platform.service;
 
 import cn.hkxj.platform.dao.*;
 import cn.hkxj.platform.pojo.*;
-import cn.hkxj.platform.pojo.vo.CourseTimeTableDetailVo;
+import cn.hkxj.platform.pojo.dto.CourseTimeTableDetailDto;
+import cn.hkxj.platform.pojo.timetable.CourseTimeTable;
 import cn.hkxj.platform.spider.newmodel.coursetimetable.TimeAndPlace;
 import cn.hkxj.platform.spider.newmodel.coursetimetable.UrpCourseTimeTable;
 import cn.hkxj.platform.spider.newmodel.coursetimetable.UrpCourseTimeTableForSpider;
@@ -75,15 +76,22 @@ public class CourseTimeTableService {
         return builder.toString();
     }
 
-    public List<CourseTimeTableDetailVo> getAllCourseTimeTableDetailVos(String account){
-        Student student = studentDao.selectStudentByAccount(Integer.parseInt(account));
+    public List<CourseTimeTableDetailDto> getAllCourseTimeTableDetailDtos(int account){
+        Student student = studentDao.selectStudentByAccount(account);
         List<CourseTimeTableDetail> details = getAllCourseTimeTableDetails(student);
-        return details.stream().map(detail -> {
-            CourseTimeTableDetailVo detailVo = new CourseTimeTableDetailVo();
-            detailVo.setDetail(detail);
-            detailVo.setUrpCourse(urpCourseService.getUrpCourseByCourseId(detail.getCourseId()));
-            return detailVo;
-        }).collect(Collectors.toList());
+        return assembleCourseTimeTableDto(details);
+    }
+
+    public List<CourseTimeTableDetailDto> getCurrentDayCourseTimeTableDetailDtos(int account){
+        Student student = studentDao.selectStudentByAccount(account);
+        List<CourseTimeTableDetail> details = getDetailsForCurrentDay(student);
+        return assembleCourseTimeTableDto(details);
+    }
+
+    public List<CourseTimeTableDetailDto> getCurrentWeekCourseTimeTableDetailDtos(int account){
+        Student student = studentDao.selectStudentByAccount(account);
+        List<CourseTimeTableDetail> details = getDetailsForCurrentWeek(student);
+        return assembleCourseTimeTableDto(details);
     }
 
     /**
@@ -95,7 +103,7 @@ public class CourseTimeTableService {
         SchoolTime schoolTime = DateUtils.getCurrentSchoolTime();
         List<CourseTimeTableDetail> dbResult =
                 courseTimeTableDetailDao.getCourseTimeTableDetailForCurrentTerm(student.getClasses().getId(), schoolTime);
-        if(CollectionUtils.isEmpty(dbResult)){
+        if(CollectionUtils.isEmpty(dbResult) && isNeedSpiderHandling(student.getClasses().getId())){
             UrpCourseTimeTableForSpider spiderResult = newUrpSpiderService.getUrpCourseTimeTable(student);
             dbResult = getCurrentTermDataFromSpider(spiderResult, schoolTime);
             dbExecutorPool.execute(() -> saveCourseTimeTableToDb(spiderResult, student));
@@ -112,7 +120,7 @@ public class CourseTimeTableService {
         SchoolTime schoolTime = DateUtils.getCurrentSchoolTime();
         List<CourseTimeTableDetail> dbResult =
                 courseTimeTableDetailDao.getCourseTimeTableDetailForCurrentWeek(student.getClasses().getId(), schoolTime);
-        if (CollectionUtils.isEmpty(dbResult)) {
+        if (CollectionUtils.isEmpty(dbResult) && isNeedSpiderHandling(student.getClasses().getId())) {
             UrpCourseTimeTableForSpider spiderResult = newUrpSpiderService.getUrpCourseTimeTable(student);
             dbExecutorPool.execute(() -> saveCourseTimeTableToDb(spiderResult, student));
             dbResult = getCurrentWeekDataFromSpider(spiderResult, schoolTime);
@@ -122,6 +130,7 @@ public class CourseTimeTableService {
 
     /**
      * 返回该学期当天的所有课程详情
+     * 从数据库获取的数据为空时，会使用爬虫来爬取数据
      * @param student 学生实体
      * @return 课程时间表详情
      */
@@ -129,7 +138,7 @@ public class CourseTimeTableService {
         SchoolTime schoolTime = DateUtils.getCurrentSchoolTime();
         List<CourseTimeTableDetail> searchResult =
                 courseTimeTableDetailDao.getCourseTimeTableDetailForCurrentDay(student.getClasses().getId(), schoolTime);
-        if (CollectionUtils.isEmpty(searchResult)) {
+        if (CollectionUtils.isEmpty(searchResult) && isNeedSpiderHandling(student.getClasses().getId())) {
             UrpCourseTimeTableForSpider spiderResult = newUrpSpiderService.getUrpCourseTimeTable(student);
             searchResult = getCurrentDayDataFromSpider(spiderResult, schoolTime);
             dbExecutorPool.execute(() -> saveCourseTimeTableToDb(spiderResult, student));
@@ -281,5 +290,23 @@ public class CourseTimeTableService {
      */
     private String computationOfKnots(CourseTimeTableDetail detail){
        return detail.getOrder() + "-" + (detail.getOrder() + detail.getContinuingSession() - 1);
+    }
+
+    private List<CourseTimeTableDetailDto> assembleCourseTimeTableDto(List<CourseTimeTableDetail> details){
+        return details.stream().map(detail -> {
+            CourseTimeTableDetailDto detailVo = new CourseTimeTableDetailDto();
+            detailVo.setDetail(detail);
+            detailVo.setUrpCourse(urpCourseService.getUrpCourseByCourseId(detail.getCourseId()));
+            return detailVo;
+        }).collect(Collectors.toList());
+    }
+
+    /**
+     * 从数据库读取数据后，判断是否需要爬虫去爬取数据
+     * @param classesId 班级编号
+     * @return true为需要， false为不需要
+     */
+    private boolean isNeedSpiderHandling(int classesId){
+        return CollectionUtils.isEmpty(courseTimeTableDetailDao.getCourseTimeTableDetailIdsByClassId(classesId));
     }
 }
