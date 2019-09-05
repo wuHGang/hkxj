@@ -21,7 +21,7 @@ public class MakeUpService {
             if (grade == null) {
                 grade = "尚无成绩";
             }
-            sb.append(map.get("kcm")).append("\n成绩: ").append(grade).append("\n");
+            sb.append(map.get("kcm")).append("\n成绩: ").append(grade).append("\n\n");
         }
         return sb.toString();
     }
