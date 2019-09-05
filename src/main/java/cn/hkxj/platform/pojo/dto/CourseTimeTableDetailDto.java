@@ -1,4 +1,4 @@
-package cn.hkxj.platform.pojo.vo;
+package cn.hkxj.platform.pojo.dto;
 
 import cn.hkxj.platform.pojo.CourseTimeTableDetail;
 import cn.hkxj.platform.pojo.UrpCourse;
@@ -9,7 +9,7 @@ import lombok.Data;
  * @date 2019/9/2 14:28
  */
 @Data
-public class CourseTimeTableDetailVo {
+public class CourseTimeTableDetailDto {
 
     private CourseTimeTableDetail detail;
 

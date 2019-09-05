@@ -114,6 +114,9 @@
     </if>
   </delete>
   <insert id="insert" parameterType="cn.hkxj.platform.pojo.CourseTimeTableBasicInfo" >
+    <selectKey order="AFTER" keyProperty="id" resultType="int">
+      select LAST_INSERT_ID()
+    </selectKey>
     insert into course_time_table_basic_info (id, plan_id, course_id,
     course_properties_code, course_properties_name,
     restricted_condition, select_course_status_code,
@@ -130,6 +133,9 @@
     #{termOrder,jdbcType=INTEGER}, #{gmtCreate,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="cn.hkxj.platform.pojo.CourseTimeTableBasicInfo" >
+    <selectKey order="AFTER" keyProperty="id" resultType="int">
+      select LAST_INSERT_ID()
+    </selectKey>
     insert into course_time_table_basic_info
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >

@@ -57,7 +57,7 @@ public class UnsubscribeMessageHandler implements WxMpMessageHandler{
         String[] strings = StreamSupport.stream(SPLITTER.split(content).spliterator(), false).toArray(String[]::new);
         if(strings.length == VALID_LENGTH){
             SubscribeScene subscribeScene = SubscribeScene.getSubscribeSceneByChinese(strings[1]);
-            if(!Objects.isNull(subscribeScene)){
+            if(Objects.nonNull(subscribeScene)){
                 return subscribeScene.getScene();
             }
         }

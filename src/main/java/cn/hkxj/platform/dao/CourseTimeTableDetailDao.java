@@ -45,8 +45,12 @@ public class CourseTimeTableDetailDao {
         return courseTimeTableDetailMapper.selectByExample(example);
     }
 
+    public List<Integer> getCourseTimeTableDetailIdsByClassId(int classesId){
+        return courseTimeTableDetailMapper.getCourseTimeTableDetailIdsByClassId(classesId);
+    }
+
     public List<CourseTimeTableDetail> getCourseTimeTableDetailForCurrentTerm(int classesId, SchoolTime schoolTime){
-        List<Integer> detailIds = courseTimeTableDetailMapper.getCourseTimeTableDetailIdsByClassId(classesId);
+        List<Integer> detailIds = getCourseTimeTableDetailIdsByClassId(classesId);
         if(detailIds.size() == 0) {return Lists.newArrayList();}
         CourseTimeTableDetailExample example = new CourseTimeTableDetailExample();
         example.createCriteria()

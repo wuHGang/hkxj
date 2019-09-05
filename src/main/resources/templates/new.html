@@ -248,7 +248,7 @@
         $.ajax({
 
             type:"get",
-            url:"/platform/course/newtimetable",
+            url:"/platform/course/timetable",
             timeout:10000,
             success:function (json) {
                 if (json.status != 200){
@@ -289,8 +289,8 @@
                                         brText(arrTd[i+27]);
                                         break;
                                     case 9:
-                                        getText(i+37,k);
-                                        brText(arrTd[i=36]);
+                                        getText(i+36,k);
+                                        brText(arrTd[i+36]);
                                         break;
                                 }//switch结束
                             }//内存if结束

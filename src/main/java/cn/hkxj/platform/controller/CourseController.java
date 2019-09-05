@@ -1,10 +1,8 @@
 package cn.hkxj.platform.controller;
 
-import cn.hkxj.platform.pojo.CourseTimeTableDetail;
 import cn.hkxj.platform.pojo.WebResponse;
 import cn.hkxj.platform.pojo.constant.ErrorCode;
-import cn.hkxj.platform.pojo.timetable.CourseTimeTable;
-import cn.hkxj.platform.pojo.vo.CourseTimeTableDetailVo;
+import cn.hkxj.platform.pojo.dto.CourseTimeTableDetailDto;
 import cn.hkxj.platform.service.CourseService;
 import cn.hkxj.platform.service.CourseTimeTableService;
 import lombok.extern.slf4j.Slf4j;
@@ -57,7 +55,7 @@ public class CourseController {
             return WebResponse.fail(ErrorCode.ACCOUNT_OR_PASSWORD_INVALID.getErrorCode(), "账号无效");
         }
 
-        List<CourseTimeTableDetailVo> details = courseTimeTableService.getAllCourseTimeTableDetailVos(account);
+        List<CourseTimeTableDetailDto> details = courseTimeTableService.getAllCourseTimeTableDetailDtos(Integer.parseInt(account));
         log.info("course timetable success-- account:{}", account);
         return WebResponse.success(details);
     }

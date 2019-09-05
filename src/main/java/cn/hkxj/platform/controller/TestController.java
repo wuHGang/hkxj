@@ -55,10 +55,10 @@ public class TestController {
     public void testCourseTimeTable(){
 
         Student student = new Student();
-        student.setAccount(2017023115);
-        student.setPassword("134340");
+        student.setAccount(2018023302);
+        student.setPassword("1");
         Classes classes = new Classes();
-        classes.setId(316);
+        classes.setId(616);
         student.setClasses(classes);
         System.out.println(courseTimeTableService.convertToText(courseTimeTableService.getDetailsForCurrentDay(student)));
     }
