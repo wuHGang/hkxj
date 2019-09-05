@@ -3,8 +3,8 @@ package cn.hkxj.platform.service;
 import cn.hkxj.platform.dao.*;
 import cn.hkxj.platform.pojo.*;
 import cn.hkxj.platform.spider.newmodel.grade.CurrentGrade;
-import cn.hkxj.platform.spider.newmodel.grade.general.UrpGeneralGradeForSpider;
 import cn.hkxj.platform.spider.newmodel.grade.detail.UrpGradeDetailForSpider;
+import cn.hkxj.platform.spider.newmodel.grade.general.UrpGeneralGradeForSpider;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +16,7 @@ import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -35,6 +36,8 @@ public class NewGradeSearchService {
     @Resource
     private UrpGradeDao urpGradeDao;
     @Resource
+    private StudentDao studentDao;
+    @Resource
     private UrpCourseService urpCourseService;
     @Resource
     private UrpGradeDetailDao urpGradeDetailDao;
@@ -48,6 +51,20 @@ public class NewGradeSearchService {
     public GradeSearchResult getCurrentGrade(Student student) {
         CurrentGrade currentGrade = newUrpSpiderService.getCurrentTermGrade(student.getAccount().toString(),
                 student.getPassword());
+
+        if(CollectionUtils.isEmpty(currentGrade.getList())){
+            return new GradeSearchResult(Lists.newArrayListWithCapacity(0), false);
+        }
+
+
+        return saveCurrentGradeToDb(student, currentGrade);
+    }
+
+    public GradeSearchResult getCurrentGrade(String account, String password) {
+        Student student = Optional.ofNullable(studentDao.selectStudentByAccount(Integer.parseInt(account)))
+                .orElseGet(() ->newUrpSpiderService.getStudentInfo(account, password));
+
+        CurrentGrade currentGrade = newUrpSpiderService.getCurrentTermGrade(account, password);
 
         if(CollectionUtils.isEmpty(currentGrade.getList())){
             return new GradeSearchResult(Lists.newArrayListWithCapacity(0), false);

@@ -1,7 +1,6 @@
 package cn.hkxj.platform.controller;
 
 import cn.hkxj.platform.pojo.GradeSearchResult;
-import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.pojo.WebResponse;
 import cn.hkxj.platform.service.NewGradeSearchService;
 import lombok.extern.slf4j.Slf4j;
@@ -25,8 +24,7 @@ public class GradeController {
     public WebResponse getNowGrade(@RequestParam("account") String account, @RequestParam("password") String password){
         log.info("now grade search start, account:{}, password:{}", account, password);
         try {
-            Student student = new Student().setAccount(Integer.parseInt(account)).setPassword(password);
-            GradeSearchResult currentGrade = newGradeSearchService.getCurrentGrade(student);
+            GradeSearchResult currentGrade = newGradeSearchService.getCurrentGrade(account, password);
             log.info("now grade search success, account:{}, password:{}", account, password);
             return WebResponse.success(currentGrade.getData());
         }catch (Exception e){

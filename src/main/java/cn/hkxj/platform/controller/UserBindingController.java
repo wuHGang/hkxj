@@ -4,6 +4,7 @@ package cn.hkxj.platform.controller;
 import cn.hkxj.platform.exceptions.OpenidExistException;
 import cn.hkxj.platform.exceptions.PasswordUncorrectException;
 import cn.hkxj.platform.exceptions.UrpVerifyCodeException;
+import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.pojo.WebResponse;
 import cn.hkxj.platform.pojo.constant.ErrorCode;
 import cn.hkxj.platform.service.wechat.StudentBindService;
@@ -51,12 +52,13 @@ public class UserBindingController {
 
 		String openid = (String) httpSession.getAttribute("openid");
 		String appid = (String) httpSession.getAttribute("appid");
+		Student student;
 		try {
 			if (Objects.isNull(openid)){
-				WebResponse.success(studentBindService.studentLogin(account, password));
+				student = studentBindService.studentLogin(account, password);
 			}
 			else {
-				WebResponse.success(studentBindService.studentBind(openid, account, password, appid));
+				student = studentBindService.studentBind(openid, account, password, appid);
 			}
 			httpSession.setAttribute("account", account);
 		}catch (UrpVerifyCodeException e){
@@ -72,7 +74,7 @@ public class UserBindingController {
 		}
 
 		log.info("student bind success account:{} password:{} openid{}", account, password, openid);
-		return WebResponse.success();
+		return WebResponse.success(student);
 	}
 
 
