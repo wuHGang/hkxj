@@ -83,7 +83,7 @@ public class CourseMessageHandler implements WxMpMessageHandler {
 
     private String getReplyContent(WxMpXmlMessage wxMpXmlMessage, WxMpService wxMpService){
         Openid openid = openIdService.getOpenid(wxMpXmlMessage.getFromUser(), wxMpService.getWxMpConfigStorage().getAppId()).get(0);
-        Student student = openIdService.getStudentByOpenId(openid.getOpenid(), wechatMpPlusProperties.getAppId());
+        Student student = openIdService.getStudentByOpenId(openid.getOpenid(), wxMpService.getWxMpConfigStorage().getAppId());
         List<CourseTimeTableDetail> details = courseTimeTableService.getDetailsForCurrentDay(student);
         return courseTimeTableService.convertToText(details);
     }
