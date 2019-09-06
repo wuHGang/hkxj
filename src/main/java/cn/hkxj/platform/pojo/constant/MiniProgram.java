@@ -7,9 +7,22 @@ package cn.hkxj.platform.pojo.constant;
  */
 public enum MiniProgram {
 
+    /**
+     * 小程序的appid
+     */
     APPID("wx05f7264e83fa40e9"),
+    /**
+     * 小程序课表的网页url
+     */
     COURSE_PATH("pages/core/cj/cj"),
-    GRADE_PATH("pages/core/kb/kb");
+    /**
+     * 小程序成绩网页的url
+     */
+    GRADE_PATH("pages/core/kb/kb"),
+    /**
+     * 小程序首页
+     */
+    INDEX("pages/index/index");
 
     private String value;
 
