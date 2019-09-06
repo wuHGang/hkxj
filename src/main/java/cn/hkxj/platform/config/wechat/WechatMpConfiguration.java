@@ -58,9 +58,6 @@ public class WechatMpConfiguration {
     private WechatOpenIdInterceptor wechatOpenIdInterceptor;
 
     @Resource
-    private CETSearchHandler cetSearchHandler;
-
-    @Resource
     private ElectiveCourseMessageHandler electiveCourseMessageHandler;
 
     @Resource
