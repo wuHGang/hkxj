@@ -127,7 +127,7 @@ public class CourseMessageHandler implements WxMpMessageHandler {
         try {
             wxMpService.getKefuService().sendKefuMessage(wxMpKefuMessage);
         } catch (WxErrorException e) {
-            log.info("send kefu message to {} fail", wxMpKefuMessage.getToUser());
+            log.info("send kefu message to {} fail {}", wxMpKefuMessage.getToUser(), e.getMessage());
         }
     }
 }

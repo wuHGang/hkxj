@@ -78,16 +78,16 @@ public class WechatMpConfiguration {
     @Bean
     public Object services() {
         //plus的配置
-        WxMpInMemoryConfigStorage proConfig = wechatMpPlusProperties.getWxMpInMemoryConfigStorage();
+        WxMpInMemoryConfigStorage plusConfig = wechatMpPlusProperties.getWxMpInMemoryConfigStorage();
         WxMpService wxPlusMpService = new WxMpServiceImpl();
-        wxPlusMpService.setWxMpConfigStorage(proConfig);
+        wxPlusMpService.setWxMpConfigStorage(plusConfig);
         routers.put(wechatMpPlusProperties.getAppId(), this.newRouter(wxPlusMpService));
         mpServices.put(wechatMpPlusProperties.getAppId(), wxPlusMpService);
 
         //pro的配置
-        WxMpInMemoryConfigStorage plusConfig = wechatMpProProperties.getWxMpInMemoryConfigStorage();
+        WxMpInMemoryConfigStorage proConfig = wechatMpProProperties.getWxMpInMemoryConfigStorage();
         WxMpService wxProMpService = new WxMpServiceImpl();
-        wxProMpService.setWxMpConfigStorage(plusConfig);
+        wxProMpService.setWxMpConfigStorage(proConfig);
         routers.put(wechatMpProProperties.getAppId(), this.newRouter(wxProMpService));
         mpServices.put(wechatMpProProperties.getAppId(), wxProMpService);
         return Boolean.TRUE;
