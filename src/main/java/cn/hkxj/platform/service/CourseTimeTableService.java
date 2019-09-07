@@ -296,7 +296,7 @@ public class CourseTimeTableService {
             }
             
             if (!CollectionUtils.isEmpty(needInsertDetailList)) {
-                idList.addAll(saveTimeTableDetail(needInsertDetailList, timeAndPlace, student, basicInfo));
+                idList.addAll(saveTimeTableDetail(needInsertDetailList, timeAndPlace, basicInfo));
             }
             
             //关联班级和课程详情
@@ -312,13 +312,20 @@ public class CourseTimeTableService {
         }
     }
 
-    private List<Integer> saveTimeTableDetail(List<CourseTimeTableDetail> needInsertDetails, TimeAndPlace timeAndPlace, Student student, CourseTimeTableBasicInfo basicInfo) {
-        needInsertDetails.stream().peek(detail -> detail.setCourseTimeTableBasicInfoId(basicInfo.getId()))
-                .forEach(detail -> {
-                    courseTimeTableDetailDao.insertCourseTimeTableDetail(detail);
-                    Room parseResult = roomService.parseToRoomForSpider(timeAndPlace.getClassroomName(), timeAndPlace.getTeachingBuildingName());
-                    roomDao.saveOrGetRoomFromDb(parseResult);
-                });
+    private List<Integer> saveTimeTableDetail(List<CourseTimeTableDetail> needInsertDetails, TimeAndPlace timeAndPlace, CourseTimeTableBasicInfo basicInfo) {
+        for (CourseTimeTableDetail detail : needInsertDetails) {
+            detail.setCourseTimeTableBasicInfoId(basicInfo.getId());
+            courseTimeTableDetailDao.insertCourseTimeTableDetail(detail);
+            Room parseResult = roomService.parseToRoomForSpider(timeAndPlace.getClassroomName(), timeAndPlace.getTeachingBuildingName());
+            roomDao.saveOrGetRoomFromDb(parseResult);
+        }
+
+//        needInsertDetails.stream().peek(detail -> detail.setCourseTimeTableBasicInfoId(basicInfo.getId()))
+//                .forEach(detail -> {
+//                    courseTimeTableDetailDao.insertCourseTimeTableDetail(detail);
+//                    Room parseResult = roomService.parseToRoomForSpider(timeAndPlace.getClassroomName(), timeAndPlace.getTeachingBuildingName());
+//                    roomDao.saveOrGetRoomFromDb(parseResult);
+//                });
         return needInsertDetails.stream().map(CourseTimeTableDetail::getId).collect(Collectors.toList());
         
     }
