@@ -3,7 +3,6 @@ package cn.hkxj.platform.service;
 import cn.hkxj.platform.dao.*;
 import cn.hkxj.platform.pojo.*;
 import cn.hkxj.platform.pojo.dto.CourseTimeTableDetailDto;
-import cn.hkxj.platform.pojo.timetable.CourseTimeTable;
 import cn.hkxj.platform.spider.newmodel.coursetimetable.TimeAndPlace;
 import cn.hkxj.platform.spider.newmodel.coursetimetable.UrpCourseTimeTable;
 import cn.hkxj.platform.spider.newmodel.coursetimetable.UrpCourseTimeTableForSpider;
@@ -15,7 +14,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
-import java.util.*;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
@@ -33,7 +35,7 @@ public class CourseTimeTableService {
 
     private static ExecutorService dbExecutorPool = new ThreadPoolExecutor(1, 1,
             0L, TimeUnit.MILLISECONDS,
-            new LinkedBlockingQueue<>(20), courseTimeTableThreadFactory);
+            new LinkedBlockingQueue<>(), courseTimeTableThreadFactory);
 
     @Resource
     private RoomService roomService;

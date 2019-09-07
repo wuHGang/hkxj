@@ -33,13 +33,12 @@ public class Classes {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         Classes classes = (Classes) o;
-        return Objects.equal(id, classes.id) &&
+        return
                 Objects.equal(name, classes.name) &&
                 Objects.equal(academy, classes.academy) &&
                 Objects.equal(subject, classes.subject) &&
                 Objects.equal(year, classes.year) &&
-                Objects.equal(num, classes.num) &&
-                Objects.equal(courseTimeTableIds, classes.courseTimeTableIds);
+                Objects.equal(num, classes.num);
     }
 
     @Override

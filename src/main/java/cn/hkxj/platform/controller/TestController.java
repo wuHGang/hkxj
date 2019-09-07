@@ -1,11 +1,11 @@
 package cn.hkxj.platform.controller;
 
+import cn.hkxj.platform.dao.ClassDao;
+import cn.hkxj.platform.dao.StudentDao;
 import cn.hkxj.platform.pojo.Classes;
 import cn.hkxj.platform.pojo.CourseTimeTableDetail;
-import cn.hkxj.platform.pojo.GradeSearchResult;
 import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.service.CourseTimeTableService;
-import cn.hkxj.platform.service.NewGradeSearchService;
 import cn.hkxj.platform.service.NewUrpSpiderService;
 import cn.hkxj.platform.spider.NewUrpSpider;
 import lombok.extern.slf4j.Slf4j;
@@ -22,14 +22,38 @@ import java.util.List;
 @Slf4j
 public class TestController {
 
-//    @Resource
-//    private NewGradeSearchService newGradeSearchService;
     @Resource
     private NewUrpSpiderService newUrpSpiderService;
     @Resource
     private CourseTimeTableService courseTimeTableService;
 
-    public TestController() {
+    @Resource
+    private ClassDao classDao;
+    @Resource
+    private StudentDao studentDao;
+
+    @GetMapping(value = "/getCourse")
+    public void getClazz(){
+
+        for (Classes classes : classDao.getAllClass()) {
+            if(classes.getYear() > 15){
+                for (Student student : studentDao.selectStudentByClassId(classes.getId())) {
+                    try {
+                        log.info("class{} student {} start",classes.toString(), student.toString());
+                        courseTimeTableService.getAllCourseTimeTableDetails(student);
+                        log.info("class{} student {} success",classes.toString(), student.toString());
+                        break;
+                    }catch (Exception e){
+                        log.error("class{} student {} success",classes.toString(), student.toString(), e);
+                    }
+
+                }
+
+            }
+
+        }
+
+
     }
 
     @GetMapping(value = "/testhtml")
