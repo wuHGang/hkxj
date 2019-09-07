@@ -308,7 +308,7 @@ public class CourseTimeTableService {
 
     private void saveClassAndDetailRelative(List<Integer> needInsertIds, Student student) {
         for (Integer needInsertId : needInsertIds) {
-            dbExecutorPool.execute(() -> courseTimeTableDetailDao.insertClassesCourseTimeTable(student.getClasses().getId(), needInsertId));
+             courseTimeTableDetailDao.insertClassesCourseTimeTable(student.getClasses().getId(), needInsertId);
         }
     }
 
