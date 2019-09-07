@@ -30,7 +30,6 @@ import java.util.stream.Collectors;
  * 提供空教室查询功能API
  */
 @RestController
-//@RequestMapping("/emptyRoom")
 @Slf4j
 public class EmtpyRoomController {
 

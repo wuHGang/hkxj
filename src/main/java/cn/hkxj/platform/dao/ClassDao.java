@@ -31,4 +31,10 @@ public class ClassDao {
         classesMapper.insert(classes);
     }
 
+    public List<Classes> getAllClass() {
+        ClassesExample classesExample = new ClassesExample();
+        classesExample.createCriteria();
+        return classesMapper.selectByExample(classesExample);
+    }
+
 }

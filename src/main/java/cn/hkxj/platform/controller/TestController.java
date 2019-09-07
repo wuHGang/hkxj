@@ -1,14 +1,21 @@
 package cn.hkxj.platform.controller;
 
+import cn.hkxj.platform.config.wechat.WechatMpConfiguration;
+import cn.hkxj.platform.config.wechat.WechatMpPlusProperties;
+import cn.hkxj.platform.config.wechat.WechatMpProProperties;
+import cn.hkxj.platform.dao.ClassDao;
+import cn.hkxj.platform.dao.StudentDao;
 import cn.hkxj.platform.pojo.Classes;
 import cn.hkxj.platform.pojo.CourseTimeTableDetail;
-import cn.hkxj.platform.pojo.GradeSearchResult;
 import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.service.CourseTimeTableService;
-import cn.hkxj.platform.service.NewGradeSearchService;
 import cn.hkxj.platform.service.NewUrpSpiderService;
 import cn.hkxj.platform.spider.NewUrpSpider;
 import lombok.extern.slf4j.Slf4j;
+import me.chanjar.weixin.common.api.WxConsts;
+import me.chanjar.weixin.common.error.WxErrorException;
+import me.chanjar.weixin.mp.api.WxMpService;
+import me.chanjar.weixin.mp.bean.material.WxMpMaterialFileBatchGetResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,14 +29,40 @@ import java.util.List;
 @Slf4j
 public class TestController {
 
-//    @Resource
-//    private NewGradeSearchService newGradeSearchService;
     @Resource
     private NewUrpSpiderService newUrpSpiderService;
     @Resource
     private CourseTimeTableService courseTimeTableService;
+    @Resource
+    private WechatMpProProperties wechatMpProProperties;
 
-    public TestController() {
+    @Resource
+    private ClassDao classDao;
+    @Resource
+    private StudentDao studentDao;
+
+    @GetMapping(value = "/getCourse")
+    public void getClazz(){
+
+        for (Classes classes : classDao.getAllClass()) {
+            if(classes.getYear() > 15){
+                for (Student student : studentDao.selectStudentByClassId(classes.getId())) {
+                    try {
+                        log.info("class{} student {} start",classes.toString(), student.toString());
+                        courseTimeTableService.getAllCourseTimeTableDetails(student);
+                        log.info("class{} student {} success",classes.toString(), student.toString());
+                        break;
+                    }catch (Exception e){
+                        log.error("class{} student {} success",classes.toString(), student.toString(), e);
+                    }
+
+                }
+
+            }
+
+        }
+
+
     }
 
     @GetMapping(value = "/testhtml")
@@ -52,15 +85,19 @@ public class TestController {
     }
 
     @RequestMapping("/testctt")
-    public void testCourseTimeTable(){
-
-        Student student = new Student();
-        student.setAccount(2018023302);
-        student.setPassword("1");
-        Classes classes = new Classes();
-        classes.setId(616);
-        student.setClasses(classes);
-        System.out.println(courseTimeTableService.convertToText(courseTimeTableService.getDetailsForCurrentDay(student)));
+    public void testCourseTimeTable() throws WxErrorException {
+        WxMpService wxMpService = WechatMpConfiguration.getMpServices().get(wechatMpProProperties.getAppId());
+//        wxMpService.getMaterialService().materialFileUpload()
+        WxMpMaterialFileBatchGetResult wxMpMaterialFileBatchGetResult =
+                wxMpService.getMaterialService().materialFileBatchGet(WxConsts.MaterialType.IMAGE, 0, 20);
+        System.out.println(wxMpMaterialFileBatchGetResult);
+//        Student student = new Student();
+//        Classes classes = new Classes();
+//        student.setAccount(2017026003);
+//        student.setPassword("1");
+//        classes.setId(503);
+//        student.setClasses(classes);
+//        System.out.println(courseTimeTableService.convertToText(courseTimeTableService.getDetailsForCurrentDay(student)));
     }
 
     @RequestMapping("/testcttweek")

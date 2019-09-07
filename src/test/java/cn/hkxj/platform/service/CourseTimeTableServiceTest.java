@@ -1,6 +1,7 @@
 package cn.hkxj.platform.service;
 
 import cn.hkxj.platform.PlatformApplication;
+import cn.hkxj.platform.pojo.Classes;
 import cn.hkxj.platform.pojo.SchoolTime;
 import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.spider.newmodel.coursetimetable.UrpCourseTimeTableForSpider;
@@ -23,18 +24,19 @@ import javax.annotation.Resource;
 public class CourseTimeTableServiceTest {
 
     @Resource
-    private NewUrpSpiderService newUrpSpiderService;
-
-    @Resource
     private CourseTimeTableService courseTimeTableService;
 
     @Test
     public void test(){
         Student student = new Student();
-        student.setAccount(2016024170);
-        student.setPassword("1");
+        Classes classes = new Classes();
+        classes.setId(317);
+        student.setAccount(2016024186);
+        student.setPassword("12345");
+        student.setClasses(classes);
         SchoolTime schoolTime = DateUtils.getCurrentSchoolTime();
-        UrpCourseTimeTableForSpider spiderResult = newUrpSpiderService.getUrpCourseTimeTable(student);
+//        UrpCourseTimeTableForSpider spiderResult = newUrpSpiderService.getUrpCourseTimeTable(student);
+        System.out.println(courseTimeTableService.getDetailsForCurrentDay(student));
     }
 
 }

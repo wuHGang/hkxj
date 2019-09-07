@@ -5,10 +5,10 @@ import cn.hkxj.platform.pojo.Classes;
 import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.spider.NewUrpSpider;
 import cn.hkxj.platform.spider.model.UrpStudentInfo;
-import cn.hkxj.platform.spider.newmodel.grade.CurrentGrade;
 import cn.hkxj.platform.spider.newmodel.course.UrpCourseForSpider;
 import cn.hkxj.platform.spider.newmodel.coursetimetable.UrpCourseTimeTableForSpider;
 import cn.hkxj.platform.spider.newmodel.examtime.UrpExamTime;
+import cn.hkxj.platform.spider.newmodel.grade.CurrentGrade;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
@@ -46,6 +46,7 @@ public class NewUrpSpiderService {
         NewUrpSpider spider = new NewUrpSpider(account, password);
     }
 
+    @Retryable(value = UrpException.class, maxAttempts = 3)
     public UrpCourseTimeTableForSpider getUrpCourseTimeTable(Student student){
         NewUrpSpider spider = new NewUrpSpider(student.getAccount().toString(), student.getPassword());
         return spider.getUrpCourseTimeTable();

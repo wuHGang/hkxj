@@ -1,33 +1,22 @@
 package cn.hkxj.platform.controller;
 
 
-import cn.hkxj.platform.config.wechat.WechatMpConfiguration;
-import cn.hkxj.platform.config.wechat.WechatMpPlusProperties;
 import cn.hkxj.platform.exceptions.OpenidExistException;
 import cn.hkxj.platform.exceptions.PasswordUncorrectException;
 import cn.hkxj.platform.exceptions.UrpVerifyCodeException;
-import cn.hkxj.platform.pojo.constant.ErrorCode;
+import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.pojo.WebResponse;
-import cn.hkxj.platform.pojo.timetable.CourseTimeTable;
-import cn.hkxj.platform.service.CourseService;
-import cn.hkxj.platform.service.NewUrpSpiderService;
+import cn.hkxj.platform.pojo.constant.ErrorCode;
 import cn.hkxj.platform.service.wechat.StudentBindService;
-import cn.hkxj.platform.spider.model.VerifyCode;
 import lombok.extern.slf4j.Slf4j;
-import me.chanjar.weixin.common.error.WxErrorException;
-import me.chanjar.weixin.mp.api.WxMpService;
-import me.chanjar.weixin.mp.bean.kefu.WxMpKefuMessage;
-import org.slf4j.MDC;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
-import javax.annotation.Resources;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.IOException;
-import java.util.List;
 import java.util.Objects;
 
 @Slf4j
@@ -63,12 +52,13 @@ public class UserBindingController {
 
 		String openid = (String) httpSession.getAttribute("openid");
 		String appid = (String) httpSession.getAttribute("appid");
+		Student student;
 		try {
 			if (Objects.isNull(openid)){
-				studentBindService.studentLogin(account, password);
+				student = studentBindService.studentLogin(account, password);
 			}
 			else {
-				studentBindService.studentBind(openid, account, password, appid);
+				student = studentBindService.studentBind(openid, account, password, appid);
 			}
 			httpSession.setAttribute("account", account);
 		}catch (UrpVerifyCodeException e){
@@ -84,7 +74,7 @@ public class UserBindingController {
 		}
 
 		log.info("student bind success account:{} password:{} openid{}", account, password, openid);
-		return WebResponse.success();
+		return WebResponse.success(student);
 	}
 
 

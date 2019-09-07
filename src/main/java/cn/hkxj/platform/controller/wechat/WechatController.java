@@ -62,9 +62,9 @@ public class WechatController {
 	                   @RequestParam(name = "msg_signature",
 			                   required = false) String msgSignature) {
 		log.info(
-				"\n接收微信请求：[signature=[{}], encType=[{}], msgSignature=[{}],"
+				"\n接收微信请求：appid:{} [signature=[{}], encType=[{}], msgSignature=[{}],"
 						+ " timestamp=[{}], nonce=[{}], requestBody=[\n{}\n] ",
-				signature, encType, msgSignature, timestamp, nonce, requestBody);
+				appid, signature, encType, msgSignature, timestamp, nonce, requestBody);
 		final WxMpService wxService = WechatMpConfiguration.getMpServices().get(appid);
 
 		if (!wxService.checkSignature(timestamp, nonce, signature)) {

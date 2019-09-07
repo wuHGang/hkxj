@@ -7,6 +7,7 @@ import cn.hkxj.platform.config.wechat.WechatTemplateProperties;
 import cn.hkxj.platform.pojo.CourseTimeTableDetail;
 import cn.hkxj.platform.pojo.ScheduleTask;
 import cn.hkxj.platform.pojo.Student;
+import cn.hkxj.platform.pojo.constant.MiniProgram;
 import cn.hkxj.platform.pojo.constant.SubscribeScene;
 import cn.hkxj.platform.pojo.timetable.CourseTimeTable;
 import cn.hkxj.platform.pojo.wechat.Openid;
@@ -17,10 +18,12 @@ import cn.hkxj.platform.service.ScheduleTaskService;
 import cn.hkxj.platform.utils.OneOffSubcriptionUtil;
 import cn.hkxj.platform.utils.SchoolTimeUtil;
 import lombok.extern.slf4j.Slf4j;
+import me.chanjar.weixin.common.api.WxConsts;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.common.session.WxSessionManager;
 import me.chanjar.weixin.mp.api.WxMpMessageHandler;
 import me.chanjar.weixin.mp.api.WxMpService;
+import me.chanjar.weixin.mp.bean.kefu.WxMpKefuMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
 import me.chanjar.weixin.mp.bean.template.WxMpTemplateData;
@@ -66,21 +69,29 @@ public class CourseMessageHandler implements WxMpMessageHandler {
             //这里返回null，是因为plus发送模板消息后，不需要发送文本消息。
             return null;
         }
-        //pro的话，直接返回一个包含一次性订阅连接的文本消息
-        String hyperlink = OneOffSubcriptionUtil.getHyperlinks("点击领取今日课表", "1005", wxMpService);
-        return new TextBuilder().build(hyperlink, wxMpXmlMessage, wxMpService);
+        String replyContent = getReplyContent(wxMpXmlMessage,wxMpService);
+        WxMpKefuMessage textMessage = buildTextKefuMessage(wxMpXmlMessage.getFromUser(), WxConsts.KefuMsgType.TEXT, replyContent);
+        WxMpKefuMessage miniProgramMessage = buildKefuMessageWithMiniProgram(wxMpXmlMessage.getFromUser(), WxConsts.KefuMsgType.MINIPROGRAMPAGE);
+        sendKefuMessage(wxMpService, textMessage);
+        sendKefuMessage(wxMpService, miniProgramMessage);
+        return null;
     }
 
     private boolean isPlus(WxMpService wxMpService){
         return Objects.equals(wechatMpPlusProperties.getAppId(), wxMpService.getWxMpConfigStorage().getAppId());
     }
 
+    private String getReplyContent(WxMpXmlMessage wxMpXmlMessage, WxMpService wxMpService){
+        Openid openid = openIdService.getOpenid(wxMpXmlMessage.getFromUser(), wxMpService.getWxMpConfigStorage().getAppId()).get(0);
+        Student student = openIdService.getStudentByOpenId(openid.getOpenid(), wxMpService.getWxMpConfigStorage().getAppId());
+        List<CourseTimeTableDetail> details = courseTimeTableService.getDetailsForCurrentDay(student);
+        return courseTimeTableService.convertToText(details);
+    }
+
     //plus的处理逻辑
     private void plusProcessing(WxMpXmlMessage wxMpXmlMessage, WxMpService wxMpService){
-        Openid openid = openIdService.getOpenid(wxMpXmlMessage.getFromUser(), wxMpService.getWxMpConfigStorage().getAppId()).get(0);
-        Student student = openIdService.getStudentByOpenId(openid.getOpenid(), wechatMpPlusProperties.getAppId());
-        List<CourseTimeTableDetail> details = courseTimeTableService.getDetailsForCurrentDay(student);
-        List<WxMpTemplateData> templateData = templateBuilder.assemblyTemplateContentForCourse(courseTimeTableService.convertToText(details));
+        String replyContent = getReplyContent(wxMpXmlMessage, wxMpService);
+        List<WxMpTemplateData> templateData = templateBuilder.assemblyTemplateContentForCourse(replyContent);
         WxMpTemplateMessage templateMessage =
                 templateBuilder.buildWithNoMiniProgram(wxMpXmlMessage.getFromUser(), templateData,
                         wechatTemplateProperties.getPlusCourseTemplateId(), TEMPLATE_REDIRECT_URL);
@@ -92,4 +103,31 @@ public class CourseMessageHandler implements WxMpMessageHandler {
 
     }
 
+    private WxMpKefuMessage buildKefuMessageWithMiniProgram(String openid, String msgType){
+        WxMpKefuMessage wxMpKefuMessage = new WxMpKefuMessage();
+        wxMpKefuMessage.setMsgType(msgType);
+        wxMpKefuMessage.setToUser(openid);
+        wxMpKefuMessage.setMiniProgramAppId(MiniProgram.APPID.getValue());
+        wxMpKefuMessage.setMiniProgramPagePath(MiniProgram.INDEX.getValue());
+        wxMpKefuMessage.setTitle("小程序");
+        wxMpKefuMessage.setThumbMediaId("qcf_h2hm7P1RL81csrh8ML3i-9lmYJAP3ihNZbOzEks");
+        return wxMpKefuMessage;
+    }
+
+    private WxMpKefuMessage buildTextKefuMessage(String openid, String msgType, String content){
+        WxMpKefuMessage wxMpKefuMessage = new WxMpKefuMessage();
+        wxMpKefuMessage.setTitle("今日课表");
+        wxMpKefuMessage.setMsgType(msgType);
+        wxMpKefuMessage.setToUser(openid);
+        wxMpKefuMessage.setContent(content);
+        return wxMpKefuMessage;
+    }
+
+    private void sendKefuMessage(WxMpService wxMpService, WxMpKefuMessage wxMpKefuMessage){
+        try {
+            wxMpService.getKefuService().sendKefuMessage(wxMpKefuMessage);
+        } catch (WxErrorException e) {
+            log.info("send kefu message to {} fail {}", wxMpKefuMessage.getToUser(), e.getMessage());
+        }
+    }
 }
