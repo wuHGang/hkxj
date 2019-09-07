@@ -34,6 +34,18 @@ public class StudentDao {
         studentMapper.updateByExampleSelective(student, studentExample);
     }
 
+    public void updatePasswordUnCorrect(Integer account){
+        Student student = new Student();
+        student.setAccount(account);
+        student.setIsCorrect(false);
+
+
+        StudentExample studentExample = new StudentExample();
+        studentExample.createCriteria()
+                .andAccountEqualTo(account);
+        studentMapper.updateByExampleSelective(student, studentExample);
+    }
+
     public List<Student> selectStudentByClassId(int classId){
         StudentExample studentExample = new StudentExample();
         Classes classes = new Classes();

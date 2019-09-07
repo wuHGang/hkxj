@@ -75,6 +75,11 @@ public class CourseTimeTableDetailDao {
     }
 
     public boolean ifExistCourseTimeTableDetail(CourseTimeTableDetail detail){
+
+        return selectByDetail(detail).size() == 1;
+    }
+
+    public List<CourseTimeTableDetail> selectByDetail(CourseTimeTableDetail detail){
         CourseTimeTableDetailExample example = new CourseTimeTableDetailExample();
         Term term = detail.getTermForCourseTimeTableDetail();
         example.createCriteria()
@@ -84,7 +89,7 @@ public class CourseTimeTableDetailDao {
                 .andRoomNameEqualTo(detail.getRoomName())
                 .andDayEqualTo(detail.getDay())
                 .andWeekEqualTo(detail.getWeek());
-        return courseTimeTableDetailMapper.countByExample(example) == 1;
+        return courseTimeTableDetailMapper.selectByExample(example);
     }
 
     public CourseTimeTableDetail getCourseTimeTableDetail(CourseTimeTableDetail detail){

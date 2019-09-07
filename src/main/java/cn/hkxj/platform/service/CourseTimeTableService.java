@@ -11,6 +11,7 @@ import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
@@ -266,7 +267,8 @@ public class CourseTimeTableService {
         }
     }
 
-    private void saveCourseTimeTableDetailsToDb(UrpCourseTimeTable urpCourseTimeTable, CourseTimeTableBasicInfo basicInfo, Student student) {
+    @Transactional(rollbackFor = Exception.class)
+    public void saveCourseTimeTableDetailsToDb(UrpCourseTimeTable urpCourseTimeTable, CourseTimeTableBasicInfo basicInfo, Student student) {
         if (CollectionUtils.isEmpty(urpCourseTimeTable.getTimeAndPlaceList())) {
             return;
         }
@@ -274,40 +276,51 @@ public class CourseTimeTableService {
             TimeAndPlace timeAndPlace = urpCourseTimeTable.getTimeAndPlaceList().get(i);
             //TimeAndPlace保存了上课的地点和时间，因为周数有时候存在多个的情况，如1-5, 8-16周等情况
             //所以TimeAndPlace转换的CourseTimeTableDetail返回的是一个集合
-            List<CourseTimeTableDetail> details =
+            List<CourseTimeTableDetail> detailList =
                     timeAndPlace.convertToCourseTimeTableDetail(urpCourseTimeTable.getCourseRelativeInfo(), urpCourseTimeTable.getAttendClassTeacher());
-            //把已经存在的课程详情过滤掉，将剩下的课程详情入库
-            List<CourseTimeTableDetail> needInsertDetails = details.stream()
-                    .filter(detail -> !courseTimeTableDetailDao.ifExistCourseTimeTableDetail(detail))
-                    .collect(Collectors.toList());
-            List<Integer> needInsertIds = details.stream().filter(detail -> !needInsertDetails.contains(detail))
-                    .map(detail -> courseTimeTableDetailDao.getCourseTimeTableDetail(detail))
-                    .map(CourseTimeTableDetail::getId)
-                    .collect(Collectors.toList());
-            if (!CollectionUtils.isEmpty(needInsertDetails)) {
-                saveToDbAsync(needInsertDetails, timeAndPlace, student, basicInfo);
+
+
+            List<Integer> idList = Lists.newArrayList();
+            List<CourseTimeTableDetail> needInsertDetailList = Lists.newArrayList();
+
+            for (CourseTimeTableDetail detail : detailList) {
+                List<CourseTimeTableDetail> dbResult = courseTimeTableDetailDao.selectByDetail(detail);
+                if(dbResult.size() == 0){
+                    needInsertDetailList.add(detail);   
+                }
+                else if(dbResult.size() == 1){
+                    idList.add(dbResult.get(0).getId());
+                }else {
+                    log.error("数据库重复课程信息 {}", detail.toString());
+                }
             }
-            if (!CollectionUtils.isEmpty(needInsertIds)) {
-                saveToDbAsync(needInsertIds, student);
+            
+            if (!CollectionUtils.isEmpty(needInsertDetailList)) {
+                idList.addAll(saveTimeTableDetail(needInsertDetailList, timeAndPlace, student, basicInfo));
+            }
+            
+            //关联班级和课程详情
+            if (!CollectionUtils.isEmpty(idList)) {
+                saveClassAndDetailRelative(idList, student);
             }
         }
     }
 
-    private void saveToDbAsync(List<Integer> needInsertIds, Student student) {
+    private void saveClassAndDetailRelative(List<Integer> needInsertIds, Student student) {
         for (Integer needInsertId : needInsertIds) {
             dbExecutorPool.execute(() -> courseTimeTableDetailDao.insertClassesCourseTimeTable(student.getClasses().getId(), needInsertId));
         }
     }
 
-    private void saveToDbAsync(List<CourseTimeTableDetail> needInsertDetails, TimeAndPlace timeAndPlace, Student student, CourseTimeTableBasicInfo basicInfo) {
+    private List<Integer> saveTimeTableDetail(List<CourseTimeTableDetail> needInsertDetails, TimeAndPlace timeAndPlace, Student student, CourseTimeTableBasicInfo basicInfo) {
         needInsertDetails.stream().peek(detail -> detail.setCourseTimeTableBasicInfoId(basicInfo.getId()))
                 .forEach(detail -> {
                     courseTimeTableDetailDao.insertCourseTimeTableDetail(detail);
                     Room parseResult = roomService.parseToRoomForSpider(timeAndPlace.getClassroomName(), timeAndPlace.getTeachingBuildingName());
                     roomDao.saveOrGetRoomFromDb(parseResult);
                 });
-        List<Integer> result = needInsertDetails.stream().map(CourseTimeTableDetail::getId).collect(Collectors.toList());
-        result.forEach(detailId -> courseTimeTableDetailDao.insertClassesCourseTimeTable(student.getClasses().getId(), detailId));
+        return needInsertDetails.stream().map(CourseTimeTableDetail::getId).collect(Collectors.toList());
+        
     }
 
     private CourseTimeTableBasicInfo getCourseTimeTableBasicInfo(UrpCourseTimeTable urpCourseTimeTable) {

@@ -1,10 +1,10 @@
 package cn.hkxj.platform.controller;
 
 import cn.hkxj.platform.config.wechat.WechatMpConfiguration;
-import cn.hkxj.platform.config.wechat.WechatMpPlusProperties;
 import cn.hkxj.platform.config.wechat.WechatMpProProperties;
 import cn.hkxj.platform.dao.ClassDao;
 import cn.hkxj.platform.dao.StudentDao;
+import cn.hkxj.platform.exceptions.PasswordUncorrectException;
 import cn.hkxj.platform.pojo.Classes;
 import cn.hkxj.platform.pojo.CourseTimeTableDetail;
 import cn.hkxj.platform.pojo.Student;
@@ -48,12 +48,15 @@ public class TestController {
             if(classes.getYear() > 15){
                 for (Student student : studentDao.selectStudentByClassId(classes.getId())) {
                     try {
-                        log.info("class{} student {} start",classes.toString(), student.toString());
+                        log.info("class{} student {} start",classes.getId(), student.getName());
                         courseTimeTableService.getAllCourseTimeTableDetails(student);
-                        log.info("class{} student {} success",classes.toString(), student.toString());
+                        log.info("class{} student {} success",classes.getId(), student.getName());
                         break;
-                    }catch (Exception e){
-                        log.error("class{} student {} success",classes.toString(), student.toString(), e);
+                    }catch (PasswordUncorrectException e){
+                        studentDao.updatePasswordUnCorrect(student.getAccount());
+                        log.error("class{} student {} password not correct", classes.getId(), student.getName());
+                    } catch (Exception e){
+                        log.error("class{} student {} fail",classes.getId(), student.getName(), e);
                     }
 
                 }
