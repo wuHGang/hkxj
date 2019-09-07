@@ -15,10 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
@@ -279,11 +276,16 @@ public class CourseTimeTableService {
             List<CourseTimeTableDetail> detailList =
                     timeAndPlace.convertToCourseTimeTableDetail(urpCourseTimeTable.getCourseRelativeInfo(), urpCourseTimeTable.getAttendClassTeacher());
 
+            Set<CourseTimeTableDetail> detailHashSet = new HashSet<>(detailList);
+
+            if(detailHashSet.size() != detailList.size()){
+                log.info("有重复数据 {}", student.getClasses());
+            }
 
             List<Integer> idList = Lists.newArrayList();
             List<CourseTimeTableDetail> needInsertDetailList = Lists.newArrayList();
 
-            for (CourseTimeTableDetail detail : detailList) {
+            for (CourseTimeTableDetail detail : detailHashSet) {
                 List<CourseTimeTableDetail> dbResult = courseTimeTableDetailDao.selectByDetail(detail);
                 if(dbResult.size() == 0){
                     needInsertDetailList.add(detail);   
