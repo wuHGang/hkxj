@@ -11,7 +11,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
-@PropertySource(value = "classpath:application-prod.properties", ignoreResourceNotFound = true)
+@PropertySource(value = "classpath:application-local.properties", ignoreResourceNotFound = true)
 @EnableScheduling
 @EnableRetry
 @SpringBootApplication

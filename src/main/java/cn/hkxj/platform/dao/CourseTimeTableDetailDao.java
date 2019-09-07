@@ -87,13 +87,16 @@ public class CourseTimeTableDetailDao {
         return courseTimeTableDetailMapper.countByExample(example) == 1;
     }
 
-    public CourseTimeTableDetail getCourseTimeTableDetail(String courseId, String roomName, Term term){
+    public CourseTimeTableDetail getCourseTimeTableDetail(CourseTimeTableDetail detail){
         CourseTimeTableDetailExample example = new CourseTimeTableDetailExample();
+        Term term = detail.getTermForCourseTimeTableDetail();
         example.createCriteria()
                 .andTermOrderEqualTo(term.getOrder())
                 .andTermYearEqualTo(term.getTermYear())
-                .andCourseIdEqualTo(courseId)
-                .andRoomNameEqualTo(roomName);
+                .andCourseIdEqualTo(detail.getCourseId())
+                .andRoomNameEqualTo(detail.getRoomName())
+                .andDayEqualTo(detail.getDay())
+                .andWeekEqualTo(detail.getWeek());
         return courseTimeTableDetailMapper.selectByExample(example).stream().findFirst().orElse(null);
     }
 
@@ -114,8 +117,7 @@ public class CourseTimeTableDetailDao {
         if(!ifExistCourseTimeTableDetail(convertFromSpider)){
             insertCourseTimeTableDetail(convertFromSpider);
         } else {
-            convertFromSpider = getCourseTimeTableDetail(convertFromSpider.getCourseId(), convertFromSpider.getRoomName(),
-                    convertFromSpider.getTermForCourseTimeTableDetail());
+            convertFromSpider = getCourseTimeTableDetail(convertFromSpider);
         }
         return convertFromSpider;
     }

@@ -110,7 +110,7 @@ public class CourseMessageHandler implements WxMpMessageHandler {
         wxMpKefuMessage.setMiniProgramAppId(MiniProgram.APPID.getValue());
         wxMpKefuMessage.setMiniProgramPagePath(MiniProgram.INDEX.getValue());
         wxMpKefuMessage.setTitle("小程序");
-//        wxMpKefuMessage.setThumbMediaId();
+        wxMpKefuMessage.setThumbMediaId("qcf_h2hm7P1RL81csrh8ML3i-9lmYJAP3ihNZbOzEks");
         return wxMpKefuMessage;
     }
 

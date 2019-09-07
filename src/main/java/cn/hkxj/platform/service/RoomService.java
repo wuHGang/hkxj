@@ -128,7 +128,7 @@ public class RoomService {
 		int[] floorAndNumber = getFloorAndNumber(classroomName.substring(1, classroomName.length()), 1);
 		room.setName(classroomName);
 		room.setArea(Building.SCIENCE_HIGH);
-		room.setDirection(Direction.getDirectionObjectByDirection(second.toString()));
+		room.setDirection(Direction.CORRECT);
 		room.setIsAllow(NOT_ALLOW);
 		room.setFloor(floorAndNumber[0]);
 		room.setNumber(floorAndNumber[1]);
