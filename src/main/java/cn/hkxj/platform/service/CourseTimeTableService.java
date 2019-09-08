@@ -293,12 +293,16 @@ public class CourseTimeTableService {
                 else if(dbResult.size() == 1){
                     idList.add(dbResult.get(0).getId());
                 }else {
-                    log.error("数据库重复课程信息 {}", detail.toString());
+                    List<Integer> list = dbResult.stream().map(CourseTimeTableDetail::getId).collect(Collectors.toList());
+
+                    log.error("数据库重复课程信息 size:{}  id:{}", dbResult.size(), list.toString());
                 }
             }
             
             if (!CollectionUtils.isEmpty(needInsertDetailList)) {
-                idList.addAll(saveTimeTableDetail(needInsertDetailList, timeAndPlace, basicInfo));
+                List<Integer> list = saveTimeTableDetail(needInsertDetailList, timeAndPlace, basicInfo);
+                log.error("class {} 插入detail size:{}  id:{}", student.getClasses().getId(), list.size(), list.toString());
+                idList.addAll(list);
             }
             
             //关联班级和课程详情
