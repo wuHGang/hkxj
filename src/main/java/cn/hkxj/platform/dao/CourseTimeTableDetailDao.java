@@ -87,6 +87,8 @@ public class CourseTimeTableDetailDao {
                 .andTermYearEqualTo(term.getTermYear())
                 .andCourseIdEqualTo(detail.getCourseId())
                 .andRoomNameEqualTo(detail.getRoomName())
+                .andStartWeekEqualTo(detail.getStartWeek())
+                .andEndWeekEqualTo(detail.getEndWeek())
                 .andDayEqualTo(detail.getDay())
                 .andWeekEqualTo(detail.getWeek());
         return courseTimeTableDetailMapper.selectByExample(example);
