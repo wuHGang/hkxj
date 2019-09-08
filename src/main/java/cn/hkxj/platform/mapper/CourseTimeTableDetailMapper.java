@@ -35,5 +35,5 @@ public interface CourseTimeTableDetailMapper {
 
     List<Integer> getCourseTimeTableDetailIdsByClassId(@Param("classesId") int classesId);
 
-    void insertClassesCourseTimeTable(@Param("classesId") int classesId, @Param("courseTimeTableDetailId") int courseTimeTableDetailId);
+    void insertClassesCourseTimeTableBatch(@Param("ids") List<Integer> ids, @Param("classesId") int classesId);
 }

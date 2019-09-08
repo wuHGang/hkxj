@@ -22,8 +22,8 @@ public class CourseTimeTableDetailDao {
     @Resource
     private CourseTimeTableDetailMapper courseTimeTableDetailMapper;
 
-    public void insertClassesCourseTimeTable(int classesId, int courseTimeTableDetailId){
-        courseTimeTableDetailMapper.insertClassesCourseTimeTable(classesId, courseTimeTableDetailId);
+    public void insertClassesCourseTimeTableBatch(List<Integer> ids, int classesId){
+        courseTimeTableDetailMapper.insertClassesCourseTimeTableBatch(ids, classesId);
     }
 
     public void insertCourseTimeTableDetail(CourseTimeTableDetail detail){

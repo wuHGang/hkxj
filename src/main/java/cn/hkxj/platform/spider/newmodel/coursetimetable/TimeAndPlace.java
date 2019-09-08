@@ -154,6 +154,11 @@ public class TimeAndPlace {
     }
 
     private int[] parseNumber(String origin) {
+        //这是处理3，6-12周这种情况
+        if (CharUtils.isAsciiNumeric(origin.charAt(0))){
+            int result = Integer.parseInt(origin);
+            return new int[]{result, result};
+        }
         String[] strs = origin.split("-");
         if(strs.length == 1){
             for(int i = 0, length = strs[0].length(); i < length; i++){

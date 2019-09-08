@@ -439,7 +439,10 @@
   <select id="getCourseTimeTableDetailIdsByClassId" parameterType="int" resultType="int">
     select course_time_table_id from class_course_time_table where classes_id = #{classesId}
   </select>
-  <insert id="insertClassesCourseTimeTable" parameterType="int">
-    insert into class_course_time_table(classes_id, course_time_table_id) values(#{classesId}, #{courseTimeTableDetailId})
+  <insert id="insertClassesCourseTimeTableBatch">
+    insert into class_course_time_table(classes_id, course_time_table_id) values
+    <foreach collection="ids" separator="," close=")" open="(" item="id">
+      #{classesId}, #{id}
+    </foreach>
   </insert>
 </mapper>

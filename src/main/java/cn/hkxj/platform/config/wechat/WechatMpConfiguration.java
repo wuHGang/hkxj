@@ -92,7 +92,8 @@ public class WechatMpConfiguration {
 
     private WxMpMessageRouter newRouter(WxMpService wxMpService) {
         final WxMessageRouter newRouter = new WxMessageRouter(wxMpService);
-        newRouter.rule()
+        newRouter
+                .rule()
                 .async(false)
                 .rContent("(课表|课程|今日课表)")
                 .interceptor(wechatOpenIdInterceptor)

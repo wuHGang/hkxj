@@ -279,7 +279,6 @@ public class CourseTimeTableService {
             List<CourseTimeTableDetail> detailList =
                     timeAndPlace.convertToCourseTimeTableDetail(urpCourseTimeTable.getCourseRelativeInfo(), urpCourseTimeTable.getAttendClassTeacher());
 
-
             List<Integer> idList = Lists.newArrayList();
             List<CourseTimeTableDetail> needInsertDetailList = Lists.newArrayList();
 
@@ -307,9 +306,7 @@ public class CourseTimeTableService {
     }
 
     private void saveClassAndDetailRelative(List<Integer> needInsertIds, Student student) {
-        for (Integer needInsertId : needInsertIds) {
-             courseTimeTableDetailDao.insertClassesCourseTimeTable(student.getClasses().getId(), needInsertId);
-        }
+        courseTimeTableDetailDao.insertClassesCourseTimeTableBatch(needInsertIds, student.getClasses().getId());
     }
 
     private List<Integer> saveTimeTableDetail(List<CourseTimeTableDetail> needInsertDetails, TimeAndPlace timeAndPlace, Student student, CourseTimeTableBasicInfo basicInfo) {
