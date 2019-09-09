@@ -258,7 +258,7 @@ public class CourseTimeTableService {
         return result;
     }
 
-    private void saveCourseTimeTableToDb(UrpCourseTimeTableForSpider spiderResult, Student student) throws StoreToDataBaseException {
+    private void saveCourseTimeTableToDb(UrpCourseTimeTableForSpider spiderResult, Student student) {
         for (Map<String, UrpCourseTimeTable> map : spiderResult.getDetails()) {
             for (Map.Entry<String, UrpCourseTimeTable> entry : map.entrySet()) {
                 UrpCourseTimeTable urpCourseTimeTable = entry.getValue();
@@ -273,7 +273,7 @@ public class CourseTimeTableService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void saveCourseTimeTableDetailsToDb(UrpCourseTimeTable urpCourseTimeTable, CourseTimeTableBasicInfo basicInfo, Student student) throws StoreToDataBaseException {
+    public void saveCourseTimeTableDetailsToDb(UrpCourseTimeTable urpCourseTimeTable, CourseTimeTableBasicInfo basicInfo, Student student) {
         if (CollectionUtils.isEmpty(urpCourseTimeTable.getTimeAndPlaceList())) {
             return;
         }
@@ -313,7 +313,6 @@ public class CourseTimeTableService {
                 } catch (RoomParseException e) {
                     throw new StoreToDataBaseException(e);
                 }
-                log.info("class {} 插入detail size:{}  id:{}", student.getClasses().getId(), list.size(), list.toString());
                 idList.addAll(list);
             }
             
