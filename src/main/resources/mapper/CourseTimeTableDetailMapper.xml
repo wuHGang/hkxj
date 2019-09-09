@@ -441,8 +441,8 @@
   </select>
   <insert id="insertClassesCourseTimeTableBatch">
     insert into class_course_time_table(classes_id, course_time_table_id) values
-    <foreach collection="ids" separator="," close=")" open="(" item="id">
-      #{classesId}, #{id}
+    <foreach collection="ids" separator="," item="id">
+      (#{classesId}, #{id})
     </foreach>
   </insert>
 </mapper>

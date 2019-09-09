@@ -1,5 +1,6 @@
 package cn.hkxj.platform.service;
 
+import cn.hkxj.platform.exceptions.RoomParseException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,10 +19,7 @@ public class RoomServiceTest {
 	private RoomService roomService;
 
 	@Test
-	public void getTodayRoomTimeTable() {
-//		for (RoomTimeTable table : roomService.getTodayRoomTimeTable(Building.SCIENCE, 1)) {
-//			System.out.println(table.toText());
-//		}
-
+	public void getTodayRoomTimeTable() throws RoomParseException {
+		System.out.println(roomService.parseToRoomForSpider("W0507(云机房)", "主楼（西楼）"));
 	}
 }

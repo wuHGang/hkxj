@@ -48,15 +48,15 @@ public class TestController {
             if(classes.getYear() > 15){
                 for (Student student : studentDao.selectStudentByClassId(classes.getId())) {
                     try {
-                        log.info("class{} student {} start",classes.getId(), student.getName());
+                        log.info("class {} student {} start",classes.getId(), student.getName());
                         courseTimeTableService.getAllCourseTimeTableDetails(student);
-                        log.info("class{} student {} success",classes.getId(), student.getName());
+                        log.info("class {} student {} success",classes.getId(), student.getName());
                         break;
                     }catch (PasswordUncorrectException e){
                         studentDao.updatePasswordUnCorrect(student.getAccount());
-                        log.error("class{} student {} password not correct", classes.getId(), student.getName());
+                        log.error("class {} student {} password not correct", classes.getId(), student.getName());
                     } catch (Exception e){
-                        log.error("class{} student {} fail",classes.getId(), student.getName(), e);
+                        log.error("class {} student {} fail",classes.getId(), student.getName(), e);
                     }
 
                 }
@@ -89,18 +89,13 @@ public class TestController {
 
     @RequestMapping("/testctt")
     public void testCourseTimeTable() throws WxErrorException {
-        WxMpService wxMpService = WechatMpConfiguration.getMpServices().get(wechatMpProProperties.getAppId());
-//        wxMpService.getMaterialService().materialFileUpload()
-        WxMpMaterialFileBatchGetResult wxMpMaterialFileBatchGetResult =
-                wxMpService.getMaterialService().materialFileBatchGet(WxConsts.MaterialType.IMAGE, 0, 20);
-        System.out.println(wxMpMaterialFileBatchGetResult);
-//        Student student = new Student();
-//        Classes classes = new Classes();
-//        student.setAccount(2017026003);
-//        student.setPassword("1");
-//        classes.setId(503);
-//        student.setClasses(classes);
-//        System.out.println(courseTimeTableService.convertToText(courseTimeTableService.getDetailsForCurrentDay(student)));
+        Student student = new Student();
+        Classes classes = new Classes();
+        student.setAccount(2017021793);
+        student.setPassword("1");
+        classes.setId(92);
+        student.setClasses(classes);
+        System.out.println(courseTimeTableService.convertToText(courseTimeTableService.getDetailsForCurrentDay(student)));
     }
 
     @RequestMapping("/testcttweek")

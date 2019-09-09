@@ -5,6 +5,7 @@ import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.pojo.UrpGradeAndUrpCourse;
 import cn.hkxj.platform.service.NewGradeSearchService;
 import cn.hkxj.platform.service.OpenIdService;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.api.WxConsts;
@@ -32,9 +33,10 @@ public class CustomerMessageService {
     @Resource
     private OpenIdService openIdService;
 
+    private static ThreadFactory gradeUpdateThreadFactory = new ThreadFactoryBuilder().setNameFormat("grade-notice-%d").build();
     private static ExecutorService gradeUpdateNotice = new ThreadPoolExecutor(1, 1,
             0L, TimeUnit.MILLISECONDS,
-            new LinkedBlockingQueue<Runnable>());
+            new LinkedBlockingQueue<Runnable>(), gradeUpdateThreadFactory);
 
     private WxMpXmlMessage wxMpXmlMessage;
     private WxMpService wxMpService;

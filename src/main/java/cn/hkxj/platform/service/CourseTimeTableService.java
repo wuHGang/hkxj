@@ -1,6 +1,8 @@
 package cn.hkxj.platform.service;
 
 import cn.hkxj.platform.dao.*;
+import cn.hkxj.platform.exceptions.RoomParseException;
+import cn.hkxj.platform.exceptions.StoreToDataBaseException;
 import cn.hkxj.platform.pojo.*;
 import cn.hkxj.platform.pojo.dto.CourseTimeTableDetailDto;
 import cn.hkxj.platform.spider.newmodel.coursetimetable.TimeAndPlace;
@@ -15,10 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
@@ -33,13 +32,9 @@ public class CourseTimeTableService {
     private static final String NO_COURSE_TEXT = "今天没有课呐，可以出去浪了~\n";
 
     private static ThreadFactory courseTimeTableThreadFactory = new ThreadFactoryBuilder().setNameFormat("courseTimeTable-pool").build();
-    private static ThreadFactory dbExecutorThreadFactory = new ThreadFactoryBuilder().setNameFormat("courseTimeTable-executor-pool-%d").build();
     private static ExecutorService saveDbPool = new ThreadPoolExecutor(1, 1,
             0L, TimeUnit.MILLISECONDS,
             new LinkedBlockingQueue<>(), courseTimeTableThreadFactory);
-    private static ExecutorService dbExecutorPool = new ThreadPoolExecutor(5, 5,
-            0L, TimeUnit.MILLISECONDS,
-            new LinkedBlockingQueue<>(), dbExecutorThreadFactory);
 
     @Resource
     private RoomService roomService;
@@ -117,8 +112,8 @@ public class CourseTimeTableService {
                 courseTimeTableDetailDao.getCourseTimeTableDetailForCurrentTerm(student.getClasses().getId(), schoolTime);
         if (CollectionUtils.isEmpty(dbResult) && isNeedSpiderHandling(student.getClasses().getId())) {
             UrpCourseTimeTableForSpider spiderResult = newUrpSpiderService.getUrpCourseTimeTable(student);
+            saveToDbAsync(spiderResult, student);
             dbResult = getCurrentTermDataFromSpider(spiderResult, schoolTime);
-            saveDbPool.execute(() -> saveCourseTimeTableToDb(spiderResult, student));
         }
         return dbResult;
     }
@@ -135,7 +130,7 @@ public class CourseTimeTableService {
                 courseTimeTableDetailDao.getCourseTimeTableDetailForCurrentWeek(student.getClasses().getId(), schoolTime);
         if (CollectionUtils.isEmpty(dbResult) && isNeedSpiderHandling(student.getClasses().getId())) {
             UrpCourseTimeTableForSpider spiderResult = newUrpSpiderService.getUrpCourseTimeTable(student);
-            saveDbPool.execute(() -> saveCourseTimeTableToDb(spiderResult, student));
+            saveToDbAsync(spiderResult, student);
             dbResult = getCurrentWeekDataFromSpider(spiderResult, schoolTime);
         }
         return dbResult;
@@ -154,8 +149,8 @@ public class CourseTimeTableService {
                 courseTimeTableDetailDao.getCourseTimeTableDetailForCurrentDay(student.getClasses().getId(), schoolTime);
         if (CollectionUtils.isEmpty(searchResult) && isNeedSpiderHandling(student.getClasses().getId())) {
             UrpCourseTimeTableForSpider spiderResult = newUrpSpiderService.getUrpCourseTimeTable(student);
+            saveToDbAsync(spiderResult, student);
             searchResult = getCurrentDayDataFromSpider(spiderResult, schoolTime);
-            saveDbPool.execute(() -> saveCourseTimeTableToDb(spiderResult, student));
         }
         return searchResult;
     }
@@ -188,6 +183,16 @@ public class CourseTimeTableService {
             }
         }
         return result;
+    }
+
+    private void saveToDbAsync(UrpCourseTimeTableForSpider spiderResult, Student student){
+        saveDbPool.execute(() -> {
+            try {
+                saveCourseTimeTableToDb(spiderResult, student);
+            } catch (StoreToDataBaseException e) {
+                log.error("coursetimetable save to database fail {}", e.getMessage());
+            }
+        });
     }
 
     /**
@@ -253,7 +258,7 @@ public class CourseTimeTableService {
         return result;
     }
 
-    private void saveCourseTimeTableToDb(UrpCourseTimeTableForSpider spiderResult, Student student) {
+    private void saveCourseTimeTableToDb(UrpCourseTimeTableForSpider spiderResult, Student student) throws StoreToDataBaseException {
         for (Map<String, UrpCourseTimeTable> map : spiderResult.getDetails()) {
             for (Map.Entry<String, UrpCourseTimeTable> entry : map.entrySet()) {
                 UrpCourseTimeTable urpCourseTimeTable = entry.getValue();
@@ -268,7 +273,7 @@ public class CourseTimeTableService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void saveCourseTimeTableDetailsToDb(UrpCourseTimeTable urpCourseTimeTable, CourseTimeTableBasicInfo basicInfo, Student student) {
+    public void saveCourseTimeTableDetailsToDb(UrpCourseTimeTable urpCourseTimeTable, CourseTimeTableBasicInfo basicInfo, Student student) throws StoreToDataBaseException {
         if (CollectionUtils.isEmpty(urpCourseTimeTable.getTimeAndPlaceList())) {
             return;
         }
@@ -279,10 +284,15 @@ public class CourseTimeTableService {
             List<CourseTimeTableDetail> detailList =
                     timeAndPlace.convertToCourseTimeTableDetail(urpCourseTimeTable.getCourseRelativeInfo(), urpCourseTimeTable.getAttendClassTeacher());
 
+            Set<CourseTimeTableDetail> detailHashSet = new HashSet<>(detailList);
+            if(detailHashSet.size() != detailList.size()){
+                log.info("有重复数据 {}", student.getClasses());
+            }
+
             List<Integer> idList = Lists.newArrayList();
             List<CourseTimeTableDetail> needInsertDetailList = Lists.newArrayList();
 
-            for (CourseTimeTableDetail detail : detailList) {
+            for (CourseTimeTableDetail detail : detailHashSet) {
                 List<CourseTimeTableDetail> dbResult = courseTimeTableDetailDao.selectByDetail(detail);
                 if(dbResult.size() == 0){
                     needInsertDetailList.add(detail);   
@@ -290,12 +300,21 @@ public class CourseTimeTableService {
                 else if(dbResult.size() == 1){
                     idList.add(dbResult.get(0).getId());
                 }else {
-                    log.error("数据库重复课程信息 {}", detail.toString());
+                    List<Integer> list = dbResult.stream().map(CourseTimeTableDetail::getId).collect(Collectors.toList());
+
+                    log.error("数据库重复课程信息 size:{}  id:{}", dbResult.size(), list.toString());
                 }
             }
             
             if (!CollectionUtils.isEmpty(needInsertDetailList)) {
-                idList.addAll(saveTimeTableDetail(needInsertDetailList, timeAndPlace, student, basicInfo));
+                List<Integer> list;
+                try {
+                    list = saveTimeTableDetail(needInsertDetailList, timeAndPlace, basicInfo);
+                } catch (RoomParseException e) {
+                    throw new StoreToDataBaseException(e);
+                }
+                log.info("class {} 插入detail size:{}  id:{}", student.getClasses().getId(), list.size(), list.toString());
+                idList.addAll(list);
             }
             
             //关联班级和课程详情
@@ -309,13 +328,13 @@ public class CourseTimeTableService {
         courseTimeTableDetailDao.insertClassesCourseTimeTableBatch(needInsertIds, student.getClasses().getId());
     }
 
-    private List<Integer> saveTimeTableDetail(List<CourseTimeTableDetail> needInsertDetails, TimeAndPlace timeAndPlace, Student student, CourseTimeTableBasicInfo basicInfo) {
-        needInsertDetails.stream().peek(detail -> detail.setCourseTimeTableBasicInfoId(basicInfo.getId()))
-                .forEach(detail -> {
-                    courseTimeTableDetailDao.insertCourseTimeTableDetail(detail);
-                    Room parseResult = roomService.parseToRoomForSpider(timeAndPlace.getClassroomName(), timeAndPlace.getTeachingBuildingName());
-                    roomDao.saveOrGetRoomFromDb(parseResult);
-                });
+    private List<Integer> saveTimeTableDetail(List<CourseTimeTableDetail> needInsertDetails, TimeAndPlace timeAndPlace, CourseTimeTableBasicInfo basicInfo) throws RoomParseException {
+        for (CourseTimeTableDetail detail : needInsertDetails) {
+            detail.setCourseTimeTableBasicInfoId(basicInfo.getId());
+            courseTimeTableDetailDao.insertCourseTimeTableDetail(detail);
+            Room parseResult = roomService.parseToRoomForSpider(timeAndPlace.getClassroomName(), timeAndPlace.getTeachingBuildingName());
+            roomDao.saveOrGetRoomFromDb(parseResult);
+        }
         return needInsertDetails.stream().map(CourseTimeTableDetail::getId).collect(Collectors.toList());
         
     }
