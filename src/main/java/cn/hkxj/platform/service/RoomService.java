@@ -112,7 +112,7 @@ public class RoomService {
 		if(CharUtils.isAsciiAlpha(second)){
 			return parseForScienceBuilding(classroomName, second);
 		} else {
-			return parseForScienceHigh(classroomName, second);
+			return parseForScienceHigh(classroomName);
 		}
 	}
 
@@ -128,9 +128,18 @@ public class RoomService {
 		return room;
 	}
 
-	private Room parseForScienceHigh(String classroomName, Character second){
+	private Room parseForScienceHigh(String classroomName){
 		Room room = new Room();
-		int[] floorAndNumber = getFloorAndNumber(classroomName.substring(1, classroomName.length()), 1);
+		int index = 0;
+		//从一开始 科0401
+		for(int i = 1, length = classroomName.length(); i < length; i++){
+			if(!CharUtils.isAsciiNumeric(classroomName.charAt(i))){
+				break;
+			}
+			index++;
+		}
+		index = index + 1;
+		int[] floorAndNumber = getFloorAndNumber(classroomName.substring(1, index), 1);
 		room.setName(classroomName);
 		room.setArea(Building.SCIENCE_HIGH);
 		room.setDirection(Direction.CORRECT);
@@ -142,6 +151,15 @@ public class RoomService {
 
 	private Room parseForMainBuilding(String classroomName){
 		Room room = new Room();
+		if(classroomName.startsWith("画室")){
+			room.setIsAllow(NOT_ALLOW);
+			room.setName(classroomName);
+			room.setArea(Building.MAIN);
+			room.setDirection(Direction.CORRECT);
+			room.setFloor(0);
+			room.setNumber(0);
+			return room;
+		}
 		String direction = CharUtils.isAsciiAlpha(classroomName.charAt(1)) ? classroomName.substring(0, 2) : classroomName.substring(0, 1);
 		int index = 0;
 		//从二开始的原因是，不过是E0401或者是EN0401，从二开始都是数字开头
