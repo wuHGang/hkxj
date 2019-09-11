@@ -2,7 +2,6 @@ package cn.hkxj.platform.service;
 
 import cn.hkxj.platform.dao.*;
 import cn.hkxj.platform.exceptions.RoomParseException;
-import cn.hkxj.platform.exceptions.StoreToDataBaseException;
 import cn.hkxj.platform.pojo.*;
 import cn.hkxj.platform.pojo.dto.CourseTimeTableDetailDto;
 import cn.hkxj.platform.spider.newmodel.coursetimetable.TimeAndPlace;
@@ -186,13 +185,7 @@ public class CourseTimeTableService {
     }
 
     private void saveToDbAsync(UrpCourseTimeTableForSpider spiderResult, Student student){
-        saveDbPool.execute(() -> {
-            try {
-                saveCourseTimeTableToDb(spiderResult, student);
-            } catch (StoreToDataBaseException e) {
-                log.error("coursetimetable save to database fail {}", e.getMessage());
-            }
-        });
+        saveDbPool.execute(() -> saveCourseTimeTableToDb(spiderResult, student));
     }
 
     /**
@@ -258,7 +251,7 @@ public class CourseTimeTableService {
         return result;
     }
 
-    private void saveCourseTimeTableToDb(UrpCourseTimeTableForSpider spiderResult, Student student) throws StoreToDataBaseException {
+    private void saveCourseTimeTableToDb(UrpCourseTimeTableForSpider spiderResult, Student student) {
         for (Map<String, UrpCourseTimeTable> map : spiderResult.getDetails()) {
             for (Map.Entry<String, UrpCourseTimeTable> entry : map.entrySet()) {
                 UrpCourseTimeTable urpCourseTimeTable = entry.getValue();
@@ -273,7 +266,7 @@ public class CourseTimeTableService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void saveCourseTimeTableDetailsToDb(UrpCourseTimeTable urpCourseTimeTable, CourseTimeTableBasicInfo basicInfo, Student student) throws StoreToDataBaseException {
+    public void saveCourseTimeTableDetailsToDb(UrpCourseTimeTable urpCourseTimeTable, CourseTimeTableBasicInfo basicInfo, Student student)  {
         if (CollectionUtils.isEmpty(urpCourseTimeTable.getTimeAndPlaceList())) {
             return;
         }
@@ -307,12 +300,7 @@ public class CourseTimeTableService {
             }
             
             if (!CollectionUtils.isEmpty(needInsertDetailList)) {
-                List<Integer> list;
-                try {
-                    list = saveTimeTableDetail(needInsertDetailList, timeAndPlace, basicInfo);
-                } catch (RoomParseException e) {
-                    throw new StoreToDataBaseException(e);
-                }
+                List<Integer> list = saveTimeTableDetail(needInsertDetailList, timeAndPlace, basicInfo);
                 log.info("class {} 插入detail size:{}  id:{}", student.getClasses().getId(), list.size(), list.toString());
                 idList.addAll(list);
             }

@@ -84,7 +84,7 @@ public class RoomService {
 
 	public Room parseToRoomForSpider(String classroomName, String buildingName) throws RoomParseException {
 		try {
-			if(buildingName.startsWith(Building.SCIENCE.getChinese())){
+			if("科大".equals(buildingName)){
                 return parseForScience(classroomName);
             }
 			//因为爬虫返回的主楼数据都是如主楼（西楼），所以使用startsWith

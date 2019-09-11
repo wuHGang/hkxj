@@ -22,19 +22,19 @@ import java.util.List;
 @ConfigurationProperties(prefix = "wechat.mp.plus")
 public class WechatMpPlusProperties {
 
-    @Value("${wechat.mp.plus.appid}")
+//    @Value("${wechat.mp.plus.appid}")
     private String appId;
 
-    @Value("${wechat.mp.plus.secret}")
+//    @Value("${wechat.mp.plus.secret}")
     private String secret;
 
-    @Value("${wechat.mp.plus.token}")
+//    @Value("${wechat.mp.plus.token}")
     private String token;
 
-    @Value("${wechat.mp.plus.aesKey}")
+//    @Value("${wechat.mp.plus.aesKey}")
     private String aesKey;
 
-    @Value("${wechat.mp.plus.templateId}")
+//    @Value("${wechat.mp.plus.templateId}")
     private String templateId;
 
     private WxMpInMemoryConfigStorage wxMpInMemoryConfigStorage;
