@@ -109,7 +109,7 @@ public class CourseTimeTableService {
         SchoolTime schoolTime = DateUtils.getCurrentSchoolTime();
         List<CourseTimeTableDetail> dbResult =
                 courseTimeTableDetailDao.getCourseTimeTableDetailForCurrentTerm(student.getClasses().getId(), schoolTime);
-        if (CollectionUtils.isEmpty(dbResult) && isNeedSpiderHandling(student.getClasses().getId())) {
+        if (CollectionUtils.isEmpty(dbResult)) {
             UrpCourseTimeTableForSpider spiderResult = newUrpSpiderService.getUrpCourseTimeTable(student);
             saveToDbAsync(spiderResult, student);
             dbResult = getCurrentTermDataFromSpider(spiderResult, schoolTime);
@@ -127,7 +127,7 @@ public class CourseTimeTableService {
         SchoolTime schoolTime = DateUtils.getCurrentSchoolTime();
         List<CourseTimeTableDetail> dbResult =
                 courseTimeTableDetailDao.getCourseTimeTableDetailForCurrentWeek(student.getClasses().getId(), schoolTime);
-        if (CollectionUtils.isEmpty(dbResult) && isNeedSpiderHandling(student.getClasses().getId())) {
+        if (CollectionUtils.isEmpty(dbResult)) {
             UrpCourseTimeTableForSpider spiderResult = newUrpSpiderService.getUrpCourseTimeTable(student);
             saveToDbAsync(spiderResult, student);
             dbResult = getCurrentWeekDataFromSpider(spiderResult, schoolTime);
@@ -146,7 +146,7 @@ public class CourseTimeTableService {
         SchoolTime schoolTime = DateUtils.getCurrentSchoolTime();
         List<CourseTimeTableDetail> searchResult =
                 courseTimeTableDetailDao.getCourseTimeTableDetailForCurrentDay(student.getClasses().getId(), schoolTime);
-        if (CollectionUtils.isEmpty(searchResult) && isNeedSpiderHandling(student.getClasses().getId())) {
+        if (CollectionUtils.isEmpty(searchResult)) {
             UrpCourseTimeTableForSpider spiderResult = newUrpSpiderService.getUrpCourseTimeTable(student);
             saveToDbAsync(spiderResult, student);
             searchResult = getCurrentDayDataFromSpider(spiderResult, schoolTime);
@@ -357,13 +357,4 @@ public class CourseTimeTableService {
         }).collect(Collectors.toList());
     }
 
-    /**
-     * 从数据库读取数据后，判断是否需要爬虫去爬取数据
-     *
-     * @param classesId 班级编号
-     * @return true为需要， false为不需要
-     */
-    private boolean isNeedSpiderHandling(int classesId) {
-        return CollectionUtils.isEmpty(courseTimeTableDetailDao.getCourseTimeTableDetailIdsByClassId(classesId));
-    }
 }
