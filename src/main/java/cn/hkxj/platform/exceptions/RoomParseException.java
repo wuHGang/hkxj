@@ -9,4 +9,8 @@ public class RoomParseException extends RuntimeException{
     public RoomParseException(String description) {
         super(description);
     }
+
+    public RoomParseException(String description, Exception e) {
+        super(description, e);
+    }
 }

@@ -2,11 +2,10 @@ package cn.hkxj.platform.service;
 
 import cn.hkxj.platform.exceptions.RoomParseException;
 import cn.hkxj.platform.mapper.RoomMapper;
-import cn.hkxj.platform.pojo.constant.Building;
 import cn.hkxj.platform.pojo.Room;
+import cn.hkxj.platform.pojo.constant.Building;
 import cn.hkxj.platform.pojo.constant.Direction;
 import cn.hkxj.platform.pojo.example.RoomExample;
-import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.CharUtils;
 import org.springframework.stereotype.Service;
@@ -102,13 +101,13 @@ public class RoomService {
             }
 		} catch (Exception e) {
 		    log.error("room parse fail classroomName:{} buildingName:{} message:{}", classroomName, buildingName, e.getMessage());
-			throw new RoomParseException("room parse fail classroomName  " + classroomName + "   buildingName   " + buildingName);
+			throw new RoomParseException("room parse fail classroomName  " + classroomName + "   buildingName   " + buildingName, e);
 		}
-		return null;
+		throw new RoomParseException("room parse fail classroomName  " + classroomName + "   buildingName   " + buildingName);
 	}
 
 	private Room parseForScience(String classroomName){
-		Character second = classroomName.charAt(1);
+		char second = classroomName.charAt(1);
 		if(CharUtils.isAsciiAlpha(second)){
 			return parseForScienceBuilding(classroomName, second);
 		} else {
