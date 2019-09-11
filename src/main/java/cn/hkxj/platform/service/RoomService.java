@@ -100,9 +100,10 @@ public class RoomService {
                 return parseForLaboratory(classroomName);
             }
 		} catch (Exception e) {
-		    log.error("room parse fail classroomName:{} buildingName:{} message:{}", classroomName, buildingName, e.getMessage());
+		    log.error("room parse fail classroomName:{} buildingName:{}", classroomName, buildingName, e);
 			throw new RoomParseException("room parse fail classroomName  " + classroomName + "   buildingName   " + buildingName, e);
 		}
+		log.error("room parse fail classroomName:{} buildingName:{} ", classroomName, buildingName);
 		throw new RoomParseException("room parse fail classroomName  " + classroomName + "   buildingName   " + buildingName);
 	}
 
