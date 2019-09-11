@@ -56,7 +56,6 @@ public class RoomService {
             Room room = new Room();
             room.setName(name);
             return room;
-//			throw new IllegalArgumentException("illegal room name: "+ name);
 		}
 		return roomList.get(0);
 	}
@@ -90,15 +89,17 @@ public class RoomService {
 			if(buildingName.startsWith(Building.MAIN.getChinese())){
                 return parseForMainBuilding(classroomName);
             }
-			if(buildingName.equals(Building.LIBRARY.getChinese())){
+			else if(buildingName.equals(Building.LIBRARY.getChinese())){
                 return parseForLibrary(classroomName);
             }
-			if(buildingName.equals(Building.PLAYGROUND.getChinese())){
+			else if(buildingName.equals(Building.PLAYGROUND.getChinese())){
                 return parseForPlayGround(classroomName);
             }
-			if(buildingName.startsWith(Building.LABORATORY.getChinese())){
+			else if(buildingName.startsWith(Building.LABORATORY.getChinese())){
                 return parseForLaboratory(classroomName);
-            }
+            }else if(buildingName.startsWith(Building.LABORATORY_BUILDING.getChinese())){
+				return parseForLaboratoryBuilding(classroomName);
+			}
 		} catch (Exception e) {
 		    log.error("room parse fail classroomName:{} buildingName:{}", classroomName, buildingName, e);
 			throw new RoomParseException("room parse fail classroomName  " + classroomName + "   buildingName   " + buildingName, e);
@@ -210,6 +211,17 @@ public class RoomService {
 		room.setIsAllow(NOT_ALLOW);
 		room.setName(classroomName);
 		room.setArea(Building.LABORATORY);
+		room.setDirection(Direction.CORRECT);
+		room.setFloor(0);
+		room.setNumber(0);
+		return room;
+	}
+
+	private Room parseForLaboratoryBuilding(String classroomName){
+		Room room = new Room();
+		room.setIsAllow(NOT_ALLOW);
+		room.setName(classroomName);
+		room.setArea(Building.LABORATORY_BUILDING);
 		room.setDirection(Direction.CORRECT);
 		room.setFloor(0);
 		room.setNumber(0);

@@ -15,6 +15,10 @@ public enum Building {
 	SCIENCE_HIGH("科高"),
 	PLAYGROUND("操场"),
 	LABORATORY("实验室"),
+	/**
+	 * 计算机前楼，建工学院机房 etc
+	 */
+	LABORATORY_BUILDING("实验楼"),
 	LIBRARY("图书馆");
 
 	private String chinese;
@@ -24,22 +28,12 @@ public enum Building {
 	}
 
 	public static Building getBuildingByName(String name){
-		switch (name){
-			case "主楼":
-				return MAIN;
-			case "科厦":
-				return SCIENCE;
-			case "科高":
-				return SCIENCE_HIGH;
-			case "操场":
-				return PLAYGROUND;
-			case "实验室":
-				return LABORATORY;
-			case "图书馆":
-				return LIBRARY;
-			default:
-				throw new IllegalArgumentException("no building match:" + name);
+		for (Building building : Building.values()) {
+			if(building.getChinese().equals(name)){
+				return building;
+			}
 		}
+		throw new IllegalArgumentException("no building match:" + name);
 	}
 
 	public static boolean isExist(String name){
