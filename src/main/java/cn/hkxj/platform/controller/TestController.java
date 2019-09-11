@@ -91,9 +91,9 @@ public class TestController {
     public void testCourseTimeTable() throws WxErrorException {
         Student student = new Student();
         Classes classes = new Classes();
-        student.setAccount(2017021793);
+        student.setAccount(2018025838);
         student.setPassword("1");
-        classes.setId(92);
+        classes.setId(643);
         student.setClasses(classes);
         System.out.println(courseTimeTableService.convertToText(courseTimeTableService.getDetailsForCurrentDay(student)));
     }

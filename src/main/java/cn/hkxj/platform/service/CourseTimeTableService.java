@@ -2,7 +2,6 @@ package cn.hkxj.platform.service;
 
 import cn.hkxj.platform.dao.*;
 import cn.hkxj.platform.exceptions.RoomParseException;
-import cn.hkxj.platform.exceptions.StoreToDataBaseException;
 import cn.hkxj.platform.pojo.*;
 import cn.hkxj.platform.pojo.dto.CourseTimeTableDetailDto;
 import cn.hkxj.platform.spider.newmodel.coursetimetable.TimeAndPlace;
@@ -110,7 +109,7 @@ public class CourseTimeTableService {
         SchoolTime schoolTime = DateUtils.getCurrentSchoolTime();
         List<CourseTimeTableDetail> dbResult =
                 courseTimeTableDetailDao.getCourseTimeTableDetailForCurrentTerm(student.getClasses().getId(), schoolTime);
-        if (CollectionUtils.isEmpty(dbResult) && isNeedSpiderHandling(student.getClasses().getId())) {
+        if (CollectionUtils.isEmpty(dbResult)) {
             UrpCourseTimeTableForSpider spiderResult = newUrpSpiderService.getUrpCourseTimeTable(student);
             saveToDbAsync(spiderResult, student);
             dbResult = getCurrentTermDataFromSpider(spiderResult, schoolTime);
@@ -128,7 +127,7 @@ public class CourseTimeTableService {
         SchoolTime schoolTime = DateUtils.getCurrentSchoolTime();
         List<CourseTimeTableDetail> dbResult =
                 courseTimeTableDetailDao.getCourseTimeTableDetailForCurrentWeek(student.getClasses().getId(), schoolTime);
-        if (CollectionUtils.isEmpty(dbResult) && isNeedSpiderHandling(student.getClasses().getId())) {
+        if (CollectionUtils.isEmpty(dbResult)) {
             UrpCourseTimeTableForSpider spiderResult = newUrpSpiderService.getUrpCourseTimeTable(student);
             saveToDbAsync(spiderResult, student);
             dbResult = getCurrentWeekDataFromSpider(spiderResult, schoolTime);
@@ -147,7 +146,7 @@ public class CourseTimeTableService {
         SchoolTime schoolTime = DateUtils.getCurrentSchoolTime();
         List<CourseTimeTableDetail> searchResult =
                 courseTimeTableDetailDao.getCourseTimeTableDetailForCurrentDay(student.getClasses().getId(), schoolTime);
-        if (CollectionUtils.isEmpty(searchResult) && isNeedSpiderHandling(student.getClasses().getId())) {
+        if (CollectionUtils.isEmpty(searchResult)) {
             UrpCourseTimeTableForSpider spiderResult = newUrpSpiderService.getUrpCourseTimeTable(student);
             saveToDbAsync(spiderResult, student);
             searchResult = getCurrentDayDataFromSpider(spiderResult, schoolTime);
@@ -186,13 +185,7 @@ public class CourseTimeTableService {
     }
 
     private void saveToDbAsync(UrpCourseTimeTableForSpider spiderResult, Student student){
-        saveDbPool.execute(() -> {
-            try {
-                saveCourseTimeTableToDb(spiderResult, student);
-            } catch (StoreToDataBaseException e) {
-                log.error("coursetimetable save to database fail {}", e.getMessage());
-            }
-        });
+        saveDbPool.execute(() -> saveCourseTimeTableToDb(spiderResult, student));
     }
 
     /**
@@ -273,7 +266,7 @@ public class CourseTimeTableService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void saveCourseTimeTableDetailsToDb(UrpCourseTimeTable urpCourseTimeTable, CourseTimeTableBasicInfo basicInfo, Student student) {
+    public void saveCourseTimeTableDetailsToDb(UrpCourseTimeTable urpCourseTimeTable, CourseTimeTableBasicInfo basicInfo, Student student)  {
         if (CollectionUtils.isEmpty(urpCourseTimeTable.getTimeAndPlaceList())) {
             return;
         }
@@ -307,12 +300,8 @@ public class CourseTimeTableService {
             }
             
             if (!CollectionUtils.isEmpty(needInsertDetailList)) {
-                List<Integer> list;
-                try {
-                    list = saveTimeTableDetail(needInsertDetailList, timeAndPlace, basicInfo);
-                } catch (RoomParseException e) {
-                    throw new StoreToDataBaseException(e);
-                }
+                List<Integer> list = saveTimeTableDetail(needInsertDetailList, timeAndPlace, basicInfo);
+                log.info("class {} 插入detail size:{}  id:{}", student.getClasses().getId(), list.size(), list.toString());
                 idList.addAll(list);
             }
             
@@ -368,13 +357,4 @@ public class CourseTimeTableService {
         }).collect(Collectors.toList());
     }
 
-    /**
-     * 从数据库读取数据后，判断是否需要爬虫去爬取数据
-     *
-     * @param classesId 班级编号
-     * @return true为需要， false为不需要
-     */
-    private boolean isNeedSpiderHandling(int classesId) {
-        return CollectionUtils.isEmpty(courseTimeTableDetailDao.getCourseTimeTableDetailIdsByClassId(classesId));
-    }
 }

@@ -19,19 +19,19 @@ import javax.annotation.PostConstruct;
 @ConfigurationProperties(prefix = "wechat.mp.pro")
 public class WechatMpProProperties{
 
-	@Value("${wechat.mp.pro.appid}")
+//	@Value("${wechat.mp.pro.appid}")
 	private String appId;
 
-	@Value("${wechat.mp.pro.secret}")
+//	@Value("${wechat.mp.pro.secret}")
 	private String secret;
 
-	@Value("${wechat.mp.pro.token}")
+//	@Value("${wechat.mp.pro.token}")
 	private String token;
 
-	@Value("${wechat.mp.pro.aesKey}")
+//	@Value("${wechat.mp.pro.aesKey}")
 	private String aesKey;
 
-	@Value("${wechat.mp.pro.templateId}")
+//	@Value("${wechat.mp.pro.templateId}")
 	private String templateId;
 
 	private WxMpInMemoryConfigStorage wxMpInMemoryConfigStorage;
