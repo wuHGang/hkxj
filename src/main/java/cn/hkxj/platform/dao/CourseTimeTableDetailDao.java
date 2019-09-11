@@ -83,14 +83,15 @@ public class CourseTimeTableDetailDao {
         CourseTimeTableDetailExample example = new CourseTimeTableDetailExample();
         Term term = detail.getTermForCourseTimeTableDetail();
         example.createCriteria()
-                .andTermOrderEqualTo(term.getOrder())
+                .andTermOrderEqualTo(detail.getTermOrder())
                 .andTermYearEqualTo(term.getTermYear())
                 .andCourseIdEqualTo(detail.getCourseId())
                 .andRoomNameEqualTo(detail.getRoomName())
                 .andStartWeekEqualTo(detail.getStartWeek())
                 .andEndWeekEqualTo(detail.getEndWeek())
                 .andDayEqualTo(detail.getDay())
-                .andWeekEqualTo(detail.getWeek());
+                .andWeekEqualTo(detail.getWeek())
+                .andOrderEqualTo(detail.getOrder());
         return courseTimeTableDetailMapper.selectByExample(example);
     }
 
