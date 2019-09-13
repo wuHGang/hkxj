@@ -2,6 +2,7 @@ package cn.hkxj.platform.dao;
 
 import cn.hkxj.platform.mapper.CourseMapper;
 import cn.hkxj.platform.pojo.Course;
+import com.google.common.collect.Lists;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -18,6 +19,10 @@ public class CourseDao {
 
     public List<Course> selectCourseByUid(List<String> courseIdList){
         return courseMapper.selectCourseByUid(courseIdList);
+    }
+
+    public List<Course> selectCourseByUid(String uid){
+        return courseMapper.selectCourseByUid(Lists.newArrayList(uid));
     }
 
     public boolean ifExistCourse(String uid){

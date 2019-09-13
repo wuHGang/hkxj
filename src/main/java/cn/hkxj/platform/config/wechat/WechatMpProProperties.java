@@ -5,8 +5,8 @@ import lombok.Data;
 import me.chanjar.weixin.mp.api.WxMpInMemoryConfigStorage;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 
@@ -15,7 +15,9 @@ import javax.annotation.PostConstruct;
  *
  * @author Binary Wang(https://github.com/binarywang)
  */
+
 @Data
+@Component
 @ConfigurationProperties(prefix = "wechat.mp.pro")
 public class WechatMpProProperties{
 

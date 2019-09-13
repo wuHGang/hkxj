@@ -2,23 +2,20 @@ package cn.hkxj.platform.config.wechat;
 
 import com.google.common.base.Objects;
 import lombok.Data;
-import lombok.Getter;
-import me.chanjar.weixin.mp.api.WxMpConfigStorage;
 import me.chanjar.weixin.mp.api.WxMpInMemoryConfigStorage;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author Yuki
  * @date 2019/5/5 9:59
  */
 @Data
+@Component
 @ConfigurationProperties(prefix = "wechat.mp.plus")
 public class WechatMpPlusProperties {
 
