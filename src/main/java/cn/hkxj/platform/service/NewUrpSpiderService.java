@@ -1,5 +1,7 @@
 package cn.hkxj.platform.service;
 
+import cn.hkxj.platform.dao.StudentDao;
+import cn.hkxj.platform.exceptions.PasswordUncorrectException;
 import cn.hkxj.platform.exceptions.UrpException;
 import cn.hkxj.platform.pojo.Classes;
 import cn.hkxj.platform.pojo.Student;
@@ -30,25 +32,27 @@ import java.util.List;
 public class NewUrpSpiderService {
     @Resource
     private ClassService classService;
+    @Resource
+    private StudentDao studentDao;
 
     @Retryable(value = UrpException.class, maxAttempts = 3)
     CurrentGrade getCurrentTermGrade(String account, String password){
-        NewUrpSpider spider = new NewUrpSpider(account, password);
+        NewUrpSpider spider = getSpider(account, password);
         return spider.getCurrentGrade();
     }
 
     public UrpCourseForSpider getCourseFromSpider(Student student, String uid){
-        NewUrpSpider spider = new NewUrpSpider(student.getAccount().toString(), student.getPassword());
+        NewUrpSpider spider = getSpider(student.getAccount().toString(), student.getPassword());
         return spider.getUrpCourse(uid);
     }
 
     public void checkStudentPassword(String account, String password){
-        NewUrpSpider spider = new NewUrpSpider(account, password);
+        NewUrpSpider spider = getSpider(account, password);
     }
 
     @Retryable(value = UrpException.class, maxAttempts = 3)
     public UrpCourseTimeTableForSpider getUrpCourseTimeTable(Student student){
-        NewUrpSpider spider = new NewUrpSpider(student.getAccount().toString(), student.getPassword());
+        NewUrpSpider spider = getSpider(student.getAccount().toString(), student.getPassword());
         return spider.getUrpCourseTimeTable();
     }
 
@@ -57,7 +61,7 @@ public class NewUrpSpiderService {
      * @return
      */
     public Student getStudentInfo(String account, String password){
-        NewUrpSpider spider = new NewUrpSpider(account, password);
+        NewUrpSpider spider = getSpider(account, password);
 
         return getUserInfo(spider.getStudentInfo());
     }
@@ -69,7 +73,7 @@ public class NewUrpSpiderService {
      */
     @Retryable(value = UrpException.class, maxAttempts = 3)
     public List<UrpExamTime> getExamTime(String account, String password){
-        NewUrpSpider spider = new NewUrpSpider(account, password);
+        NewUrpSpider spider = getSpider(account, password);
 
         return spider.getExamTime();
     }
@@ -80,6 +84,16 @@ public class NewUrpSpiderService {
         student.setClasses(classes);
 
         return student;
+    }
+
+    private NewUrpSpider getSpider(String account, String password){
+        try {
+            return new NewUrpSpider(account, password);
+        }catch (PasswordUncorrectException e){
+            studentDao.updatePasswordUnCorrect(Integer.parseInt(account));
+            throw e;
+        }
+
     }
 
     private Student wrapperToStudent(UrpStudentInfo studentWrapper) {

@@ -73,7 +73,7 @@ public class UserBindingController {
 			return WebResponse.fail(ErrorCode.OPENID_EXIST.getErrorCode(), "该账号已经绑定");
 		}
 
-		log.info("student bind success account:{} password:{} openid{}", account, password, openid);
+		log.info("student bind success account:{} password:{} openid:{}", account, password, openid);
 		return WebResponse.success(student);
 	}
 
