@@ -16,7 +16,6 @@ public class HtmlShowController {
 
 	@GetMapping(value = "/timetable")
 	public String courseTimeTable(){
-		log.info("request timetable html");
 		return "new";
 	}
 

@@ -22,14 +22,7 @@ public class GradeController {
 
     @RequestMapping(value = "/nowGrade", method = RequestMethod.POST)
     public WebResponse getNowGrade(@RequestParam("account") String account, @RequestParam("password") String password){
-        log.info("now grade search start, account:{}, password:{}", account, password);
-        try {
-            GradeSearchResult currentGrade = newGradeSearchService.getCurrentGrade(account, password);
-            log.info("now grade search success, account:{}, password:{}", account, password);
-            return WebResponse.success(currentGrade.getData());
-        }catch (Exception e){
-            log.info("now grade search fail, account:{}, password:{}", account, password, e);
-            throw e;
-        }
+        GradeSearchResult currentGrade = newGradeSearchService.getCurrentGrade(account, password);
+        return WebResponse.success(currentGrade.getData());
     }
 }

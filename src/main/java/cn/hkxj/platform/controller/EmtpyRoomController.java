@@ -42,7 +42,7 @@ public class EmtpyRoomController {
                                     @RequestParam("order") int order,
                                     @RequestParam("building") String buildingName,
                                     @RequestParam("floor") int floor) {
-        log.info("emptyRoom search{},{},{},{},{}", schoolWeek, dayOfWeek, order, buildingName, floor);
+
         try {
             return WebResponse.success(emptyRoomService.getEmptyRoomReply(emptyRoomService.getRoomTimeTableByTime(schoolWeek, dayOfWeek, order, Building.getBuildingByName(buildingName), floor)));
         } catch (IOException e) {
@@ -57,7 +57,6 @@ public class EmtpyRoomController {
                                       @RequestParam("order") int order,
                                       @RequestParam("building") String buildingName,
                                       @RequestParam("floor") int floor) {
-        log.info("emptyRoom search{},{},{},{},{}", schoolWeek, dayOfWeek, order, buildingName, floor);
         return WebResponse.success();
 //        try {
 //            List<RoomTimeTable> table = emptyRoomService.getRoomTimeTableByTime(schoolWeek, dayOfWeek, order, Building.getBuildingByName(buildingName), floor);
