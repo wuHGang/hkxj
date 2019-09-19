@@ -39,7 +39,6 @@ public class CourseController {
 
     @GetMapping("/timetable")
     public WebResponse getTimeTable(@RequestParam(value = "account", required = false) String account) {
-        log.info("course timetable start-- account:{}", account);
 
         if (Objects.isNull(account)) {
             account = (String) httpSession.getAttribute("account");

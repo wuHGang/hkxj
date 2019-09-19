@@ -49,7 +49,6 @@ public class UserBindingController {
             log.info("student getStudentInfo fail--invalid account:{}", account);
             return WebResponse.fail(ErrorCode.ACCOUNT_OR_PASSWORD_INVALID.getErrorCode(), "账号无效");
         }
-
 		String openid = (String) httpSession.getAttribute("openid");
 		String appid = (String) httpSession.getAttribute("appid");
 		Student student;
