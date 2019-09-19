@@ -198,8 +198,10 @@ public class CourseSubscribeService {
         }
         List<Integer> accounts = openIds.stream().map(Openid::getAccount).collect(Collectors.toList());
         StudentExample studentExample = new StudentExample();
+        //这里返回的学生实体需要密码是正确的
         studentExample.createCriteria()
-                .andAccountIn(accounts);
+                .andAccountIn(accounts)
+                .andIsCorrectEqualTo(true);
         return studentMapper.selectByExample(studentExample);
     }
 
