@@ -78,6 +78,8 @@ public class CourseSubscriptionTask {
      * @param wxMpService wxMpService
      */
     private void plusMpProcess(ScheduleTask task, CourseGroupMsg msg, WxMpService wxMpService){
+        //当CourseTimeTableDetailDtos的引用为null时，说明没有对应的数据，直接返回
+        if(msg.getDetailDtos() == null) { return; }
         List<WxMpTemplateData> templateData = templateBuilder.assemblyTemplateContentForCourse(msg);
         WxMpTemplateMessage.MiniProgram miniProgram = new WxMpTemplateMessage.MiniProgram();
         miniProgram.setAppid(MiniProgram.APPID.getValue());
