@@ -62,8 +62,8 @@ public class RedisCookiePersistor implements AccountCookiePersistor{
         }
         String key = RedisKeys.URP_COOKIE.genKey(account);
         HashOperations<String, String, String> opsForHash = redisTemplate.opsForHash();
-        redisTemplate.expire(key, 30L, TimeUnit.MINUTES);
         opsForHash.putAll(key, cookieMap);
+        redisTemplate.expire(key, 25L, TimeUnit.MINUTES);
     }
 
     @Override

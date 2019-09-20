@@ -4,13 +4,13 @@ import cn.hkxj.platform.exceptions.*;
 import cn.hkxj.platform.pojo.constant.RedisKeys;
 import cn.hkxj.platform.spider.model.UrpStudentInfo;
 import cn.hkxj.platform.spider.model.VerifyCode;
-import cn.hkxj.platform.spider.newmodel.*;
+import cn.hkxj.platform.spider.newmodel.CourseRelativeInfo;
 import cn.hkxj.platform.spider.newmodel.course.UrpCourseForSpider;
 import cn.hkxj.platform.spider.newmodel.coursetimetable.UrpCourseTimeTableForSpider;
 import cn.hkxj.platform.spider.newmodel.examtime.UrpExamTime;
 import cn.hkxj.platform.spider.newmodel.grade.CurrentGrade;
-import cn.hkxj.platform.spider.newmodel.grade.general.UrpGeneralGradeForSpider;
 import cn.hkxj.platform.spider.newmodel.grade.detail.UrpGradeDetailForSpider;
+import cn.hkxj.platform.spider.newmodel.grade.general.UrpGeneralGradeForSpider;
 import cn.hkxj.platform.spider.newmodel.grade.general.UrpGradeForSpider;
 import cn.hkxj.platform.utils.ApplicationUtil;
 import com.alibaba.fastjson.JSON;
@@ -118,7 +118,7 @@ public class NewUrpSpider {
 
         studentCheck(account, password, code, uuid.toString());
 
-
+        opsForHash.delete(RedisKeys.KAPTCHA.getName(), uuid.toString());
     }
 
     /**
@@ -270,7 +270,7 @@ public class NewUrpSpider {
         }
 
         ValueOperations<String, String> opsForValue = stringRedisTemplate.opsForValue();
-        opsForValue.set(RedisKeys.URP_LOGIN_COOKIE.genKey(account), uuid, 20L, TimeUnit.MINUTES);
+        opsForValue.set(RedisKeys.URP_LOGIN_COOKIE.genKey(account), uuid, 25L, TimeUnit.MINUTES);
 
     }
 
