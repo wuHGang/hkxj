@@ -17,6 +17,7 @@ import javax.annotation.Resource;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 @Component
 @Slf4j
@@ -33,7 +34,9 @@ public class StudentInfoInterceptor implements WxMessageInterceptor{
     public boolean intercept(WxMpXmlMessage wxMessage, Map<String, Object> context, WxMpService wxMpService, WxSessionManager sessionManager) {
         String appid = wxMpService.getWxMpConfigStorage().getAppId();
         String openid = wxMessage.getFromUser();
-        String account = redisTemplate.opsForValue().get(RedisKeys.OPENID_TO_ACCOUNT.getName() + openid);
+        String key = RedisKeys.OPENID_TO_ACCOUNT.getName() + openid;
+
+        String account = redisTemplate.opsForValue().get(key);
 
         //TODO 这里不能排除掉用户绑定了新账号的情况  除非每次都查一下库  但是这样就失去了缓存的意义  最好有解绑事件来触发缓存的更新
         if(StringUtils.isEmpty(account)){
@@ -41,8 +44,8 @@ public class StudentInfoInterceptor implements WxMessageInterceptor{
             String mark = student.getAccount().toString() + " " + student.getName();
             executor.submit(() ->{
                 try {
-                    redisTemplate.opsForValue().set(RedisKeys.OPENID_TO_ACCOUNT.getName() + openid,
-                            student.getAccount().toString());
+                    redisTemplate.opsForValue().set(key,
+                            student.getAccount().toString(), 12L, TimeUnit.HOURS);
                     wxMpService.getUserService().userUpdateRemark(openid, mark);
                 } catch (WxErrorException e) {
                     log.error("set student mark error", e);
