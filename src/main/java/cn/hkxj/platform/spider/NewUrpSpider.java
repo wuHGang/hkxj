@@ -4,13 +4,13 @@ import cn.hkxj.platform.exceptions.*;
 import cn.hkxj.platform.pojo.constant.RedisKeys;
 import cn.hkxj.platform.spider.model.UrpStudentInfo;
 import cn.hkxj.platform.spider.model.VerifyCode;
-import cn.hkxj.platform.spider.newmodel.*;
+import cn.hkxj.platform.spider.newmodel.CourseRelativeInfo;
 import cn.hkxj.platform.spider.newmodel.course.UrpCourseForSpider;
 import cn.hkxj.platform.spider.newmodel.coursetimetable.UrpCourseTimeTableForSpider;
 import cn.hkxj.platform.spider.newmodel.examtime.UrpExamTime;
 import cn.hkxj.platform.spider.newmodel.grade.CurrentGrade;
-import cn.hkxj.platform.spider.newmodel.grade.general.UrpGeneralGradeForSpider;
 import cn.hkxj.platform.spider.newmodel.grade.detail.UrpGradeDetailForSpider;
+import cn.hkxj.platform.spider.newmodel.grade.general.UrpGeneralGradeForSpider;
 import cn.hkxj.platform.spider.newmodel.grade.general.UrpGradeForSpider;
 import cn.hkxj.platform.utils.ApplicationUtil;
 import com.alibaba.fastjson.JSON;
@@ -19,6 +19,7 @@ import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.TypeReference;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
 import org.apache.commons.lang3.StringUtils;
@@ -33,6 +34,7 @@ import org.springframework.data.redis.core.ValueOperations;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -84,8 +86,14 @@ public class NewUrpSpider {
     private String account;
     private String password;
 
+    private static ArrayBlockingQueue<PreLoadCaptcha> queue = new ArrayBlockingQueue<>(5);
+
 
     static {
+        Thread produceThread = new Thread(new CaptchaProducer());
+        Thread cleanThread = new Thread(new CaptchaCleaner());
+        produceThread.start();
+        cleanThread.start();
         try {
             stringRedisTemplate = ApplicationUtil.getBean("stringRedisTemplate");
         } catch (Exception e) {
@@ -106,8 +114,18 @@ public class NewUrpSpider {
         if (hasLoginCookieCache(account)) {
             return;
         }
+        PreLoadCaptcha preLoadCaptcha;
+        VerifyCode verifyCode = null;
+        while ((preLoadCaptcha = queue.poll()) != null){
+            if(System.currentTimeMillis() - preLoadCaptcha.createDate.getTime() < 1000*60*20){
+                MDC.put("preLoad", preLoadCaptcha.preloadCookieId);
+                verifyCode = preLoadCaptcha.captcha;
+            }
+        }
+        if(verifyCode == null){
+            verifyCode = getCaptcha();
+        }
 
-        VerifyCode verifyCode = getCaptcha();
         Base64.Encoder encoder = Base64.getEncoder();
 
         UUID uuid = UUID.randomUUID();
@@ -223,7 +241,7 @@ public class NewUrpSpider {
         return courses.get(0);
     }
 
-    public VerifyCode getCaptcha() {
+    public static VerifyCode getCaptcha() {
         Request request = new Request.Builder()
                 .url(CAPTCHA)
                 .header("Referer", LOGIN)
@@ -375,7 +393,7 @@ public class NewUrpSpider {
     }
 
 
-    private byte[] execute(Request request) {
+    private static byte[] execute(Request request) {
         try (Response response = client.newCall(request).execute()) {
             if (isResponseFail(response)) {
                 throw new UrpRequestException("url: " + request.url().toString() + " code: " + response.code() + " cause: " + response.message());
@@ -436,13 +454,61 @@ public class NewUrpSpider {
      * @param response 响应
      * @return 是否成功响应
      */
-    private boolean isResponseFail(Response response) {
+    private static boolean isResponseFail(Response response) {
         return response.body() == null ||
                 (!response.isSuccessful() && !response.isRedirect());
     }
 
     private void flashCache() {
         stringRedisTemplate.expire(RedisKeys.URP_LOGIN_COOKIE.genKey(account), 20L, TimeUnit.MINUTES);
+    }
+
+
+    private static class CaptchaProducer implements Runnable{
+
+        @Override
+        public void run() {
+            while (true){
+                UUID uuid = UUID.randomUUID();
+                MDC.put("preLoad", uuid.toString());
+                try {
+                    VerifyCode captcha = getCaptcha();
+                    PreLoadCaptcha preLoadCaptcha = new PreLoadCaptcha(captcha, uuid.toString(), new Date());
+                    queue.put(preLoadCaptcha);
+                } catch (Throwable e) {
+                    log.error("preload captcha error", e);
+                } finally {
+                    MDC.clear();
+                }
+
+            }
+        }
+    }
+
+    private static class CaptchaCleaner implements Runnable{
+
+        @Override
+        public void run() {
+            queue.removeIf(preLoadCaptcha -> System.currentTimeMillis() - preLoadCaptcha.createDate.getTime() > 1000 * 60 * 20);
+            try {
+                Thread.sleep(1000 * 60 * 20);
+            } catch (Throwable e) {
+                log.error("clean preload captcha error", e);
+            }
+        }
+    }
+
+    @Data
+    private static class PreLoadCaptcha{
+        private VerifyCode captcha;
+        private String preloadCookieId;
+        private Date createDate;
+
+        PreLoadCaptcha(VerifyCode captcha, String preloadCookieId, Date createDate){
+            this.captcha = captcha;
+            this.preloadCookieId = preloadCookieId;
+            this.createDate = createDate;
+        }
     }
 
 }
