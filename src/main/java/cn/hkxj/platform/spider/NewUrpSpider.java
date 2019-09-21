@@ -120,6 +120,7 @@ public class NewUrpSpider {
             if(System.currentTimeMillis() - preLoadCaptcha.createDate.getTime() < 1000*60*20){
                 MDC.put("preLoad", preLoadCaptcha.preloadCookieId);
                 verifyCode = preLoadCaptcha.captcha;
+                break;
             }
         }
         if(verifyCode == null){
