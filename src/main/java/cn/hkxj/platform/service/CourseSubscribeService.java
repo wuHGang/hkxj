@@ -43,6 +43,7 @@ public class CourseSubscribeService {
 
     /**
      * 获取一个appid和CourseGroupMsg的映射关系
+     *
      * @return 映射关系
      */
     public Map<String, Set<CourseGroupMsg>> getCoursesSubscribeForCurrentDay() {
@@ -68,8 +69,9 @@ public class CourseSubscribeService {
 
     /**
      * 获取学生实体和openid的映射关系
+     *
      * @param students 学生信息列表
-     * @param openIds openid列表
+     * @param openIds  openid列表
      * @return 映射关系
      */
     private Map<String, Student> getOpenIdMap(List<Student> students, List<Openid> openIds) {
@@ -84,6 +86,7 @@ public class CourseSubscribeService {
 
     /**
      * 通过classes和scheduleTask的映射关系来创建CourseGroupMsg的集合
+     *
      * @param classesMappingMap classes和scheduleTask的映射关系
      * @return CourseGroupMsg的集合
      */
@@ -95,10 +98,8 @@ public class CourseSubscribeService {
         //每一个CourseGroupMsg都对应着一个班级的课程和订阅者的信息
         classesMappingMap.forEach((classes, scheduleTasks) -> {
             CourseGroupMsg courseGroupMsg = new CourseGroupMsg();
-            //获取班级的课程时间表，只需要从班级中随机获取一个人的学号即可，这里确定取第一个
-            Openid openid = getOpenidFromList(openidObjects, scheduleTasks.get(0).getOpenid());
             //根据班级来获取当天的课程信息
-            List<CourseTimeTableDetailDto> detailDtos = getCourseTimeTablesCurrentDay(openid);
+            List<CourseTimeTableDetailDto> detailDtos = getCourseTimeTableDetailDto(scheduleTasks, openidObjects);
             //设置班级信息
             courseGroupMsg.setClasses(classes);
             //设置关联的定时任务信息
@@ -111,15 +112,26 @@ public class CourseSubscribeService {
     }
 
     /**
-     * 因为是从已有数据中去找对应的openid对象，所以这个方法是不会返回空的
-     * @param openidObjects openid对象列表
-     * @param openid 目标openid
-     * @return openid对象
+     * 这个方法会返回班级对应的课表
+     *
+     * @param scheduleTasks 订阅任务
+     * @param openidObjects Openid
+     * @return 如果从爬虫和数据库都无法获取到数据就会返回Null
+     * 正常返回会返回一个正常的list
      */
-    private Openid getOpenidFromList(List<Openid> openidObjects, String openid){
-        for (Openid openidObject : openidObjects) {
-            if (Objects.equals(openidObject.getOpenid(), openid)) {
-                return openidObject;
+    private List<CourseTimeTableDetailDto> getCourseTimeTableDetailDto(List<ScheduleTask> scheduleTasks, List<Openid> openidObjects) {
+        List<CourseTimeTableDetailDto> detailDtos;
+        for (ScheduleTask task : scheduleTasks) {
+            for (Openid openid : openidObjects) {
+                if (Objects.equals(openid.getOpenid(), task.getOpenid())) {
+                    try {
+                        detailDtos = getCourseTimeTablesCurrentDay(openid);
+                        openidObjects.remove(openid);
+                        return detailDtos;
+                    } catch (Exception e) {
+                        log.error("get course subscribe fail account: {}", openid.getAccount(), e);
+                    }
+                }
             }
         }
         return null;
@@ -127,6 +139,7 @@ public class CourseSubscribeService {
 
     /**
      * 根据班级信息获取当天的课程时间表
+     *
      * @param openid openid对象
      * @return 课表时间表实体列表
      */
@@ -138,8 +151,9 @@ public class CourseSubscribeService {
 
     /**
      * 获取classes和scheduleTask的映射关系
-     * @param students 学生信息列表
-     * @param openids openid实体列表
+     *
+     * @param students      学生信息列表
+     * @param openids       openid实体列表
      * @param scheduleTasks 定时任务实体列表
      * @return 映射关系
      */
@@ -152,28 +166,32 @@ public class CourseSubscribeService {
         Map<String, Student> openidToStudentMapping = getOpenIdMap(students, openids);
         Map<Classes, List<ScheduleTask>> classesMappingMap = Maps.newHashMap();
         //这里其实是一个双层循环
-        openidToStudentMapping.forEach((openid, student) -> scheduleTasks.forEach(task -> {
-            if (Objects.equals(openid, task.getOpenid())) {
-                List<ScheduleTask> temp = classesMappingMap.get(student.getClasses());
-                if (Objects.isNull(temp)) {
-                    temp = Lists.newArrayList();
+        openidToStudentMapping.forEach((openid, student) -> {
+            for (ScheduleTask task : scheduleTasks) {
+                if (Objects.equals(openid, task.getOpenid())) {
+                    List<ScheduleTask> temp = classesMappingMap.get(student.getClasses());
+                    if (Objects.isNull(temp)) {
+                        temp = Lists.newArrayList();
+                    }
+                    temp.add(task);
+                    classesMappingMap.put(student.getClasses(), temp);
                 }
-                temp.add(task);
-                classesMappingMap.put(student.getClasses(), temp);
+
             }
-        }));
+        });
         return classesMappingMap;
     }
 
     /**
      * 根据openid列表获取相应的openid实体
+     *
      * @param openIds openid列表
-     * @param appid appid
+     * @param appid   appid
      * @return openid实体列表
      */
     private List<Openid> getOpenIdList(List<String> openIds, String appid) {
         //如果openid列表为空，直接返回null
-        if(CollectionUtils.isEmpty(openIds)){
+        if (CollectionUtils.isEmpty(openIds)) {
             return null;
         }
         OpenidExample openidExample = new OpenidExample();
@@ -188,6 +206,7 @@ public class CourseSubscribeService {
 
     /**
      * 通过openid实体列表来获取相应的学生实体
+     *
      * @param openIds openid实体列表
      * @return 学生实体列表
      */
