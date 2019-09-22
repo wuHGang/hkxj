@@ -1,6 +1,8 @@
 package cn.hkxj.platform.service;
 
 import cn.hkxj.platform.PlatformApplication;
+import cn.hkxj.platform.pojo.EmptyRoom;
+import cn.hkxj.platform.pojo.Room;
 import cn.hkxj.platform.pojo.constant.Building;
 import cn.hkxj.platform.pojo.timetable.RoomTimeTable;
 import org.junit.Test;
@@ -30,9 +32,9 @@ public class EmptyRoomServiceTest {
 
     @Test
     public void getEmptyRoomReply() throws IOException {
-        List<String> emptyRoomReply = emptyRoomService.getEmptyRoomReply("8", "01", "4/1",3);
-        for (String s:emptyRoomReply){
-            System.out.println(s);
+        List<EmptyRoom> emptyRoomReply = emptyRoomService.getEmptyRoomReply("8", "01", "4/1",3);
+        for (EmptyRoom s:emptyRoomReply){
+            System.out.println(s.getName());
         }
     }
 }

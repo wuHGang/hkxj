@@ -38,7 +38,7 @@ public class CaptchaBreakerTest {
         AtomicInteger success = new AtomicInteger();
         AtomicInteger fail = new AtomicInteger();
         HashOperations<String, String, String> hash = stringRedisTemplate.opsForHash();
-        Set<String> keys = hash.keys(RedisKeys.KAPTCHA.getName());
+        Set<String> keys = hash.keys(RedisKeys.CAPTCHA.getName());
         for (String key : keys) {
             pool.execute(() -> {
                 try {

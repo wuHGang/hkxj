@@ -4,10 +4,15 @@ import lombok.Data;
 
 /**
  * @author Syaeldon
+ * 空教室教务网接口的post数据格式
  */
 @Data
 public class EmptyRoomPost {
+    /**
+     * weeks显示当前周数
+     */
     private String weeks;
+
     private String executiveEducationPlanNumber;
     /**
      * codeCampusListNumber为校区编号
@@ -27,11 +32,18 @@ public class EmptyRoomPost {
      */
     private String teaNum;
     /**
-     * wSection为星期和节次
-     * 星期数/节次
+     * wSection为星期的天数和节次
+     * 星期天数/节次
      */
     private String wSection;
+    /**
+     * 页号
+     */
     private String pageNum;
+
+    /**
+     * 一页显示的数据大小
+     */
     private String pageSize;
 
     public EmptyRoomPost(String weeks, String teaNum, String wSection, String pageNum, String pageSize) {

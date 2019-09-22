@@ -1,44 +1,19 @@
 package cn.hkxj.platform.service;
 
 import cn.hkxj.platform.pojo.EmptyRoom;
-import cn.hkxj.platform.pojo.Room;
-import cn.hkxj.platform.pojo.constant.Building;
-import cn.hkxj.platform.pojo.constant.RedisKeys;
-import cn.hkxj.platform.pojo.timetable.CourseTimeTable;
-import cn.hkxj.platform.pojo.timetable.RoomTimeTable;
 import cn.hkxj.platform.spider.NewUrpSpider;
 import cn.hkxj.platform.spider.newmodel.emptyroom.EmptyRoomPojo;
 import cn.hkxj.platform.spider.newmodel.emptyroom.EmptyRoomPost;
 import cn.hkxj.platform.spider.newmodel.emptyroom.EmptyRoomRecord;
-import cn.hkxj.platform.utils.SchoolTimeUtil;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.KeyDeserializer;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.datatype.guava.GuavaModule;
-import com.google.common.collect.HashMultimap;
 import lombok.extern.slf4j.Slf4j;
-import okhttp3.FormBody;
-import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
-import java.io.IOException;
-import java.io.StringWriter;
 import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -51,7 +26,7 @@ import java.util.concurrent.TimeUnit;
 public class EmptyRoomService {
 
     @Autowired
-    EmptyRoomService _this;
+    EmptyRoomService proxy;
 
     @Autowired
     RedisTemplate redisTemplate;
@@ -60,10 +35,10 @@ public class EmptyRoomService {
     /**
      * 从缓存中获取空教室信息，若redis中没有相关缓存，则爬取
      *
-     * @param week
-     * @param teaNum
-     * @param wSection
-     * @return
+     * @param week     星期数
+     * @param teaNum   教学楼编号
+     * @param wSection 星期天数/节次
+     * @return 返回包含空教室数据的list
      */
     @Cacheable(key = "#p0+#p1+#p2", unless = "#result == null")
     public List<String> getEmptyRoomReply(String week, String teaNum, String wSection) {
@@ -89,31 +64,29 @@ public class EmptyRoomService {
         }
 
         return records;
-
     }
 
     /**
      * 对数据进行楼层筛选
      *
-     * @param week
-     * @param teaNum
-     * @param wSection
-     * @param floor
-     * @return
+     * @param week     星期数
+     * @param teaNum   教学楼编号
+     * @param wSection 星期天数/节次
+     * @param floor    楼层
+     * @return 返回经过筛选楼层后的空教室数据的list
      */
-    public List<String> getEmptyRoomReply(String week, String teaNum, String wSection, int floor) {
+    public List<EmptyRoom> getEmptyRoomReply(String week, String teaNum, String wSection, int floor) {
         // 注解@Cacheable是使用AOP代理实现的 ，通过创建内部类来代理缓存方法
         // 类内部的方法调用类内部的缓存方法不会走代理，使得cacheable注解失效，
         // 所以就不能正常创建缓存，因此需要一个代理对象来调用
-        List<String> emptyRoomList = _this.getEmptyRoomReply(week, teaNum, wSection);
+        List<String> emptyRoomList = proxy.getEmptyRoomReply(week, teaNum, wSection);
         String key = "empty_Room_data::" + week + teaNum + wSection;
         //对数据缓存24小时，重复查询会更新这个数据的过期时间
         redisTemplate.expire(key, 30, TimeUnit.HOURS);
-        List<String> result = new ArrayList<>();
+        List<EmptyRoom> result = new ArrayList<>();
         for (String s : emptyRoomList) {
-            System.out.println(s);
             if (checkFloor(s, floor)) {
-                result.add(s);
+                result.add(new EmptyRoom(s));
             }
         }
         return result;

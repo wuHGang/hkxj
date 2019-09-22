@@ -1,7 +1,6 @@
 package cn.hkxj.platform.controller;
 
 import cn.hkxj.platform.pojo.WebResponse;
-import cn.hkxj.platform.pojo.constant.Building;
 import cn.hkxj.platform.pojo.constant.ErrorCode;
 import cn.hkxj.platform.pojo.timetable.CourseTimeTable;
 import cn.hkxj.platform.pojo.timetable.RoomTimeTable;
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -45,7 +43,7 @@ public class EmtpyRoomController {
 
         try {
             String wSection = dayOfWeek + "/" + order;
-            return WebResponse.success(emptyRoomService.getEmptyRoomReply(String.valueOf(schoolWeek), buildingName, wSection,floor));
+            return WebResponse.success(emptyRoomService.getEmptyRoomReply(String.valueOf(schoolWeek), buildingName, wSection, floor));
         } catch (Exception e) {
             log.error("fail to get emptyRoom data {},{},{},{},{}", schoolWeek, dayOfWeek, order, buildingName, floor, e);
         }

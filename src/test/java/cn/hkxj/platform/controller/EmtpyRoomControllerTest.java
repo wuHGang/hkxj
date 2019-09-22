@@ -1,5 +1,6 @@
 package cn.hkxj.platform.controller;
 
+import cn.hkxj.platform.pojo.WebResponse;
 import cn.hkxj.platform.pojo.constant.Building;
 import cn.hkxj.platform.service.EmptyRoomService;
 import lombok.extern.slf4j.Slf4j;
@@ -17,20 +18,33 @@ import static org.junit.Assert.*;
 @SpringBootTest
 @Slf4j
 public class EmtpyRoomControllerTest {
-    @Resource(name="emptyRoomService")
+    @Resource(name = "emptyRoomService")
     private EmptyRoomService emptyRoomService;
 
     @Test
     public void getEmptyRoom() {
 
-        int schoolWeek=13;int dayOfWeek=2;int order=4;String buildingName="主楼";int floor=1;
+        int schoolWeek = 8;
+        int dayOfWeek = 4;
+        int order = 1;
+        String buildingName = "01";
+        int floor = 3;
         try {
 
-//                System.out.println(emptyRoomService.getEmptyRoomReply(emptyRoomService.getRoomTimeTableByTime(schoolWeek,dayOfWeek,order,Building.getBuildingByName(buildingName),floor)));
+
+            String wSection = dayOfWeek + "/" + order;
+            System.out.println(WebResponse.success(
+                            emptyRoomService.getEmptyRoomReply(
+                                    String.valueOf(schoolWeek),
+                                    buildingName,
+                                    wSection,
+                                    floor)
+                    )
+            )
+            ;
 
 
-
-        }catch (Exception e){
+        } catch (Exception e) {
             System.out.println("!!");
         }
     }
