@@ -28,8 +28,8 @@ public class HandlerRouteService {
 	@Resource
 	private UnbindMessageHandler unbindMessageHandler;
 
-	@Resource
-	private EmptyRoomHandler emptyRoomHandler;
+//	@Resource
+//	private EmptyRoomHandler emptyRoomHandler;
 
 	@Resource
     private ExamMessageHandler examMessageHandler;

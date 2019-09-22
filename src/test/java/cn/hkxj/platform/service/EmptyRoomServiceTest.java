@@ -12,6 +12,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import javax.annotation.Resource;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -28,8 +29,10 @@ public class EmptyRoomServiceTest {
     private EmptyRoomService emptyRoomService;
 
     @Test
-    public void getRoomTimeTableByTime() throws IOException {
-        List<RoomTimeTable> roomTimeTableByTime = emptyRoomService.getRoomTimeTableByTime(12, 3, 3, Building.SCIENCE, 3);
-
+    public void getEmptyRoomReply() throws IOException {
+        List<String> emptyRoomReply = emptyRoomService.getEmptyRoomReply("8", "01", "4/1",3);
+        for (String s:emptyRoomReply){
+            System.out.println(s);
+        }
     }
 }

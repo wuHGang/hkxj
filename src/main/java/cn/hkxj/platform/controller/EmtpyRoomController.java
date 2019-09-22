@@ -44,8 +44,9 @@ public class EmtpyRoomController {
                                     @RequestParam("floor") int floor) {
 
         try {
-            return WebResponse.success(emptyRoomService.getEmptyRoomReply(emptyRoomService.getRoomTimeTableByTime(schoolWeek, dayOfWeek, order, Building.getBuildingByName(buildingName), floor)));
-        } catch (IOException e) {
+            String wSection = dayOfWeek + "/" + order;
+            return WebResponse.success(emptyRoomService.getEmptyRoomReply(String.valueOf(schoolWeek), buildingName, wSection,floor));
+        } catch (Exception e) {
             log.error("fail to get emptyRoom data {},{},{},{},{}", schoolWeek, dayOfWeek, order, buildingName, floor, e);
         }
         return WebResponse.fail(ErrorCode.NO_DATA.getErrorCode(), "fail to get emptyRoom Data");

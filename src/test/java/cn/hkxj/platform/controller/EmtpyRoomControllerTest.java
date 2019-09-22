@@ -26,7 +26,7 @@ public class EmtpyRoomControllerTest {
         int schoolWeek=13;int dayOfWeek=2;int order=4;String buildingName="主楼";int floor=1;
         try {
 
-                System.out.println(emptyRoomService.getEmptyRoomReply(emptyRoomService.getRoomTimeTableByTime(schoolWeek,dayOfWeek,order,Building.getBuildingByName(buildingName),floor)));
+//                System.out.println(emptyRoomService.getEmptyRoomReply(emptyRoomService.getRoomTimeTableByTime(schoolWeek,dayOfWeek,order,Building.getBuildingByName(buildingName),floor)));
 
 
 

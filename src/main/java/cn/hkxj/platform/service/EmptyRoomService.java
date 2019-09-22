@@ -6,6 +6,10 @@ import cn.hkxj.platform.pojo.constant.Building;
 import cn.hkxj.platform.pojo.constant.RedisKeys;
 import cn.hkxj.platform.pojo.timetable.CourseTimeTable;
 import cn.hkxj.platform.pojo.timetable.RoomTimeTable;
+import cn.hkxj.platform.spider.NewUrpSpider;
+import cn.hkxj.platform.spider.newmodel.emptyroom.EmptyRoomPojo;
+import cn.hkxj.platform.spider.newmodel.emptyroom.EmptyRoomPost;
+import cn.hkxj.platform.spider.newmodel.emptyroom.EmptyRoomRecord;
 import cn.hkxj.platform.utils.SchoolTimeUtil;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -18,6 +22,12 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.guava.GuavaModule;
 import com.google.common.collect.HashMultimap;
 import lombok.extern.slf4j.Slf4j;
+import okhttp3.FormBody;
+import org.checkerframework.checker.units.qual.A;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -32,297 +42,101 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /**
- * @author junrong.chen
- * @date 2018/11/4
+ * @author Xie
+ * @date 2019/9/18
  */
 @Slf4j
 @Service("emptyRoomService")
+@CacheConfig(cacheNames = "empty_Room_data")
 public class EmptyRoomService {
-    @Resource
-    private RoomService roomService;
-    @Resource
-    private TimeTableService timeTableService;
-    @Resource
-    private RedisTemplate<String, String> redisTemplate;
-    /**
-     * 缓存当天有课教室和课程的映射
-     */
-    private static HashMultimap<Room, CourseTimeTable> scienceRoomTimeTable;
-    private static HashMultimap<Room, CourseTimeTable> mainRoomTimeTable;
-    private static int dayOfWeek;
-    private static ObjectMapper objectMapper;
 
-    static {
-        SimpleModule sm = new SimpleModule();
-        //注册序列化，反序列化类。因为Jackson在序列化Map时，会把Map的Key对应的对象默认解析成字符串；但是这个字符串格式不是Json的格式
-        // 通过添加自定义Map的键的序列化解析类和反序列化解析类，可以实现对Room对象Json序列化／反序列化
-        sm.addKeySerializer(Room.class, new KeySerializer());
-        sm.addKeyDeserializer(Room.class, new KeyDeSerializer());
-        //注册到ObjectMapper中。
-        objectMapper = new ObjectMapper().registerModule(sm).registerModule(new GuavaModule());
-    }
+    @Autowired
+    EmptyRoomService _this;
+
+    @Autowired
+    RedisTemplate redisTemplate;
+
 
     /**
-     * 该方法为获取当天具体教学楼所有教室的课程情况
+     * 从缓存中获取空教室信息，若redis中没有相关缓存，则爬取
      *
-     * @param building 教学楼
+     * @param week
+     * @param teaNum
+     * @param wSection
      * @return
      */
-    public ArrayList<RoomTimeTable> getTodayEmptyRoomByBuilding(Building building) {
-        ArrayList<RoomTimeTable> roomTimeTableList = new ArrayList<>();
-        HashMultimap<Room, CourseTimeTable> tableMap = getTodayRoomTimeTableMap(building);
-        for (Room room : tableMap.keySet()) {
-            RoomTimeTable roomTimeTable = new RoomTimeTable();
-            ArrayList<CourseTimeTable> courseTimeTables = new ArrayList<>(tableMap.get(room));
-            courseTimeTables.sort(Comparator.comparing(CourseTimeTable::getOrder));
-            roomTimeTable.setCourseTimeTable(courseTimeTables);
-            roomTimeTable.setRoom(room);
-            roomTimeTableList.add(roomTimeTable);
+    @Cacheable(key = "#p0+#p1+#p2", unless = "#result == null")
+    public List<String> getEmptyRoomReply(String week, String teaNum, String wSection) {
+        log.info("爬取空教室缓存{} {} {}", week, teaNum, wSection);
+        NewUrpSpider spider = new NewUrpSpider("2016024254", "1");
+
+        EmptyRoomPost emptyRoomPost = new EmptyRoomPost(week, teaNum, wSection, "1", "50");
+        EmptyRoomPojo emptyRoomPojo = spider.getEmptyRoom(emptyRoomPost);
+        List<String> records = new ArrayList<>();
+        for (EmptyRoomRecord emptyRoomRecord : emptyRoomPojo.getRecords()) {
+            records.add(emptyRoomRecord.getClassroomName());
         }
-        roomTimeTableList.sort((o1, o2) -> {
-            if (o1.getRoom().getFloor().equals(o2.getRoom().getFloor())) {
-                return o1.getRoom().getName().compareTo(o2.getRoom().getName());
-            } else {
-                return o1.getRoom().getFloor().compareTo(o2.getRoom().getFloor());
+
+        //times是还需爬取数据的次数，教务网只能一页显示50个数据，需要循环爬取直到爬完
+        int times = emptyRoomPojo.getPageContext().getTotalCount() / 50;
+        //获取剩余的数据
+        for (int i = 2; i <= times + 1; i++) {
+            emptyRoomPost = new EmptyRoomPost(week, teaNum, wSection, String.valueOf(times), "50");
+            emptyRoomPojo = spider.getEmptyRoom(emptyRoomPost);
+            for (EmptyRoomRecord emptyRoomRecord : emptyRoomPojo.getRecords()) {
+                records.add(emptyRoomRecord.getClassroomName());
             }
-        });
-
-        return roomTimeTableList;
-    }
-
-    public List<RoomTimeTable> getTodayRoomTimeTable(Building building, int floor) {
-        ArrayList<RoomTimeTable> roomTimeTableList = new ArrayList<>();
-        HashMultimap<Room, CourseTimeTable> tableMap = getTodayRoomTimeTableMap(building);
-        for (Room room : roomService.getRoomByBuildingAndFloor(building, floor)) {
-            RoomTimeTable roomTimeTable = new RoomTimeTable();
-
-            ArrayList<CourseTimeTable> courseTimeTables = new ArrayList<>(tableMap.get(room));
-            //将教室对应的上课时间按顺序排序
-            courseTimeTables.sort(Comparator.comparing(CourseTimeTable::getOrder));
-            roomTimeTable.setRoom(room);
-            roomTimeTable.setCourseTimeTable(courseTimeTables);
-            roomTimeTableList.add(roomTimeTable);
         }
-        //将教室按名称排序
-        roomTimeTableList.sort(Comparator.comparing(o -> o.getRoom().getName()));
-        return roomTimeTableList;
+
+        return records;
+
     }
 
     /**
-     * 根据具体的时间获取具体教学楼教室的课程情况
-     * 对已经查询过的日期的课表进行序列化存储到缓存中
+     * 对数据进行楼层筛选
      *
-     * @param schoolWeek 教学周
-     * @param dayOfWeek  星期
-     * @param order      节次
-     * @param building   教学楼
-     * @param floor      楼层
+     * @param week
+     * @param teaNum
+     * @param wSection
+     * @param floor
      * @return
      */
-    @SuppressWarnings(value = {"unchecked"})
-    public List<RoomTimeTable> getRoomTimeTableByTime(int schoolWeek, int dayOfWeek, int order, Building building, int floor) throws IOException {
-        ArrayList<RoomTimeTable> roomTimeTableList = new ArrayList<>();
-        //业务类型加具体时间设为redis的key
-        String key =RedisKeys.EMPTY_ROOM_KEY .getName()+ Integer.toString(schoolWeek) + Integer.toString(dayOfWeek);
-        //教学楼的名字作为设为redis存储的map的hashKey
-        String hashKey = building.name();
-
-        HashMultimap<Room, CourseTimeTable> tableMap = getRoomTimeTableMapByRedis(key, hashKey, schoolWeek, dayOfWeek, building);
-
-        //想查询所有楼层时floor设为0
-        for (Room room : floor == 0 ? roomService.getRoomByBuilding(building) : roomService.getRoomByBuildingAndFloor(building, floor)) {
-            RoomTimeTable roomTimeTable = new RoomTimeTable();
-            LinkedList<CourseTimeTable> courseTimeTables = new LinkedList<>(tableMap.get(room));
-            //将教室对应的上课时间按顺序排序
-            courseTimeTables.sort(Comparator.comparing(CourseTimeTable::getOrder));
-            //在对节次有要求的查询情况下，对在该节次时有课的教室和课程进行筛选并进行移除
-            boolean roomInOrder = false;
-            if (order != 0) {
-                for (CourseTimeTable courseTimeTable : courseTimeTables) {
-                    if (courseTimeTable.getOrder() == order) {
-                        roomInOrder = true;
-                        break;
-                    }
-                }
-            }
-            if (!roomInOrder) {
-                roomTimeTable.setRoom(room);
-                roomTimeTable.setCourseTimeTable(courseTimeTables);
-                roomTimeTableList.add(roomTimeTable);
-            }
-        }
-        //将教室按名称排序
-        roomTimeTableList.sort(Comparator.comparing(o -> o.getRoom().getName()));
-        return roomTimeTableList;
-    }
-
-    /**
-     *从缓存中拿教室信息，如果缓存中不存在查询日期的结果，就进行缓存，对于查询频繁的数据，更新他的过期时间
-     * @param key 业务类型加具体时间设为redis的key
-     * @param hashKey 教学楼的名字作为设为redis存储的map的hashKey
-     * @param schoolWeek 教学周
-     * @param dayOfWeek 星期
-     * @param building 教学楼
-     * @return
-     * @throws IOException 序列化失败
-     */
-    public HashMultimap<Room, CourseTimeTable> getRoomTimeTableMapByRedis(String key,String hashKey,int schoolWeek, int dayOfWeek, Building building) throws IOException{
-        //如果缓存中不存在查询日期的结果，就进行缓存，对于查询频繁的数据，更新他的过期时间
-        if (!redisTemplate.opsForHash().hasKey(key, hashKey)) {
-            redisTemplate.opsForHash().put(key, hashKey, objectMapper.writeValueAsString(getRoomTimeTableMapByTime(schoolWeek, dayOfWeek, building)));
-        }
+    public List<String> getEmptyRoomReply(String week, String teaNum, String wSection, int floor) {
+        // 注解@Cacheable是使用AOP代理实现的 ，通过创建内部类来代理缓存方法
+        // 类内部的方法调用类内部的缓存方法不会走代理，使得cacheable注解失效，
+        // 所以就不能正常创建缓存，因此需要一个代理对象来调用
+        List<String> emptyRoomList = _this.getEmptyRoomReply(week, teaNum, wSection);
+        String key = "empty_Room_data::" + week + teaNum + wSection;
+        //对数据缓存24小时，重复查询会更新这个数据的过期时间
         redisTemplate.expire(key, 30, TimeUnit.HOURS);
-
-        return objectMapper.readValue((String) redisTemplate.opsForHash().get(key, hashKey), new TypeReference<HashMultimap<Room, CourseTimeTable>>() {
-        });
-    }
-
-    /**
-     * 根据具体的时间获取具体教学楼的教室时间表
-     * 对指定了具体时间进行查询的情况下，用局部变量进行存储来确保线程安全性
-     *
-     * @param schoolWeek 教学周
-     * @param dayOfWeek  星期
-     * @param building   教学楼
-     * @return
-     */
-    public HashMultimap<Room, CourseTimeTable> getRoomTimeTableMapByTime(int schoolWeek, int dayOfWeek, Building building) {
-
-        try {
-            HashMultimap<Room, CourseTimeTable> roomTimeTable = HashMultimap.create();
-            for (CourseTimeTable timeTable : timeTableService.getTimeTableFromDB(schoolWeek, dayOfWeek)) {
-                if (checkDistinct(timeTable.getDistinct())) {
-                    Room room = roomService.getRoomByName(timeTable.getRoom().getName());
-                    if (room.getArea() == building) {
-                        roomTimeTable.put(room, timeTable);
-                    }
-                }
-            }
-
-            return roomTimeTable;
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("illegal building " + building.getChinese());
-        }
-    }
-
-    private HashMultimap<Room, CourseTimeTable> getTodayRoomTimeTableMap(Building building) {
-        int week = SchoolTimeUtil.getDayOfWeek();
-        if (dayOfWeek != week) {
-            log.info("initialize RoomTimeTableMap! day of week{}", week);
-            dayOfWeek = week;
-            generateMap();
-        }
-
-        if (building == Building.SCIENCE) {
-            return scienceRoomTimeTable;
-        }
-        if (building == Building.MAIN) {
-            return mainRoomTimeTable;
-        }
-
-        throw new IllegalArgumentException("illegal building " + building.getChinese());
-    }
-
-    private void generateMap() {
-        scienceRoomTimeTable = HashMultimap.create();
-        mainRoomTimeTable = HashMultimap.create();
-        for (CourseTimeTable timeTable : timeTableService.getTimeTableFromDB(SchoolTimeUtil.getSchoolWeek())) {
-            if (checkDistinct(timeTable.getDistinct())) {
-                Room room = roomService.getRoomByName(timeTable.getRoom().getName());
-                if (room.getArea() == Building.SCIENCE) {
-
-                    scienceRoomTimeTable.put(room, timeTable);
-                }
-                if (room.getArea() == Building.MAIN) {
-
-                    mainRoomTimeTable.put(room, timeTable);
-                }
+        List<String> result = new ArrayList<>();
+        for (String s : emptyRoomList) {
+            System.out.println(s);
+            if (checkFloor(s, floor)) {
+                result.add(s);
             }
         }
+        return result;
     }
+
 
     /**
-     * 根据教室名称查询当天教室的上课情况
-     *
-     * @param name 教室名
+     * 判断楼层
      */
-    public RoomTimeTable getTodayTimeTableByRoomName(String name) {
-        RoomTimeTable timeTable = new RoomTimeTable();
-
-        try {
-            Room room = roomService.getRoomByName(name);
-            ArrayList<CourseTimeTable> courseTimeTableArrayList = new ArrayList<>(getTodayRoomTimeTableMap(room.getArea()).get(room));
-            timeTable.setRoom(room);
-            courseTimeTableArrayList.sort(Comparator.comparing(CourseTimeTable::getOrder));
-            timeTable.setCourseTimeTable(courseTimeTableArrayList);
-        } catch (Exception e) {
-            Room room = new Room();
-            room.setName(name);
-            timeTable.setRoom(room);
+    private boolean checkFloor(String className, int floor) {
+        if (floor == 0) {
+            return true;
         }
-        return timeTable;
-    }
-
-    private boolean checkDistinct(int distinct) {
-        return (distinct == 0) || (distinct == SchoolTimeUtil.getWeekDistinct());
-    }
-
-    /**
-     * 获取组装后的空教室查询的结果列表
-     *
-     * @param roomTimeTableList
-     * @return
-     */
-    public List<EmptyRoom> getEmptyRoomReply(List<RoomTimeTable> roomTimeTableList) {
-        List<EmptyRoom> replayList = new ArrayList<>();
-        for (RoomTimeTable table : roomTimeTableList) {
-            replayList.add(tableToEmptyRoomPojo(table));
+        char[] chars = className.replaceAll("\\D", "").toCharArray();
+        if (chars.length != 4) {
+            return false;
         }
-        return replayList;
-    }
-
-    /**
-     * 对空教室的结果进行组装
-     *
-     * @param roomTimeTable
-     * @return
-     */
-    private EmptyRoom tableToEmptyRoomPojo(RoomTimeTable roomTimeTable) {
-        EmptyRoom emptyRoom = new EmptyRoom();
-        LinkedList<Integer> orderList = new LinkedList<>();
-
-        List<CourseTimeTable> courseTimeTable = roomTimeTable.getCourseTimeTable();
-
-        if (!(Objects.isNull(courseTimeTable) || courseTimeTable.size() == 0)) {
-            for (CourseTimeTable table : courseTimeTable) {
-                orderList.add(table.getOrder());
-            }
+        int floorTemp = (chars[0] - '0') * 10 + (chars[1] - '0');
+        if (floorTemp == floor) {
+            return true;
+        } else {
+            return false;
         }
-        emptyRoom.setName(roomTimeTable.getRoom().getName());
-        emptyRoom.setOrderList(orderList);
-        return emptyRoom;
-    }
-}
-
-//Key的序列化类
-class KeySerializer extends JsonSerializer<Room> {
-    private final ObjectMapper objectMapper = new ObjectMapper();
-
-    @Override
-    public void serialize(Room keyInstance, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
-        StringWriter writer = new StringWriter();
-        objectMapper.writeValue(writer, keyInstance);
-        jsonGenerator.writeFieldName(writer.toString());
-    }
-}
-
-//Key的反序列化类
-class KeyDeSerializer extends KeyDeserializer {
-    private final ObjectMapper objectMapper = new ObjectMapper();
-
-    @Override
-    public Room deserializeKey(String key, DeserializationContext deserializationContext) throws IOException {
-        return objectMapper.readValue(key, Room.class);
     }
 }
 

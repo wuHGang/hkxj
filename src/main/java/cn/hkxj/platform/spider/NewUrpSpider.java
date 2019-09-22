@@ -7,6 +7,8 @@ import cn.hkxj.platform.spider.model.VerifyCode;
 import cn.hkxj.platform.spider.newmodel.*;
 import cn.hkxj.platform.spider.newmodel.course.UrpCourseForSpider;
 import cn.hkxj.platform.spider.newmodel.coursetimetable.UrpCourseTimeTableForSpider;
+import cn.hkxj.platform.spider.newmodel.emptyroom.EmptyRoomPojo;
+import cn.hkxj.platform.spider.newmodel.emptyroom.EmptyRoomPost;
 import cn.hkxj.platform.spider.newmodel.examtime.UrpExamTime;
 import cn.hkxj.platform.spider.newmodel.grade.CurrentGrade;
 import cn.hkxj.platform.spider.newmodel.grade.general.UrpGeneralGradeForSpider;
@@ -52,6 +54,7 @@ public class NewUrpSpider {
     private static final String COURSE_TIME_TABLE = ROOT + "/student/courseSelect/thisSemesterCurriculum/ajaxStudentSchedule/callback";
     private static final String INDEX = ROOT + "/index.jsp";
     private static final String MAKE_UP_GRADE = ROOT + "/student/examinationManagement/examGrade/search";
+    private static final String EMPTY_ROOM = ROOT + "/student/teachingResources/freeClassroomQuery/search";
     private static StringRedisTemplate stringRedisTemplate;
     private static final TypeReference<UrpGradeDetailForSpider> gradeDetailTypeReference
             = new TypeReference<UrpGradeDetailForSpider>() {
@@ -272,6 +275,42 @@ public class NewUrpSpider {
         ValueOperations<String, String> opsForValue = stringRedisTemplate.opsForValue();
         opsForValue.set(RedisKeys.URP_LOGIN_COOKIE.genKey(account), uuid, 20L, TimeUnit.MINUTES);
 
+    }
+
+    /**
+     * 获取空教室信息
+     *
+     * @param emptyRoomPost
+     * @return
+     */
+    public EmptyRoomPojo getEmptyRoom(EmptyRoomPost emptyRoomPost) {
+        FormBody.Builder params = new FormBody.Builder();
+        FormBody body = params.add("weeks", emptyRoomPost.getWeeks())
+                .add("executiveEducationPlanNumber", "2019-2020-1-1")
+                .add("codeCampusListNumber", "01")
+                .add("teaNum", emptyRoomPost.getTeaNum())
+                .add("wSection", emptyRoomPost.getWSection())
+                .add("pageNum",emptyRoomPost.getPageNum())
+                .add("pageSize",emptyRoomPost.getPageSize())
+                .build();
+        Request request = new Request.Builder()
+                .url(EMPTY_ROOM)
+                .headers(HEADERS)
+                .post(body)
+                .build();
+        String result = new String(execute(request));
+        try {
+            List<EmptyRoomPojo> pojo=JSON.parseObject(result, new TypeReference<List<EmptyRoomPojo>>() {
+            });
+            return pojo.get(0);
+        } catch (JSONException e) {
+            if (result.length() > 1000) {
+                throw new UrpEvaluationException("account: " + account + " 未完成评估无法查成绩");
+            }
+            log.error("parse grade error {}", result, e);
+            cookieJar.clearSession();
+            throw new UrpSessionExpiredException("account: " + account + "session expired");
+        }
     }
 
     public List<UrpExamTime> getExamTime() {
