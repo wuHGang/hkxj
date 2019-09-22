@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -62,7 +61,10 @@ public class UrpCookieJar implements ClearableCookieJar {
 
         CookieCache cookieCache = selectCookieCache();
         cookieCache.addAll(cookies);
-        persistor.saveByAccount(cookies, MDC.get("account"));
+        if(StringUtils.isNotEmpty(MDC.get("account"))){
+            persistor.saveByAccount(cookies, MDC.get("account"));
+        }
+
     }
 
     @Override
@@ -93,14 +95,31 @@ public class UrpCookieJar implements ClearableCookieJar {
      * 为了保证putIfAbsent这个操作的原子性，当put的key不存在的时候，该方法会返回null
      */
     private CookieCache selectCookieCache() {
-        CookieCache cookieCache = new SetCookieCache();
-        CookieCache result;
-        if (StringUtils.isNotEmpty(MDC.get("account"))) {
-            result = accountCookieCache.getIfPresent(MDC.get("account"));
+        CookieCache result = null;
+        if(StringUtils.isNotEmpty(MDC.get("preLoad"))){
+            result = accountCookieCache.getIfPresent(MDC.get("preLoad"));
             if(result == null){
+                CookieCache cookieCache = new SetCookieCache();
+                accountCookieCache.put(MDC.get("preLoad"), cookieCache);
+                return cookieCache;
+            }
+        }
+
+        //TODO 这个逻辑怎么会写得跟浆糊一样
+        if (StringUtils.isNotEmpty(MDC.get("account"))) {
+            if (result == null){
+                result = accountCookieCache.getIfPresent(MDC.get("account"));
+            }else {
+                accountCookieCache.put(MDC.get("account"), result);
+            }
+            if(result == null){
+                CookieCache cookieCache = new SetCookieCache();
                 accountCookieCache.put(MDC.get("account"), cookieCache);
                 return cookieCache;
             }
+            return result;
+        }
+        if(result != null){
             return result;
         } else {
             throw new RuntimeException("no cookie jar can use");
@@ -119,10 +138,6 @@ public class UrpCookieJar implements ClearableCookieJar {
             accountCookieCache.invalidate(account);
             persistor.clearByAccount(account);
         }
-    }
-
-    boolean isCookieExpiredByAccount(String account){
-        return accountCookieCache.getIfPresent(account) == null;
     }
 
     @Override

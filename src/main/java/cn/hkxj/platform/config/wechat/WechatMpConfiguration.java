@@ -24,7 +24,7 @@ import java.util.Map;
  * @author Binary Wang(https://github.com/binarywang)
  */
 @Configuration
-@ComponentScan(basePackages = "cn.hkxj.platform.*")
+@ComponentScan(basePackages = "cn.hkxj.platform.config.*")
 @Component
 @EnableConfigurationProperties(value = {WechatMpProProperties.class, WechatMpPlusProperties.class, WechatTemplateProperties.class})
 public class WechatMpConfiguration {

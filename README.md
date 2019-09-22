@@ -10,12 +10,7 @@
 
 黑科校际Pro后台，基于Spring Boot光速微服务开发
 
-使用前请先resources根目录完成配置
-
-
-2018年6月8日
----
-微信公众平台接入支持完成
+![Image text](https://raw.githubusercontent.com/JR--Chen/hkxj/master/picture/framework.jpg)
 
 
 开源许可证 License MIT

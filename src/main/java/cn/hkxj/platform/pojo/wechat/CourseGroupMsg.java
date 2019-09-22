@@ -27,7 +27,12 @@ public class CourseGroupMsg {
 
     public String getCourseContent(){
         StringBuilder builder = new StringBuilder();
-        if(CollectionUtils.isEmpty(detailDtos)){
+        //引用为Null时，说明没有响应的数据
+        if(Objects.isNull(detailDtos)){
+            return null;
+        }
+        //detailDtos的size为0时，说明当天没有课
+        if(detailDtos.size() == 0){
             builder.append("今天没有课呐，可以出去浪了~\n");
         } else {
             detailDtos.sort(Comparator.comparing(detailVo -> detailVo.getDetail().getOrder()));
