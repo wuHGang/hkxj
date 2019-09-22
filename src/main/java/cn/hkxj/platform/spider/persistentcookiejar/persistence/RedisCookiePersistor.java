@@ -11,6 +11,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * @author junrong.chen
@@ -31,9 +32,11 @@ public class RedisCookiePersistor implements AccountCookiePersistor{
 
     @Override
     synchronized public Map<String, List<Cookie>> loadAll() {
-        Set<String> accountSet =
-                Optional.ofNullable(redisTemplate.opsForSet().members(RedisKeys.URP_COOKIE_ACCOUNT.getName())).orElse(new HashSet<>());
-
+        Set<String> accountSet = Optional
+                .ofNullable(redisTemplate.keys(RedisKeys.URP_LOGIN_COOKIE.getName()+"*")).orElse(new HashSet<>())
+                .stream()
+                .map(key -> key.split(RedisKeys.URP_LOGIN_COOKIE.getName() + "_")[1])
+                .collect(Collectors.toSet());;
         HashMap<String, List<Cookie>> accountCookieMap = Maps.newHashMapWithExpectedSize(accountSet.size());
         HashOperations<String, String, String> opsForHash = redisTemplate.opsForHash();
         for (String account : accountSet) {
@@ -54,7 +57,6 @@ public class RedisCookiePersistor implements AccountCookiePersistor{
 
     @Override
     synchronized public void saveByAccount(Collection<Cookie> cookies, String account) {
-        redisTemplate.opsForSet().add(RedisKeys.URP_COOKIE_ACCOUNT.getName(), account);
 
         HashMap<String, String> cookieMap = Maps.newHashMapWithExpectedSize(cookies.size());
         for (Cookie cookie : cookies) {
@@ -79,8 +81,8 @@ public class RedisCookiePersistor implements AccountCookiePersistor{
 
     @Override
     synchronized public void clearByAccount(String account) {
-        redisTemplate.opsForSet().remove(RedisKeys.URP_COOKIE_ACCOUNT.getName(), account);
         redisTemplate.delete(RedisKeys.URP_COOKIE.genKey(account));
+        redisTemplate.delete(RedisKeys.URP_LOGIN_COOKIE.genKey(account));
     }
 
 

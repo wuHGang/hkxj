@@ -15,14 +15,9 @@ public enum RedisKeys {
 
     URP_COOKIE("urp_cookie"),
 
-    /**
-     * set 存储学号
-     */
-    URP_COOKIE_ACCOUNT("urp_cookie_account"),
-
     URP_LOGIN_COOKIE("urp_login_cookie"),
 
-    KAPTCHA("kaptcha")
+    CAPTCHA("kaptcha")
     ;
     private String name;
 

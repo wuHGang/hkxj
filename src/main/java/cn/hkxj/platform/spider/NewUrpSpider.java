@@ -132,12 +132,12 @@ public class NewUrpSpider {
         UUID uuid = UUID.randomUUID();
         HashOperations<String, String, String> opsForHash = stringRedisTemplate.opsForHash();
 
-        opsForHash.put(RedisKeys.KAPTCHA.getName(), uuid.toString(), encoder.encodeToString(verifyCode.getData().clone()));
+        opsForHash.put(RedisKeys.CAPTCHA.getName(), uuid.toString(), encoder.encodeToString(verifyCode.getData().clone()));
         String code = CaptchaBreaker.getCode(uuid.toString());
 
         studentCheck(account, password, code, uuid.toString());
 
-        opsForHash.delete(RedisKeys.KAPTCHA.getName(), uuid.toString());
+        opsForHash.delete(RedisKeys.CAPTCHA.getName(), uuid.toString());
     }
 
     /**
@@ -162,6 +162,9 @@ public class NewUrpSpider {
         } catch (JSONException e) {
             if (result.length() > 1000) {
                 throw new UrpEvaluationException("account: " + account + " 未完成评估无法查成绩");
+            }else if(result.contains("login")){
+                cookieJar.clearSession();
+                throw new UrpSessionExpiredException("account: " + account + "session expired");
             }
             log.error("parse grade error {}", result, e);
             cookieJar.clearSession();
@@ -422,34 +425,6 @@ public class NewUrpSpider {
         return stringRedisTemplate.hasKey(RedisKeys.URP_COOKIE.genKey(account))
                 && stringRedisTemplate.hasKey(RedisKeys.URP_LOGIN_COOKIE.genKey(account));
     }
-
-    public boolean isCookieExpire() {
-
-        Request request = new Request.Builder()
-                .url(INDEX)
-                .headers(HEADERS)
-                .get()
-                .build();
-
-        Response response = getResponse(request);
-        if (response.isSuccessful()) {
-            return false;
-        }
-
-        if (response.isRedirect()) {
-            String location = response.header("Location");
-            if (StringUtils.isNotEmpty(location)) {
-                if (location.contains("login")) {
-                    return true;
-                } else {
-                    log.error("check cookie Redirect location {}", location);
-                }
-            }
-        }
-        // 网络超时是否应该返回true呢
-        return true;
-    }
-
 
     /**
      * @param response 响应

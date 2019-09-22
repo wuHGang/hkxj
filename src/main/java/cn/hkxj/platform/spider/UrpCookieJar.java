@@ -140,10 +140,6 @@ public class UrpCookieJar implements ClearableCookieJar {
         }
     }
 
-    boolean isCookieExpiredByAccount(String account){
-        return accountCookieCache.getIfPresent(account) == null;
-    }
-
     @Override
     public void clear() {
         accountCookieCache.cleanUp();
