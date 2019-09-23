@@ -85,7 +85,7 @@ public class EmptyRoomService {
         redisTemplate.expire(key, 30, TimeUnit.HOURS);
         List<EmptyRoom> result = new ArrayList<>();
         for (String s : emptyRoomList) {
-            if (checkFloor(s, floor)) {
+            if (checkFloor(s, floor, teaNum)) {
                 result.add(new EmptyRoom(s));
             }
         }
@@ -96,15 +96,22 @@ public class EmptyRoomService {
     /**
      * 判断楼层
      */
-    private boolean checkFloor(String className, int floor) {
+    private boolean checkFloor(String className, int floor, String teaNum) {
         if (floor == 0) {
             return true;
         }
+        int floorTemp;
         char[] chars = className.replaceAll("\\D", "").toCharArray();
-        if (chars.length != 4) {
-            return false;
+        if (!"02".equals(teaNum)) {
+            if (chars.length != 4) {
+                return false;
+            }
+            floorTemp = (chars[0] - '0') * 10 + (chars[1] - '0');
+
+        } else {
+            floorTemp = (chars[0] - '0');
         }
-        int floorTemp = (chars[0] - '0') * 10 + (chars[1] - '0');
+
         if (floorTemp == floor) {
             return true;
         } else {
