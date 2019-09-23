@@ -4,11 +4,12 @@ import cn.hkxj.platform.builder.TemplateBuilder;
 import cn.hkxj.platform.config.wechat.WechatMpConfiguration;
 import cn.hkxj.platform.config.wechat.WechatMpPlusProperties;
 import cn.hkxj.platform.config.wechat.WechatTemplateProperties;
-import cn.hkxj.platform.pojo.*;
+import cn.hkxj.platform.pojo.GradeAndCourse;
+import cn.hkxj.platform.pojo.ScheduleTask;
+import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.pojo.constant.MiniProgram;
 import cn.hkxj.platform.pojo.constant.SubscribeScene;
 import cn.hkxj.platform.pojo.wechat.Openid;
-import cn.hkxj.platform.service.GradeSearchService;
 import cn.hkxj.platform.service.NewGradeSearchService;
 import cn.hkxj.platform.service.OpenIdService;
 import cn.hkxj.platform.service.ScheduleTaskService;
@@ -20,14 +21,17 @@ import me.chanjar.weixin.mp.bean.template.WxMpTemplateData;
 import me.chanjar.weixin.mp.bean.template.WxMpTemplateMessage;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
-import java.util.*;
-import java.util.concurrent.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Yuki
@@ -165,7 +169,7 @@ public class GradeAutoUpdateTask {
             //因为一次模板消息只能处理一个成绩，所以循环处理
             List<WxMpTemplateData> data = templateBuilder.assemblyTemplateContentForGradeUpdate(gradeAndCourse);
             WxMpTemplateMessage.MiniProgram miniProgram = new WxMpTemplateMessage.MiniProgram();
-            miniProgram.setAppid(MiniProgram.APPID.getValue());
+            miniProgram.setAppid(MiniProgram.APP_ID.getValue());
             miniProgram.setPagePath(MiniProgram.GRADE_PATH.getValue());
             WxMpTemplateMessage templateMessage =
                     templateBuilder.buildWithNoUrl(task.getOpenid(), data,  wechatTemplateProperties.getPlusGradeUpdateTemplateId(), miniProgram);

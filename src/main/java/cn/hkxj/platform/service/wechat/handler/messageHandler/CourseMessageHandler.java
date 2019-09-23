@@ -1,7 +1,6 @@
 package cn.hkxj.platform.service.wechat.handler.messageHandler;
 
 import cn.hkxj.platform.builder.TemplateBuilder;
-import cn.hkxj.platform.builder.TextBuilder;
 import cn.hkxj.platform.config.wechat.WechatMpPlusProperties;
 import cn.hkxj.platform.config.wechat.WechatTemplateProperties;
 import cn.hkxj.platform.pojo.CourseTimeTableDetail;
@@ -9,14 +8,10 @@ import cn.hkxj.platform.pojo.ScheduleTask;
 import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.pojo.constant.MiniProgram;
 import cn.hkxj.platform.pojo.constant.SubscribeScene;
-import cn.hkxj.platform.pojo.timetable.CourseTimeTable;
 import cn.hkxj.platform.pojo.wechat.Openid;
-import cn.hkxj.platform.service.CourseService;
 import cn.hkxj.platform.service.CourseTimeTableService;
 import cn.hkxj.platform.service.OpenIdService;
 import cn.hkxj.platform.service.ScheduleTaskService;
-import cn.hkxj.platform.utils.OneOffSubcriptionUtil;
-import cn.hkxj.platform.utils.SchoolTimeUtil;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.api.WxConsts;
 import me.chanjar.weixin.common.error.WxErrorException;
@@ -31,7 +26,6 @@ import me.chanjar.weixin.mp.bean.template.WxMpTemplateMessage;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -107,7 +101,7 @@ public class CourseMessageHandler implements WxMpMessageHandler {
         WxMpKefuMessage wxMpKefuMessage = new WxMpKefuMessage();
         wxMpKefuMessage.setMsgType(msgType);
         wxMpKefuMessage.setToUser(openid);
-        wxMpKefuMessage.setMiniProgramAppId(MiniProgram.APPID.getValue());
+        wxMpKefuMessage.setMiniProgramAppId(MiniProgram.APP_ID.getValue());
         wxMpKefuMessage.setMiniProgramPagePath(MiniProgram.INDEX.getValue());
         wxMpKefuMessage.setTitle("小程序");
         wxMpKefuMessage.setThumbMediaId("qcf_h2hm7P1RL81csrh8ML3i-9lmYJAP3ihNZbOzEks");
