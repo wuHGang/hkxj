@@ -13,6 +13,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -30,6 +31,8 @@ public class EmptyRoomService {
 
     @Autowired
     RedisTemplate redisTemplate;
+
+    private static HashSet<String> hashSet = new HashSet<>();
 
 
     /**
@@ -84,6 +87,7 @@ public class EmptyRoomService {
         //对数据缓存24小时，重复查询会更新这个数据的过期时间
         redisTemplate.expire(key, 30, TimeUnit.HOURS);
         List<EmptyRoom> result = new ArrayList<>();
+        hashSet.clear();
         for (String s : emptyRoomList) {
             if (checkFloor(s, floor, teaNum)) {
                 result.add(new EmptyRoom(s));
@@ -97,21 +101,24 @@ public class EmptyRoomService {
      * 判断楼层
      */
     private boolean checkFloor(String className, int floor, String teaNum) {
+        if (hashSet.contains(className)) {
+            return false;
+        }
         if (floor == 0) {
             return true;
         }
         int floorTemp;
         char[] chars = className.replaceAll("\\D", "").toCharArray();
+
         if (!"02".equals(teaNum)) {
             if (chars.length != 4) {
                 return false;
             }
             floorTemp = (chars[0] - '0') * 10 + (chars[1] - '0');
-
         } else {
             floorTemp = (chars[0] - '0');
         }
-
+        hashSet.add(className);
         if (floorTemp == floor) {
             return true;
         } else {
