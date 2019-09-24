@@ -5,6 +5,7 @@ import cn.hkxj.platform.spider.NewUrpSpider;
 import cn.hkxj.platform.spider.newmodel.emptyroom.EmptyRoomPojo;
 import cn.hkxj.platform.spider.newmodel.emptyroom.EmptyRoomPost;
 import cn.hkxj.platform.spider.newmodel.emptyroom.EmptyRoomRecord;
+import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
@@ -13,7 +14,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -32,7 +32,6 @@ public class EmptyRoomService {
     @Autowired
     RedisTemplate redisTemplate;
 
-    private static HashSet<String> hashSet = new HashSet<>();
 
 
     /**
@@ -85,10 +84,10 @@ public class EmptyRoomService {
         List<String> emptyRoomList = proxy.getEmptyRoomReply(week, teaNum, wSection);
         String key = "empty_Room_data::" + week + teaNum + wSection;
         //对数据缓存24小时，重复查询会更新这个数据的过期时间
-        redisTemplate.expire(key, 30, TimeUnit.HOURS);
+        redisTemplate.expire(key, 24L, TimeUnit.HOURS);
         List<EmptyRoom> result = new ArrayList<>();
-        hashSet.clear();
-        for (String s : emptyRoomList) {
+
+        for (String s : Sets.newHashSet(emptyRoomList)) {
             if (checkFloor(s, floor, teaNum)) {
                 result.add(new EmptyRoom(s));
             }
@@ -102,9 +101,6 @@ public class EmptyRoomService {
      */
     private boolean checkFloor(String className, int floor, String teaNum) {
 
-        if (hashSet.contains(className)) {
-            return false;
-        }
         if(className.startsWith("科技大厦10楼")){
             return false;
         }
@@ -122,7 +118,7 @@ public class EmptyRoomService {
         } else {
             floorTemp = (chars[0] - '0');
         }
-        hashSet.add(className);
+
         if (floorTemp == floor) {
             return true;
         } else {

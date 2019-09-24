@@ -66,12 +66,12 @@ public class NewUrpSpider {
     };
     private static final Splitter SPACE_SPLITTER = Splitter.on(" ").omitEmptyStrings().trimResults();
 
-    private static final UrpCookieJar cookieJar = new UrpCookieJar();
+    private static final UrpCookieJar COOKIE_JAR = new UrpCookieJar();
 
-    private static final OkHttpClient client = new OkHttpClient.Builder()
-            .cookieJar(cookieJar)
+    private static final OkHttpClient CLIENT = new OkHttpClient.Builder()
+            .cookieJar(COOKIE_JAR)
             .retryOnConnectionFailure(true)
-            .addInterceptor(new RetryInterceptor(5))
+            .addInterceptor(new RetryInterceptor(10))
             .followRedirects(false)
             .build();
 
@@ -166,11 +166,11 @@ public class NewUrpSpider {
             if (result.length() > 1000) {
                 throw new UrpEvaluationException("account: " + account + " 未完成评估无法查成绩");
             }else if(result.contains("login")){
-                cookieJar.clearSession();
+                COOKIE_JAR.clearSession();
                 throw new UrpSessionExpiredException("account: " + account + "session expired");
             }
             log.error("parse grade error {}", result, e);
-            cookieJar.clearSession();
+            COOKIE_JAR.clearSession();
             throw new UrpSessionExpiredException("account: " + account + "session expired");
         }
     }
@@ -211,7 +211,7 @@ public class NewUrpSpider {
             }
 
             log.error("parse grade error {}", result, e);
-            cookieJar.clearSession();
+            COOKIE_JAR.clearSession();
             throw new UrpSessionExpiredException("account: " + account + "session expired");
         }
     }
@@ -282,15 +282,15 @@ public class NewUrpSpider {
         String location = response.header("Location");
 
         if (StringUtils.isEmpty(location)) {
-            cookieJar.clearSession();
+            COOKIE_JAR.clearSession();
             throw new UrpRequestException("url: " + request.url().toString() + " code: " + response.code() + " cause: " + response.message());
         } else if (location.contains("badCaptcha")) {
-            cookieJar.clearSession();
+            COOKIE_JAR.clearSession();
             throw new UrpVerifyCodeException("captcha: " + captcha + " code uuid :" + uuid);
         } else if (location.contains("badCredentials")) {
             throw new PasswordUncorrectException("account: " + account);
         } else if (location.contains("concurrentSessionExpired")) {
-            cookieJar.clearSession();
+            COOKIE_JAR.clearSession();
             throw new UrpSessionExpiredException("account: " + account + "session expired");
         }
 
@@ -330,7 +330,7 @@ public class NewUrpSpider {
                 throw new UrpEvaluationException("account: " + account + " 未完成评估无法查成绩");
             }
             log.error("parse grade error {}", result, e);
-            cookieJar.clearSession();
+            COOKIE_JAR.clearSession();
             throw new UrpSessionExpiredException("account: " + account + "session expired");
         }
     }
@@ -343,7 +343,7 @@ public class NewUrpSpider {
                 .build();
         String s = new String(execute(request));
         if (s.contains("invalidSession")) {
-            cookieJar.clearSession();
+            COOKIE_JAR.clearSession();
             throw new UrpSessionExpiredException("account: " + account + "session expired");
         }
         Document document = Jsoup.parse(s);
@@ -384,7 +384,7 @@ public class NewUrpSpider {
             return JSON.parseObject(result, UrpCourseTimeTableForSpider.class);
         } catch (JSONException e) {
             log.error("parse courseTimeTable error {}", result, e);
-            cookieJar.clearSession();
+            COOKIE_JAR.clearSession();
             throw new UrpSessionExpiredException("account: " + account + " session expired");
         }
     }
@@ -437,7 +437,7 @@ public class NewUrpSpider {
 
 
     private static byte[] execute(Request request) {
-        try (Response response = client.newCall(request).execute()) {
+        try (Response response = CLIENT.newCall(request).execute()) {
             if (isResponseFail(response)) {
                 throw new UrpRequestException("url: " + request.url().toString() + " code: " + response.code() + " cause: " + response.message());
             }
@@ -449,7 +449,7 @@ public class NewUrpSpider {
 
 
     private Response getResponse(Request request) {
-        try (Response response = client.newCall(request).execute()) {
+        try (Response response = CLIENT.newCall(request).execute()) {
             if (isResponseFail(response)) {
                 throw new UrpRequestException("url: " + request.url().toString() + " code: " + response.code() + " cause: " + response.message());
             }
