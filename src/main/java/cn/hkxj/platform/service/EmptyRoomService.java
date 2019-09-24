@@ -101,7 +101,11 @@ public class EmptyRoomService {
      * 判断楼层
      */
     private boolean checkFloor(String className, int floor, String teaNum) {
+
         if (hashSet.contains(className)) {
+            return false;
+        }
+        if(className.startsWith("科技大厦10楼")){
             return false;
         }
         if (floor == 0) {

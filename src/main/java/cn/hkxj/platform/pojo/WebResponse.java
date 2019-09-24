@@ -1,11 +1,14 @@
 package cn.hkxj.platform.pojo;
 
+import lombok.Data;
+
 import java.util.Objects;
 
 /**
  * @author junrong.chen
  * @date 2018/10/13
  */
+@Data
 public class WebResponse<T> {
 	private Integer status;
 	private String message;

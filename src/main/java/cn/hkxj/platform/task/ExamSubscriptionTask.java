@@ -1,36 +1,30 @@
 package cn.hkxj.platform.task;
 
 import cn.hkxj.platform.builder.TemplateBuilder;
-import cn.hkxj.platform.builder.TextBuilder;
 import cn.hkxj.platform.config.wechat.WechatMpConfiguration;
 import cn.hkxj.platform.config.wechat.WechatMpPlusProperties;
 import cn.hkxj.platform.config.wechat.WechatTemplateProperties;
-import cn.hkxj.platform.pojo.*;
+import cn.hkxj.platform.pojo.ScheduleTask;
 import cn.hkxj.platform.pojo.constant.MiniProgram;
-import cn.hkxj.platform.pojo.timetable.ExamTimeTable;
-import cn.hkxj.platform.pojo.wechat.CourseGroupMsg;
 import cn.hkxj.platform.pojo.wechat.ExamGroupMsg;
 import cn.hkxj.platform.pojo.wechat.OneOffSubscription;
-import cn.hkxj.platform.pojo.wechat.Openid;
-import cn.hkxj.platform.service.*;
+import cn.hkxj.platform.service.ExamTimeTableService;
+import cn.hkxj.platform.service.ScheduleTaskService;
 import cn.hkxj.platform.utils.OneOffSubcriptionUtil;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.mp.api.WxMpService;
-import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.template.WxMpTemplateData;
 import me.chanjar.weixin.mp.bean.template.WxMpTemplateMessage;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * 1.通过定时任务的表把对应场景值中所有订阅状态可用的用户查询出来
@@ -102,7 +96,7 @@ public class ExamSubscriptionTask {
         List<WxMpTemplateData> templateData = templateBuilder.assemblyTemplateContentForExam(msg);
 
         WxMpTemplateMessage.MiniProgram miniProgram = new WxMpTemplateMessage.MiniProgram();
-        miniProgram.setAppid(MiniProgram.APPID.getValue());
+        miniProgram.setAppid(MiniProgram.APP_ID.getValue());
         miniProgram.setPagePath(MiniProgram.COURSE_PATH.getValue());
         String url = "https://platform.hackerda.com/platform/show/timetable";
 

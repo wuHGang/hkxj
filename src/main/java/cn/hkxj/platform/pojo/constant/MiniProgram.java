@@ -10,7 +10,7 @@ public enum MiniProgram {
     /**
      * 小程序的appid
      */
-    APPID("wx05f7264e83fa40e9"),
+    APP_ID("wx05f7264e83fa40e9"),
     /**
      * 小程序课表的网页url
      */

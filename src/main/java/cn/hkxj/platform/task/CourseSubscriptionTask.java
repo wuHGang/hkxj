@@ -19,7 +19,10 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -82,7 +85,7 @@ public class CourseSubscriptionTask {
         if(msg.getDetailDtos() == null) { return; }
         List<WxMpTemplateData> templateData = templateBuilder.assemblyTemplateContentForCourse(msg);
         WxMpTemplateMessage.MiniProgram miniProgram = new WxMpTemplateMessage.MiniProgram();
-        miniProgram.setAppid(MiniProgram.APPID.getValue());
+        miniProgram.setAppid(MiniProgram.APP_ID.getValue());
         miniProgram.setPagePath(MiniProgram.COURSE_PATH.getValue());
         String url = domain + "/platform/show/timetable";
         //构建一个课程推送的模板消息

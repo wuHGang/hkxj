@@ -33,7 +33,6 @@ public class UrpCookieJar implements ClearableCookieJar {
 
     private final Cache<String,CookieCache> accountCookieCache;
 
-
     private final RedisCookiePersistor persistor;
 
     UrpCookieJar() {
@@ -52,7 +51,6 @@ public class UrpCookieJar implements ClearableCookieJar {
         }catch (Exception e){
             log.error("UrpCookieJar init error ", e);
         }
-
 
     }
 
