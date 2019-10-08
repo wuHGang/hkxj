@@ -483,7 +483,7 @@ public class NewUrpSpider {
 
         @Override
         public void run() {
-            while (true){
+            while (!Thread.interrupted()){
                 log.debug("produce captcha thread start");
                 UUID uuid = UUID.randomUUID();
                 MDC.put("preLoad", uuid.toString());
@@ -506,14 +506,16 @@ public class NewUrpSpider {
 
         @Override
         public void run() {
+            while (!Thread.interrupted()){
+                try {
+                    Thread.sleep(1000 * 60 * 20);
+                } catch (Throwable e) {
+                    log.error("clean preload captcha error", e);
+                }
+                log.debug("clean up thread start");
+                queue.removeIf(preLoadCaptcha -> System.currentTimeMillis() - preLoadCaptcha.createDate.getTime() > 1000 * 60 * 20);
 
-            try {
-                Thread.sleep(1000 * 60 * 20);
-            } catch (Throwable e) {
-                log.error("clean preload captcha error", e);
             }
-            log.debug("clean up thread start");
-            queue.removeIf(preLoadCaptcha -> System.currentTimeMillis() - preLoadCaptcha.createDate.getTime() > 1000 * 60 * 20);
         }
     }
 
