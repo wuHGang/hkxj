@@ -72,6 +72,7 @@ public class NewUrpSpider {
             .cookieJar(COOKIE_JAR)
             .retryOnConnectionFailure(true)
             .addInterceptor(new RetryInterceptor(10))
+            .connectTimeout(500L, TimeUnit.MILLISECONDS)
             .followRedirects(false)
             .build();
 
