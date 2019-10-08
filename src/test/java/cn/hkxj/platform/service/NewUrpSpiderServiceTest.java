@@ -5,8 +5,14 @@ import cn.hkxj.platform.pojo.Classes;
 import cn.hkxj.platform.pojo.GradeSearchResult;
 import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.spider.NewUrpSpider;
+import cn.hkxj.platform.spider.newmodel.course.UrpCourseForSpider;
 import cn.hkxj.platform.spider.newmodel.coursetimetable.UrpCourseTimeTableForSpider;
+import cn.hkxj.platform.spider.newmodel.searchcourse.ClassCourseSearchResult;
+import cn.hkxj.platform.spider.newmodel.searchcourse.ClassInfoSearchResult;
+import cn.hkxj.platform.spider.newmodel.searchcourse.Records;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
+import org.assertj.core.util.Lists;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,6 +20,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import javax.annotation.Resource;
+import java.util.List;
 import java.util.concurrent.*;
 
 @Slf4j
@@ -71,19 +78,16 @@ public class NewUrpSpiderServiceTest {
         classes.setId(316);
         student.setClasses(classes);
         Future<GradeSearchResult> submit = cacheThreadPool.submit(
-                new Callable<GradeSearchResult>() {
-                    @Override
-                    public GradeSearchResult call() throws Exception {
-                        try {
-                            System.out.println("test");
-                            newUrpSpiderService.getCurrentTermGrade("2016024170", "1");
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-
-
-                        return null;
+                () -> {
+                    try {
+                        System.out.println("test");
+                        newUrpSpiderService.getCurrentTermGrade("2016024170", "1");
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
+
+
+                    return null;
                 });
         while (!submit.isDone()) {
 
@@ -133,6 +137,29 @@ public class NewUrpSpiderServiceTest {
 //        NewUrpSpider spider = new NewUrpSpider("2017023081", "1");
         MakeUpService makeUpService=new MakeUpService();
         System.out.println(makeUpService.getMakeUpService("2017023081", "1"));
+    }
+
+    @Test
+    public void testGetClassInfoSearchResult() {
+        List<ClassInfoSearchResult> result = newUrpSpiderService.getClassInfoSearchResult("2017023081", "1");
+        if(CollectionUtils.isNotEmpty(result)){
+            for (ClassInfoSearchResult searchResult : result) {
+                for (Records record : searchResult.getRecords()) {
+                    System.out.println(record);
+                }
+
+            }
+
+        }
+        System.out.println();
+    }
+
+    @Test
+    public void testSearchClassTimeTable() {
+        for (List<ClassCourseSearchResult> result : newUrpSpiderService.searchClassTimeTable("2017023081", "1", "2016020002")) {
+            System.out.println(result);
+        }
+
     }
 
 

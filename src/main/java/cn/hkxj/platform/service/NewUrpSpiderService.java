@@ -11,6 +11,8 @@ import cn.hkxj.platform.spider.newmodel.course.UrpCourseForSpider;
 import cn.hkxj.platform.spider.newmodel.coursetimetable.UrpCourseTimeTableForSpider;
 import cn.hkxj.platform.spider.newmodel.examtime.UrpExamTime;
 import cn.hkxj.platform.spider.newmodel.grade.CurrentGrade;
+import cn.hkxj.platform.spider.newmodel.searchcourse.ClassCourseSearchResult;
+import cn.hkxj.platform.spider.newmodel.searchcourse.ClassInfoSearchResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
@@ -41,9 +43,25 @@ public class NewUrpSpiderService {
         return spider.getCurrentGrade();
     }
 
-    public UrpCourseForSpider getCourseFromSpider(Student student, String uid){
-        NewUrpSpider spider = getSpider(student.getAccount().toString(), student.getPassword());
+    UrpCourseForSpider getCourseFromSpider(String account, String password, String uid){
+        NewUrpSpider spider = getSpider(account, password);
         return spider.getUrpCourse(uid);
+    }
+
+    UrpCourseForSpider getCourseFromSpider(Student student, String uid){
+        return getCourseFromSpider(student.getAccount().toString(), student.getPassword(), uid);
+    }
+
+    @Retryable(value = UrpException.class, maxAttempts = 3)
+    public List<ClassInfoSearchResult> getClassInfoSearchResult(String account, String password){
+        NewUrpSpider spider = getSpider(account, password);
+        return spider.getClassInfoSearchResult();
+    }
+
+    @Retryable(value = UrpException.class, maxAttempts = 3)
+    public List<List<ClassCourseSearchResult>> searchClassTimeTable(String account, String password, String classCode){
+        NewUrpSpider spider = getSpider(account, password);
+        return spider.getUrpCourseTimeTableByClassCode(classCode);
     }
 
     public void checkStudentPassword(String account, String password){
@@ -58,7 +76,6 @@ public class NewUrpSpiderService {
 
     /**
      * 获取学生信息
-     * @return
      */
     public Student getStudentInfo(String account, String password){
         NewUrpSpider spider = getSpider(account, password);

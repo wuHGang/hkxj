@@ -14,6 +14,8 @@ import cn.hkxj.platform.spider.newmodel.grade.CurrentGrade;
 import cn.hkxj.platform.spider.newmodel.grade.detail.UrpGradeDetailForSpider;
 import cn.hkxj.platform.spider.newmodel.grade.general.UrpGeneralGradeForSpider;
 import cn.hkxj.platform.spider.newmodel.grade.general.UrpGradeForSpider;
+import cn.hkxj.platform.spider.newmodel.searchcourse.ClassCourseSearchResult;
+import cn.hkxj.platform.spider.newmodel.searchcourse.ClassInfoSearchResult;
 import cn.hkxj.platform.utils.ApplicationUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -45,24 +47,59 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class NewUrpSpider {
     private static final String ROOT = "http://xsurp.usth.edu.cn";
+    /**
+     * 验证码
+     */
     private static final String CAPTCHA = ROOT + "/img/captcha.jpg";
+    /**
+     * 登录校验
+     */
     private static final String CHECK = ROOT + "/j_spring_security_check";
+    /**
+     * 仅做header refer使用
+     */
     private static final String LOGIN = ROOT + "/getStudentInfo";
+    /**
+     * 学生基本信息
+     */
     private static final String STUDENT_INFO = ROOT + "/student/rollManagement/rollInfo/index";
+    /**
+     * 当前学期成绩
+     */
     private static final String CURRENT_TERM_GRADE = ROOT + "/student/integratedQuery/scoreQuery/thisTermScores/data";
+    /**
+     * 成绩详细信息  平时分，排行 etc
+     */
     private static final String CURRENT_TERM_GRADE_DETAIL = ROOT + "/student/integratedQuery/scoreQuery/coursePropertyScores/serchScoreDetail";
     private static final String COURSE_DETAIL = ROOT + "/student/integratedQuery/course/courseSchdule/detail";
     private static final String EXAM_TIME = ROOT + "/student/examinationManagement/examPlan/index";
     private static final String COURSE_TIME_TABLE = ROOT + "/student/courseSelect/thisSemesterCurriculum/ajaxStudentSchedule/callback";
-    private static final String INDEX = ROOT + "/index.jsp";
     private static final String MAKE_UP_GRADE = ROOT + "/student/examinationManagement/examGrade/search";
+    /**
+     * 空教室查询
+     */
     private static final String EMPTY_ROOM = ROOT + "/student/teachingResources/freeClassroomQuery/search";
+    /**
+     * 班级信息查询
+     */
+    private static final String CLASS_INFO = ROOT + "/student/teachingResources/classCurriculum/search";
+    /**
+     * 根据班级号和学期号查询班级课程信息地址
+     */
+    private static final String SEARCH_COURSE_INFO = ROOT + "/student/teachingResources/classCurriculum" +
+            "/searchCurriculumInfo/callback";
     private static StringRedisTemplate stringRedisTemplate;
     private static final TypeReference<UrpGradeDetailForSpider> gradeDetailTypeReference
             = new TypeReference<UrpGradeDetailForSpider>() {
     };
     private static final TypeReference<List<UrpCourseForSpider>> courseTypeReference
             = new TypeReference<List<UrpCourseForSpider>>() {
+    };
+    private static final TypeReference<List<ClassInfoSearchResult>> classInfoReference
+            = new TypeReference<List<ClassInfoSearchResult>>() {
+    };
+    private static final TypeReference<List<List<ClassCourseSearchResult>>> classCourseSearchResultReference
+            = new TypeReference<List<List<ClassCourseSearchResult>>>() {
     };
     private static final Splitter SPACE_SPLITTER = Splitter.on(" ").omitEmptyStrings().trimResults();
 
@@ -412,6 +449,37 @@ public class NewUrpSpider {
         return student;
     }
 
+    public List<ClassInfoSearchResult> getClassInfoSearchResult(){
+        FormBody.Builder params = new FormBody.Builder();
+        FormBody body = params.add("param_value", "100024")
+                .add("executiveEducationPlanNum", "2019-2020-1-1")
+                .add("pageNum", "1")
+                .add("pageSize", "1000")
+                .build();
+
+        Request request = new Request.Builder()
+                .url(CLASS_INFO)
+                .headers(HEADERS)
+                .post(body)
+                .build();
+
+
+
+        return JSON.parseObject(new String(execute(request)), classInfoReference);
+    }
+
+
+    public List<List<ClassCourseSearchResult>> getUrpCourseTimeTableByClassCode(String classCode) {
+
+        Request request = new Request.Builder()
+                .url(SEARCH_COURSE_INFO + "?planCode=2019-2020-1-1&classCode=" + classCode)
+                .headers(HEADERS)
+                .get()
+                .build();
+
+        return JSONArray.parseObject(new String(execute(request)), classCourseSearchResultReference);
+    }
+
 
     /**
      * 解析学生信息页面的html
@@ -483,7 +551,7 @@ public class NewUrpSpider {
 
         @Override
         public void run() {
-            while (true){
+            while (!Thread.interrupted()){
                 log.debug("produce captcha thread start");
                 UUID uuid = UUID.randomUUID();
                 MDC.put("preLoad", uuid.toString());
@@ -506,14 +574,15 @@ public class NewUrpSpider {
 
         @Override
         public void run() {
-
-            try {
-                Thread.sleep(1000 * 60 * 20);
-            } catch (Throwable e) {
-                log.error("clean preload captcha error", e);
+            while (!Thread.interrupted()){
+                try {
+                    Thread.sleep(1000 * 60 * 20);
+                } catch (Throwable e) {
+                    log.error("clean preload captcha error", e);
+                }
+                log.debug("clean up thread start");
+                queue.removeIf(PreLoadCaptcha::isExpire);
             }
-            log.debug("clean up thread start");
-            queue.removeIf(preLoadCaptcha -> System.currentTimeMillis() - preLoadCaptcha.createDate.getTime() > 1000 * 60 * 20);
         }
     }
 
@@ -527,6 +596,10 @@ public class NewUrpSpider {
             this.captcha = captcha;
             this.preloadCookieId = preloadCookieId;
             this.createDate = createDate;
+        }
+
+        boolean isExpire(){
+            return System.currentTimeMillis() - createDate.getTime() > 1000 * 60 * 20;
         }
     }
 

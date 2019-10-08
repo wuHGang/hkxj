@@ -3,6 +3,7 @@ package cn.hkxj.platform.service.wechat;
 import cn.hkxj.platform.exceptions.OpenidExistException;
 import cn.hkxj.platform.exceptions.PasswordUncorrectException;
 import cn.hkxj.platform.exceptions.ReadTimeoutException;
+import cn.hkxj.platform.pojo.Student;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,10 +20,7 @@ public class StudentBindServiceTest {
 
     @Test
     public void studentBind() {
-//        try {
-//            studentBindService.studentBind("2","2014025846","3664");
-//        } catch (PasswordUncorrectException | ReadTimeoutException | OpenidExistException e) {
-//            log.error(e.toString());
-//        }
+        Student student = studentBindService.studentLogin("2017026003", "111111");
+        assert student != null;
     }
 }

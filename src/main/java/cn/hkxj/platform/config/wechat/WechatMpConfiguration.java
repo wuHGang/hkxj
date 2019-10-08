@@ -60,9 +60,6 @@ public class WechatMpConfiguration {
     private WechatOpenIdInterceptor wechatOpenIdInterceptor;
 
     @Resource
-    private ElectiveCourseMessageHandler electiveCourseMessageHandler;
-
-    @Resource
     private UnsubscribeMessageHandler unsubscribeMessageHandler;
 
     @Resource
@@ -150,13 +147,6 @@ public class WechatMpConfiguration {
                 .interceptor(wechatOpenIdInterceptor)
                 .interceptor(studentInfoInterceptor)
                 .handler(examMessageHandler)
-                .end()
-                .rule()
-                .async(false)
-                .rContent(".*?选修.*?")
-                .interceptor(wechatOpenIdInterceptor)
-                .interceptor(studentInfoInterceptor)
-                .handler(electiveCourseMessageHandler)
                 .end()
                 .rule()
                 .async(false)

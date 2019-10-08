@@ -4,10 +4,15 @@ import cn.hkxj.platform.dao.UrpCourseDao;
 import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.pojo.UrpCourse;
 import cn.hkxj.platform.spider.newmodel.course.UrpCourseForSpider;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Yuki
@@ -23,6 +28,10 @@ public class UrpCourseService {
     @Resource
     private NewUrpSpiderService newUrpSpiderService;
 
+    private static final Cache<String, UrpCourse> cache = CacheBuilder.newBuilder()
+            .maximumSize(500)
+            .build();
+
     public void checkOrSaveUrpCourseToDb(String uid, Student student){
         if (!urpCourseDao.ifExistCourse(uid)) {
             UrpCourseForSpider urpCourseForSpider = newUrpSpiderService.getCourseFromSpider(student, uid);
@@ -31,6 +40,19 @@ public class UrpCourseService {
     }
 
     public UrpCourse getUrpCourseByCourseId(String courseId){
+
+        try {
+            UrpCourse urpCourse = cache.get(courseId, () -> urpCourseDao.getUrpCourseByCourseId(courseId));
+            if(urpCourse == null){
+                UrpCourseForSpider urpCourseForSpider = newUrpSpiderService.getCourseFromSpider("2014025838", "1", courseId);
+                UrpCourse course = urpCourseForSpider.convertToUrpCourse();
+                urpCourseDao.insertUrpCourse(course);
+                return course;
+            }
+        } catch (ExecutionException e) {
+            log.error("get course cache error");
+        }
+
         return urpCourseDao.getUrpCourseByCourseId(courseId);
     }
 }
