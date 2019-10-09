@@ -2,6 +2,7 @@ package cn.hkxj.platform;
 
 
 import cn.hkxj.platform.pojo.UrpCourse;
+import cn.hkxj.platform.pojo.constant.Academy;
 import cn.hkxj.platform.service.NewUrpSpiderService;
 import cn.hkxj.platform.service.UrpCourseService;
 import cn.hkxj.platform.spider.newmodel.course.UrpCourseForSpider;
@@ -17,6 +18,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -36,56 +39,63 @@ public class CourseRank {
     private UrpCourseService urpCourseService;
 
     @Test
-    public void testRank(){
+    public void testRank() throws IOException, InterruptedException {
         ConcurrentHashMap<Records, Pair<Integer, Set<UrpCourse>>> map = new ConcurrentHashMap<>();
         LinkedBlockingQueue<Runnable> queue = new LinkedBlockingQueue<>();
 
-        ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(15, 15, 0L, TimeUnit.MILLISECONDS, queue);
+        ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(9, 9, 0L, TimeUnit.MILLISECONDS, queue);
         HashSet<UrpCourse> allCourseSet = new HashSet<>();
 
-        long start = System.currentTimeMillis();
-        AtomicInteger count = new AtomicInteger();
-        for (ClassInfoSearchResult searchResult : newUrpSpiderService.getClassInfoSearchResult("2014025838", "1")) {
+        AtomicInteger sizeCount = new AtomicInteger(1);
+        List<ClassInfoSearchResult> classInfoSearchResult = newUrpSpiderService.getClassInfoSearchResult("2014025838", "1");
+
+        int totalSize = classInfoSearchResult.get(0).getRecords().size();
+
+        CountDownLatch latch = new CountDownLatch(totalSize);
+
+        for (ClassInfoSearchResult searchResult : classInfoSearchResult) {
 
             for (Records record : searchResult.getRecords()) {
-                threadPoolExecutor.submit(() ->{
-                    String classNum = record.getId().getClassNum();
-                    System.out.println(classNum);
-                    HashSet<UrpCourse> set = new HashSet<>();
-                    for (List<ClassCourseSearchResult> resultList : newUrpSpiderService.searchClassTimeTable("2014025838", "1", classNum)) {
+                threadPoolExecutor.submit(() -> {
+                    long start = System.currentTimeMillis();
+                    try{
 
-                        for (ClassCourseSearchResult result : resultList) {
-                            UrpCourse course = urpCourseService.getUrpCourseByCourseId(result.getId().getKch());
-                            set.add(course);
+                        String classNum = record.getId().getClassNum();
+                        HashSet<UrpCourse> set = new HashSet<>();
+                        for (List<ClassCourseSearchResult> resultList : newUrpSpiderService.searchClassTimeTable("2014025838", "1", classNum)) {
+
+                            for (ClassCourseSearchResult result : resultList) {
+                                UrpCourse course = urpCourseService.getUrpCourseByCourseId(result.getId().getKch());
+                                set.add(course);
+                            }
                         }
+                        allCourseSet.addAll(set);
+                        Pair<Integer, Set<UrpCourse>> pair = Pair.of(classHourSum(set), set);
+                        map.put(record, pair);
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }finally {
+                        System.out.println(sizeCount.getAndIncrement()+ " " + (System.currentTimeMillis() - start));
+                        latch.countDown();
                     }
-                    allCourseSet.addAll(set);
-                    Pair<Integer, Set<UrpCourse>> pair = Pair.of(classHourSum(set), set);
-                    map.put(record, pair);
-                    count.getAndIncrement();
+
                 });
 
             }
 
         }
-
-
-//        while (!queue.isEmpty()){
-//
-//        }
-
-        while (count.get() < 50){
-
-        }
+        latch.await();
         ArrayList<Map.Entry<Records, Pair<Integer, Set<UrpCourse>>>> list = Lists.newArrayList(map.entrySet());
-        list.sort(Comparator.comparingInt(o -> o.getValue().getKey()));
+        list.sort(((Comparator<Map.Entry<Records, Pair<Integer, Set<UrpCourse>>>>) (o1, o2) -> {
+            return Integer.compare(o1.getValue().getKey(), o2.getValue().getKey());
+        }).reversed());
 
 
         showRank(list, "所有班级课时数目排行");
         courseRank(allCourseSet);
     }
 
-    private int classHourSum(Set<UrpCourse> set){
+    private int classHourSum(Iterable<UrpCourse> set){
         int sum = 0;
         for (UrpCourse course : set) {
             sum = sum + course.getClassHour();
@@ -93,26 +103,73 @@ public class CourseRank {
         return sum;
     }
 
-    private void showRank(ArrayList<Map.Entry<Records, Pair<Integer, Set<UrpCourse>>>> list, String title){
+    private void showRank(ArrayList<Map.Entry<Records, Pair<Integer, Set<UrpCourse>>>> list, String title) throws IOException {
         System.out.println(title);
+        BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("classCourse"),
+                StandardCharsets.UTF_8));
+
+
         int rank = 1;
         for (Map.Entry<Records, Pair<Integer, Set<UrpCourse>>> entry : list) {
-            System.out.println(rank+ ": "+ entry.getKey().getClassName() + "  课程数"+ entry.getValue().getValue().size() + " 课时:"+entry.getKey() );
+            out.write(String.join(" ",
+                    Integer.toString(rank),
+                    entry.getKey().getDepartmentNum(),
+                    entry.getKey().getDepartmentName(),
+                    entry.getKey().getSubjectNum(),
+                    entry.getKey().getSubjectName(),
+                    entry.getKey().getId().getClassNum(),
+                    entry.getKey().getClassName(),
+                    Integer.toString(entry.getValue().getValue().size()),
+                    entry.getValue().getKey().toString()));
+            out.newLine();
+
             rank ++;
         }
 
         System.out.println("\n\n");
-
+        out.flush();
+        out.close();
     }
 
-    private void courseRank(Set<UrpCourse> set){
+
+
+    private void courseRank(Set<UrpCourse> set) throws IOException {
         int rank = 1;
         System.out.println("本学期所有课程课时排行");
-        for (UrpCourse course : set) {
-            System.out.println(rank+ ": "+ course.getCourseName() + " "+ course.getClassHour());
+        ArrayList<UrpCourse> list = Lists.newArrayList(set);
+
+        BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("course"),
+                StandardCharsets.UTF_8));
+
+
+        list.sort(Comparator.comparingInt(UrpCourse::getClassHour).reversed());
+        for (UrpCourse course : list) {
+            try {
+                out.write(String.join(" ",
+                        Integer.toString(rank),
+                        course.getAcademy().toString(),
+                        Academy.getAcademyByCode(course.getAcademy()).getAcademyName(),
+                        course.getCourseName(),
+                        course.getClassHour().toString()
+                ));
+                out.newLine();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            System.out.println(String.join(" ",
+                    Integer.toString(rank),
+                    course.getAcademy().toString(),
+                    Academy.getAcademyByCode(course.getAcademy()).getAcademyName(),
+                    course.getCourseName(),
+                    course.getClassHour().toString()
+                    )
+            );
+
+//            System.out.println(rank+ ": "+ course.getCourseName() + " "+ course.getClassHour());
             rank ++;
         }
         System.out.println("\n\n");
-
+        out.flush();
+        out.close();
     }
 }

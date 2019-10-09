@@ -108,6 +108,7 @@ public class NewUrpSpider {
     private static final OkHttpClient CLIENT = new OkHttpClient.Builder()
             .cookieJar(COOKIE_JAR)
             .retryOnConnectionFailure(true)
+            .connectTimeout(500L, TimeUnit.MILLISECONDS)
             .addInterceptor(new RetryInterceptor(10))
             .followRedirects(false)
             .build();
@@ -462,10 +463,16 @@ public class NewUrpSpider {
                 .headers(HEADERS)
                 .post(body)
                 .build();
+        String result = new String(execute(request));
+        try {
+            return JSON.parseObject(result, classInfoReference);
+        } catch (JSONException e) {
+            log.error("parse courseTimeTable error {}", result, e);
+            COOKIE_JAR.clearSession();
+            throw new UrpSessionExpiredException("account: " + account + " session expired");
+        }
 
 
-
-        return JSON.parseObject(new String(execute(request)), classInfoReference);
     }
 
 
@@ -476,8 +483,15 @@ public class NewUrpSpider {
                 .headers(HEADERS)
                 .get()
                 .build();
+        String result = new String(execute(request));
+        try {
+            return JSONArray.parseObject(result, classCourseSearchResultReference);
+        } catch (JSONException e) {
+            log.error("parse courseTimeTable error {}", result, e);
+            COOKIE_JAR.clearSession();
+            throw new UrpSessionExpiredException("account: " + account + " session expired");
+        }
 
-        return JSONArray.parseObject(new String(execute(request)), classCourseSearchResultReference);
     }
 
 

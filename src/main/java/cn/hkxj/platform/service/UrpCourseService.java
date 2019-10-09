@@ -42,15 +42,17 @@ public class UrpCourseService {
     public UrpCourse getUrpCourseByCourseId(String courseId){
 
         try {
-            UrpCourse urpCourse = cache.get(courseId, () -> urpCourseDao.getUrpCourseByCourseId(courseId));
-            if(urpCourse == null){
-                UrpCourseForSpider urpCourseForSpider = newUrpSpiderService.getCourseFromSpider("2014025838", "1", courseId);
-                UrpCourse course = urpCourseForSpider.convertToUrpCourse();
-                urpCourseDao.insertUrpCourse(course);
-                return course;
-            }
+            return cache.get(courseId, () -> {
+                UrpCourse urpCourse = urpCourseDao.getUrpCourseByCourseId(courseId);
+                if(urpCourse == null){
+                    UrpCourseForSpider urpCourseForSpider = newUrpSpiderService.getCourseFromSpider("2014025838", "1", courseId);
+                    urpCourse = urpCourseForSpider.convertToUrpCourse();
+                    urpCourseDao.insertUrpCourse(urpCourse);
+                }
+                return urpCourse;
+            });
         } catch (ExecutionException e) {
-            log.error("get course cache error");
+            log.error("get course cache error", e);
         }
 
         return urpCourseDao.getUrpCourseByCourseId(courseId);

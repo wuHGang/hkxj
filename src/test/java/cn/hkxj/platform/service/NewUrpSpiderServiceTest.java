@@ -151,16 +151,18 @@ public class NewUrpSpiderServiceTest {
             }
 
         }
-        System.out.println();
+        System.out.println(result.get(0).getRecords().size());
     }
 
     @Test
     public void testSearchClassTimeTable() {
         for (List<ClassCourseSearchResult> result : newUrpSpiderService.searchClassTimeTable("2017023081", "1", "2016020002")) {
-            System.out.println(result);
+            System.out.println(result.size());
         }
 
     }
+
+
 
 
 }
