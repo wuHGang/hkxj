@@ -7,6 +7,7 @@ import cn.hkxj.platform.pojo.Classes;
 import cn.hkxj.platform.pojo.example.ClassesExample;
 import cn.hkxj.platform.pojo.Subject;
 import cn.hkxj.platform.spider.model.UrpStudentInfo;
+import cn.hkxj.platform.spider.newmodel.searchcourse.Records;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -99,6 +100,33 @@ public class ClassService {
             log.error("account {} class more than 1 {}", studentWrapper.getAccount(), classesList.toString());
         }
         return buildClazzByStudent(studentWrapper);
+    }
+
+    public Classes parseClassFormSearchResult(Records records){
+        Classes classes = new Classes();
+        String classname = records.getClassName();
+        classes.setNum(1);
+
+        if(classname.endsWith("班")){
+            classname = classname.substring(0, classname.length() - 1);
+        }
+        if (classname.startsWith("财会S")) {
+            classes.setName(classname);
+
+        } else if (classname.startsWith("采矿卓越")) {
+            classes.setName("采矿卓越");
+        } else if (classname.startsWith("会计ACA实验")) {
+            classes.setName("会计ACA实验");
+        } else {
+            classes = parseText(classname);
+        }
+
+        classes.setYear(Integer.valueOf(records.getAdmissionGrade().substring(2, 4)));
+        classes.setAcademy(Academy.getAcademyByUrpCode(Integer.valueOf(records.getDepartmentNum())).getAcademyCode());
+        Subject subjectByName = subjectService.getSubjectByName(records.getSubjectName());
+        classes.setSubject(subjectByName.getId());
+
+        return classes;
     }
 
     private Classes buildClazzByStudent(UrpStudentInfo studentWrapper) {

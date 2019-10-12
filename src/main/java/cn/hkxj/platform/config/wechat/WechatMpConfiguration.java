@@ -68,6 +68,9 @@ public class WechatMpConfiguration {
     @Resource
     private StudentInfoInterceptor studentInfoInterceptor;
 
+    @Resource
+    private CourseRankHandler courseRankHandler;
+
     private static Map<String, WxMpMessageRouter> routers = Maps.newHashMap();
     private static Map<String, WxMpService> mpServices = Maps.newHashMap();
 
@@ -101,7 +104,7 @@ public class WechatMpConfiguration {
                 .end()
                 .rule()
                 .async(false)
-                .rContent("课表推送|成绩推送|考试推送")
+                .rContent("订阅|课表推送|成绩推送|考试推送")
                 .interceptor(wechatOpenIdInterceptor)
                 .interceptor(studentInfoInterceptor)
                 .handler(subscribeMessageHandler)
@@ -159,6 +162,11 @@ public class WechatMpConfiguration {
                 .interceptor(wechatOpenIdInterceptor)
                 .interceptor(studentInfoInterceptor)
                 .handler(unsubscribeMessageHandler)
+                .async(false)
+                .rContent(".*?课时排行.*?")
+                .interceptor(wechatOpenIdInterceptor)
+                .interceptor(studentInfoInterceptor)
+                .handler(courseRankHandler)
                 .end();
         return newRouter;
     }

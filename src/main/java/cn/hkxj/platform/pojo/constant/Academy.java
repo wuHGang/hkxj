@@ -117,6 +117,15 @@ public enum Academy {
         return Unknown;
     }
 
+    public static Academy getAcademyByUrpCode(int code){
+        for(Academy aca : Academy.values()){
+            if(Objects.equals(aca.getUrpCode(), code)){
+                return aca;
+            }
+        }
+        return Unknown;
+    }
+
     public static Integer getAcademyCodeByName(String name){
         for(Academy aca : Academy.values()){
             if(Objects.equals(aca.getAcademyName(), name)){
@@ -155,6 +164,11 @@ public enum Academy {
     public int getAcademyCode() {
         return academyCode;
     }
+
+    public int getUrpCode() {
+        return urpCode;
+    }
+
 
     @Override
     public String toString() {

@@ -25,6 +25,8 @@ public class SubjectService {
         List<Subject> subjectList = subjectMapper.selectByExample(subjectExample);
         if(subjectList.size() > 1){
             log.error("more than one subject {}", subjectList.toString());
+        }else if(subjectList.size() == 0){
+            throw new RuntimeException(subjectName);
         }
         return subjectList.get(0);
     }

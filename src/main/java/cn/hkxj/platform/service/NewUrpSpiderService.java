@@ -13,6 +13,7 @@ import cn.hkxj.platform.spider.newmodel.examtime.UrpExamTime;
 import cn.hkxj.platform.spider.newmodel.grade.CurrentGrade;
 import cn.hkxj.platform.spider.newmodel.searchcourse.ClassCourseSearchResult;
 import cn.hkxj.platform.spider.newmodel.searchcourse.ClassInfoSearchResult;
+import cn.hkxj.platform.spider.newmodel.searchcourse.SearchClassInfoPost;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
@@ -53,9 +54,9 @@ public class NewUrpSpiderService {
     }
 
     @Retryable(value = UrpException.class, maxAttempts = 3)
-    public List<ClassInfoSearchResult> getClassInfoSearchResult(String account, String password){
+    public List<ClassInfoSearchResult> getClassInfoSearchResult(String account, String password, SearchClassInfoPost searchClassInfoPost){
         NewUrpSpider spider = getSpider(account, password);
-        return spider.getClassInfoSearchResult();
+        return spider.getClassInfoSearchResult(searchClassInfoPost);
     }
 
     @Retryable(value = UrpException.class, maxAttempts = 3)

@@ -14,6 +14,9 @@ import cn.hkxj.platform.spider.newmodel.grade.CurrentGrade;
 import cn.hkxj.platform.spider.newmodel.grade.detail.UrpGradeDetailForSpider;
 import cn.hkxj.platform.spider.newmodel.grade.general.UrpGeneralGradeForSpider;
 import cn.hkxj.platform.spider.newmodel.grade.general.UrpGradeForSpider;
+import cn.hkxj.platform.spider.newmodel.searchcourse.ClassCourseSearchResult;
+import cn.hkxj.platform.spider.newmodel.searchcourse.ClassInfoSearchResult;
+import cn.hkxj.platform.spider.newmodel.searchcourse.SearchClassInfoPost;
 import cn.hkxj.platform.utils.ApplicationUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -106,8 +109,8 @@ public class NewUrpSpider {
     private static final OkHttpClient CLIENT = new OkHttpClient.Builder()
             .cookieJar(COOKIE_JAR)
             .retryOnConnectionFailure(true)
-            .addInterceptor(new RetryInterceptor(10))
             .connectTimeout(500L, TimeUnit.MILLISECONDS)
+            .addInterceptor(new RetryInterceptor(10))
             .followRedirects(false)
             .build();
 
@@ -448,12 +451,15 @@ public class NewUrpSpider {
         return student;
     }
 
-    public List<ClassInfoSearchResult> getClassInfoSearchResult(){
+    public List<ClassInfoSearchResult> getClassInfoSearchResult(SearchClassInfoPost searchClassInfoPost){
         FormBody.Builder params = new FormBody.Builder();
-        FormBody body = params.add("param_value", "100024")
-                .add("executiveEducationPlanNum", "2019-2020-1-1")
-                .add("pageNum", "1")
-                .add("pageSize", "1000")
+        FormBody body = params.add("param_value", searchClassInfoPost.getParamValue())
+                .add("executiveEducationPlanNum", searchClassInfoPost.getExecutiveEducationPlanNum())
+                .add("pageNum", searchClassInfoPost.getPageNum())
+                .add("pageSize", searchClassInfoPost.getPageSize())
+                .add("yearNum", searchClassInfoPost.getYearNum())
+                .add("departmentNum", searchClassInfoPost.getDepartmentNum())
+                .add("classNum", searchClassInfoPost.getClassNum())
                 .build();
 
         Request request = new Request.Builder()
