@@ -5,11 +5,13 @@ import cn.hkxj.platform.pojo.UrpCourse;
 import cn.hkxj.platform.pojo.constant.Academy;
 import cn.hkxj.platform.service.NewUrpSpiderService;
 import cn.hkxj.platform.service.UrpCourseService;
-import cn.hkxj.platform.spider.newmodel.course.UrpCourseForSpider;
 import cn.hkxj.platform.spider.newmodel.searchcourse.ClassCourseSearchResult;
 import cn.hkxj.platform.spider.newmodel.searchcourse.ClassInfoSearchResult;
 import cn.hkxj.platform.spider.newmodel.searchcourse.Records;
+import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
+import com.google.common.io.Files;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Test;
@@ -23,6 +25,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -85,14 +88,30 @@ public class CourseRank {
 
         }
         latch.await();
+
+        handlerClassCourseHour(map);
+        courseRank(allCourseSet);
+    }
+
+    private void handlerClassCourseHour(Map<Records, Pair<Integer, Set<UrpCourse>>> map){
         ArrayList<Map.Entry<Records, Pair<Integer, Set<UrpCourse>>>> list = Lists.newArrayList(map.entrySet());
         list.sort(((Comparator<Map.Entry<Records, Pair<Integer, Set<UrpCourse>>>>) (o1, o2) -> {
             return Integer.compare(o1.getValue().getKey(), o2.getValue().getKey());
         }).reversed());
 
+        List<ClassCourseHour> data = list.stream()
+                .map(x -> new ClassCourseHour(x.getKey(), x.getValue().getKey(), x.getValue().getValue()))
+                .collect(Collectors.toList());
 
-        showRank(list, "所有班级课时数目排行");
-        courseRank(allCourseSet);
+        writeFile(JSON.toJSONString(data), "classCourseHour.json");
+    }
+    private void writeFile(String content, String fileName){
+        File file = new File(fileName);
+        try {
+            Files.write(content.getBytes(),file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private int classHourSum(Iterable<UrpCourse> set){
@@ -103,73 +122,17 @@ public class CourseRank {
         return sum;
     }
 
-    private void showRank(ArrayList<Map.Entry<Records, Pair<Integer, Set<UrpCourse>>>> list, String title) throws IOException {
-        System.out.println(title);
-        BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("classCourse"),
-                StandardCharsets.UTF_8));
-
-
-        int rank = 1;
-        for (Map.Entry<Records, Pair<Integer, Set<UrpCourse>>> entry : list) {
-            out.write(String.join(" ",
-                    Integer.toString(rank),
-                    entry.getKey().getDepartmentNum(),
-                    entry.getKey().getDepartmentName(),
-                    entry.getKey().getSubjectNum(),
-                    entry.getKey().getSubjectName(),
-                    entry.getKey().getId().getClassNum(),
-                    entry.getKey().getClassName(),
-                    Integer.toString(entry.getValue().getValue().size()),
-                    entry.getValue().getKey().toString()));
-            out.newLine();
-
-            rank ++;
-        }
-
-        System.out.println("\n\n");
-        out.flush();
-        out.close();
+    @lombok.Data
+    @AllArgsConstructor
+    private class ClassCourseHour {
+        private Records classInfo;
+        private int courseHourCount;
+        private Set<UrpCourse> urpCourseSet;
     }
 
-
-
     private void courseRank(Set<UrpCourse> set) throws IOException {
-        int rank = 1;
-        System.out.println("本学期所有课程课时排行");
         ArrayList<UrpCourse> list = Lists.newArrayList(set);
-
-        BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("course"),
-                StandardCharsets.UTF_8));
-
-
         list.sort(Comparator.comparingInt(UrpCourse::getClassHour).reversed());
-        for (UrpCourse course : list) {
-            try {
-                out.write(String.join(" ",
-                        Integer.toString(rank),
-                        course.getAcademy().toString(),
-                        Academy.getAcademyByCode(course.getAcademy()).getAcademyName(),
-                        course.getCourseName(),
-                        course.getClassHour().toString()
-                ));
-                out.newLine();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            System.out.println(String.join(" ",
-                    Integer.toString(rank),
-                    course.getAcademy().toString(),
-                    Academy.getAcademyByCode(course.getAcademy()).getAcademyName(),
-                    course.getCourseName(),
-                    course.getClassHour().toString()
-                    )
-            );
-
-//            System.out.println(rank+ ": "+ course.getCourseName() + " "+ course.getClassHour());
-            rank ++;
-        }
-        System.out.println("\n\n");
-        out.flush();
-        out.close();
+        writeFile(JSON.toJSONString(list), "courseRank.json");
     }
 }
