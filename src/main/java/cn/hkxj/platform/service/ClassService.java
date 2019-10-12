@@ -34,7 +34,12 @@ public class ClassService {
         }
 
         Classes classes = new Classes();
-        classes.setNum(Integer.parseInt(clazzSplitter[1]));
+        if(clazzSplitter[1].endsWith("班")){
+            classes.setNum(Integer.parseInt(clazzSplitter[1].substring(0, clazzSplitter[1].length()-1)));
+        }else {
+            classes.setNum(Integer.parseInt(clazzSplitter[1]));
+        }
+
         int length = clazzSplitter[0].length();
         for (int i = 0; i < length; i++) {
             char c = clazzSplitter[0].charAt(i);

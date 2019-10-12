@@ -14,8 +14,6 @@ import cn.hkxj.platform.spider.newmodel.grade.CurrentGrade;
 import cn.hkxj.platform.spider.newmodel.grade.detail.UrpGradeDetailForSpider;
 import cn.hkxj.platform.spider.newmodel.grade.general.UrpGeneralGradeForSpider;
 import cn.hkxj.platform.spider.newmodel.grade.general.UrpGradeForSpider;
-import cn.hkxj.platform.spider.newmodel.searchcourse.ClassCourseSearchResult;
-import cn.hkxj.platform.spider.newmodel.searchcourse.ClassInfoSearchResult;
 import cn.hkxj.platform.utils.ApplicationUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -108,8 +106,8 @@ public class NewUrpSpider {
     private static final OkHttpClient CLIENT = new OkHttpClient.Builder()
             .cookieJar(COOKIE_JAR)
             .retryOnConnectionFailure(true)
-            .connectTimeout(500L, TimeUnit.MILLISECONDS)
             .addInterceptor(new RetryInterceptor(10))
+            .connectTimeout(500L, TimeUnit.MILLISECONDS)
             .followRedirects(false)
             .build();
 
