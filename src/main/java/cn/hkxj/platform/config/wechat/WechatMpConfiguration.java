@@ -163,7 +163,7 @@ public class WechatMpConfiguration {
                 .interceptor(studentInfoInterceptor)
                 .handler(unsubscribeMessageHandler)
                 .async(false)
-                .rContent(".*?课时排行.*?")
+                .rContent("课时排行|课时安排|课时排名|课表排行|科时排行|科时排名")
                 .interceptor(wechatOpenIdInterceptor)
                 .interceptor(studentInfoInterceptor)
                 .handler(courseRankHandler)

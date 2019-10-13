@@ -46,7 +46,7 @@ public class SubscribeMessageHandler implements WxMpMessageHandler{
                 //判断有没有相应的订阅记录，有就更新记录，没有就插入一条记录
                 scheduleTaskService.checkAndSetSubscribeStatus(scheduleTask, true);
             }
-            return textBuilder.build("课表,成绩,考试订阅成功"+"\n\n回复【课时排名】可以查看你学费交的有多值", wxMessage, wxMpService);
+            return textBuilder.build("课表,成绩,考试订阅成功"+"\n\n回复【课时排行】可以查看你学费交的有多值", wxMessage, wxMpService);
         }
 
 
