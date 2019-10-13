@@ -141,7 +141,7 @@ public class NewUrpSpiderServiceTest {
 
     @Test
     public void testGetClassInfoSearchResult() {
-        List<ClassInfoSearchResult> result = newUrpSpiderService.getClassInfoSearchResult("2017023081", "1");
+        List<ClassInfoSearchResult> result = newUrpSpiderService.getClassInfoSearchResult("2017023081", "1", null);
         if(CollectionUtils.isNotEmpty(result)){
             for (ClassInfoSearchResult searchResult : result) {
                 for (Records record : searchResult.getRecords()) {

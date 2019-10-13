@@ -50,7 +50,8 @@ public class CourseRank {
         HashSet<UrpCourse> allCourseSet = new HashSet<>();
 
         AtomicInteger sizeCount = new AtomicInteger(1);
-        List<ClassInfoSearchResult> classInfoSearchResult = newUrpSpiderService.getClassInfoSearchResult("2014025838", "1");
+        List<ClassInfoSearchResult> classInfoSearchResult = newUrpSpiderService.getClassInfoSearchResult("2014025838"
+                , "1", null);
 
         int totalSize = classInfoSearchResult.get(0).getRecords().size();
 

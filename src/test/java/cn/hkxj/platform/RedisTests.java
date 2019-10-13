@@ -1,6 +1,7 @@
 package cn.hkxj.platform;
 
 import cn.hkxj.platform.pojo.constant.RedisKeys;
+import com.google.common.io.Files;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.concurrent.TimeUnit;
@@ -37,6 +39,12 @@ public class RedisTests {
         boolean key = redisTemplate.hasKey(RedisKeys.URP_COOKIE.genKey("2017021458"))
                 && redisTemplate.hasKey(RedisKeys.URP_LOGIN_COOKIE.genKey("2017021458"));
         System.out.println(key);
+
+    }
+
+    @Test
+    public void zadd() {
+        ZSetOperations<String, String> zSet = redisTemplate.opsForZSet();
 
     }
 
