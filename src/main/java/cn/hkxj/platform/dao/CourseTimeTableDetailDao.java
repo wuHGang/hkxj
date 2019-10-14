@@ -3,6 +3,7 @@ package cn.hkxj.platform.dao;
 import cn.hkxj.platform.mapper.CourseTimeTableDetailMapper;
 import cn.hkxj.platform.pojo.CourseTimeTableDetail;
 import cn.hkxj.platform.pojo.SchoolTime;
+import cn.hkxj.platform.pojo.StudentCourseTimeTable;
 import cn.hkxj.platform.pojo.Term;
 import cn.hkxj.platform.pojo.example.CourseTimeTableDetailExample;
 import cn.hkxj.platform.utils.DateUtils;
@@ -30,12 +31,10 @@ public class CourseTimeTableDetailDao {
         courseTimeTableDetailMapper.insertSelective(detail);
     }
 
-    public List<CourseTimeTableDetail> getCourseTimeTableDetailForCurrentDay(int classesId, SchoolTime schoolTime){
-        List<Integer> detailIds = courseTimeTableDetailMapper.getCourseTimeTableDetailIdsByClassId(classesId);
-        if(detailIds.size() == 0) {return Lists.newArrayList();}
+    public List<CourseTimeTableDetail> getCourseTimeTableDetailForCurrentDay(List<Integer> detailIdList, SchoolTime schoolTime){
         CourseTimeTableDetailExample example = new CourseTimeTableDetailExample();
         example.createCriteria()
-                .andIdIn(detailIds)
+                .andIdIn(detailIdList)
                 .andTermYearEqualTo(schoolTime.getTerm().getTermYear())
                 .andTermOrderEqualTo(schoolTime.getTerm().getOrder())
                 .andDayEqualTo(schoolTime.getDay())
@@ -49,34 +48,27 @@ public class CourseTimeTableDetailDao {
         return courseTimeTableDetailMapper.getCourseTimeTableDetailIdsByClassId(classesId);
     }
 
-    public List<CourseTimeTableDetail> getCourseTimeTableDetailForCurrentTerm(int classesId, SchoolTime schoolTime){
-        List<Integer> detailIds = getCourseTimeTableDetailIdsByClassId(classesId);
-        if(detailIds.size() == 0) {return Lists.newArrayList();}
+    public List<CourseTimeTableDetail> getCourseTimeTableDetailForCurrentTerm(List<Integer> detailIdList, SchoolTime schoolTime){
         CourseTimeTableDetailExample example = new CourseTimeTableDetailExample();
         example.createCriteria()
-                .andIdIn(detailIds)
+                .andIdIn(detailIdList)
                 .andTermYearEqualTo(schoolTime.getTerm().getTermYear())
                 .andTermOrderEqualTo(schoolTime.getTerm().getOrder());
         return courseTimeTableDetailMapper.selectByExample(example);
     }
 
-    public List<CourseTimeTableDetail> getCourseTimeTableDetailForCurrentWeek(int classesId, SchoolTime schoolTime){
-        List<Integer> detailIds = courseTimeTableDetailMapper.getCourseTimeTableDetailIdsByClassId(classesId);
-        if(detailIds.size() == 0) {return Lists.newArrayList();}
+    public List<CourseTimeTableDetail> getCourseTimeTableDetailForCurrentWeek(List<Integer> detailIdList,
+                                                                              SchoolTime schoolTime){
+
         CourseTimeTableDetailExample example = new CourseTimeTableDetailExample();
         example.createCriteria()
-                .andIdIn(detailIds)
+                .andIdIn(detailIdList)
                 .andTermYearEqualTo(schoolTime.getTerm().getTermYear())
                 .andTermOrderEqualTo(schoolTime.getTerm().getOrder())
                 .andStartWeekLessThanOrEqualTo(schoolTime.getWeek())
                 .andEndWeekGreaterThanOrEqualTo(schoolTime.getWeek())
                 .andDistinctNotEqualTo(DateUtils.getContraryDistinct());
         return courseTimeTableDetailMapper.selectByExample(example);
-    }
-
-    public boolean ifExistCourseTimeTableDetail(CourseTimeTableDetail detail){
-
-        return selectByDetail(detail).size() == 1;
     }
 
     public List<CourseTimeTableDetail> selectByDetail(CourseTimeTableDetail detail){
@@ -95,38 +87,12 @@ public class CourseTimeTableDetailDao {
         return courseTimeTableDetailMapper.selectByExample(example);
     }
 
-    public CourseTimeTableDetail getCourseTimeTableDetail(CourseTimeTableDetail detail){
-        CourseTimeTableDetailExample example = new CourseTimeTableDetailExample();
-        Term term = detail.getTermForCourseTimeTableDetail();
-        example.createCriteria()
-                .andTermOrderEqualTo(term.getOrder())
-                .andTermYearEqualTo(term.getTermYear())
-                .andCourseIdEqualTo(detail.getCourseId())
-                .andRoomNameEqualTo(detail.getRoomName())
-                .andDayEqualTo(detail.getDay())
-                .andWeekEqualTo(detail.getWeek());
-        return courseTimeTableDetailMapper.selectByExample(example).stream().findFirst().orElse(null);
+    public void insertStudentCourseTimeTableBatch(List<Integer> courseTimeTableIdList, int account,  String termYear,  int termOrder){
+        courseTimeTableDetailMapper.insertStudentCourseTimeTableBatch(courseTimeTableIdList, account ,termYear ,termOrder);
     }
 
-    public CourseTimeTableDetail getCourseTimeTableDetailById(int id){
-        return courseTimeTableDetailMapper.selectByPrimaryKey(id);
+    public List<StudentCourseTimeTable> selectStudentCourseTimeTableRelative(StudentCourseTimeTable studentCourseTimeTable){
+        return courseTimeTableDetailMapper.selectStudentCourseTimeTableRelative(studentCourseTimeTable);
     }
 
-    public void updateCourseTimeTableBasicInfoId(CourseTimeTableDetail detail){
-        courseTimeTableDetailMapper.updateByPrimaryKeySelective(detail);
-    }
-
-    /**
-     * 将从爬虫爬取到的数据判断是需要存入数据库还是从数据库中进行获取
-     * @param convertFromSpider 从爬虫爬取的信息中转化的考试实体
-     * @return 考试实体
-     */
-    public CourseTimeTableDetail saveOrGetCourseTimeTableDetailFromDb(CourseTimeTableDetail convertFromSpider){
-        if(!ifExistCourseTimeTableDetail(convertFromSpider)){
-            insertCourseTimeTableDetail(convertFromSpider);
-        } else {
-            convertFromSpider = getCourseTimeTableDetail(convertFromSpider);
-        }
-        return convertFromSpider;
-    }
 }

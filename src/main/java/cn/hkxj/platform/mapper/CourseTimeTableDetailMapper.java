@@ -3,6 +3,7 @@ package cn.hkxj.platform.mapper;
 import java.util.List;
 
 import cn.hkxj.platform.pojo.CourseTimeTableDetail;
+import cn.hkxj.platform.pojo.StudentCourseTimeTable;
 import cn.hkxj.platform.pojo.example.CourseTimeTableDetailExample;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -36,4 +37,10 @@ public interface CourseTimeTableDetailMapper {
     List<Integer> getCourseTimeTableDetailIdsByClassId(@Param("classesId") int classesId);
 
     void insertClassesCourseTimeTableBatch(@Param("ids") List<Integer> ids, @Param("classesId") int classesId);
+
+    void insertStudentCourseTimeTableBatch(@Param("courseTimeTableIdList") List<Integer> courseTimeTableIdList,
+                                           @Param("account") int account, @Param("termYear") String termYear, @Param(
+                                                   "termOrder") int termOrder);
+
+    List<StudentCourseTimeTable> selectStudentCourseTimeTableRelative(StudentCourseTimeTable studentCourseTimeTable);
 }

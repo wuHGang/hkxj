@@ -18,6 +18,11 @@ public class StudentDao {
         return studentMapper.selectByAccount(account);
     }
 
+    public List<Student> selectAllStudent(){
+        StudentExample studentExample = new StudentExample();
+        return studentMapper.selectByExample(studentExample);
+    }
+
     public void insertStudent(Student student){
         studentMapper.insert(student);
     }
