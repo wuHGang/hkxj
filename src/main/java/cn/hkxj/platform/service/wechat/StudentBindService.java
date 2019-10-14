@@ -86,9 +86,11 @@ public class StudentBindService {
         if(student != null && !student.getIsCorrect()){
             newUrpSpiderService.checkStudentPassword(account, password);
             studentDao.updatePassword(account, password);
-        }else {
+        }else if(student == null){
             student = newUrpSpiderService.getStudentInfo(account, password);
+            studentDao.insertStudent(student);
         }
+
         return student;
     }
 
@@ -99,7 +101,7 @@ public class StudentBindService {
      * @param openid 微信用户唯一标识
      * @param appid 微信平台对应的id
      */
-    public Student studentBind(Student student, String openid, String appid) {
+    private Student studentBind(Student student, String openid, String appid) {
         boolean haveOpenId;
         if (Objects.equals(wechatMpPlusProperties.getAppId(), appid)) {
             haveOpenId = openidPlusMapper.isOpenidExist(openid) != null && openidPlusMapper.isOpenidBind(openid) == 0;
@@ -112,12 +114,6 @@ public class StudentBindService {
         }else {
             saveOpenid(openid, student.getAccount().toString(), appid);
         }
-
-        //判断数据库中是否存在数据
-        if(student.getId() == null){
-            studentDao.insertStudent(student);
-        }
-
 
         return student;
     }
