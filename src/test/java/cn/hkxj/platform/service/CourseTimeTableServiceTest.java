@@ -6,6 +6,7 @@ import cn.hkxj.platform.pojo.Classes;
 import cn.hkxj.platform.pojo.CourseTimeTableDetail;
 import cn.hkxj.platform.pojo.SchoolTime;
 import cn.hkxj.platform.pojo.Student;
+import cn.hkxj.platform.pojo.dto.CourseTimeTableDetailDto;
 import cn.hkxj.platform.spider.newmodel.coursetimetable.UrpCourseTimeTableForSpider;
 import cn.hkxj.platform.utils.DateUtils;
 import org.junit.Test;
@@ -36,7 +37,7 @@ public class CourseTimeTableServiceTest {
 
     @Test
     public void getAllCourseTimeTableDetails(){
-        Student student = studentDao.selectStudentByAccount(2017025278);
+        Student student = studentDao.selectStudentByAccount(2017025299);
         List<CourseTimeTableDetail> details = courseTimeTableService.getAllCourseTimeTableDetails(student);
         for (CourseTimeTableDetail detail : details) {
             System.out.println(detail);
@@ -44,6 +45,16 @@ public class CourseTimeTableServiceTest {
 
     }
 
+    @Test
+    public void getAllCourseTimeTableDetailDtos() {
+
+        for (CourseTimeTableDetailDto dto : courseTimeTableService.getAllCourseTimeTableDetailDtos(2017025299)) {
+            System.out.println(dto);
+        }
+        ;
+
+
+    }
 
     @Test
     public void task() throws InterruptedException {
@@ -53,18 +64,24 @@ public class CourseTimeTableServiceTest {
         for (Student student : studentList) {
             if(student.getIsCorrect()){
                 service.submit(() ->{
-                    if(student.getIsCorrect()){
-                        long start = System.currentTimeMillis();
-                        courseTimeTableService.getAllCourseTimeTableDetails(student);
-                        System.out.println(student.getAccount() + "  spend"+ (System.currentTimeMillis() - start));
+                    try {
+                        if(student.getIsCorrect()){
+                            long start = System.currentTimeMillis();
+                            courseTimeTableService.getAllCourseTimeTableDetails(student);
+                            System.out.println(student.getAccount() + "  spend"+ (System.currentTimeMillis() - start));
+                        }
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }finally {
+                        latch.countDown();
                     }
-                    latch.countDown();
                 });
             }
 
         }
         latch.await();
-
+        System.out.println("finish");
+        Thread.sleep(2000L);
 
 
     }

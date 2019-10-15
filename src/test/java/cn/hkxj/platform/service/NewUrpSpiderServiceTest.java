@@ -6,11 +6,18 @@ import cn.hkxj.platform.pojo.Classes;
 import cn.hkxj.platform.pojo.GradeSearchResult;
 import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.spider.NewUrpSpider;
+import cn.hkxj.platform.spider.newmodel.SearchPost;
+import cn.hkxj.platform.spider.newmodel.SearchResult;
 import cn.hkxj.platform.spider.newmodel.course.UrpCourseForSpider;
 import cn.hkxj.platform.spider.newmodel.coursetimetable.UrpCourseTimeTableForSpider;
+import cn.hkxj.platform.spider.newmodel.searchclassroom.SearchClassroomPost;
+import cn.hkxj.platform.spider.newmodel.searchclassroom.SearchClassroomResult;
+import cn.hkxj.platform.spider.newmodel.searchclassroom.SearchResultWrapper;
 import cn.hkxj.platform.spider.newmodel.searchcourse.ClassCourseSearchResult;
 import cn.hkxj.platform.spider.newmodel.searchcourse.ClassInfoSearchResult;
 import cn.hkxj.platform.spider.newmodel.searchcourse.Records;
+import cn.hkxj.platform.spider.newmodel.searchteacher.SearchTeacherPost;
+import cn.hkxj.platform.spider.newmodel.searchteacher.SearchTeacherResult;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.assertj.core.util.Lists;
@@ -146,6 +153,32 @@ public class NewUrpSpiderServiceTest {
         for (List<ClassCourseSearchResult> result : newUrpSpiderService.searchClassTimeTable("2017023081", "1", "2016020002")) {
             System.out.println(result.size());
         }
+
+    }
+
+    @Test
+    public void searchTeacherInfo() {
+        SearchTeacherPost post = new SearchTeacherPost();
+        post.setExecutiveEducationPlanNum("2019-2020-1-1");
+        for (SearchResult<SearchTeacherResult> result : newUrpSpiderService.searchTeacherInfo("2017023081", "1", post)) {
+            for (SearchTeacherResult record : result.getRecords()) {
+                System.out.println(record);
+            }
+        }
+    }
+
+    @Test
+    public void searchClassroomInfo() {
+        SearchClassroomPost post = new SearchClassroomPost();
+        post.setExecutiveEducationPlanNum("2019-2020-1-1");
+        for (SearchResultWrapper<SearchClassroomResult> resultWrapper : newUrpSpiderService.searchClassroomInfo("2017023081", "1", post)) {
+            for (SearchClassroomResult result : resultWrapper.getPageData().getRecords()) {
+                System.out.println(result);
+            }
+
+        }
+
+
 
     }
 

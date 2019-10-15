@@ -7,13 +7,19 @@ import cn.hkxj.platform.pojo.Classes;
 import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.spider.NewUrpSpider;
 import cn.hkxj.platform.spider.model.UrpStudentInfo;
+import cn.hkxj.platform.spider.newmodel.SearchResult;
 import cn.hkxj.platform.spider.newmodel.course.UrpCourseForSpider;
 import cn.hkxj.platform.spider.newmodel.coursetimetable.UrpCourseTimeTableForSpider;
 import cn.hkxj.platform.spider.newmodel.examtime.UrpExamTime;
 import cn.hkxj.platform.spider.newmodel.grade.CurrentGrade;
+import cn.hkxj.platform.spider.newmodel.searchclassroom.SearchClassroomPost;
+import cn.hkxj.platform.spider.newmodel.searchclassroom.SearchClassroomResult;
+import cn.hkxj.platform.spider.newmodel.searchclassroom.SearchResultWrapper;
 import cn.hkxj.platform.spider.newmodel.searchcourse.ClassCourseSearchResult;
 import cn.hkxj.platform.spider.newmodel.searchcourse.ClassInfoSearchResult;
 import cn.hkxj.platform.spider.newmodel.searchcourse.SearchClassInfoPost;
+import cn.hkxj.platform.spider.newmodel.searchteacher.SearchTeacherPost;
+import cn.hkxj.platform.spider.newmodel.searchteacher.SearchTeacherResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
@@ -63,6 +69,20 @@ public class NewUrpSpiderService {
     public List<List<ClassCourseSearchResult>> searchClassTimeTable(String account, String password, String classCode){
         NewUrpSpider spider = getSpider(account, password);
         return spider.getUrpCourseTimeTableByClassCode(classCode);
+    }
+
+    @Retryable(value = UrpException.class, maxAttempts = 3)
+    public List<SearchResult<SearchTeacherResult>> searchTeacherInfo(String account, String password,
+                                                                     SearchTeacherPost searchTeacherPost){
+        NewUrpSpider spider = getSpider(account, password);
+        return spider.searchTeacherInfo(searchTeacherPost);
+    }
+
+    @Retryable(value = UrpException.class, maxAttempts = 3)
+    public List<SearchResultWrapper<SearchClassroomResult>> searchClassroomInfo(String account, String password,
+                                                                                SearchClassroomPost searchClassroomPost){
+        NewUrpSpider spider = getSpider(account, password);
+        return spider.searchClassroomInfo(searchClassroomPost);
     }
 
     public void checkStudentPassword(String account, String password){

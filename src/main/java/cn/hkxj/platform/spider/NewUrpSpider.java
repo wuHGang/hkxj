@@ -5,6 +5,7 @@ import cn.hkxj.platform.pojo.constant.RedisKeys;
 import cn.hkxj.platform.spider.model.UrpStudentInfo;
 import cn.hkxj.platform.spider.model.VerifyCode;
 import cn.hkxj.platform.spider.newmodel.CourseRelativeInfo;
+import cn.hkxj.platform.spider.newmodel.SearchResult;
 import cn.hkxj.platform.spider.newmodel.course.UrpCourseForSpider;
 import cn.hkxj.platform.spider.newmodel.coursetimetable.UrpCourseTimeTableForSpider;
 import cn.hkxj.platform.spider.newmodel.emptyroom.EmptyRoomPojo;
@@ -14,9 +15,14 @@ import cn.hkxj.platform.spider.newmodel.grade.CurrentGrade;
 import cn.hkxj.platform.spider.newmodel.grade.detail.UrpGradeDetailForSpider;
 import cn.hkxj.platform.spider.newmodel.grade.general.UrpGeneralGradeForSpider;
 import cn.hkxj.platform.spider.newmodel.grade.general.UrpGradeForSpider;
+import cn.hkxj.platform.spider.newmodel.searchclassroom.SearchClassroomPost;
+import cn.hkxj.platform.spider.newmodel.searchclassroom.SearchClassroomResult;
+import cn.hkxj.platform.spider.newmodel.searchclassroom.SearchResultWrapper;
 import cn.hkxj.platform.spider.newmodel.searchcourse.ClassCourseSearchResult;
 import cn.hkxj.platform.spider.newmodel.searchcourse.ClassInfoSearchResult;
 import cn.hkxj.platform.spider.newmodel.searchcourse.SearchClassInfoPost;
+import cn.hkxj.platform.spider.newmodel.searchteacher.SearchTeacherPost;
+import cn.hkxj.platform.spider.newmodel.searchteacher.SearchTeacherResult;
 import cn.hkxj.platform.utils.ApplicationUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -27,6 +33,7 @@ import com.google.common.collect.Lists;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -89,7 +96,17 @@ public class NewUrpSpider {
      */
     private static final String SEARCH_COURSE_INFO = ROOT + "/student/teachingResources/classCurriculum" +
             "/searchCurriculumInfo/callback";
+
+    /**
+     * 教室信息查询
+     */
+    private static final String CLASSROOM_INFO = ROOT + "/student/teachingResources/classroomCurriculum/search";
+    /**
+     * 教师信息查询
+     */
+    private static final String TEACHER_INFO = ROOT + "/student/teachingResources/teacherCurriculum/search";
     private static StringRedisTemplate stringRedisTemplate;
+
     private static final TypeReference<UrpGradeDetailForSpider> gradeDetailTypeReference
             = new TypeReference<UrpGradeDetailForSpider>() {
     };
@@ -198,20 +215,8 @@ public class NewUrpSpider {
                 .post(body)
                 .build();
         String result = new String(execute(request));
-        try {
-            return JSON.parseObject(result, new TypeReference<List<Map<String, Object>>>() {
-            });
-        } catch (JSONException e) {
-            if (result.length() > 1000) {
-                throw new UrpEvaluationException("account: " + account + " 未完成评估无法查成绩");
-            }else if(result.contains("login")){
-                COOKIE_JAR.clearSession();
-                throw new UrpSessionExpiredException("account: " + account + "session expired");
-            }
-            log.error("parse grade error {}", result, e);
-            COOKIE_JAR.clearSession();
-            throw new UrpSessionExpiredException("account: " + account + "session expired");
-        }
+        return parseObject(result, new TypeReference<List<Map<String, Object>>>() {
+        });
     }
 
     public CurrentGrade getCurrentGrade() {
@@ -239,20 +244,10 @@ public class NewUrpSpider {
                 .get()
                 .build();
         String result = new String(execute(request));
-        try {
-            List<Map<String, Object>> list = JSON.parseObject(result, new TypeReference<List<Map<String, Object>>>() {
-            });
-            JSONArray jsonArray = (JSONArray) list.get(0).get("list");
-            return jsonArray.toJavaList(UrpGeneralGradeForSpider.class);
-        } catch (JSONException e) {
-            if (result.length() > 1000) {
-                throw new UrpEvaluationException("account: " + account + " 未完成评估无法查成绩");
-            }
-
-            log.error("parse grade error {}", result, e);
-            COOKIE_JAR.clearSession();
-            throw new UrpSessionExpiredException("account: " + account + "session expired");
-        }
+        List<Map<String, Object>> list = parseObject(result, new TypeReference<List<Map<String, Object>>>() {
+        });
+        JSONArray jsonArray = (JSONArray) list.get(0).get("list");
+        return jsonArray.toJavaList(UrpGeneralGradeForSpider.class);
     }
 
     public UrpGradeDetailForSpider getUrpGradeDetail(UrpGeneralGradeForSpider urpGeneralGradeForSpider) {
@@ -269,7 +264,7 @@ public class NewUrpSpider {
                 .post(body)
                 .build();
         String result = new String(execute(request));
-        return JSON.parseObject(result, gradeDetailTypeReference);
+        return parseObject(result, gradeDetailTypeReference);
     }
 
     public UrpCourseForSpider getUrpCourse(String uid) {
@@ -282,7 +277,7 @@ public class NewUrpSpider {
         String result = new String(execute(request));
         flashCache();
         //因为爬虫爬取的结果是个集合，所以先转成list
-        List<UrpCourseForSpider> courses = JSONArray.parseObject(result, courseTypeReference);
+        List<UrpCourseForSpider> courses = parseObject(result, courseTypeReference);
         //因为用uid查询，所以取第一个元素即可
         return courses.get(0);
     }
@@ -419,13 +414,8 @@ public class NewUrpSpider {
         String result = new String(execute(request));
         String regex = "\"dateList\": [.*]}$";
         result = result.replaceAll(regex, "");
-        try {
-            return JSON.parseObject(result, UrpCourseTimeTableForSpider.class);
-        } catch (JSONException e) {
-            log.error("parse courseTimeTable error {}", result, e);
-            COOKIE_JAR.clearSession();
-            throw new UrpSessionExpiredException("account: " + account + " session expired");
-        }
+        return parseObject(result, UrpCourseTimeTableForSpider.class);
+
     }
 
     public UrpStudentInfo getStudentInfo() {
@@ -468,15 +458,7 @@ public class NewUrpSpider {
                 .post(body)
                 .build();
         String result = new String(execute(request));
-        try {
-            return JSON.parseObject(result, classInfoReference);
-        } catch (JSONException e) {
-            log.error("parse courseTimeTable error {}", result, e);
-            COOKIE_JAR.clearSession();
-            throw new UrpSessionExpiredException("account: " + account + " session expired");
-        }
-
-
+        return parseObject(result, classInfoReference);
     }
 
 
@@ -488,16 +470,90 @@ public class NewUrpSpider {
                 .get()
                 .build();
         String result = new String(execute(request));
+
+        return parseObject(result, classCourseSearchResultReference);
+
+    }
+
+    /**
+     * 教师信息列表
+     * @param searchTeacherPost
+     * @return
+     */
+    public List<SearchResult<SearchTeacherResult>> searchTeacherInfo(SearchTeacherPost searchTeacherPost){
+        FormBody.Builder params = new FormBody.Builder();
+        FormBody body = params
+                .add("executiveEducationPlanNumber", searchTeacherPost.getExecutiveEducationPlanNum())
+                .add("departmentNum", searchTeacherPost.getDepartmentNum())
+                .add("teacherName", searchTeacherPost.getTeacherName())
+                .add("pageSize", searchTeacherPost.getPageSize())
+                .add("pageNum", searchTeacherPost.getPageNum())
+                .build();
+
+        Request request = new Request.Builder()
+                .url(TEACHER_INFO)
+                .headers(HEADERS)
+                .post(body)
+                .build();
+
+        TypeReference<List<SearchResult<SearchTeacherResult>>> reference = new TypeReference<List<SearchResult<SearchTeacherResult>>>(){};
+        return parseObject(new String(execute(request)) ,reference);
+    }
+
+    /**
+     * 获取课室列表
+     * @return
+     */
+    public List<SearchResultWrapper<SearchClassroomResult>> searchClassroomInfo(SearchClassroomPost searchClassroomPost){
+        FormBody.Builder params = new FormBody.Builder();
+        FormBody body = params
+                .add("executiveEducationPlanNumber", searchClassroomPost.getExecutiveEducationPlanNum())
+                .add("campusNumber", searchClassroomPost.getCampusNumber())
+                .add("teachingBuildingNumber", searchClassroomPost.getTeachingBuildingNumber())
+                .add("classRoomNumber", searchClassroomPost.getClassRoomNumber())
+                .add("pageSize", searchClassroomPost.getPageSize())
+                .add("pageNum", searchClassroomPost.getPageNum())
+                .build();
+
+        Request request = new Request.Builder()
+                .url(CLASSROOM_INFO)
+                .headers(HEADERS)
+                .post(body)
+                .build();
+
+        TypeReference<List<SearchResultWrapper<SearchClassroomResult>>> reference = new TypeReference<List<SearchResultWrapper<SearchClassroomResult>>>(){};
+        return parseObject(new String(execute(request)) ,reference);
+    }
+
+    private <T> T parseObject(String text, TypeReference<T> type){
         try {
-            return JSONArray.parseObject(result, classCourseSearchResultReference);
-        } catch (JSONException e) {
-            log.error("parse courseTimeTable error {}", result, e);
+            return JSON.parseObject(text, type);
+        }catch (JSONException e) {
+            if (text.length() > 1000) {
+                throw new UrpEvaluationException("account: " + account + " 未完成评估无法查成绩");
+            }
+            if(!(text.contains("login") || text.contains("invalidSession"))){
+                log.error("parse courseTimeTable error {}", text, e);
+            }
+            throw new UrpSessionExpiredException("account: " + account + " session expired");
+        }finally {
+            COOKIE_JAR.clearSession();
+        }
+
+    }
+
+    private <T> T parseObject(String text, Class<T> clazz){
+        try {
+            return JSON.parseObject(text, clazz);
+        }catch (JSONException e) {
+            if(!text.contains("login")){
+                log.error("parse courseTimeTable error {}", text, e);
+            }
             COOKIE_JAR.clearSession();
             throw new UrpSessionExpiredException("account: " + account + " session expired");
         }
 
     }
-
 
     /**
      * 解析学生信息页面的html
@@ -527,7 +583,12 @@ public class NewUrpSpider {
             if (isResponseFail(response)) {
                 throw new UrpRequestException("url: " + request.url().toString() + " code: " + response.code() + " cause: " + response.message());
             }
-            return response.body().bytes();
+            ResponseBody body = response.body();
+            if(body == null){
+                throw new UrpRequestException("url: " + request.url().toString() + " code: " + response.code() + " " +
+                        "cause: response body is null");
+            }
+            return body.bytes();
         } catch (IOException e) {
             throw new UrpTimeoutException(request.url().toString(), e);
         }
@@ -547,8 +608,8 @@ public class NewUrpSpider {
 
     private boolean hasLoginCookieCache(String account) {
 
-        return stringRedisTemplate.hasKey(RedisKeys.URP_COOKIE.genKey(account))
-                && stringRedisTemplate.hasKey(RedisKeys.URP_LOGIN_COOKIE.genKey(account));
+        return BooleanUtils.toBoolean(stringRedisTemplate.hasKey(RedisKeys.URP_COOKIE.genKey(account)))
+                && BooleanUtils.toBoolean(stringRedisTemplate.hasKey(RedisKeys.URP_LOGIN_COOKIE.genKey(account)));
     }
 
     /**
