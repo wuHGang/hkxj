@@ -60,9 +60,6 @@ public class WechatMpConfiguration {
     private WechatOpenIdInterceptor wechatOpenIdInterceptor;
 
     @Resource
-    private ElectiveCourseMessageHandler electiveCourseMessageHandler;
-
-    @Resource
     private UnsubscribeMessageHandler unsubscribeMessageHandler;
 
     @Resource
@@ -70,6 +67,9 @@ public class WechatMpConfiguration {
 
     @Resource
     private StudentInfoInterceptor studentInfoInterceptor;
+
+    @Resource
+    private CourseRankHandler courseRankHandler;
 
     private static Map<String, WxMpMessageRouter> routers = Maps.newHashMap();
     private static Map<String, WxMpService> mpServices = Maps.newHashMap();
@@ -104,7 +104,7 @@ public class WechatMpConfiguration {
                 .end()
                 .rule()
                 .async(false)
-                .rContent("课表推送|成绩推送|考试推送")
+                .rContent("订阅|课表推送|成绩推送|考试推送")
                 .interceptor(wechatOpenIdInterceptor)
                 .interceptor(studentInfoInterceptor)
                 .handler(subscribeMessageHandler)
@@ -153,13 +153,6 @@ public class WechatMpConfiguration {
                 .end()
                 .rule()
                 .async(false)
-                .rContent(".*?选修.*?")
-                .interceptor(wechatOpenIdInterceptor)
-                .interceptor(studentInfoInterceptor)
-                .handler(electiveCourseMessageHandler)
-                .end()
-                .rule()
-                .async(false)
                 .rContent("空教室.*?")
                 .handler(emptyRoomHandler)
                 .end()
@@ -169,6 +162,11 @@ public class WechatMpConfiguration {
                 .interceptor(wechatOpenIdInterceptor)
                 .interceptor(studentInfoInterceptor)
                 .handler(unsubscribeMessageHandler)
+                .async(false)
+                .rContent("课时排行|课时安排|课时排名|课表排行|科时排行|科时排名")
+                .interceptor(wechatOpenIdInterceptor)
+                .interceptor(studentInfoInterceptor)
+                .handler(courseRankHandler)
                 .end();
         return newRouter;
     }

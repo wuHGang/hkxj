@@ -37,14 +37,26 @@ public class SubscribeMessageHandler implements WxMpMessageHandler{
 
     @Override
     public WxMpXmlOutMessage handle(WxMpXmlMessage wxMessage, Map<String, Object> context, WxMpService wxMpService, WxSessionManager sessionManager) {
+        String openid = wxMessage.getFromUser();
+        String appid = wxMpService.getWxMpConfigStorage().getAppId();
+
+        if(wxMessage.getContent().equals("订阅")){
+            for (SubscribeScene scene : SubscribeScene.values()) {
+                ScheduleTask scheduleTask = new ScheduleTask(appid, openid, scene.getScene());
+                //判断有没有相应的订阅记录，有就更新记录，没有就插入一条记录
+                scheduleTaskService.checkAndSetSubscribeStatus(scheduleTask, true);
+            }
+            return textBuilder.build("课表,成绩,考试订阅成功"+"\n\n回复【课时排行】可以查看你学费交的有多值", wxMessage, wxMpService);
+        }
+
+
         SubscribeScene subscribeScene = SubscribeScene.getSubscribeSceneByChinese(wxMessage.getContent());
         if(Objects.isNull(subscribeScene)){
             return textBuilder.build(PATTERN, wxMessage, wxMpService);
         }
         String scene = subscribeScene.getScene();
         if(Objects.nonNull(scene)){
-            String openid = wxMessage.getFromUser();
-            String appid = wxMpService.getWxMpConfigStorage().getAppId();
+
             ScheduleTask scheduleTask = new ScheduleTask(appid, openid, scene);
             //判断有没有相应的订阅记录，有就更新记录，没有就插入一条记录
             scheduleTaskService.checkAndSetSubscribeStatus(scheduleTask, true);

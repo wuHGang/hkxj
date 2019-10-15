@@ -14,6 +14,9 @@ import cn.hkxj.platform.spider.newmodel.grade.CurrentGrade;
 import cn.hkxj.platform.spider.newmodel.grade.detail.UrpGradeDetailForSpider;
 import cn.hkxj.platform.spider.newmodel.grade.general.UrpGeneralGradeForSpider;
 import cn.hkxj.platform.spider.newmodel.grade.general.UrpGradeForSpider;
+import cn.hkxj.platform.spider.newmodel.searchcourse.ClassCourseSearchResult;
+import cn.hkxj.platform.spider.newmodel.searchcourse.ClassInfoSearchResult;
+import cn.hkxj.platform.spider.newmodel.searchcourse.SearchClassInfoPost;
 import cn.hkxj.platform.utils.ApplicationUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -45,18 +48,47 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class NewUrpSpider {
     private static final String ROOT = "http://xsurp.usth.edu.cn";
+    /**
+     * 验证码
+     */
     private static final String CAPTCHA = ROOT + "/img/captcha.jpg";
+    /**
+     * 登录校验
+     */
     private static final String CHECK = ROOT + "/j_spring_security_check";
+    /**
+     * 仅做header refer使用
+     */
     private static final String LOGIN = ROOT + "/getStudentInfo";
+    /**
+     * 学生基本信息
+     */
     private static final String STUDENT_INFO = ROOT + "/student/rollManagement/rollInfo/index";
+    /**
+     * 当前学期成绩
+     */
     private static final String CURRENT_TERM_GRADE = ROOT + "/student/integratedQuery/scoreQuery/thisTermScores/data";
+    /**
+     * 成绩详细信息  平时分，排行 etc
+     */
     private static final String CURRENT_TERM_GRADE_DETAIL = ROOT + "/student/integratedQuery/scoreQuery/coursePropertyScores/serchScoreDetail";
     private static final String COURSE_DETAIL = ROOT + "/student/integratedQuery/course/courseSchdule/detail";
     private static final String EXAM_TIME = ROOT + "/student/examinationManagement/examPlan/index";
     private static final String COURSE_TIME_TABLE = ROOT + "/student/courseSelect/thisSemesterCurriculum/ajaxStudentSchedule/callback";
-    private static final String INDEX = ROOT + "/index.jsp";
     private static final String MAKE_UP_GRADE = ROOT + "/student/examinationManagement/examGrade/search";
+    /**
+     * 空教室查询
+     */
     private static final String EMPTY_ROOM = ROOT + "/student/teachingResources/freeClassroomQuery/search";
+    /**
+     * 班级信息查询
+     */
+    private static final String CLASS_INFO = ROOT + "/student/teachingResources/classCurriculum/search";
+    /**
+     * 根据班级号和学期号查询班级课程信息地址
+     */
+    private static final String SEARCH_COURSE_INFO = ROOT + "/student/teachingResources/classCurriculum" +
+            "/searchCurriculumInfo/callback";
     private static StringRedisTemplate stringRedisTemplate;
     private static final TypeReference<UrpGradeDetailForSpider> gradeDetailTypeReference
             = new TypeReference<UrpGradeDetailForSpider>() {
@@ -64,14 +96,21 @@ public class NewUrpSpider {
     private static final TypeReference<List<UrpCourseForSpider>> courseTypeReference
             = new TypeReference<List<UrpCourseForSpider>>() {
     };
+    private static final TypeReference<List<ClassInfoSearchResult>> classInfoReference
+            = new TypeReference<List<ClassInfoSearchResult>>() {
+    };
+    private static final TypeReference<List<List<ClassCourseSearchResult>>> classCourseSearchResultReference
+            = new TypeReference<List<List<ClassCourseSearchResult>>>() {
+    };
     private static final Splitter SPACE_SPLITTER = Splitter.on(" ").omitEmptyStrings().trimResults();
 
-    private static final UrpCookieJar cookieJar = new UrpCookieJar();
+    private static final UrpCookieJar COOKIE_JAR = new UrpCookieJar();
 
-    private static final OkHttpClient client = new OkHttpClient.Builder()
-            .cookieJar(cookieJar)
+    private static final OkHttpClient CLIENT = new OkHttpClient.Builder()
+            .cookieJar(COOKIE_JAR)
             .retryOnConnectionFailure(true)
-            .addInterceptor(new RetryInterceptor(5))
+            .connectTimeout(500L, TimeUnit.MILLISECONDS)
+            .addInterceptor(new RetryInterceptor(10))
             .followRedirects(false)
             .build();
 
@@ -166,11 +205,11 @@ public class NewUrpSpider {
             if (result.length() > 1000) {
                 throw new UrpEvaluationException("account: " + account + " 未完成评估无法查成绩");
             }else if(result.contains("login")){
-                cookieJar.clearSession();
+                COOKIE_JAR.clearSession();
                 throw new UrpSessionExpiredException("account: " + account + "session expired");
             }
             log.error("parse grade error {}", result, e);
-            cookieJar.clearSession();
+            COOKIE_JAR.clearSession();
             throw new UrpSessionExpiredException("account: " + account + "session expired");
         }
     }
@@ -211,7 +250,7 @@ public class NewUrpSpider {
             }
 
             log.error("parse grade error {}", result, e);
-            cookieJar.clearSession();
+            COOKIE_JAR.clearSession();
             throw new UrpSessionExpiredException("account: " + account + "session expired");
         }
     }
@@ -282,15 +321,15 @@ public class NewUrpSpider {
         String location = response.header("Location");
 
         if (StringUtils.isEmpty(location)) {
-            cookieJar.clearSession();
+            COOKIE_JAR.clearSession();
             throw new UrpRequestException("url: " + request.url().toString() + " code: " + response.code() + " cause: " + response.message());
         } else if (location.contains("badCaptcha")) {
-            cookieJar.clearSession();
+            COOKIE_JAR.clearSession();
             throw new UrpVerifyCodeException("captcha: " + captcha + " code uuid :" + uuid);
         } else if (location.contains("badCredentials")) {
             throw new PasswordUncorrectException("account: " + account);
         } else if (location.contains("concurrentSessionExpired")) {
-            cookieJar.clearSession();
+            COOKIE_JAR.clearSession();
             throw new UrpSessionExpiredException("account: " + account + "session expired");
         }
 
@@ -330,7 +369,7 @@ public class NewUrpSpider {
                 throw new UrpEvaluationException("account: " + account + " 未完成评估无法查成绩");
             }
             log.error("parse grade error {}", result, e);
-            cookieJar.clearSession();
+            COOKIE_JAR.clearSession();
             throw new UrpSessionExpiredException("account: " + account + "session expired");
         }
     }
@@ -343,7 +382,7 @@ public class NewUrpSpider {
                 .build();
         String s = new String(execute(request));
         if (s.contains("invalidSession")) {
-            cookieJar.clearSession();
+            COOKIE_JAR.clearSession();
             throw new UrpSessionExpiredException("account: " + account + "session expired");
         }
         Document document = Jsoup.parse(s);
@@ -384,7 +423,7 @@ public class NewUrpSpider {
             return JSON.parseObject(result, UrpCourseTimeTableForSpider.class);
         } catch (JSONException e) {
             log.error("parse courseTimeTable error {}", result, e);
-            cookieJar.clearSession();
+            COOKIE_JAR.clearSession();
             throw new UrpSessionExpiredException("account: " + account + " session expired");
         }
     }
@@ -412,6 +451,53 @@ public class NewUrpSpider {
         return student;
     }
 
+    public List<ClassInfoSearchResult> getClassInfoSearchResult(SearchClassInfoPost searchClassInfoPost){
+        FormBody.Builder params = new FormBody.Builder();
+        FormBody body = params.add("param_value", searchClassInfoPost.getParamValue())
+                .add("executiveEducationPlanNum", searchClassInfoPost.getExecutiveEducationPlanNum())
+                .add("pageNum", searchClassInfoPost.getPageNum())
+                .add("pageSize", searchClassInfoPost.getPageSize())
+                .add("yearNum", searchClassInfoPost.getYearNum())
+                .add("departmentNum", searchClassInfoPost.getDepartmentNum())
+                .add("classNum", searchClassInfoPost.getClassNum())
+                .build();
+
+        Request request = new Request.Builder()
+                .url(CLASS_INFO)
+                .headers(HEADERS)
+                .post(body)
+                .build();
+        String result = new String(execute(request));
+        try {
+            return JSON.parseObject(result, classInfoReference);
+        } catch (JSONException e) {
+            log.error("parse courseTimeTable error {}", result, e);
+            COOKIE_JAR.clearSession();
+            throw new UrpSessionExpiredException("account: " + account + " session expired");
+        }
+
+
+    }
+
+
+    public List<List<ClassCourseSearchResult>> getUrpCourseTimeTableByClassCode(String classCode) {
+
+        Request request = new Request.Builder()
+                .url(SEARCH_COURSE_INFO + "?planCode=2019-2020-1-1&classCode=" + classCode)
+                .headers(HEADERS)
+                .get()
+                .build();
+        String result = new String(execute(request));
+        try {
+            return JSONArray.parseObject(result, classCourseSearchResultReference);
+        } catch (JSONException e) {
+            log.error("parse courseTimeTable error {}", result, e);
+            COOKIE_JAR.clearSession();
+            throw new UrpSessionExpiredException("account: " + account + " session expired");
+        }
+
+    }
+
 
     /**
      * 解析学生信息页面的html
@@ -437,7 +523,7 @@ public class NewUrpSpider {
 
 
     private static byte[] execute(Request request) {
-        try (Response response = client.newCall(request).execute()) {
+        try (Response response = CLIENT.newCall(request).execute()) {
             if (isResponseFail(response)) {
                 throw new UrpRequestException("url: " + request.url().toString() + " code: " + response.code() + " cause: " + response.message());
             }
@@ -449,7 +535,7 @@ public class NewUrpSpider {
 
 
     private Response getResponse(Request request) {
-        try (Response response = client.newCall(request).execute()) {
+        try (Response response = CLIENT.newCall(request).execute()) {
             if (isResponseFail(response)) {
                 throw new UrpRequestException("url: " + request.url().toString() + " code: " + response.code() + " cause: " + response.message());
             }
@@ -483,7 +569,7 @@ public class NewUrpSpider {
 
         @Override
         public void run() {
-            while (true){
+            while (!Thread.interrupted()){
                 log.debug("produce captcha thread start");
                 UUID uuid = UUID.randomUUID();
                 MDC.put("preLoad", uuid.toString());
@@ -506,14 +592,15 @@ public class NewUrpSpider {
 
         @Override
         public void run() {
-
-            try {
-                Thread.sleep(1000 * 60 * 20);
-            } catch (Throwable e) {
-                log.error("clean preload captcha error", e);
+            while (!Thread.interrupted()){
+                try {
+                    Thread.sleep(1000 * 60 * 20);
+                } catch (Throwable e) {
+                    log.error("clean preload captcha error", e);
+                }
+                log.debug("clean up thread start");
+                queue.removeIf(PreLoadCaptcha::isExpire);
             }
-            log.debug("clean up thread start");
-            queue.removeIf(preLoadCaptcha -> System.currentTimeMillis() - preLoadCaptcha.createDate.getTime() > 1000 * 60 * 20);
         }
     }
 
@@ -527,6 +614,10 @@ public class NewUrpSpider {
             this.captcha = captcha;
             this.preloadCookieId = preloadCookieId;
             this.createDate = createDate;
+        }
+
+        boolean isExpire(){
+            return System.currentTimeMillis() - createDate.getTime() > 1000 * 60 * 20;
         }
     }
 

@@ -42,8 +42,6 @@ public class StudentBindService {
     @Resource
     private StudentDao studentDao;
     @Resource
-    private CourseService courseService;
-    @Resource
     private NewUrpSpiderService newUrpSpiderService;
 
     /**
@@ -52,6 +50,10 @@ public class StudentBindService {
      * 现在的一个问题是，如果是从一次订阅的接口路由过来的用户，如何帮他们实现快速绑定呢？
      * 点击地址以后将openID存在session中，查看是否已经绑定
      *
+     *  1.数据库中有学生信息，并且密码不正确的，重新通过教务网确认密码
+     *  2.数据库中有学生信息且密码正确，直接绑定
+     *  3.数据库中没有学生数据，查询后绑定
+     *
      * @param openid   微信用户唯一标识
      * @param account  学生教务网账号
      * @param password 学生教务网密码
@@ -59,42 +61,14 @@ public class StudentBindService {
      * @throws ReadTimeoutException       读取信息超时异常
      * @throws OpenidExistException       Openid已存在
      */
-    public Student studentBind(String openid, String account, String password, String appid) throws PasswordUncorrectException, ReadTimeoutException, OpenidExistException {
+    public Student studentBind(String openid, String account, String password, String appid) throws OpenidExistException {
         if (isStudentBind(openid, appid)) {
             throw new OpenidExistException(String.format(template, account, openid));
         }
-        //openid在数据库中分为两种状态时可以重新绑定
-        //1:数据库存在openid,is_bind=0
-        //2:数据库不存在openid
-        boolean result;
-        if (Objects.equals(wechatMpPlusProperties.getAppId(), appid)) {
-            result = openidPlusMapper.isOpenidExist(openid) != null && openidPlusMapper.isOpenidBind(openid) == 0;
-        } else {
-            result = openidMapper.isOpenidExist(openid) != null && openidMapper.isOpenidBind(openid) == 0;
-        }
-        newUrpSpiderService.checkStudentPassword(account, password);
-        if (result) {
-            //可以重新绑定
-            Student student = null;
-            if (isStudentExist(account)) {
-                updateOpenid(openid, account, appid);
-                studentDao.updatePassword(account, password);
-            } else {
-                student = newUrpSpiderService.getStudentInfo(account, password);
-                studentDao.insertStudent(student);
-                updateOpenid(openid, account, appid);
-            }
-            return student;
-        } else {
-            Student student = null;
-            if (isStudentExist(account)) {
-                saveOpenid(openid, account, appid);
-            } else {
-                student = newUrpSpiderService.getStudentInfo(account, password);
-                studentBind(student, openid, appid);
-            }
-            return student;
-        }
+
+        Student student = studentLogin(account, password);
+
+        return studentBind(student, openid, appid);
 
     }
 
@@ -108,17 +82,39 @@ public class StudentBindService {
      */
     public Student studentLogin(String account, String password) throws PasswordUncorrectException {
         Student student = studentDao.selectStudentByAccount(Integer.parseInt(account));
-        if (student == null) {
+
+        if(student != null && !student.getIsCorrect()){
+            newUrpSpiderService.checkStudentPassword(account, password);
+            studentDao.updatePassword(account, password);
+        }else if(student == null){
             student = newUrpSpiderService.getStudentInfo(account, password);
             studentDao.insertStudent(student);
         }
+
         return student;
     }
 
+    /**
+     * 如果已经存在openid则重新关联绑定，否则插入一条新数据再绑定
+     *
+     * @param student 学生信息
+     * @param openid 微信用户唯一标识
+     * @param appid 微信平台对应的id
+     */
+    private Student studentBind(Student student, String openid, String appid) {
+        boolean haveOpenId;
+        if (Objects.equals(wechatMpPlusProperties.getAppId(), appid)) {
+            haveOpenId = openidPlusMapper.isOpenidExist(openid) != null && openidPlusMapper.isOpenidBind(openid) == 0;
+        } else {
+            haveOpenId = openidMapper.isOpenidExist(openid) != null && openidMapper.isOpenidBind(openid) == 0;
+        }
 
-    public Student studentBind(Student student, String openid, String appid) {
-        studentDao.insertStudent(student);
-        saveOpenid(openid, student.getAccount().toString(), appid);
+        if (haveOpenId){
+            updateOpenid(openid, student.getAccount().toString(), appid);
+        }else {
+            saveOpenid(openid, student.getAccount().toString(), appid);
+        }
+
         return student;
     }
 
@@ -130,11 +126,6 @@ public class StudentBindService {
             Openid openidEntity = openids.get(0);
             return openidEntity.getIsBind();
         }
-    }
-
-    private boolean isStudentExist(String account) {
-        Student student = studentDao.selectStudentByAccount(Integer.parseInt(account));
-        return student != null;
     }
 
     public Student getStudentByOpenID(String openid, String appid) {
@@ -178,25 +169,4 @@ public class StudentBindService {
         return openidMapper.updateByPrimaryKey(update);
     }
 
-
-    private void sendMessage(String scene, String appid, String openid, String account){
-        if(!Objects.isNull(appid)){
-            if(Objects.equals(wechatMpPlusProperties.getAppId(), appid)){
-                WxMpService wxMpService = WechatMpConfiguration.getMpServices().get(appid);
-                if(Objects.equals("1005", scene)){
-                    List<CourseTimeTable> courseTimeTableList = courseService.getCoursesCurrentDay(Integer.parseInt(account));
-                    WxMpKefuMessage wxMpKefuMessage = new WxMpKefuMessage();
-                    wxMpKefuMessage.setMsgType("text");
-                    wxMpKefuMessage.setContent(courseService.toText(courseTimeTableList));
-                    wxMpKefuMessage.setToUser(openid);
-                    try {
-                        wxMpService.getKefuService().sendKefuMessage(wxMpKefuMessage);
-                        log.info("send kefuMessage about course success openid:{} appid:{}", openid, appid);
-                    } catch (WxErrorException e) {
-                        log.info("send kefuMessage about course failed openid:{} appid:{}", openid, appid);
-                    }
-                }
-            }
-        }
-    }
 }

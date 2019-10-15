@@ -66,7 +66,7 @@
                     "account": account,
                     "password": password
                 };
-
+                alert("绑定中,请稍候");
                 if (!isCommitted) { //当表单被成功提交过一次后isCommitted将变为true,根据判断将无法进行提交。
                     isCommitted = true;//提交表单后，将表单是否已经提交标识设置为true
                     $.ajax({

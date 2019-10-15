@@ -1,7 +1,9 @@
 package cn.hkxj.platform.service;
 
 import cn.hkxj.platform.PlatformApplication;
+import cn.hkxj.platform.dao.StudentDao;
 import cn.hkxj.platform.pojo.Classes;
+import cn.hkxj.platform.pojo.CourseTimeTableDetail;
 import cn.hkxj.platform.pojo.SchoolTime;
 import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.spider.newmodel.coursetimetable.UrpCourseTimeTableForSpider;
@@ -13,6 +15,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import javax.annotation.Resource;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * @author Yuki
@@ -25,18 +31,42 @@ public class CourseTimeTableServiceTest {
 
     @Resource
     private CourseTimeTableService courseTimeTableService;
+    @Resource
+    private StudentDao studentDao;
 
     @Test
-    public void test(){
-        Student student = new Student();
-        Classes classes = new Classes();
-        classes.setId(317);
-        student.setAccount(2016024186);
-        student.setPassword("12345");
-        student.setClasses(classes);
-        SchoolTime schoolTime = DateUtils.getCurrentSchoolTime();
-//        UrpCourseTimeTableForSpider spiderResult = newUrpSpiderService.getUrpCourseTimeTable(student);
-        System.out.println(courseTimeTableService.getDetailsForCurrentDay(student));
+    public void getAllCourseTimeTableDetails(){
+        Student student = studentDao.selectStudentByAccount(2017025278);
+        List<CourseTimeTableDetail> details = courseTimeTableService.getAllCourseTimeTableDetails(student);
+        for (CourseTimeTableDetail detail : details) {
+            System.out.println(detail);
+        }
+
+    }
+
+
+    @Test
+    public void task() throws InterruptedException {
+        ExecutorService service = Executors.newFixedThreadPool(9);
+        List<Student> studentList = studentDao.selectAllStudent();
+        CountDownLatch latch = new CountDownLatch(studentList.size());
+        for (Student student : studentList) {
+            if(student.getIsCorrect()){
+                service.submit(() ->{
+                    if(student.getIsCorrect()){
+                        long start = System.currentTimeMillis();
+                        courseTimeTableService.getAllCourseTimeTableDetails(student);
+                        System.out.println(student.getAccount() + "  spend"+ (System.currentTimeMillis() - start));
+                    }
+                    latch.countDown();
+                });
+            }
+
+        }
+        latch.await();
+
+
+
     }
 
 }

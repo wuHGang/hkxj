@@ -113,14 +113,13 @@ public class CourseTimeTableService {
      */
     public List<CourseTimeTableDetail> getAllCourseTimeTableDetails(Student student) {
         SchoolTime schoolTime = DateUtils.getCurrentSchoolTime();
-        List<CourseTimeTableDetail> dbResult =
-                courseTimeTableDetailDao.getCourseTimeTableDetailForCurrentTerm(student.getClasses().getId(), schoolTime);
-        if (CollectionUtils.isEmpty(dbResult)) {
-            UrpCourseTimeTableForSpider spiderResult = newUrpSpiderService.getUrpCourseTimeTable(student);
-            saveToDbAsync(spiderResult, student);
-            dbResult = getCurrentTermDataFromSpider(spiderResult, schoolTime);
+        List<Integer> detailIdList = getCourseTimeTableDetailIdByAccount(student.getAccount());
+        if(detailIdList.isEmpty()){
+            UrpCourseTimeTableForSpider tableForSpider = getCourseTimeTableDetails(student);
+            return getCurrentTermDataFromSpider(tableForSpider, schoolTime);
+        }else {
+            return courseTimeTableDetailDao.getCourseTimeTableDetailForCurrentTerm(detailIdList, schoolTime);
         }
-        return dbResult;
     }
 
     /**
@@ -131,14 +130,20 @@ public class CourseTimeTableService {
      */
     public List<CourseTimeTableDetail> getDetailsForCurrentWeek(Student student) {
         SchoolTime schoolTime = DateUtils.getCurrentSchoolTime();
-        List<CourseTimeTableDetail> dbResult =
-                courseTimeTableDetailDao.getCourseTimeTableDetailForCurrentWeek(student.getClasses().getId(), schoolTime);
-        if (CollectionUtils.isEmpty(dbResult)) {
-            UrpCourseTimeTableForSpider spiderResult = newUrpSpiderService.getUrpCourseTimeTable(student);
-            saveToDbAsync(spiderResult, student);
-            dbResult = getCurrentWeekDataFromSpider(spiderResult, schoolTime);
+        List<Integer> detailIdList = getCourseTimeTableDetailIdByAccount(student.getAccount());
+        if(detailIdList.isEmpty()){
+            UrpCourseTimeTableForSpider tableForSpider = getCourseTimeTableDetails(student);
+            return getCurrentWeekDataFromSpider(tableForSpider, schoolTime);
+        }else {
+            return courseTimeTableDetailDao.getCourseTimeTableDetailForCurrentWeek(detailIdList, schoolTime);
         }
-        return dbResult;
+
+    }
+
+    private UrpCourseTimeTableForSpider getCourseTimeTableDetails(Student student) {
+        UrpCourseTimeTableForSpider spiderResult = newUrpSpiderService.getUrpCourseTimeTable(student);
+        saveToDbAsync(spiderResult, student);
+        return spiderResult;
     }
 
     /**
@@ -150,14 +155,14 @@ public class CourseTimeTableService {
      */
     public List<CourseTimeTableDetail> getDetailsForCurrentDay(Student student) {
         SchoolTime schoolTime = DateUtils.getCurrentSchoolTime();
-        List<CourseTimeTableDetail> searchResult =
-                courseTimeTableDetailDao.getCourseTimeTableDetailForCurrentDay(student.getClasses().getId(), schoolTime);
-        if (CollectionUtils.isEmpty(searchResult)) {
-            UrpCourseTimeTableForSpider spiderResult = newUrpSpiderService.getUrpCourseTimeTable(student);
-            saveToDbAsync(spiderResult, student);
-            searchResult = getCurrentDayDataFromSpider(spiderResult, schoolTime);
+        List<Integer> detailIdList = getCourseTimeTableDetailIdByAccount(student.getAccount());
+        if(detailIdList.isEmpty()){
+            UrpCourseTimeTableForSpider tableForSpider = getCourseTimeTableDetails(student);
+            return getCurrentDayDataFromSpider(tableForSpider, schoolTime);
+        }else {
+            return courseTimeTableDetailDao.getCourseTimeTableDetailForCurrentDay(detailIdList, schoolTime);
         }
-        return searchResult;
+
     }
 
     public List<CourseTimeTableDetail> getDetailsForSection(Student student, int section){
@@ -351,13 +356,14 @@ public class CourseTimeTableService {
             
             //关联班级和课程详情
             if (!CollectionUtils.isEmpty(idList)) {
-                saveClassAndDetailRelative(idList, student);
+
+                saveClassAndDetailRelative(idList, student, basicInfo.getTermYear(), basicInfo.getTermOrder());
             }
         }
     }
 
-    private void saveClassAndDetailRelative(List<Integer> needInsertIds, Student student) {
-        courseTimeTableDetailDao.insertClassesCourseTimeTableBatch(needInsertIds, student.getClasses().getId());
+    private void saveClassAndDetailRelative(List<Integer> needInsertIds, Student student, String termYear, Integer termOrder) {
+        courseTimeTableDetailDao.insertStudentCourseTimeTableBatch(needInsertIds,student.getAccount(), termYear, termOrder);
     }
 
     private List<Integer> saveTimeTableDetail(List<CourseTimeTableDetail> needInsertDetails, TimeAndPlace timeAndPlace, CourseTimeTableBasicInfo basicInfo) throws RoomParseException {
@@ -399,6 +405,17 @@ public class CourseTimeTableService {
             detailVo.setUrpCourse(urpCourseService.getUrpCourseByCourseId(detail.getCourseId()));
             return detailVo;
         }).collect(Collectors.toList());
+    }
+
+    private List<Integer> getCourseTimeTableDetailIdByAccount(Integer account) {
+        SchoolTime schoolTime = DateUtils.getCurrentSchoolTime();
+
+        StudentCourseTimeTable table = new StudentCourseTimeTable()
+                .setAccount(account)
+                .setTermOrder(schoolTime.getTerm().getOrder())
+                .setTermYear(schoolTime.getTerm().getTermYear());
+        List<StudentCourseTimeTable> tableList = courseTimeTableDetailDao.selectStudentCourseTimeTableRelative(table);
+        return tableList.stream().map(StudentCourseTimeTable::getCourseTimeTableId).collect(Collectors.toList());
     }
 
 }
