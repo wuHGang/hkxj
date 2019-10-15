@@ -126,8 +126,6 @@ public class CourseSubscriptionTask {
         WxMpTemplateMessage templateMessage =
                 templateBuilder.build(task.getOpenid(), templateData, wechatTemplateProperties.getPlusCourseTemplateId(), miniProgram, url);
                 templateBuilder.build(task.getOpenid(), templateData, wechatTemplateProperties.getPlusCourseTemplateId(),null, url);
-        System.err.println("课程内容 " + msg.getCourseContent());
-        System.err.println("班级 " + msg.getClasses().getClassname());
         try {
             //发送成功的同时更新发送状态
             wxMpService.getTemplateMsgService().sendTemplateMsg(templateMessage);

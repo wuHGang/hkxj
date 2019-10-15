@@ -158,7 +158,7 @@ public class TemplateBuilder {
         //keyword1关键字
         WxMpTemplateData course = new WxMpTemplateData();
         course.setName("keyword1");
-        course.setValue("\n" + content + "\n");
+        course.setValue("\n" + contentg + "\n");
         //keyword2关键字
         WxMpTemplateData date = new WxMpTemplateData();
         date.setName("keyword2");
