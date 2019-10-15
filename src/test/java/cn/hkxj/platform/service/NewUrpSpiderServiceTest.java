@@ -1,6 +1,7 @@
 package cn.hkxj.platform.service;
 
 import cn.hkxj.platform.PlatformApplication;
+import cn.hkxj.platform.dao.StudentDao;
 import cn.hkxj.platform.pojo.Classes;
 import cn.hkxj.platform.pojo.GradeSearchResult;
 import cn.hkxj.platform.pojo.Student;
@@ -32,6 +33,8 @@ public class NewUrpSpiderServiceTest {
     private NewUrpSpiderService newUrpSpiderService;
     @Resource
     private NewGradeSearchService newGradeSearchService;
+    @Resource
+    private StudentDao studentDao;
 
     private ExecutorService cacheThreadPool = Executors.newFixedThreadPool(10);
 
@@ -110,26 +113,10 @@ public class NewUrpSpiderServiceTest {
 
     @Test
     public void testCourseTimeTable(){
-        Student student = new Student();
-        student.setAccount(2016024170);
-        student.setPassword("1");
-        Classes classes = new Classes();
-        classes.setId(316);
-        student.setClasses(classes);
-        Future<UrpCourseTimeTableForSpider> submit =
-                cacheThreadPool.submit(new Callable<UrpCourseTimeTableForSpider>() {
-                    @Override
-                    public UrpCourseTimeTableForSpider call() throws Exception {
-                        return newUrpSpiderService.getUrpCourseTimeTable(student);
-                    }
-                });
-        try {
-            System.out.println(submit.get().getDetails());
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
+        Student student = studentDao.selectStudentByAccount(2017025278);
+        UrpCourseTimeTableForSpider timeTable = newUrpSpiderService.getUrpCourseTimeTable(student);
+
+
     }
 
     @Test

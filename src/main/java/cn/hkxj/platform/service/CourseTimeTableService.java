@@ -109,7 +109,8 @@ public class CourseTimeTableService {
         SchoolTime schoolTime = DateUtils.getCurrentSchoolTime();
         List<Integer> detailIdList = getCourseTimeTableDetailIdByAccount(student.getAccount());
         if(detailIdList.isEmpty()){
-            return getCourseTimeTableDetails(student, schoolTime);
+            UrpCourseTimeTableForSpider tableForSpider = getCourseTimeTableDetails(student);
+            return getCurrentTermDataFromSpider(tableForSpider, schoolTime);
         }else {
             return courseTimeTableDetailDao.getCourseTimeTableDetailForCurrentTerm(detailIdList, schoolTime);
         }
@@ -125,19 +126,18 @@ public class CourseTimeTableService {
         SchoolTime schoolTime = DateUtils.getCurrentSchoolTime();
         List<Integer> detailIdList = getCourseTimeTableDetailIdByAccount(student.getAccount());
         if(detailIdList.isEmpty()){
-            return getCourseTimeTableDetails(student, schoolTime);
+            UrpCourseTimeTableForSpider tableForSpider = getCourseTimeTableDetails(student);
+            return getCurrentWeekDataFromSpider(tableForSpider, schoolTime);
         }else {
             return courseTimeTableDetailDao.getCourseTimeTableDetailForCurrentWeek(detailIdList, schoolTime);
         }
 
     }
 
-    private List<CourseTimeTableDetail> getCourseTimeTableDetails(Student student, SchoolTime schoolTime) {
-        List<CourseTimeTableDetail> dbResult;
+    private UrpCourseTimeTableForSpider getCourseTimeTableDetails(Student student) {
         UrpCourseTimeTableForSpider spiderResult = newUrpSpiderService.getUrpCourseTimeTable(student);
         saveToDbAsync(spiderResult, student);
-        dbResult = getCurrentWeekDataFromSpider(spiderResult, schoolTime);
-        return dbResult;
+        return spiderResult;
     }
 
     /**
@@ -151,7 +151,8 @@ public class CourseTimeTableService {
         SchoolTime schoolTime = DateUtils.getCurrentSchoolTime();
         List<Integer> detailIdList = getCourseTimeTableDetailIdByAccount(student.getAccount());
         if(detailIdList.isEmpty()){
-            return getCourseTimeTableDetails(student, schoolTime);
+            UrpCourseTimeTableForSpider tableForSpider = getCourseTimeTableDetails(student);
+            return getCurrentDayDataFromSpider(tableForSpider, schoolTime);
         }else {
             return courseTimeTableDetailDao.getCourseTimeTableDetailForCurrentDay(detailIdList, schoolTime);
         }
