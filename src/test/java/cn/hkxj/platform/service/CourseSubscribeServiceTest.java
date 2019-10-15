@@ -30,19 +30,25 @@ public class CourseSubscribeServiceTest {
     @Test
     public void getCoursesSubscribeForCurrentDay() {
         System.out.println("entering");
-        Map<String, Set<CourseGroupMsg>> map = courseSubscribeService.getCoursesSubscribeForCurrentDay();
-        map.forEach((appid, msgs) -> {
-            System.out.println("appid = " + appid);
-            System.out.println(msgs);
-        });
+        for(int i =  0; i <= 8; i+=2){
+            Map<String, Set<CourseGroupMsg>> map = courseSubscribeService.getCoursesSubscribe(CourseSubscribeService.FIRST_SECTION + i);
+            map.forEach((appid, msgs) -> {
+                if(msgs == null) return;
+                System.out.println("appid = " + appid);
+                System.err.println(msgs);
+                for(CourseGroupMsg msg : msgs){
+                    System.err.println("课程内容 " + msg.getCourseContent());
+                }
+            });
+        }
     }
 
     @Test
     public void getCourseTimeTables() {
-        Map<String, Set<CourseGroupMsg>> map = courseSubscribeService.getCoursesSubscribeForCurrentDay();
-        map.forEach((appid, msgs) -> {
-            System.out.println("appid = " + appid);
-            System.out.println(msgs);
-        });
+//        Map<String, Set<CourseGroupMsg>> map = courseSubscribeService.getCoursesSubscribeForCurrentDay();
+//        map.forEach((appid, msgs) -> {
+//            System.out.println("appid = " + appid);
+//            System.out.println(msgs);
+//        });
     }
 }

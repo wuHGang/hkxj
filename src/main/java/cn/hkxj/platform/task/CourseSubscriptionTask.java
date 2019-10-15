@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -52,10 +53,42 @@ public class CourseSubscriptionTask {
     private WechatTemplateProperties wechatTemplateProperties;
 
     @Async
-//    @Scheduled(cron = "0/60 * * * * ?")
+//    @Scheduled(cron = "10 1/3 * * * ?")
     @Scheduled(cron = "0 0 8 ? * MON-FRI")      //这个cron表达式的意思是星期一到星期五的早上8点执行一次
-    void sendCourseRemindMsg() {
-        Map<String, Set<CourseGroupMsg>> courseGroupMsgMap = courseSubscribeService.getCoursesSubscribeForCurrentDay();
+    void sendCourseRemindMsgForFirstSection() {
+        execute(CourseSubscribeService.FIRST_SECTION);
+    }
+
+    @Async
+//    @Scheduled(cron = "20 1/3 * * * ?")
+    @Scheduled(cron = "0 50 9 ? * MON-FRI")      //这个cron表达式的意思是星期一到星期五的早上9点50分执行一次
+    void sendCourseRemindMsgForSecondSection() {
+        execute(CourseSubscribeService.SECOND_SECTION);
+    }
+
+    @Async
+//    @Scheduled(cron = "30 1/3 * * * ?")
+    @Scheduled(cron = "0 0 13 ? * MON-FRI")      //这个cron表达式的意思是星期一到星期五的下午13点执行一次
+    void sendCourseRemindMsgForThirdSection() {
+        execute(CourseSubscribeService.THIRD_SECTION);
+    }
+
+    @Async
+//    @Scheduled(cron = "40 1/3 * * * ?")
+    @Scheduled(cron = "0 50 14 ? * MON-FRI")      //这个cron表达式的意思是星期一到星期五的下午14点50分执行一次
+    void sendCourseRemindMsgForFourthSection() {
+        execute(CourseSubscribeService.FOURTH_SECTION);
+    }
+
+    @Async
+//    @Scheduled(cron = "50 1/3 * * * ?")
+    @Scheduled(cron = "0 0 18 ? * MON-FRI")      //这个cron表达式的意思是星期一到星期五的晚上6点执行一次
+    void sendCourseRemindMsgForFifthSection() {
+        execute(CourseSubscribeService.FIFTH_SECTION);
+    }
+
+    public void execute(int section){
+        Map<String, Set<CourseGroupMsg>> courseGroupMsgMap = courseSubscribeService.getCoursesSubscribe(section);
         courseGroupMsgMap.forEach((appid, courseGroupMsgSet) -> {
             //如果courseGroupMsgSet为空时，说明没有可用的订阅，直接跳过当前循环
             if(courseGroupMsgSet == null) {
@@ -64,10 +97,12 @@ public class CourseSubscriptionTask {
             WxMpService wxMpService = getWxMpService(appid);
             log.info("appid:{} data size:{}", appid, courseGroupMsgMap.size());
             for (CourseGroupMsg msg : courseGroupMsgSet) {
-                //获取一个并行流，添加监视messagePeek,设置过滤条件，然后每一个都进行消息发送
-                //parallelStream不是线程安全的
-                msg.getScheduleTasks().stream().filter(cgm -> !Objects.isNull(cgm)).peek(this::messagePeek).forEach(task -> {
-                    //根据appid来选择不同的处理过程
+                //添加监视messagePeek,设置过滤条件，然后每一个都进行消息发送
+                //当CourseTimeTableDetailDtos的引用为null时，说明没有对应的数据，直接返回
+                msg.getScheduleTasks().stream()
+                        .filter(courseGroupMsg -> !Objects.isNull(courseGroupMsg))
+                        .filter(courseGroupMsg -> !CollectionUtils.isEmpty(msg.getDetailDtos()))
+                        .peek(this::messagePeek).forEach(task -> {
                     courseSubscriptionSendPool.execute(() -> plusMpProcess(task, msg, wxMpService));
                 });
             }
@@ -81,9 +116,8 @@ public class CourseSubscriptionTask {
      * @param wxMpService wxMpService
      */
     private void plusMpProcess(ScheduleTask task, CourseGroupMsg msg, WxMpService wxMpService){
-        //当CourseTimeTableDetailDtos的引用为null时，说明没有对应的数据，直接返回
-        if(msg.getDetailDtos() == null) { return; }
         List<WxMpTemplateData> templateData = templateBuilder.assemblyTemplateContentForCourse(msg);
+        if(Objects.isNull(templateData)){ return; }
         WxMpTemplateMessage.MiniProgram miniProgram = new WxMpTemplateMessage.MiniProgram();
         miniProgram.setAppid(MiniProgram.APP_ID.getValue());
         miniProgram.setPagePath(MiniProgram.COURSE_PATH.getValue());
@@ -91,6 +125,9 @@ public class CourseSubscriptionTask {
         //构建一个课程推送的模板消息
         WxMpTemplateMessage templateMessage =
                 templateBuilder.build(task.getOpenid(), templateData, wechatTemplateProperties.getPlusCourseTemplateId(), miniProgram, url);
+                templateBuilder.build(task.getOpenid(), templateData, wechatTemplateProperties.getPlusCourseTemplateId(),null, url);
+        System.err.println("课程内容 " + msg.getCourseContent());
+        System.err.println("班级 " + msg.getClasses().getClassname());
         try {
             //发送成功的同时更新发送状态
             wxMpService.getTemplateMsgService().sendTemplateMsg(templateMessage);

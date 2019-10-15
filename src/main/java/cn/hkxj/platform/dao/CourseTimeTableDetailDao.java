@@ -30,6 +30,22 @@ public class CourseTimeTableDetailDao {
         courseTimeTableDetailMapper.insertSelective(detail);
     }
 
+    public List<CourseTimeTableDetail> getCourseTimeTableDetailForSection(int classesId, SchoolTime schoolTime, int section){
+        List<Integer> detailIds = courseTimeTableDetailMapper.getCourseTimeTableDetailIdsByClassId(classesId);
+        if(detailIds.size() == 0) {return Lists.newArrayList();}
+        CourseTimeTableDetailExample example = new CourseTimeTableDetailExample();
+        example.createCriteria()
+                .andIdIn(detailIds)
+                .andTermYearEqualTo(schoolTime.getTerm().getTermYear())
+                .andTermOrderEqualTo(schoolTime.getTerm().getOrder())
+                .andDayEqualTo(schoolTime.getDay())
+                .andStartWeekLessThanOrEqualTo(schoolTime.getWeek())
+                .andEndWeekGreaterThanOrEqualTo(schoolTime.getWeek())
+                .andDistinctNotEqualTo(DateUtils.getContraryDistinct())
+                .andOrderEqualTo(section);
+        return courseTimeTableDetailMapper.selectByExample(example);
+    }
+
     public List<CourseTimeTableDetail> getCourseTimeTableDetailForCurrentDay(int classesId, SchoolTime schoolTime){
         List<Integer> detailIds = courseTimeTableDetailMapper.getCourseTimeTableDetailIdsByClassId(classesId);
         if(detailIds.size() == 0) {return Lists.newArrayList();}

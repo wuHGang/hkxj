@@ -27,6 +27,34 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class CourseSubscribeService {
+    /**
+     * 查询当天课程信息时使用
+     */
+    public final static int CURRENT_DAY = -1;
+    /**
+     * 第一节
+     */
+    public final static int FIRST_SECTION = 1;
+    /**
+     * 第二节
+     */
+    public final static int SECOND_SECTION = 3;
+    /**
+     * 第三节
+     */
+    public final static int THIRD_SECTION = 5;
+    /**
+     * 第四节
+     */
+    public final static int FOURTH_SECTION = 7;
+    /**
+     * 第五节
+     */
+    public final static int FIFTH_SECTION = 9;
+    /**
+     * 查询指定节数的课程信息时使用，如 查询第一节课程的时候使用
+     */
+    private final static int SECTION = 0;
 
     @Resource
     private StudentMapper studentMapper;
@@ -43,10 +71,10 @@ public class CourseSubscribeService {
 
     /**
      * 获取一个appid和CourseGroupMsg的映射关系
-     *
+     * @param condition 查询条件
      * @return 映射关系
      */
-    public Map<String, Set<CourseGroupMsg>> getCoursesSubscribeForCurrentDay() {
+    public Map<String, Set<CourseGroupMsg>> getCoursesSubscribe(int condition) {
         //获取appid和scheduleTask的映射关系
         Map<String, List<ScheduleTask>> scheduleTaskMap = scheduleTaskService.getSubscribeData(Integer.parseInt(SubscribeScene.COURSE_PUSH.getScene()));
         Map<String, Set<CourseGroupMsg>> courseGroupMsgMap = Maps.newHashMap();
@@ -61,7 +89,7 @@ public class CourseSubscribeService {
             //组装classes和scheduleTask的映射关系
             Map<Classes, List<ScheduleTask>> classesMapping = getClassesMappingMap(students, openidObjects, scheduleTasks);
             //组装appid和CourseGroupMsg的映射关系
-            Set<CourseGroupMsg> courseGroupMsgSet = getCourseGroupMsgs(classesMapping, openidObjects);
+            Set<CourseGroupMsg> courseGroupMsgSet = getCourseGroupMsgs(classesMapping, openidObjects, condition);
             courseGroupMsgMap.put(appid, courseGroupMsgSet);
         });
         return courseGroupMsgMap;
@@ -90,7 +118,7 @@ public class CourseSubscribeService {
      * @param classesMappingMap classes和scheduleTask的映射关系
      * @return CourseGroupMsg的集合
      */
-    private Set<CourseGroupMsg> getCourseGroupMsgs(Map<Classes, List<ScheduleTask>> classesMappingMap, List<Openid> openidObjects) {
+    private Set<CourseGroupMsg> getCourseGroupMsgs(Map<Classes, List<ScheduleTask>> classesMappingMap, List<Openid> openidObjects, int section) {
         if (classesMappingMap == null) {
             return null;
         }
@@ -98,8 +126,15 @@ public class CourseSubscribeService {
         //每一个CourseGroupMsg都对应着一个班级的课程和订阅者的信息
         classesMappingMap.forEach((classes, scheduleTasks) -> {
             CourseGroupMsg courseGroupMsg = new CourseGroupMsg();
+            List<CourseTimeTableDetailDto> detailDtos = Lists.newArrayList();
             //根据班级来获取当天的课程信息
-            List<CourseTimeTableDetailDto> detailDtos = getCourseTimeTableDetailDto(scheduleTasks, openidObjects);
+            //以-1来标识当天的情况
+            if(section == CURRENT_DAY){
+                detailDtos = getCourseTimeTableDetailDto(scheduleTasks, openidObjects);
+                //大于0是按节查询
+            } else if(section > SECTION){
+                detailDtos = getCourseTimeTableDetailDtoForSection(scheduleTasks, openidObjects, section);
+            }
             //设置班级信息
             courseGroupMsg.setClasses(classes);
             //设置关联的定时任务信息
@@ -138,6 +173,32 @@ public class CourseSubscribeService {
     }
 
     /**
+     * 这个方法会返回班级对应的课表
+     *
+     * @param scheduleTasks 订阅任务
+     * @param openidObjects Openid
+     * @return 如果从爬虫和数据库都无法获取到数据就会返回Null
+     * 正常返回会返回一个正常的list
+     */
+    private List<CourseTimeTableDetailDto> getCourseTimeTableDetailDtoForSection(List<ScheduleTask> scheduleTasks, List<Openid> openidObjects, int section) {
+        List<CourseTimeTableDetailDto> detailDtos;
+        for (ScheduleTask task : scheduleTasks) {
+            for (Openid openid : openidObjects) {
+                if (Objects.equals(openid.getOpenid(), task.getOpenid())) {
+                    try {
+                        detailDtos = getCourseTimeTablesSection(openid, section);
+                        openidObjects.remove(openid);
+                        return detailDtos;
+                    } catch (Exception e) {
+                        log.error("get course subscribe fail account: {}", openid.getAccount(), e);
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
      * 根据班级信息获取当天的课程时间表
      *
      * @param openid openid对象
@@ -146,6 +207,18 @@ public class CourseSubscribeService {
     private List<CourseTimeTableDetailDto> getCourseTimeTablesCurrentDay(Openid openid) {
         //获取所有关联的课程时间表的实体
         return courseTimeTableService.getCurrentDayCourseTimeTableDetailDtos(openid.getAccount());
+        //筛选出所有符合条件的课程时间表实体，并组成列表返回
+    }
+
+    /**
+     * 根据班级信息获取当天的课程时间表
+     *
+     * @param openid openid对象
+     * @return 课表时间表实体列表
+     */
+    private List<CourseTimeTableDetailDto> getCourseTimeTablesSection(Openid openid, int section) {
+        //获取所有关联的课程时间表的实体
+        return courseTimeTableService.getAppointSectionCourseTimeTableDetailDto(openid.getAccount(), section);
         //筛选出所有符合条件的课程时间表实体，并组成列表返回
     }
 

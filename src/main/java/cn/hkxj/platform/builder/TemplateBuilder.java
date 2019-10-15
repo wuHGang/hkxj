@@ -7,6 +7,7 @@ import cn.hkxj.platform.utils.DateUtils;
 import cn.hkxj.platform.utils.SchoolTimeUtil;
 import me.chanjar.weixin.mp.bean.template.WxMpTemplateData;
 import me.chanjar.weixin.mp.bean.template.WxMpTemplateMessage;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -147,6 +148,8 @@ public class TemplateBuilder {
      * @return List<WxMpTemplateData>
      */
     public List<WxMpTemplateData> assemblyTemplateContentForCourse(CourseGroupMsg msg) {
+        String content = msg.getCourseContent();
+        if(StringUtils.isEmpty(content)) { return null; }
         List<WxMpTemplateData> templateDatas = new ArrayList<>();
         //first关键字
         WxMpTemplateData first = new WxMpTemplateData();
@@ -155,7 +158,7 @@ public class TemplateBuilder {
         //keyword1关键字
         WxMpTemplateData course = new WxMpTemplateData();
         course.setName("keyword1");
-        course.setValue("\n" + msg.getCourseContent() + "\n");
+        course.setValue("\n" + content + "\n");
         //keyword2关键字
         WxMpTemplateData date = new WxMpTemplateData();
         date.setName("keyword2");
