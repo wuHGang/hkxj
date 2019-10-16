@@ -3,6 +3,7 @@ package cn.hkxj.platform.dao;
 import cn.hkxj.platform.mapper.CourseTimeTableDetailMapper;
 import cn.hkxj.platform.pojo.CourseTimeTableDetail;
 import cn.hkxj.platform.pojo.SchoolTime;
+import cn.hkxj.platform.pojo.StudentCourseTimeTable;
 import cn.hkxj.platform.pojo.Term;
 import cn.hkxj.platform.pojo.example.CourseTimeTableDetailExample;
 import cn.hkxj.platform.utils.DateUtils;
