@@ -42,18 +42,9 @@
             <property name="enableSubPackages" value="false" />
         </javaClientGenerator>
 
-        <!--<table tableName="subject" domainObjectName="Subject"-->
-               <!--enableCountByExample="false" enableUpdateByExample="false"-->
-               <!--enableDeleteByExample="false" enableSelectByExample="true"-->
-               <!--selectByExampleQueryId="false">-->
-            <!--<property name="ignoreQualifiersAtRuntime" value="true"/>-->
-            <!--<generatedKey column="id" sqlStatement="MySql" identity="true"/>-->
-            <!--<columnOverride column="academy" javaType="cn.hkxj.platform.pojo.constant.Academy" typeHandler="cn.hkxj.platform.handler.AcademyHandler"/>-->
-        <!--</table>-->
-        <table tableName="student">
+
+        <table tableName="teacher">
             <property name="ignoreQualifiersAtRuntime" value="true"/>
-            <generatedKey column="id" sqlStatement="MySql" identity="true"/>
-            <columnOverride column="class_id" javaType="cn.hkxj.platform.pojo.Classes" typeHandler="cn.hkxj.platform.handler.ClassesHandler"/>
         </table>
 
     </context>

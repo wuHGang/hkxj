@@ -69,7 +69,7 @@ public class CourseRank {
                         for (List<ClassCourseSearchResult> resultList : newUrpSpiderService.searchClassTimeTable("2014025838", "1", classNum)) {
 
                             for (ClassCourseSearchResult result : resultList) {
-                                UrpCourse course = urpCourseService.getUrpCourseByCourseId(result.getId().getKch());
+                                UrpCourse course = urpCourseService.getUrpCourseByCourseId(result.getId().getCourseId());
                                 set.add(course);
                             }
                         }

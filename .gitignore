@@ -3,6 +3,7 @@
 
 *.properties
 
+generatorConfig.xml
 ### STS ###
 .apt_generated
 .classpath
