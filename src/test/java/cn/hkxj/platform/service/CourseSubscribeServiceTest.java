@@ -2,6 +2,7 @@ package cn.hkxj.platform.service;
 
 import cn.hkxj.platform.PlatformApplication;
 import cn.hkxj.platform.pojo.wechat.CourseGroupMsg;
+import cn.hkxj.platform.pojo.wechat.CourseSubscriptionMessage;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -31,13 +32,13 @@ public class CourseSubscribeServiceTest {
     public void getCoursesSubscribeForCurrentDay() {
         System.out.println("entering");
         for(int i =  0; i <= 8; i+=2){
-            Map<String, Set<CourseGroupMsg>> map = courseSubscribeService.getCoursesSubscribe(CourseSubscribeService.FIRST_SECTION + i);
+            Map<String, Set<CourseSubscriptionMessage>> map = courseSubscribeService.getSubscriptionMessages(CourseSubscribeService.FIRST_SECTION + i);
             map.forEach((appid, msgs) -> {
                 if(msgs == null) return;
                 System.out.println("appid = " + appid);
                 System.err.println(msgs);
-                for(CourseGroupMsg msg : msgs){
-                    System.err.println("课程内容 " + msg.getCourseContent());
+                for(CourseSubscriptionMessage msg : msgs){
+                    System.err.println("课程内容 " + msg.getPushContent());
                 }
             });
         }

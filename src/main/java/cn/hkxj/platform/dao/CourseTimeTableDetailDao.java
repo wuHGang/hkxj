@@ -3,6 +3,7 @@ package cn.hkxj.platform.dao;
 import cn.hkxj.platform.mapper.CourseTimeTableDetailMapper;
 import cn.hkxj.platform.pojo.CourseTimeTableDetail;
 import cn.hkxj.platform.pojo.SchoolTime;
+import cn.hkxj.platform.pojo.StudentCourseTimeTable;
 import cn.hkxj.platform.pojo.Term;
 import cn.hkxj.platform.pojo.example.CourseTimeTableDetailExample;
 import cn.hkxj.platform.utils.DateUtils;
@@ -30,12 +31,10 @@ public class CourseTimeTableDetailDao {
         courseTimeTableDetailMapper.insertSelective(detail);
     }
 
-    public List<CourseTimeTableDetail> getCourseTimeTableDetailForSection(int classesId, SchoolTime schoolTime, int section){
-        List<Integer> detailIds = courseTimeTableDetailMapper.getCourseTimeTableDetailIdsByClassId(classesId);
-        if(detailIds.size() == 0) {return Lists.newArrayList();}
+    public List<CourseTimeTableDetail> getCourseTimeTableDetailForSection(List<Integer> detailIdList, SchoolTime schoolTime, int section){
         CourseTimeTableDetailExample example = new CourseTimeTableDetailExample();
         example.createCriteria()
-                .andIdIn(detailIds)
+                .andIdIn(detailIdList)
                 .andTermYearEqualTo(schoolTime.getTerm().getTermYear())
                 .andTermOrderEqualTo(schoolTime.getTerm().getOrder())
                 .andDayEqualTo(schoolTime.getDay())

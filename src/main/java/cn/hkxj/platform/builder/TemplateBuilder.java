@@ -2,6 +2,7 @@ package cn.hkxj.platform.builder;
 
 import cn.hkxj.platform.pojo.GradeAndCourse;
 import cn.hkxj.platform.pojo.wechat.CourseGroupMsg;
+import cn.hkxj.platform.pojo.wechat.CourseSubscriptionMessage;
 import cn.hkxj.platform.pojo.wechat.ExamGroupMsg;
 import cn.hkxj.platform.utils.DateUtils;
 import cn.hkxj.platform.utils.SchoolTimeUtil;
@@ -158,7 +159,7 @@ public class TemplateBuilder {
         //keyword1关键字
         WxMpTemplateData course = new WxMpTemplateData();
         course.setName("keyword1");
-        course.setValue("\n" + contentg + "\n");
+        course.setValue("\n" + content + "\n");
         //keyword2关键字
         WxMpTemplateData date = new WxMpTemplateData();
         date.setName("keyword2");
@@ -169,6 +170,35 @@ public class TemplateBuilder {
         remark.setValue("查询仅供参考，以学校下发的课表为准，如有疑问微信添加吴彦祖【hkdhd666】");
 
         templateDatas.add(first);
+        templateDatas.add(course);
+        templateDatas.add(date);
+        templateDatas.add(remark);
+
+        return templateDatas;
+    }
+
+    /**
+     * 组装课程推送模板消息需要的WxMpTemplateData的列表
+     * @param msg 课程推送信息
+     * @return List<WxMpTemplateData>
+     */
+    public List<WxMpTemplateData> assemblyTemplateContentForCourse(CourseSubscriptionMessage msg) {
+        String content = msg.getPushContent();
+        if(StringUtils.isEmpty(content)) { return null; }
+        List<WxMpTemplateData> templateDatas = new ArrayList<>();
+        //keyword1关键字
+        WxMpTemplateData course = new WxMpTemplateData();
+        course.setName("keyword1");
+        course.setValue(content);
+        //keyword2关键字
+        WxMpTemplateData date = new WxMpTemplateData();
+        date.setName("keyword2");
+        date.setValue("第" + SchoolTimeUtil.getSchoolWeek() + "周   " + SchoolTimeUtil.getDayOfWeekChinese());
+        //remark关键字
+        WxMpTemplateData remark = new WxMpTemplateData();
+        remark.setName("remark");
+        remark.setValue("查询仅供参考，以学校下发的课表为准，如有疑问微信添加吴彦祖【hkdhd666】");
+
         templateDatas.add(course);
         templateDatas.add(date);
         templateDatas.add(remark);

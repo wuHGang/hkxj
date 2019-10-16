@@ -167,14 +167,13 @@ public class CourseTimeTableService {
 
     public List<CourseTimeTableDetail> getDetailsForSection(Student student, int section){
         SchoolTime schoolTime = DateUtils.getCurrentSchoolTime();
-        List<CourseTimeTableDetail> searchResult =
-                courseTimeTableDetailDao.getCourseTimeTableDetailForSection(student.getClasses().getId(), schoolTime, section);
-        if (CollectionUtils.isEmpty(searchResult)) {
-            UrpCourseTimeTableForSpider spiderResult = newUrpSpiderService.getUrpCourseTimeTable(student);
-            saveToDbAsync(spiderResult, student);
-            searchResult = getAppointSectionDataFromSpider(spiderResult, schoolTime, section);
+        List<Integer> detailIdList = getCourseTimeTableDetailIdByAccount(student.getAccount());
+        if(detailIdList.isEmpty()){
+            UrpCourseTimeTableForSpider tableForSpider = getCourseTimeTableDetails(student);
+            return getCurrentDayDataFromSpider(tableForSpider, schoolTime);
+        }else {
+            return courseTimeTableDetailDao.getCourseTimeTableDetailForSection(detailIdList, schoolTime, section);
         }
-        return searchResult;
     }
 
     /**

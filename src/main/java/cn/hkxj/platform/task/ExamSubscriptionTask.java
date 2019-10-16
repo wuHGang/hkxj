@@ -39,7 +39,7 @@ import java.util.Set;
 
 @Slf4j
 @Service
-public class ExamSubscriptionTask {
+public class ExamSubscriptionTask extends BaseSubscriptionTask{
     private static final String MSG_TITLE = "考试时间";
     @Resource
     private WechatMpPlusProperties wechatMpPlusProperties;
@@ -60,15 +60,13 @@ public class ExamSubscriptionTask {
 //    @Scheduled(cron = "0 0 20 ? * MON-FRI")      //这个cron表达式的意思是星期一到星期五的晚上8点执行一次
     void autoUpdateExam() {
         //执行前，检查定时任务的可用性
-        if (isTaskEnable())
-            return;
+        if (isTaskEnable()){  return; }
         // 返回classes班级信息、examTimeTables明天的考试信息、scheduleTasks定时任务信息
         Map<String, Set<ExamGroupMsg>> examGroupMsgMap = examTimeTableService.getExamSubscribeForCurrentDay();
 
         examGroupMsgMap.forEach((appid, examGroupMsgSet) -> {
             //如果courseGroupMsgSet为空时，说明没有可用的订阅，直接跳过当前循环
-            if(examGroupMsgSet == null)
-                return;
+            if(examGroupMsgSet == null){ return; }
             WxMpService wxMpService = getWxMpService(appid);
             log.info("appid:{} data size:{}", appid, examGroupMsgMap.size());
 
@@ -103,17 +101,7 @@ public class ExamSubscriptionTask {
         //构建一个课程推送的模板消息
         WxMpTemplateMessage templateMessage =
                 templateBuilder.buildWithNoMiniProgram(task.getOpenid(), templateData, wechatTemplateProperties.getPlusExamTemplateId(), url);
-
-        try {
-            //发送成功的同时更新发送状态
-            wxMpService.getTemplateMsgService().sendTemplateMsg(templateMessage);
-            scheduleTaskService.updateSendStatus(task, ScheduleTaskService.SEND_SUCCESS);
-            log.info("send Message to appid:{} openid:{} success", wxMpService.getWxMpConfigStorage().getAppId(), task.getOpenid());
-        } catch (WxErrorException e) {
-            scheduleTaskService.updateSendStatus(task, ScheduleTaskService.SEND_FAIL);
-            log.error("send Message to appid:{} openid:{} failed message:{}",
-                    wxMpService.getWxMpConfigStorage().getAppId(), task.getOpenid(), e.getMessage());
-        }
+        sendTemplateMessage(wxMpService, templateMessage, task);
     }
 
     /**
