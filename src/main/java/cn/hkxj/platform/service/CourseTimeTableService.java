@@ -170,7 +170,7 @@ public class CourseTimeTableService {
         List<Integer> detailIdList = getCourseTimeTableDetailIdByAccount(student.getAccount());
         if(detailIdList.isEmpty()){
             UrpCourseTimeTableForSpider tableForSpider = getCourseTimeTableDetails(student);
-            return getCurrentDayDataFromSpider(tableForSpider, schoolTime);
+            return getAppointSectionDataFromSpider(tableForSpider, schoolTime, section);
         }else {
             return courseTimeTableDetailDao.getCourseTimeTableDetailForSection(detailIdList, schoolTime, section);
         }

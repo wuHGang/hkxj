@@ -126,10 +126,10 @@ public class TemplateBuilder {
         courseName.setName("keyword1");
         courseName.setValue(gradeAndCourse.getCourse().getName() + "\n\n");
         //keyword2关键字
-        Integer grade = gradeAndCourse.getGrade().getScore() / 10;
+        int grade = gradeAndCourse.getGrade().getScore() / 10;
         WxMpTemplateData score = new WxMpTemplateData();
         score.setName("keyword2");
-        score.setValue(grade.toString() + "\n\n");
+        score.setValue(grade + "\n\n");
         //remark关键字
         WxMpTemplateData remark = new WxMpTemplateData();
         remark.setName("remark");
@@ -185,25 +185,21 @@ public class TemplateBuilder {
     public List<WxMpTemplateData> assemblyTemplateContentForCourse(CourseSubscriptionMessage msg) {
         String content = msg.getPushContent();
         if(StringUtils.isEmpty(content)) { return null; }
-        List<WxMpTemplateData> templateDatas = new ArrayList<>();
+        List<WxMpTemplateData> templateDataList = new ArrayList<>();
         //keyword1关键字
         WxMpTemplateData course = new WxMpTemplateData();
         course.setName("keyword1");
         course.setValue(content);
         //keyword2关键字
-        WxMpTemplateData date = new WxMpTemplateData();
-        date.setName("keyword2");
-        date.setValue("第" + SchoolTimeUtil.getSchoolWeek() + "周   " + SchoolTimeUtil.getDayOfWeekChinese());
+        WxMpTemplateData date = getCourseDateWithoutSpecificTime();
         //remark关键字
-        WxMpTemplateData remark = new WxMpTemplateData();
-        remark.setName("remark");
-        remark.setValue("查询仅供参考，以学校下发的课表为准，如有疑问微信添加吴彦祖【hkdhd666】");
+        WxMpTemplateData remark = getCourseRemark();
 
-        templateDatas.add(course);
-        templateDatas.add(date);
-        templateDatas.add(remark);
+        templateDataList.add(course);
+        templateDataList.add(date);
+        templateDataList.add(remark);
 
-        return templateDatas;
+        return templateDataList;
     }
 
     /**
@@ -212,26 +208,21 @@ public class TemplateBuilder {
      * @return List<WxMpTemplateData>
      */
     public List<WxMpTemplateData> assemblyTemplateContentForCourse(String content) {
-        List<WxMpTemplateData> templateDatas = new ArrayList<>();
+        List<WxMpTemplateData> templateDataList = new ArrayList<>();
         WxMpTemplateData first = new WxMpTemplateData();
         first.setName("first");
         first.setValue("当日课表\n");
         WxMpTemplateData course = new WxMpTemplateData();
         course.setName("keyword1");
         course.setValue("\n" + content);
-        WxMpTemplateData date = new WxMpTemplateData();
-        date.setName("keyword2");
-        date.setValue("\n第" + SchoolTimeUtil.getSchoolWeek() + "周   " + SchoolTimeUtil.getDayOfWeekChinese());
-        WxMpTemplateData remark = new WxMpTemplateData();
-        remark.setName("remark");
-        remark.setValue("查询仅供参考，以学校下发的课表为准，如有疑问微信添加吴彦祖【hkdhd666】");
+        WxMpTemplateData date = getCourseDateWithoutSpecificTime();
+        WxMpTemplateData remark = getCourseRemark();
+        templateDataList.add(first);
+        templateDataList.add(course);
+        templateDataList.add(date);
+        templateDataList.add(remark);
 
-        templateDatas.add(first);
-        templateDatas.add(course);
-        templateDatas.add(date);
-        templateDatas.add(remark);
-
-        return templateDatas;
+        return templateDataList;
     }
 
     /**
@@ -240,7 +231,7 @@ public class TemplateBuilder {
      * @return List<WxMpTemplateData>
      */
     public List<WxMpTemplateData> assemblyTemplateContentForExam(ExamGroupMsg msg) {
-        List<WxMpTemplateData> templateDatas = new ArrayList<>();
+        List<WxMpTemplateData> templateDataList = new ArrayList<>();
         //first关键字
         WxMpTemplateData first = new WxMpTemplateData();
         first.setName("first");
@@ -250,15 +241,46 @@ public class TemplateBuilder {
         course.setName("keyword1");
         course.setValue("\n" + msg.getCourseContent() + "\n");
 
+        WxMpTemplateData remark = getExamRemark();
+
+        templateDataList.add(first);
+        templateDataList.add(course);
+        templateDataList.add(remark);
+
+        return templateDataList;
+    }
+
+    /**
+     * 生成考试推送模板消息的remark
+     * @return 考试推送模板消息的remark
+     */
+    private WxMpTemplateData getExamRemark(){
         WxMpTemplateData remark = new WxMpTemplateData();
         remark.setName("remark");
         remark.setValue("查询仅供参考，以学校下发的考试通知为准，如有疑问微信添加吴彦祖【hkdhd666】\n");
-
-        templateDatas.add(first);
-        templateDatas.add(course);
-        templateDatas.add(remark);
-
-        return templateDatas;
+        return remark;
     }
 
+    /**
+     * 生成课程推送模板消息的remark
+     * @return 课程推送模板消息的remark
+     */
+    private WxMpTemplateData getCourseRemark(){
+        WxMpTemplateData remark = new WxMpTemplateData();
+        remark.setName("remark");
+        remark.setValue("查询仅供参考，以学校下发的课表为准，如有疑问微信添加吴彦祖【hkdhd666】");
+        return remark;
+    }
+
+    /**
+     * 返回的日期只包含周数和天数
+     * 如 13周 星期三
+     * @return 包含日期的WxMpTemplateData
+     */
+    private WxMpTemplateData getCourseDateWithoutSpecificTime(){
+        WxMpTemplateData date = new WxMpTemplateData();
+        date.setName("keyword2");
+        date.setValue("\n第" + SchoolTimeUtil.getSchoolWeek() + "周   " + SchoolTimeUtil.getDayOfWeekChinese());
+        return date;
+    }
 }
