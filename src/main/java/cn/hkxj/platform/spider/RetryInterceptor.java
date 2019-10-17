@@ -39,7 +39,7 @@ public class RetryInterceptor implements Interceptor {
                     return response;
                 }
             }catch (IOException e){
-                log.error("urp url {} request retry  time {}, cause {}", chain.request().url().toString(), retryNum,
+                log.debug("urp url {} request retry  time {}, cause {}", chain.request().url().toString(), retryNum,
                         e.getMessage());
             }
 

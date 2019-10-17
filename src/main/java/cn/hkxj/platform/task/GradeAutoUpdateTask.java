@@ -39,7 +39,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 @Service
-public class GradeAutoUpdateTask {
+public class GradeAutoUpdateTask extends BaseSubscriptionTask{
     //这里设置拒绝策略为调用者运行，这样可以降低产生任务的速率
     private static ExecutorService gradeAutoUpdatePool = new ThreadPoolExecutor(10, 10,
             0L, TimeUnit.MILLISECONDS, new LinkedBlockingDeque<>(20), new ThreadPoolExecutor.CallerRunsPolicy());
@@ -122,14 +122,10 @@ public class GradeAutoUpdateTask {
         scheduleTaskService.updateSubscribeStatus(task, ScheduleTaskService.FUNCTION_DISABLE);
         if(isPlus(appid)){
             List<WxMpTemplateData> templateData = templateBuilder.assemblyTemplateContentForTips(ERROR_CONTENT);
-            WxMpTemplateMessage wxMpTemplateMessage =
+            WxMpTemplateMessage templateMessage =
                     templateBuilder.buildWithNoMiniProgram(task.getOpenid(),
                             templateData, wechatTemplateProperties.getPlusTipsTemplateId(), BIND_URL);
-            try {
-                wxMpService.getTemplateMsgService().sendTemplateMsg(wxMpTemplateMessage);
-            } catch (WxErrorException e) {
-                log.error("send template message fail openid:{} appid:{}", task.getOpenid(), appid);
-            }
+            sendTemplateMessage(wxMpService, templateMessage, task);
         } else {
             sendKefuMessage(wxMpService, task.getOpenid(), ERROR_CONTENT);
             sendKefuMessage(wxMpService, task.getOpenid(), BIND_URL);
@@ -173,18 +169,12 @@ public class GradeAutoUpdateTask {
             miniProgram.setPagePath(MiniProgram.GRADE_PATH.getValue());
             WxMpTemplateMessage templateMessage =
                     templateBuilder.buildWithNoUrl(task.getOpenid(), data,  wechatTemplateProperties.getPlusGradeUpdateTemplateId(), miniProgram);
-            try {
-                wxMpService.getTemplateMsgService().sendTemplateMsg(templateMessage);
-                log.info("send template message success openid:{}", task.getOpenid());
-            } catch (WxErrorException e) {
-                log.error("send templdate message fail message:{}", e.getMessage());
-            }
+            sendTemplateMessage(wxMpService, templateMessage, task);
         }
     }
 
     /**
-     * 发送客服消息
-     *
+     * 生成对应的客服消息，调用父类的方法来发送
      * @param wxMpService wxMpService
      * @param openid      openid
      * @param content     内容
@@ -194,13 +184,8 @@ public class GradeAutoUpdateTask {
         wxMpKefuMessage.setToUser(openid);
         wxMpKefuMessage.setMsgType("text");
         wxMpKefuMessage.setContent(content);
-        try {
-            wxMpService.getKefuService().sendKefuMessage(wxMpKefuMessage);
-            log.info("send kefuMessage success");
-        } catch (WxErrorException e) {
-            log.error("send kefuMessage fail message:{}", e.getMessage());
-        }
-
+        //调用BaseSubscriptionTask的方法来发送消息
+        sendKefuMessage(wxMpService, wxMpKefuMessage);
     }
 
     /**

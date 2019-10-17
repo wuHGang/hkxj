@@ -56,9 +56,9 @@ public class RedisCookiePersistor implements AccountCookiePersistor{
     }
 
     @Override
-    synchronized public void saveByAccount(Collection<Cookie> cookies, String account) {
+    synchronized public void saveByAccount(Iterable<Cookie> cookies, String account) {
 
-        HashMap<String, String> cookieMap = Maps.newHashMapWithExpectedSize(cookies.size());
+        HashMap<String, String> cookieMap = Maps.newHashMap();
         for (Cookie cookie : cookies) {
             cookieMap.put(createCookieKey(cookie), new SerializableCookie().encode(cookie));
         }

@@ -13,10 +13,7 @@ import okhttp3.internal.annotations.EverythingIsNonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.MDC;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -96,6 +93,7 @@ public class UrpCookieJar implements ClearableCookieJar {
         CookieCache result = null;
         if(StringUtils.isNotEmpty(MDC.get("preLoad"))){
             result = accountCookieCache.getIfPresent(MDC.get("preLoad"));
+            // 这里如果是预加载的请求  cookieJar会为空  然后新建一个
             if(result == null){
                 CookieCache cookieCache = new SetCookieCache();
                 accountCookieCache.put(MDC.get("preLoad"), cookieCache);
@@ -105,16 +103,21 @@ public class UrpCookieJar implements ClearableCookieJar {
 
         //TODO 这个逻辑怎么会写得跟浆糊一样
         if (StringUtils.isNotEmpty(MDC.get("account"))) {
+            // 这里对应的情况是没有预加载的代码  cookieJar会为空  然后新建一个
             if (result == null){
                 result = accountCookieCache.getIfPresent(MDC.get("account"));
+
+                if(result == null){
+                    CookieCache cookieCache = new SetCookieCache();
+                    accountCookieCache.put(MDC.get("account"), cookieCache);
+                    result = cookieCache;
+                }
             }else {
+
                 accountCookieCache.put(MDC.get("account"), result);
+                persistor.saveByAccount(result, MDC.get("account"));
             }
-            if(result == null){
-                CookieCache cookieCache = new SetCookieCache();
-                accountCookieCache.put(MDC.get("account"), cookieCache);
-                return cookieCache;
-            }
+
             return result;
         }
         if(result != null){

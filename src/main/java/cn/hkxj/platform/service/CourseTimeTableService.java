@@ -99,6 +99,12 @@ public class CourseTimeTableService {
         return assembleCourseTimeTableDto(details);
     }
 
+    public List<CourseTimeTableDetailDto> getAppointSectionCourseTimeTableDetailDto(int account, int section){
+        Student student = studentDao.selectStudentByAccount(account);
+        List<CourseTimeTableDetail> details = getDetailsForSection(student, section);
+        return assembleCourseTimeTableDto(details);
+    }
+
     /**
      * 获取当前学期所有的课程时间表
      *
@@ -157,6 +163,24 @@ public class CourseTimeTableService {
             return courseTimeTableDetailDao.getCourseTimeTableDetailForCurrentDay(detailIdList, schoolTime);
         }
 
+    }
+
+    /**
+     * 返回当前节的课程详情
+     * 从数据库获取的数据为空时，会使用爬虫来爬取数据
+     * @param student 学生实体
+     * @param section 结束
+     * @return 课程时间表详情
+     */
+    public List<CourseTimeTableDetail> getDetailsForSection(Student student, int section){
+        SchoolTime schoolTime = DateUtils.getCurrentSchoolTime();
+        List<Integer> detailIdList = getCourseTimeTableDetailIdByAccount(student.getAccount());
+        if(detailIdList.isEmpty()){
+            UrpCourseTimeTableForSpider tableForSpider = getCourseTimeTableDetails(student);
+            return getAppointSectionDataFromSpider(tableForSpider, schoolTime, section);
+        }else {
+            return courseTimeTableDetailDao.getCourseTimeTableDetailForSection(detailIdList, schoolTime, section);
+        }
     }
 
     /**
@@ -232,7 +256,7 @@ public class CourseTimeTableService {
      * @return 课程时间表详情
      */
     private List<CourseTimeTableDetail> getCurrentDayDataFromSpider(UrpCourseTimeTableForSpider spiderResult, SchoolTime schoolTime) {
-        List<CourseTimeTableDetail> result = Lists.newArrayListWithCapacity(4);
+        List<CourseTimeTableDetail> result = Lists.newArrayListWithCapacity(5);
         for (Map<String, UrpCourseTimeTable> map : spiderResult.getDetails()) {
             for (Map.Entry<String, UrpCourseTimeTable> entry : map.entrySet()) {
                 UrpCourseTimeTable urpCourseTimeTable = entry.getValue();
@@ -249,6 +273,32 @@ public class CourseTimeTableService {
                             .filter(detail -> detail.isActiveWeek(schoolTime.getWeek()))
                             .filter(detail -> Objects.equals(detail.getTermYear(), schoolTime.getTerm().getTermYear()))
                             .filter(detail -> detail.getTermOrder() == schoolTime.getTerm().getOrder())
+                            .forEach(result::add);
+                }
+            }
+        }
+        return result;
+    }
+
+    private List<CourseTimeTableDetail> getAppointSectionDataFromSpider(UrpCourseTimeTableForSpider spiderResult, SchoolTime schoolTime, int section) {
+        List<CourseTimeTableDetail> result = Lists.newArrayListWithCapacity(1);
+        for (Map<String, UrpCourseTimeTable> map : spiderResult.getDetails()) {
+            for (Map.Entry<String, UrpCourseTimeTable> entry : map.entrySet()) {
+                UrpCourseTimeTable urpCourseTimeTable = entry.getValue();
+                if (CollectionUtils.isEmpty(urpCourseTimeTable.getTimeAndPlaceList())) {
+                    continue;
+                }
+                for (int i = 0, length = urpCourseTimeTable.getTimeAndPlaceList().size(); i < length; i++) {
+                    TimeAndPlace timeAndPlace = urpCourseTimeTable.getTimeAndPlaceList().get(i);
+                    //TimeAndPlace保存了上课的地点和时间，因为周数有时候存在多个的情况，如1-5, 8-16周等情况
+                    //所以TimeAndPlace转换的CourseTimeTableDetail返回的是一个集合
+                    List<CourseTimeTableDetail> details =
+                            timeAndPlace.convertToCourseTimeTableDetail(urpCourseTimeTable.getCourseRelativeInfo(), urpCourseTimeTable.getAttendClassTeacher());
+                    details.stream().filter(detail -> detail.getDay() == schoolTime.getDay())
+                            .filter(detail -> detail.isActiveWeek(schoolTime.getWeek()))
+                            .filter(detail -> Objects.equals(detail.getTermYear(), schoolTime.getTerm().getTermYear()))
+                            .filter(detail -> detail.getTermOrder() == schoolTime.getTerm().getOrder())
+                            .filter(detail -> detail.getOrder() == section)
                             .forEach(result::add);
                 }
             }

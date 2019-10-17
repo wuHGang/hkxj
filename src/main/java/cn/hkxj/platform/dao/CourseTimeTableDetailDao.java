@@ -31,6 +31,20 @@ public class CourseTimeTableDetailDao {
         courseTimeTableDetailMapper.insertSelective(detail);
     }
 
+    public List<CourseTimeTableDetail> getCourseTimeTableDetailForSection(List<Integer> detailIdList, SchoolTime schoolTime, int section){
+        CourseTimeTableDetailExample example = new CourseTimeTableDetailExample();
+        example.createCriteria()
+                .andIdIn(detailIdList)
+                .andTermYearEqualTo(schoolTime.getTerm().getTermYear())
+                .andTermOrderEqualTo(schoolTime.getTerm().getOrder())
+                .andDayEqualTo(schoolTime.getDay())
+                .andStartWeekLessThanOrEqualTo(schoolTime.getWeek())
+                .andEndWeekGreaterThanOrEqualTo(schoolTime.getWeek())
+                .andDistinctNotEqualTo(DateUtils.getContraryDistinct())
+                .andOrderEqualTo(section);
+        return courseTimeTableDetailMapper.selectByExample(example);
+    }
+
     public List<CourseTimeTableDetail> getCourseTimeTableDetailForCurrentDay(List<Integer> detailIdList, SchoolTime schoolTime){
         CourseTimeTableDetailExample example = new CourseTimeTableDetailExample();
         example.createCriteria()
