@@ -79,6 +79,13 @@ public class NewUrpSpiderService {
     }
 
     @Retryable(value = UrpException.class, maxAttempts = 3)
+    public List<List<ClassCourseSearchResult>> getUrpCourseTimeTableByTeacherAccount(String account, String password,
+                                                                 String teacherNumber){
+        NewUrpSpider spider = getSpider(account, password);
+        return spider.getUrpCourseTimeTableByTeacherAccount(teacherNumber);
+    }
+
+    @Retryable(value = UrpException.class, maxAttempts = 3)
     public List<SearchResultWrapper<SearchClassroomResult>> searchClassroomInfo(String account, String password,
                                                                                 SearchClassroomPost searchClassroomPost){
         NewUrpSpider spider = getSpider(account, password);

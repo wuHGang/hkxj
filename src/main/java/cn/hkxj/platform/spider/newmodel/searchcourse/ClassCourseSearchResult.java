@@ -80,9 +80,13 @@ public class ClassCourseSearchResult {
     /**
      * 班级号 2019010001,2019010002 逗号分隔
      */
-    @JSONField(name = "xb")
+    @JSONField(name = "bjh")
     private String classIdList;
-    private int xss;
+    /**
+     * 学生数
+     */
+    @JSONField(name = "xss")
+    private int studentCount;
     private int bkskyl;
     /**
      * 学分  这个主意有可能是小数点开头  0.5 会显示成 .5

@@ -82,6 +82,8 @@ public class NewUrpSpider {
     private static final String COURSE_DETAIL = ROOT + "/student/integratedQuery/course/courseSchdule/detail";
     private static final String EXAM_TIME = ROOT + "/student/examinationManagement/examPlan/index";
     private static final String COURSE_TIME_TABLE = ROOT + "/student/courseSelect/thisSemesterCurriculum/ajaxStudentSchedule/callback";
+    private static final String TEACHER_COURSE_TIME_TABLE = ROOT + "/student/teachingResources/teacherCurriculum" +
+        "/searchCurriculumInfo/callback";
     private static final String MAKE_UP_GRADE = ROOT + "/student/examinationManagement/examGrade/search";
     /**
      * 空教室查询
@@ -461,11 +463,31 @@ public class NewUrpSpider {
         return parseObject(result, classInfoReference);
     }
 
-
+    /**
+     * 通过教务网的班级号查询班级课表
+     * @param classCode
+     */
     public List<List<ClassCourseSearchResult>> getUrpCourseTimeTableByClassCode(String classCode) {
 
         Request request = new Request.Builder()
                 .url(SEARCH_COURSE_INFO + "?planCode=2019-2020-1-1&classCode=" + classCode)
+                .headers(HEADERS)
+                .get()
+                .build();
+        String result = new String(execute(request));
+
+        return parseObject(result, classCourseSearchResultReference);
+
+    }
+
+    /**
+     * 通过教务网的教师号查询教师课表
+     * @param teacherNumber
+     */
+    public List<List<ClassCourseSearchResult>> getUrpCourseTimeTableByTeacherAccount(String teacherNumber) {
+
+        Request request = new Request.Builder()
+                .url(TEACHER_COURSE_TIME_TABLE + "?planCode=2019-2020-1-1&teacherNum=" + teacherNumber)
                 .headers(HEADERS)
                 .get()
                 .build();
@@ -529,6 +551,7 @@ public class NewUrpSpider {
         try {
             return JSON.parseObject(text, type);
         }catch (JSONException e) {
+            COOKIE_JAR.clearSession();
             if (text.length() > 1000) {
                 throw new UrpEvaluationException("account: " + account + " 未完成评估无法查成绩");
             }
@@ -536,8 +559,7 @@ public class NewUrpSpider {
                 log.error("parse courseTimeTable error {}", text, e);
             }
             throw new UrpSessionExpiredException("account: " + account + " session expired");
-        }finally {
-            COOKIE_JAR.clearSession();
+
         }
 
     }

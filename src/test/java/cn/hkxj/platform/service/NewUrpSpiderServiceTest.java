@@ -160,11 +160,23 @@ public class NewUrpSpiderServiceTest {
     public void searchTeacherInfo() {
         SearchTeacherPost post = new SearchTeacherPost();
         post.setExecutiveEducationPlanNum("2019-2020-1-1");
-        for (SearchResult<SearchTeacherResult> result : newUrpSpiderService.searchTeacherInfo("2017023081", "1", post)) {
+        for (SearchResult<SearchTeacherResult> result : newUrpSpiderService.searchTeacherInfo("2014025838", "1",
+                post)) {
             for (SearchTeacherResult record : result.getRecords()) {
                 System.out.println(record);
             }
         }
+    }
+
+    @Test
+    public void getUrpCourseTimeTableByTeacherAccount() {
+        for (List<ClassCourseSearchResult> result : newUrpSpiderService.getUrpCourseTimeTableByTeacherAccount("2017023081", "1", "1982800009")) {
+            for (ClassCourseSearchResult searchResult : result) {
+                System.out.println(searchResult);
+            }
+
+        }
+
     }
 
     @Test

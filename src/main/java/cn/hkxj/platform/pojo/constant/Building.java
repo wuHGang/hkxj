@@ -10,21 +10,27 @@ public enum Building {
 	/**
 	 *
 	 */
-	MAIN("主楼"),
-	SCIENCE("科厦"),
-	SCIENCE_HIGH("科高"),
-	PLAYGROUND("操场"),
-	LABORATORY("实验室"),
+	MAIN("主楼", -1),
+	MAIN_EAST("主楼(东楼)", 1),
+	MAIN_WEST("主楼(西楼)", 3),
+	SCIENCE_ALL("科大", 2),
+	SCIENCE("科厦", -1),
+	SCIENCE_HIGH("科高", -1),
+	PLAYGROUND("操场", 4),
+	LABORATORY("实验室", -1),
 	/**
 	 * 计算机前楼，建工学院机房 etc
 	 */
-	LABORATORY_BUILDING("实验楼"),
-	LIBRARY("图书馆");
+	LABORATORY_BUILDING("实验楼", 5),
+	LIBRARY("图书馆", 6);
 
 	private String chinese;
 
-	Building(String chinese) {
+	private int urpCode;
+
+	Building(String chinese, int urpCode) {
 		this.chinese = chinese;
+		this.urpCode = urpCode;
 	}
 
 	public static Building getBuildingByName(String name){
