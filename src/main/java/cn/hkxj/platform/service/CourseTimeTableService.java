@@ -165,6 +165,13 @@ public class CourseTimeTableService {
 
     }
 
+    /**
+     * 返回当前节的课程详情
+     * 从数据库获取的数据为空时，会使用爬虫来爬取数据
+     * @param student 学生实体
+     * @param section 结束
+     * @return 课程时间表详情
+     */
     public List<CourseTimeTableDetail> getDetailsForSection(Student student, int section){
         SchoolTime schoolTime = DateUtils.getCurrentSchoolTime();
         List<Integer> detailIdList = getCourseTimeTableDetailIdByAccount(student.getAccount());
