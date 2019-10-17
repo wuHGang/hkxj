@@ -21,7 +21,7 @@ public interface AccountCookiePersistor {
      * @param cookies 需要保存的cookie
      * @param account cookie对应的学号
      */
-    void saveByAccount(Collection<Cookie> cookies, String account);
+    void saveByAccount(Iterable<Cookie> cookies, String account);
 
     /**
      * 删除对应账号指定的cookie
