@@ -61,16 +61,16 @@ public class TemplateBuilder {
      *
      * @param openid 用户的openid
      * @param list 模板消息的内容
-     * @param templdateId 模板id
+     * @param templateId 模板id
      * @param miniProgram 小程序跳转
      * @param url 跳转地址
      * @return 模板消息
      */
-	public WxMpTemplateMessage build(String openid, List<WxMpTemplateData> list, String templdateId,
+	public WxMpTemplateMessage build(String openid, List<WxMpTemplateData> list, String templateId,
                                      WxMpTemplateMessage.MiniProgram miniProgram, String url) {
 		return WxMpTemplateMessage.builder()
 				.toUser(openid)
-				.templateId(templdateId)
+				.templateId(templateId)
                 .miniProgram(miniProgram)
 				.data(list)
 				.url(url)
