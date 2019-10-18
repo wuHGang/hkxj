@@ -31,7 +31,7 @@ public class WebAppConfigurer implements WebMvcConfigurer {
 	public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new TraceIDInterceptor()).addPathPatterns("/**");
 		registry.addInterceptor(interfaceStatisticsInterceptor ()).addPathPatterns("/**");
-//        registry.addInterceptor(loginInterceptor()).addPathPatterns("/course/timetable");
+//        registry.addInterceptor(loginInterceptor()).addPathPatterns("/course.json/timetable");
 
 	}
 

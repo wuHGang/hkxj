@@ -1,6 +1,5 @@
 package cn.hkxj.platform.service.wechat;
 
-import cn.hkxj.platform.config.wechat.WechatMpConfiguration;
 import cn.hkxj.platform.config.wechat.WechatMpPlusProperties;
 import cn.hkxj.platform.dao.StudentDao;
 import cn.hkxj.platform.exceptions.OpenidExistException;
@@ -10,14 +9,9 @@ import cn.hkxj.platform.mapper.OpenidMapper;
 import cn.hkxj.platform.mapper.OpenidPlusMapper;
 import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.pojo.example.OpenidExample;
-import cn.hkxj.platform.pojo.timetable.CourseTimeTable;
 import cn.hkxj.platform.pojo.wechat.Openid;
-import cn.hkxj.platform.service.CourseService;
 import cn.hkxj.platform.service.NewUrpSpiderService;
 import lombok.extern.slf4j.Slf4j;
-import me.chanjar.weixin.common.error.WxErrorException;
-import me.chanjar.weixin.mp.api.WxMpService;
-import me.chanjar.weixin.mp.bean.kefu.WxMpKefuMessage;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

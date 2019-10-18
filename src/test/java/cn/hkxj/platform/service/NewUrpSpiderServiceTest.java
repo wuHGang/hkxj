@@ -6,21 +6,20 @@ import cn.hkxj.platform.pojo.Classes;
 import cn.hkxj.platform.pojo.GradeSearchResult;
 import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.spider.NewUrpSpider;
-import cn.hkxj.platform.spider.newmodel.SearchPost;
 import cn.hkxj.platform.spider.newmodel.SearchResult;
-import cn.hkxj.platform.spider.newmodel.course.UrpCourseForSpider;
 import cn.hkxj.platform.spider.newmodel.coursetimetable.UrpCourseTimeTableForSpider;
 import cn.hkxj.platform.spider.newmodel.searchclassroom.SearchClassroomPost;
 import cn.hkxj.platform.spider.newmodel.searchclassroom.SearchClassroomResult;
 import cn.hkxj.platform.spider.newmodel.searchclassroom.SearchResultWrapper;
-import cn.hkxj.platform.spider.newmodel.searchcourse.ClassCourseSearchResult;
-import cn.hkxj.platform.spider.newmodel.searchcourse.ClassInfoSearchResult;
-import cn.hkxj.platform.spider.newmodel.searchcourse.Records;
+import cn.hkxj.platform.spider.newmodel.searchclass.ClassCourseSearchResult;
+import cn.hkxj.platform.spider.newmodel.searchclass.ClassInfoSearchResult;
+import cn.hkxj.platform.spider.newmodel.searchclass.Records;
+import cn.hkxj.platform.spider.newmodel.searchcourse.SearchCoursePost;
+import cn.hkxj.platform.spider.newmodel.searchcourse.SearchCourseResult;
 import cn.hkxj.platform.spider.newmodel.searchteacher.SearchTeacherPost;
 import cn.hkxj.platform.spider.newmodel.searchteacher.SearchTeacherResult;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
-import org.assertj.core.util.Lists;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -183,17 +182,38 @@ public class NewUrpSpiderServiceTest {
     public void searchClassroomInfo() {
         SearchClassroomPost post = new SearchClassroomPost();
         post.setExecutiveEducationPlanNum("2019-2020-1-1");
-        for (SearchResultWrapper<SearchClassroomResult> resultWrapper : newUrpSpiderService.searchClassroomInfo("2017023081", "1", post)) {
+        for (SearchResultWrapper<SearchClassroomResult> resultWrapper : newUrpSpiderService.searchClassroomInfo(post)) {
             for (SearchClassroomResult result : resultWrapper.getPageData().getRecords()) {
                 System.out.println(result);
             }
 
         }
 
-
-
     }
 
+    @Test
+    public void searchCourseInfo() {
+
+        int sum = (2186 / 30) + 1;
+        for (int x=1; x<=sum; x++){
+            SearchCoursePost post = new SearchCoursePost();
+            post.setExecutiveEducationPlanNum("2019-2020-1-1")
+            .setPageNum(Integer.toString(x))
+            .setPageSize("30");
+            for (SearchCourseResult record : newUrpSpiderService.searchCourseInfo(post).getRecords()) {
+                System.out.println(record);
+            }
+        }
+
+
+//        for (SearchResult<SearchCourseResult> searchResult : ) {
+//            for (SearchCourseResult record : searchResult.getRecords()) {
+//                System.out.println(record);
+//            }
+//
+//        }
+
+    }
 
 
 

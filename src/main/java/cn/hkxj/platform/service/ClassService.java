@@ -1,13 +1,11 @@
 package cn.hkxj.platform.service;
 
 import cn.hkxj.platform.dao.ClassDao;
-import cn.hkxj.platform.mapper.ClassesMapper;
 import cn.hkxj.platform.pojo.constant.Academy;
 import cn.hkxj.platform.pojo.Classes;
-import cn.hkxj.platform.pojo.example.ClassesExample;
 import cn.hkxj.platform.pojo.Subject;
 import cn.hkxj.platform.spider.model.UrpStudentInfo;
-import cn.hkxj.platform.spider.newmodel.searchcourse.Records;
+import cn.hkxj.platform.spider.newmodel.searchclass.Records;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 

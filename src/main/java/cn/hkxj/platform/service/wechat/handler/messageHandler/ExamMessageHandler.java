@@ -2,7 +2,6 @@ package cn.hkxj.platform.service.wechat.handler.messageHandler;
 
 import cn.hkxj.platform.builder.TextBuilder;
 import cn.hkxj.platform.pojo.Student;
-import cn.hkxj.platform.pojo.timetable.ExamTimeTable;
 import cn.hkxj.platform.service.NewUrpSpiderService;
 import cn.hkxj.platform.service.OpenIdService;
 import cn.hkxj.platform.spider.newmodel.examtime.UrpExamTime;
@@ -48,26 +47,6 @@ public class ExamMessageHandler implements WxMpMessageHandler {
         return textBuilder.build(examListToText(examTime), wxMpXmlMessage, wxMpService);
     }
 
-    private String newExamListToText(List<ExamTimeTable> examTimeTables,Student student) {
-        examTimeTables.sort((o1, o2) -> (o1.getStart().compareTo(o2.getStart())));
-        StringBuffer stringBuffer = new StringBuffer();
-        DateTime dateTime = new DateTime(examTimeTables.get(0).getStart());
-        stringBuffer.append(student.getName()).append("同学，你的").append(dateTimeYear(dateTime)).append("学年第").append(dateTimeTerm(dateTime)).append("学期的考试时间如下：\n\n");
-        for (ExamTimeTable examTimeTable : examTimeTables) {
-            DateTime start = new DateTime(examTimeTable.getStart());
-            DateTime end = new DateTime(examTimeTable.getEnd());
-            stringBuffer.append("科目：").append(examTimeTable.getCourse().getName()).append('\n');
-            stringBuffer.append("时间：").append(start.getYear()).append("年").append(start.getMonthOfYear()).append("月")
-                    .append(start.getDayOfMonth()).append("日 ")
-                    .append(dateTimeHour(start)).append(dateTimeToText(start)).append(" - ").append(dateTimeToText(end)).append('\n');
-            stringBuffer.append("地点：").append(examTimeTable.getCourse().getName()).append("\n\n");
-        }
-        stringBuffer.append("关注我们的另一个号【黑科校际plus】\n" +
-                "回复【考试订阅】即可订阅考试通知\n" +
-                "我们出了考试时间和考试前都会提醒你\n" +
-                "信息仅供参考，以学校通知为准。");
-        return new String(stringBuffer);
-    }
 
     private String examListToText(List<UrpExamTime> examTimeList) {
 

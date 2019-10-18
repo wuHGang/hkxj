@@ -128,9 +128,9 @@ public class WxSubscriptionController {
                 .build();
         try {
             OneOffSubcriptionUtil.sendTemplateMessageToUser(oneOffSubscription, wxMpService);
-            log.info("send templateMessage about course success appid:{} openid:{}", appid, openid);
+            log.info("send templateMessage about course.json success appid:{} openid:{}", appid, openid);
         } catch (WxErrorException e) {
-            log.info("send templateMessage about course failed appid:{} openid:{} message:{}", appid, openid, e.getMessage());
+            log.info("send templateMessage about course.json failed appid:{} openid:{} message:{}", appid, openid, e.getMessage());
         }
     }
 

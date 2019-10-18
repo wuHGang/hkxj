@@ -1,6 +1,7 @@
 package cn.hkxj.platform.spider;
 
 import cn.hkxj.platform.exceptions.*;
+import cn.hkxj.platform.pojo.UrpClassroom;
 import cn.hkxj.platform.pojo.constant.RedisKeys;
 import cn.hkxj.platform.spider.model.UrpStudentInfo;
 import cn.hkxj.platform.spider.model.VerifyCode;
@@ -18,9 +19,11 @@ import cn.hkxj.platform.spider.newmodel.grade.general.UrpGradeForSpider;
 import cn.hkxj.platform.spider.newmodel.searchclassroom.SearchClassroomPost;
 import cn.hkxj.platform.spider.newmodel.searchclassroom.SearchClassroomResult;
 import cn.hkxj.platform.spider.newmodel.searchclassroom.SearchResultWrapper;
-import cn.hkxj.platform.spider.newmodel.searchcourse.ClassCourseSearchResult;
-import cn.hkxj.platform.spider.newmodel.searchcourse.ClassInfoSearchResult;
-import cn.hkxj.platform.spider.newmodel.searchcourse.SearchClassInfoPost;
+import cn.hkxj.platform.spider.newmodel.searchclass.ClassCourseSearchResult;
+import cn.hkxj.platform.spider.newmodel.searchclass.ClassInfoSearchResult;
+import cn.hkxj.platform.spider.newmodel.searchclass.SearchClassInfoPost;
+import cn.hkxj.platform.spider.newmodel.searchcourse.SearchCoursePost;
+import cn.hkxj.platform.spider.newmodel.searchcourse.SearchCourseResult;
 import cn.hkxj.platform.spider.newmodel.searchteacher.SearchTeacherPost;
 import cn.hkxj.platform.spider.newmodel.searchteacher.SearchTeacherResult;
 import cn.hkxj.platform.utils.ApplicationUtil;
@@ -79,7 +82,7 @@ public class NewUrpSpider {
      * 成绩详细信息  平时分，排行 etc
      */
     private static final String CURRENT_TERM_GRADE_DETAIL = ROOT + "/student/integratedQuery/scoreQuery/coursePropertyScores/serchScoreDetail";
-    private static final String COURSE_DETAIL = ROOT + "/student/integratedQuery/course/courseSchdule/detail";
+    private static final String COURSE_DETAIL = ROOT + "/student/integratedQuery/course.json/courseSchdule/detail";
     private static final String EXAM_TIME = ROOT + "/student/examinationManagement/examPlan/index";
     private static final String COURSE_TIME_TABLE = ROOT + "/student/courseSelect/thisSemesterCurriculum/ajaxStudentSchedule/callback";
     private static final String TEACHER_COURSE_TIME_TABLE = ROOT + "/student/teachingResources/teacherCurriculum" +
@@ -107,6 +110,24 @@ public class NewUrpSpider {
      * 教师信息查询
      */
     private static final String TEACHER_INFO = ROOT + "/student/teachingResources/teacherCurriculum/search";
+
+    /**
+     * 教室课表查询
+     */
+    private static final String CLASSROOM_TIME_TABLE = ROOT + "/student/teachingResources/classroomCurriculum" +
+        "/searchCurriculum/callback?planNumber=%s&campusNumber=%s&teachingBuildingNumber=%s" +
+            "&classroomNumber=%s";
+    /**
+     * 查询课程信息
+     */
+    private static final String COURSE_SEARCH = ROOT + "/student/teachingResources/courseCurriculum/search";
+
+    /**
+     * 查询课程对应的时间安排
+     */
+    private static final String COURSE_TIMETABLE = ROOT + "/student/teachingResources/courseCurriculum" +
+            "/searchCurriculumInfoLo";
+
     private static StringRedisTemplate stringRedisTemplate;
 
     private static final TypeReference<UrpGradeDetailForSpider> gradeDetailTypeReference
@@ -481,6 +502,25 @@ public class NewUrpSpider {
     }
 
     /**
+     * 通过教务网的班级号查询班级课表
+     * @param urpClassroom
+     */
+    public List<List<ClassCourseSearchResult>> getUrpCourseTimeTableByClassroomNum(UrpClassroom urpClassroom) {
+        String url = String.format(CLASSROOM_TIME_TABLE, "2019-2020-1-1", urpClassroom.getCampusNumber(),
+                urpClassroom.getTeachingBuildingNumber(), urpClassroom.getNumber());
+        System.out.println(url);
+        Request request = new Request.Builder()
+                .url(url)
+                .headers(HEADERS)
+                .get()
+                .build();
+        String result = new String(execute(request));
+
+        return parseObject(result, classCourseSearchResultReference);
+
+    }
+
+    /**
      * 通过教务网的教师号查询教师课表
      * @param teacherNumber
      */
@@ -523,7 +563,7 @@ public class NewUrpSpider {
     }
 
     /**
-     * 获取课室列表
+     * 查询教室信息
      * @return
      */
     public List<SearchResultWrapper<SearchClassroomResult>> searchClassroomInfo(SearchClassroomPost searchClassroomPost){
@@ -546,6 +586,36 @@ public class NewUrpSpider {
         TypeReference<List<SearchResultWrapper<SearchClassroomResult>>> reference = new TypeReference<List<SearchResultWrapper<SearchClassroomResult>>>(){};
         return parseObject(new String(execute(request)) ,reference);
     }
+
+    /**
+     * 查询课程信息
+     * @param searchCoursePost
+     */
+    public SearchResult<SearchCourseResult> searchCourseInfo(SearchCoursePost searchCoursePost){
+        FormBody.Builder params = new FormBody.Builder();
+        FormBody body = params
+                .add("zxjxjhh", searchCoursePost.getExecutiveEducationPlanNum())
+                .add("kkxsh", searchCoursePost.getAcademyCode())
+                .add("kcm", searchCoursePost.getCourseName())
+                .add("kch", searchCoursePost.getCourseNumber())
+                .add("kxh", searchCoursePost.getCourseOrderNumber())
+                .add("kclb", searchCoursePost.getCourseType())
+                .add("pageSize", searchCoursePost.getPageSize())
+                .add("pageNum", searchCoursePost.getPageNum())
+                .build();
+
+        Request request = new Request.Builder()
+                .url(COURSE_SEARCH)
+                .headers(HEADERS)
+                .post(body)
+                .build();
+
+        TypeReference<List<SearchResult<SearchCourseResult>>> reference = new TypeReference<List<SearchResult<SearchCourseResult>>>(){};
+        TypeReference<SearchResult<SearchCourseResult>> typeReference = new TypeReference<SearchResult<SearchCourseResult>>() {
+        };
+        return parseObject(new String(execute(request)) ,typeReference);
+    }
+
 
     private <T> T parseObject(String text, TypeReference<T> type){
         try {

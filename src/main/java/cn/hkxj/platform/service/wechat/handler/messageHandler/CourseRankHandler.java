@@ -5,7 +5,7 @@ import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.pojo.UrpCourse;
 import cn.hkxj.platform.pojo.constant.RedisKeys;
 import cn.hkxj.platform.service.OpenIdService;
-import cn.hkxj.platform.spider.newmodel.searchcourse.ClassCourseHour;
+import cn.hkxj.platform.spider.newmodel.searchclass.ClassCourseHour;
 import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.session.WxSessionManager;

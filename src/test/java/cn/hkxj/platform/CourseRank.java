@@ -2,12 +2,11 @@ package cn.hkxj.platform;
 
 
 import cn.hkxj.platform.pojo.UrpCourse;
-import cn.hkxj.platform.pojo.constant.Academy;
 import cn.hkxj.platform.service.NewUrpSpiderService;
 import cn.hkxj.platform.service.UrpCourseService;
-import cn.hkxj.platform.spider.newmodel.searchcourse.ClassCourseSearchResult;
-import cn.hkxj.platform.spider.newmodel.searchcourse.ClassInfoSearchResult;
-import cn.hkxj.platform.spider.newmodel.searchcourse.Records;
+import cn.hkxj.platform.spider.newmodel.searchclass.ClassCourseSearchResult;
+import cn.hkxj.platform.spider.newmodel.searchclass.ClassInfoSearchResult;
+import cn.hkxj.platform.spider.newmodel.searchclass.Records;
 import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
@@ -21,7 +20,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;

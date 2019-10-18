@@ -1,6 +1,6 @@
 package cn.hkxj.platform.spider.newmodel;
 
-import cn.hkxj.platform.spider.newmodel.searchcourse.PageContext;
+import cn.hkxj.platform.spider.newmodel.searchclass.PageContext;
 import lombok.Data;
 import lombok.experimental.Accessors;
 

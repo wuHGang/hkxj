@@ -44,7 +44,9 @@ public class RedisTests {
 
     @Test
     public void zadd() {
-        ZSetOperations<String, String> zSet = redisTemplate.opsForZSet();
+        ValueOperations<String, String> ops = redisTemplate.opsForValue();
+        ops.set(RedisKeys.URP_LOGIN_COOKIE.genKey("test"), "123", 25L,
+                TimeUnit.MINUTES);
 
     }
 

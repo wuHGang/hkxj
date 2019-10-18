@@ -1,9 +1,7 @@
 package cn.hkxj.platform.builder;
 
-import cn.hkxj.platform.pojo.GradeAndCourse;
 import cn.hkxj.platform.pojo.wechat.CourseGroupMsg;
 import cn.hkxj.platform.pojo.wechat.CourseSubscriptionMessage;
-import cn.hkxj.platform.pojo.wechat.ExamGroupMsg;
 import cn.hkxj.platform.utils.DateUtils;
 import cn.hkxj.platform.utils.SchoolTimeUtil;
 import me.chanjar.weixin.mp.bean.template.WxMpTemplateData;
@@ -110,40 +108,6 @@ public class TemplateBuilder {
     }
 
     /**
-     * 组装成绩更新模板消息需要的WxMpTemplateData的列表
-     *
-     * @param gradeAndCourse 课程和成绩信息
-     * @return List<WxMpTemplateData>
-     */
-    public List<WxMpTemplateData> assemblyTemplateContentForGradeUpdate(GradeAndCourse gradeAndCourse) {
-        List<WxMpTemplateData> templateDatas = new ArrayList<>();
-        //first关键字
-        WxMpTemplateData first = new WxMpTemplateData();
-        first.setName("first");
-        first.setValue("您有新的成绩更新\n\n");
-        //keyword1关键字
-        WxMpTemplateData courseName = new WxMpTemplateData();
-        courseName.setName("keyword1");
-        courseName.setValue(gradeAndCourse.getCourse().getName() + "\n\n");
-        //keyword2关键字
-        int grade = gradeAndCourse.getGrade().getScore() / 10;
-        WxMpTemplateData score = new WxMpTemplateData();
-        score.setName("keyword2");
-        score.setValue(grade + "\n\n");
-        //remark关键字
-        WxMpTemplateData remark = new WxMpTemplateData();
-        remark.setName("remark");
-        remark.setValue("查询仅供参考，以教务网的成绩为准，如有疑问微信添加吴彦祖【hkdhd666】");
-
-        templateDatas.add(first);
-        templateDatas.add(courseName);
-        templateDatas.add(score);
-        templateDatas.add(remark);
-
-        return templateDatas;
-    }
-
-    /**
      * 组装课程推送模板消息需要的WxMpTemplateData的列表
      * @param msg 课程推送信息
      * @return List<WxMpTemplateData>
@@ -225,30 +189,6 @@ public class TemplateBuilder {
         return templateDataList;
     }
 
-    /**
-     * 组装课程推送模板消息需要的WxMpTemplateData的列表
-     * @param msg 课程推送信息
-     * @return List<WxMpTemplateData>
-     */
-    public List<WxMpTemplateData> assemblyTemplateContentForExam(ExamGroupMsg msg) {
-        List<WxMpTemplateData> templateDataList = new ArrayList<>();
-        //first关键字
-        WxMpTemplateData first = new WxMpTemplateData();
-        first.setName("first");
-        first.setValue("考试推送\n");
-        //keyword1关键字
-        WxMpTemplateData course = new WxMpTemplateData();
-        course.setName("keyword1");
-        course.setValue("\n" + msg.getCourseContent() + "\n");
-
-        WxMpTemplateData remark = getExamRemark();
-
-        templateDataList.add(first);
-        templateDataList.add(course);
-        templateDataList.add(remark);
-
-        return templateDataList;
-    }
 
     /**
      * 生成考试推送模板消息的remark

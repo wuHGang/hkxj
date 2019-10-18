@@ -10,7 +10,7 @@ import cn.hkxj.platform.pojo.TeacherClass;
 import cn.hkxj.platform.pojo.TeacherCourse;
 import cn.hkxj.platform.pojo.constant.Academy;
 import cn.hkxj.platform.spider.newmodel.SearchResult;
-import cn.hkxj.platform.spider.newmodel.searchcourse.ClassCourseSearchResult;
+import cn.hkxj.platform.spider.newmodel.searchclass.ClassCourseSearchResult;
 import cn.hkxj.platform.spider.newmodel.searchteacher.SearchTeacherPost;
 import cn.hkxj.platform.spider.newmodel.searchteacher.SearchTeacherResult;
 import com.google.common.base.Splitter;

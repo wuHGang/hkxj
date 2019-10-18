@@ -1,4 +1,4 @@
-package cn.hkxj.platform.spider.newmodel.searchcourse;
+package cn.hkxj.platform.spider.newmodel.searchclass;
 
 import cn.hkxj.platform.pojo.UrpCourse;
 import lombok.AllArgsConstructor;

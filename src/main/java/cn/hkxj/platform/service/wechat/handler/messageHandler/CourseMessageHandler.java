@@ -92,7 +92,7 @@ public class CourseMessageHandler implements WxMpMessageHandler {
         try {
             wxMpService.getTemplateMsgService().sendTemplateMsg(templateMessage);
         } catch (WxErrorException e) {
-            log.error("course keyword reply occurred error message:{}", e.getMessage());
+            log.error("course.json keyword reply occurred error message:{}", e.getMessage());
         }
 
     }

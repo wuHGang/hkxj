@@ -64,7 +64,7 @@ public class UrpCourseSpider {
         try {
             response = client.newCall(request).execute();
         } catch (IOException e) {
-            log.error("get course error, course id {}", uid);
+            log.error("get course.json error, course.json id {}", uid);
             throw new RuntimeException(e);
         }
         String cookie=response.headers().get("Set-Cookie").substring(0, response.headers().get("Set-Cookie").indexOf(";"));
@@ -77,7 +77,7 @@ public class UrpCourseSpider {
         try {
             result = client.newCall(request).execute().body().string();
         } catch (IOException e) {
-            log.error("get course error, course id {}", uid);
+            log.error("get course.json error, course.json id {}", uid);
             throw new RuntimeException(e);
         }
         response.body().close();

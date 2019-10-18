@@ -2,10 +2,15 @@ package cn.hkxj.platform.service;
 
 import cn.hkxj.platform.exceptions.RoomParseException;
 import cn.hkxj.platform.mapper.RoomMapper;
+import cn.hkxj.platform.mapper.UrpClassroomMapper;
 import cn.hkxj.platform.pojo.Room;
+import cn.hkxj.platform.pojo.UrpClassroom;
 import cn.hkxj.platform.pojo.constant.Building;
 import cn.hkxj.platform.pojo.constant.Direction;
 import cn.hkxj.platform.pojo.example.RoomExample;
+import cn.hkxj.platform.spider.newmodel.searchclassroom.SearchClassroomPost;
+import cn.hkxj.platform.spider.newmodel.searchclassroom.SearchClassroomResult;
+import cn.hkxj.platform.spider.newmodel.searchclassroom.SearchResultWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.CharUtils;
 import org.springframework.stereotype.Service;
@@ -25,26 +30,15 @@ public class RoomService {
 
 	@Resource
 	private RoomMapper roomMapper;
+	@Resource
+	private NewUrpSpiderService newUrpSpiderService;
+	@Resource
+	private UrpClassroomMapper urpClassroomMapper;
 
 	private final static byte NOT_ALLOW = 0;
 	private final static byte ALLOW = 1;
 
 	private static Map<String, Room> roomMap = new HashMap<>();
-
-
-	public List<Room> getRoomByBuilding(Building building) {
-		RoomExample roomExample = new RoomExample();
-		roomExample.createCriteria().andAreaEqualTo(building);
-		return roomMapper.selectByExample(roomExample);
-	}
-
-	public List<Room> getRoomByBuildingAndFloor(Building building, int floor) {
-		RoomExample roomExample = new RoomExample();
-		roomExample.createCriteria()
-				.andAreaEqualTo(building)
-				.andFloorEqualTo(floor);
-		return roomMapper.selectByExample(roomExample);
-	}
 
 	private Room getRoomByNameFromDB (String name){
 		RoomExample roomExample = new RoomExample();
@@ -59,6 +53,33 @@ public class RoomService {
 		}
 		return roomList.get(0);
 	}
+
+	public void saveAllClassRoom(){
+		SearchClassroomPost post = new SearchClassroomPost();
+		post.setExecutiveEducationPlanNum("2019-2020-1-1");
+		for (SearchResultWrapper<SearchClassroomResult> resultWrapper : newUrpSpiderService.searchClassroomInfo(post)) {
+			for (SearchClassroomResult result : resultWrapper.getPageData().getRecords()) {
+				UrpClassroom urpClassroom = new UrpClassroom()
+						.setType(result.getClassroomTypeDirections())
+						.setSeats(result.getClassNumberOfSeats())
+						.setCampusName(result.getCampusName())
+						.setCampusNumber(result.getId().getCampusNumber())
+						.setTeachingBuildingName(result.getTeachingBuildingName())
+						.setTeachingBuildingNumber(result.getId().getTeachingBuildingNumber())
+						.setName(result.getClassroomName())
+						.setNumber(result.getId().getClassroomNumber())
+						.setDepartment(result.getDepartmentName());
+
+				urpClassroomMapper.insertSelective(urpClassroom);
+			}
+
+		}
+
+	}
+
+	public void searchCourseTimeTableByClassRoom(UrpClassroom urpClassroom){
+	}
+
 
 
 	/**

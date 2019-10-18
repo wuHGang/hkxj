@@ -2,9 +2,6 @@ package cn.hkxj.platform.service;
 
 import cn.hkxj.platform.PlatformApplication;
 import cn.hkxj.platform.pojo.EmptyRoom;
-import cn.hkxj.platform.pojo.Room;
-import cn.hkxj.platform.pojo.constant.Building;
-import cn.hkxj.platform.pojo.timetable.RoomTimeTable;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,10 +11,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import javax.annotation.Resource;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
-
-import static org.junit.Assert.*;
 
 /**
  * @author junrong.chen

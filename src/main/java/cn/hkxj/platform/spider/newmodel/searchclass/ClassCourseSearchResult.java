@@ -1,7 +1,7 @@
 /**
  * Copyright 2019 bejson.com
  */
-package cn.hkxj.platform.spider.newmodel.searchcourse;
+package cn.hkxj.platform.spider.newmodel.searchclass;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import lombok.Data;

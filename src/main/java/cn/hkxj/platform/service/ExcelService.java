@@ -2,16 +2,10 @@ package cn.hkxj.platform.service;
 
 import cn.hkxj.platform.mapper.*;
 import cn.hkxj.platform.pojo.*;
-import cn.hkxj.platform.pojo.constant.Academy;
 import cn.hkxj.platform.pojo.constant.Building;
-import cn.hkxj.platform.pojo.constant.CourseType;
 import cn.hkxj.platform.pojo.constant.Direction;
 import cn.hkxj.platform.pojo.example.ClassesExample;
-import cn.hkxj.platform.pojo.example.CourseExample;
-import cn.hkxj.platform.pojo.example.CourseTimeTableExample;
 import cn.hkxj.platform.pojo.example.RoomExample;
-import cn.hkxj.platform.pojo.timetable.CourseTimeTable;
-import com.google.common.collect.Maps;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.CharUtils;
@@ -21,7 +15,6 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.io.FileInputStream;
@@ -37,10 +30,6 @@ public class ExcelService {
 
     @Resource
     private ClassesMapper classesMapper;
-    @Resource
-    private CourseMapper courseMapper;
-    @Resource
-    private CourseTimeTableMapper courseTimeTableMapper;
     @Resource
     private RoomMapper roomMapper;
     @Resource
@@ -64,25 +53,6 @@ public class ExcelService {
         }
     }
 
-    public CourseTimeTable getOppositeCourseTimetable(CourseTimeTable courseTimeTable){
-        CourseTimeTableExample courseTimeTableExample = new CourseTimeTableExample();
-        courseTimeTableExample.createCriteria()
-                .andCourseEqualTo(courseTimeTable.getCourse())
-                .andTermEqualTo(courseTimeTable.getTerm())
-                .andYearEqualTo(courseTimeTable.getYear())
-                .andStartEqualTo(courseTimeTable.getStart())
-                .andEndEqualTo(courseTimeTable.getEnd())
-                .andOrderEqualTo(courseTimeTable.getOrder())
-                .andWeekEqualTo(courseTimeTable.getWeek())
-                .andDistinctEqualTo(courseTimeTable.getDistinct())
-                .andRoomEqualTo(courseTimeTable.getRoom());
-        List<CourseTimeTable> courseTimeTables = courseTimeTableMapper.selectByExample(courseTimeTableExample);
-        if(!CollectionUtils.isEmpty(courseTimeTables)){
-            return courseTimeTables.get(0);
-        }
-        courseTimeTableMapper.insertSelective(courseTimeTable);
-        return courseTimeTable;
-    }
 
     /**
      * 将教室名分离，start和end是用来把方向提取出来 如WN0401 start:0 end = 2;
@@ -189,33 +159,6 @@ public class ExcelService {
         return null;
     }
 
-    /**
-     * 通过课程号在course表查找是否有相应的课程信息，有就直接返回，没有就插入记录
-     * @param excelResult 封装好的excel的行结果
-     * @param distinct 单双周
-     * @return 相应的课程信息
-     */
-    private Course getOppositeCourse(ExcelResult excelResult, int distinct){
-        CourseExample example = new CourseExample();
-        example.createCriteria()
-                .andUidEqualTo(excelResult.getCourse_id());
-        List<Course> courses = courseMapper.selectByExample(example);
-        Course course;
-        if(courses.size() == 0){
-            //没有相应的课程信息就插入新的新纪录
-            course = new Course();
-            course.setName(excelResult.getCourse_name());
-            course.setUid(excelResult.getCourse_id());
-            course.setAcademy(Academy.getAcademyBySimpleName(excelResult.getAcademy()));
-            course.setCredit(0);
-            course.setType(CourseType.getCourseByByte(distinct));
-            courseMapper.insertSelective(course);
-        } else {
-            //否则直接返回
-            course = courses.get(0);
-        }
-        return course;
-    }
 
     /**
      * 根据教室名在数据库中查找相应教室信息
@@ -238,37 +181,6 @@ public class ExcelService {
         return room;
     }
 
-    /**
-     * 插入相应的课程时间表数据
-     * @param course 相应的课程信息
-     * @param room 相应的教室信息
-     * @param excelResult 对应的excel行数据
-     * @return 返回插入完之后的课表时间表的id集合
-     */
-    private Set<Integer> insertCourseTimetable(Course course, Room room, ExcelResult excelResult){
-        Set<Integer> timetableIds = new HashSet<>();
-        Map<String, Integer> startAndStopMap = excelResult.getStartAndStopTime();
-        int count = startAndStopMap.size() / 2;
-        for(int i = 1; i <= count; i++){
-            CourseTimeTable courseTimeTable = new CourseTimeTable();
-            courseTimeTable.setTerm(2);
-            courseTimeTable.setYear(2019);
-            courseTimeTable.setCourse(course);
-            courseTimeTable.setWeek(excelResult.getWeek());
-            courseTimeTable.setOrder(excelResult.getOrder());
-            courseTimeTable.setDistinct(excelResult.getStartAndStopTime().get("distinct"));
-            courseTimeTable.setRoom(room);
-            courseTimeTable.setStart(excelResult.getStartAndStopTime().get("start" + i));
-            courseTimeTable.setEnd(excelResult.getStartAndStopTime().get("end" + i));
-            System.out.println("courseTimetable     " + courseTimeTable);
-            //如果有指定的课程就直接返回，没有的话插入后返回
-            courseTimeTable = getOppositeCourseTimetable(courseTimeTable);
-//            courseTimeTableMapper.insertSelective(courseTimeTable);
-            timetableIds.add(courseTimeTable.getId());
-
-        }
-        return timetableIds;
-    }
 
     /**
      * 将班级列表的班级信息逐一查表,有则继续下一步，没有就插入相应的数据
@@ -302,28 +214,7 @@ public class ExcelService {
         }
     }
 
-    /**
-     * 进行最后的插入数据的工作
-     * @param excelResults 包含所有封装后的excel数据
-     */
-    public void insertDb(List<ExcelResult> excelResults){
-        for(ExcelResult excelResult : excelResults){
-            List<Classes> classesList = excelResult.getClassesList();
-            //如果没有相应的班级列表，则直接跳过
-            if(classesList.size() == 0) continue;
-            Map<String, Integer> map = excelResult.getStartAndStopTime();
-            //处理课程信息
-            Course course = getOppositeCourse(excelResult, map.get("distinct"));
-            //处理教室信息
-            Room room = getOppositeRoom(excelResult);
-            //插入相应的课程时间表，数据库做了比对
-            Set<Integer> timetableIds = insertCourseTimetable(course, room, excelResult);
-            //处理班级信息
-            processClassesAndCourseTimetableMapping(classesList, timetableIds);
-        }
-        //在class_timetable表中查询相应数据
-        insertClassIdAndTimetableId();
-    }
+
 
     private void processClassesAndCourseTimetableMapping(List<Classes> classesList, Set<Integer> timetableIds){
         for(Classes classes : classesList){
@@ -350,7 +241,7 @@ public class ExcelService {
         FileInputStream fis;
         Workbook workbook;
         try {
-            fis=new FileInputStream("C:\\Users\\Yuki\\Desktop\\course\\18-19-2全校大课表 - 副本.xls");
+            fis=new FileInputStream("C:\\Users\\Yuki\\Desktop\\course.json\\18-19-2全校大课表 - 副本.xls");
             workbook = new HSSFWorkbook(fis);
             Sheet sheet=workbook.getSheetAt(0);
             int rowNum=sheet.getLastRowNum();

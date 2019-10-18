@@ -26,4 +26,9 @@ public class RoomServiceTest {
 	public void getTodayRoomTimeTable() throws RoomParseException {
 		System.out.println(roomService.parseToRoomForSpider("画室1", "主楼（西楼）"));
 	}
+
+	@Test
+	public void test(){
+		roomService.saveAllClassRoom();
+	}
 }

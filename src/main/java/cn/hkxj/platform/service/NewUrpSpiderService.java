@@ -5,6 +5,7 @@ import cn.hkxj.platform.exceptions.PasswordUncorrectException;
 import cn.hkxj.platform.exceptions.UrpException;
 import cn.hkxj.platform.pojo.Classes;
 import cn.hkxj.platform.pojo.Student;
+import cn.hkxj.platform.pojo.UrpClassroom;
 import cn.hkxj.platform.spider.NewUrpSpider;
 import cn.hkxj.platform.spider.model.UrpStudentInfo;
 import cn.hkxj.platform.spider.newmodel.SearchResult;
@@ -15,9 +16,11 @@ import cn.hkxj.platform.spider.newmodel.grade.CurrentGrade;
 import cn.hkxj.platform.spider.newmodel.searchclassroom.SearchClassroomPost;
 import cn.hkxj.platform.spider.newmodel.searchclassroom.SearchClassroomResult;
 import cn.hkxj.platform.spider.newmodel.searchclassroom.SearchResultWrapper;
-import cn.hkxj.platform.spider.newmodel.searchcourse.ClassCourseSearchResult;
-import cn.hkxj.platform.spider.newmodel.searchcourse.ClassInfoSearchResult;
-import cn.hkxj.platform.spider.newmodel.searchcourse.SearchClassInfoPost;
+import cn.hkxj.platform.spider.newmodel.searchclass.ClassCourseSearchResult;
+import cn.hkxj.platform.spider.newmodel.searchclass.ClassInfoSearchResult;
+import cn.hkxj.platform.spider.newmodel.searchclass.SearchClassInfoPost;
+import cn.hkxj.platform.spider.newmodel.searchcourse.SearchCoursePost;
+import cn.hkxj.platform.spider.newmodel.searchcourse.SearchCourseResult;
 import cn.hkxj.platform.spider.newmodel.searchteacher.SearchTeacherPost;
 import cn.hkxj.platform.spider.newmodel.searchteacher.SearchTeacherResult;
 import lombok.extern.slf4j.Slf4j;
@@ -86,10 +89,24 @@ public class NewUrpSpiderService {
     }
 
     @Retryable(value = UrpException.class, maxAttempts = 3)
-    public List<SearchResultWrapper<SearchClassroomResult>> searchClassroomInfo(String account, String password,
-                                                                                SearchClassroomPost searchClassroomPost){
-        NewUrpSpider spider = getSpider(account, password);
+    public List<List<ClassCourseSearchResult>> getCourseTimeTableByClassroom(UrpClassroom urpClassroom){
+        Student student = studentDao.selectStudentByAccount(2014025838);
+        NewUrpSpider spider = getSpider(student.getAccount().toString(), student.getPassword());
+        return spider.getUrpCourseTimeTableByClassroomNum(urpClassroom);
+    }
+
+    @Retryable(value = UrpException.class, maxAttempts = 3)
+    public List<SearchResultWrapper<SearchClassroomResult>> searchClassroomInfo(SearchClassroomPost searchClassroomPost){
+        Student student = studentDao.selectStudentByAccount(2014025838);
+        NewUrpSpider spider = getSpider(student.getAccount().toString(), student.getPassword());
         return spider.searchClassroomInfo(searchClassroomPost);
+    }
+
+    @Retryable(value = UrpException.class, maxAttempts = 3)
+    public SearchResult<SearchCourseResult> searchCourseInfo(SearchCoursePost searchCoursePost){
+        Student student = studentDao.selectStudentByAccount(2014025838);
+        NewUrpSpider spider = getSpider(student.getAccount().toString(), student.getPassword());
+        return spider.searchCourseInfo(searchCoursePost);
     }
 
     public void checkStudentPassword(String account, String password){

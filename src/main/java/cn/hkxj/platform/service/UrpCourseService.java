@@ -52,7 +52,7 @@ public class UrpCourseService {
                 return urpCourse;
             });
         } catch (ExecutionException e) {
-            log.error("get course cache error", e);
+            log.error("get course.json cache error", e);
         }
 
         return urpCourseDao.getUrpCourseByCourseId(courseId);

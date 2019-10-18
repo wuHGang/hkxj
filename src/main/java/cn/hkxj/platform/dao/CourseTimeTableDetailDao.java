@@ -62,6 +62,12 @@ public class CourseTimeTableDetailDao {
         return courseTimeTableDetailMapper.getCourseTimeTableDetailIdsByClassId(classesId);
     }
 
+    public List<CourseTimeTableDetail> getByClassroomName(String classroomName){
+        CourseTimeTableDetailExample example = new CourseTimeTableDetailExample();
+        example.createCriteria().andRoomNameEqualTo(classroomName);
+        return courseTimeTableDetailMapper.selectByExample(example);
+    }
+
     public List<CourseTimeTableDetail> getCourseTimeTableDetailForCurrentTerm(List<Integer> detailIdList, SchoolTime schoolTime){
         CourseTimeTableDetailExample example = new CourseTimeTableDetailExample();
         example.createCriteria()

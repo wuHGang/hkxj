@@ -3,10 +3,8 @@ package cn.hkxj.platform.controller;
 import cn.hkxj.platform.pojo.WebResponse;
 import cn.hkxj.platform.pojo.constant.ErrorCode;
 import cn.hkxj.platform.pojo.dto.CourseTimeTableDetailDto;
-import cn.hkxj.platform.service.CourseService;
 import cn.hkxj.platform.service.CourseTimeTableService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -26,8 +24,6 @@ import java.util.Objects;
 @RequestMapping("/course")
 public class CourseController {
 
-    @Autowired
-    private CourseService courseService;
 
     @Resource
     private CourseTimeTableService courseTimeTableService;
@@ -45,7 +41,7 @@ public class CourseController {
         }
 
         if (Objects.isNull(account)) {
-            log.info("course timetable fail-- 用户未绑定");
+            log.info("course.json timetable fail-- 用户未绑定");
             return WebResponse.fail(ErrorCode.USER_UNAUTHORIZED.getErrorCode(), "用户未绑定");
         }
 
@@ -55,7 +51,7 @@ public class CourseController {
         }
 
         List<CourseTimeTableDetailDto> details = courseTimeTableService.getAllCourseTimeTableDetailDtos(Integer.parseInt(account));
-        log.info("course timetable success-- account:{}", account);
+        log.info("course.json timetable success-- account:{}", account);
         return WebResponse.success(details);
     }
 
