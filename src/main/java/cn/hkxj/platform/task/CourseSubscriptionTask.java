@@ -48,52 +48,38 @@ public class CourseSubscriptionTask extends BaseSubscriptionTask {
     private TemplateBuilder templateBuilder;
     @Resource
     private WechatTemplateProperties wechatTemplateProperties;
-    @Value("scheduled.sendCourse")
-    private String sendCourseSwitch;
+
     @Async
-//    @Scheduled(cron = "10 1/3 * * * ?")
-    @Scheduled(cron = "0 0 8 ? * ?")
-        //这个cron表达式的意思是星期一到星期五的早上8点执行一次
+    @Scheduled(cron = "0 0 8 * * ?")//这个cron表达式的意思是星期一到星期五的早上8点执行一次
     void sendCourseRemindMsgForFirstSection() {
         execute(CourseSubscribeService.FIRST_SECTION);
     }
 
     @Async
-//    @Scheduled(cron = "20 1/3 * * * ?")
-    @Scheduled(cron = "0 50 9 ? * ?")
-        //这个cron表达式的意思是星期一到星期五的早上9点50分执行一次
+    @Scheduled(cron = "0 50 9 * * ?")//这个cron表达式的意思是星期一到星期五的早上9点50分执行一次
     void sendCourseRemindMsgForSecondSection() {
         execute(CourseSubscribeService.SECOND_SECTION);
     }
 
     @Async
-//    @Scheduled(cron = "30 1/3 * * * ?")
-    @Scheduled(cron = "0 0 13 ? * ?")
-        //这个cron表达式的意思是星期一到星期五的下午13点执行一次
+    @Scheduled(cron = "0 0 13 * * ?")//这个cron表达式的意思是星期一到星期五的下午13点执行一次
     void sendCourseRemindMsgForThirdSection() {
         execute(CourseSubscribeService.THIRD_SECTION);
     }
 
     @Async
-//    @Scheduled(cron = "40 1/3 * * * ?")
-    @Scheduled(cron = "0 50 14 ? * ?")
-        //这个cron表达式的意思是星期一到星期五的下午14点50分执行一次
+    @Scheduled(cron = "0 50 14 * * ?")//这个cron表达式的意思是星期一到星期五的下午14点50分执行一次
     void sendCourseRemindMsgForFourthSection() {
         execute(CourseSubscribeService.FOURTH_SECTION);
     }
 
     @Async
-//    @Scheduled(cron = "50 1/3 * * * ?")
-    @Scheduled(cron = "0 0 18 ? * ?")
-        //这个cron表达式的意思是星期一到星期五的晚上6点执行一次
+    @Scheduled(cron = "0 0 18 * * ?")//这个cron表达式的意思是星期一到星期五的晚上6点执行一次
     void sendCourseRemindMsgForFifthSection() {
         execute(CourseSubscribeService.FIFTH_SECTION);
     }
 
     public void execute(int section) {
-        if(!Boolean.valueOf(sendCourseSwitch)){
-            return;
-        }
         Map<String, Set<CourseSubscriptionMessage>> subscriptionMessageMap = courseSubscribeService.getSubscriptionMessages(section);
         subscriptionMessageMap.forEach((appid, courseSubscriptionMessageSet) -> {
             //courseSubscriptionMessageSet，说明没有可用的订阅，直接跳过当前循环
@@ -121,6 +107,7 @@ public class CourseSubscriptionTask extends BaseSubscriptionTask {
      */
     private void plusMpProcess(ScheduleTask task, CourseSubscriptionMessage msg, WxMpService wxMpService) {
         List<WxMpTemplateData> templateData = templateBuilder.assemblyTemplateContentForCourse(msg);
+        //templateData为空时，说明没有对应的课程，所以直接返回不发送消息
         if (Objects.isNull(templateData)) {
             return;
         }
