@@ -65,7 +65,8 @@ public class CourseMessageHandler implements WxMpMessageHandler {
         }
         String replyContent = getReplyContent(wxMpXmlMessage,wxMpService);
         WxMpKefuMessage textMessage = buildTextKefuMessage(wxMpXmlMessage.getFromUser(), WxConsts.KefuMsgType.TEXT, replyContent);
-        WxMpKefuMessage miniProgramMessage = buildKefuMessageWithMiniProgram(wxMpXmlMessage.getFromUser(), WxConsts.KefuMsgType.MINIPROGRAMPAGE);
+        WxMpKefuMessage miniProgramMessage = MiniProgram.COURSE_PATH.genCard(wxMpXmlMessage.getFromUser(),
+                wxMpService.getWxMpConfigStorage().getAppId());
         sendKefuMessage(wxMpService, textMessage);
         sendKefuMessage(wxMpService, miniProgramMessage);
         return null;
@@ -97,16 +98,6 @@ public class CourseMessageHandler implements WxMpMessageHandler {
 
     }
 
-    private WxMpKefuMessage buildKefuMessageWithMiniProgram(String openid, String msgType){
-        WxMpKefuMessage wxMpKefuMessage = new WxMpKefuMessage();
-        wxMpKefuMessage.setMsgType(msgType);
-        wxMpKefuMessage.setToUser(openid);
-        wxMpKefuMessage.setMiniProgramAppId(MiniProgram.APP_ID.getValue());
-        wxMpKefuMessage.setMiniProgramPagePath(MiniProgram.INDEX.getValue());
-        wxMpKefuMessage.setTitle("小程序");
-        wxMpKefuMessage.setThumbMediaId("qcf_h2hm7P1RL81csrh8ML3i-9lmYJAP3ihNZbOzEks");
-        return wxMpKefuMessage;
-    }
 
     private WxMpKefuMessage buildTextKefuMessage(String openid, String msgType, String content){
         WxMpKefuMessage wxMpKefuMessage = new WxMpKefuMessage();

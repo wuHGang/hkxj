@@ -94,7 +94,7 @@ public class ExamSubscriptionTask extends BaseSubscriptionTask{
         List<WxMpTemplateData> templateData = templateBuilder.assemblyTemplateContentForExam(msg);
 
         WxMpTemplateMessage.MiniProgram miniProgram = new WxMpTemplateMessage.MiniProgram();
-        miniProgram.setAppid(MiniProgram.APP_ID.getValue());
+        miniProgram.setAppid(MiniProgram.APP_ID);
         miniProgram.setPagePath(MiniProgram.COURSE_PATH.getValue());
         String url = "https://platform.hackerda.com/platform/show/timetable";
 

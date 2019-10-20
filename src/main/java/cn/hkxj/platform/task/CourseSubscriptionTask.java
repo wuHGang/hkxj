@@ -112,7 +112,7 @@ public class CourseSubscriptionTask extends BaseSubscriptionTask {
             return;
         }
         WxMpTemplateMessage.MiniProgram miniProgram = new WxMpTemplateMessage.MiniProgram();
-        miniProgram.setAppid(MiniProgram.APP_ID.getValue());
+        miniProgram.setAppid(MiniProgram.APP_ID);
         miniProgram.setPagePath(MiniProgram.COURSE_PATH.getValue());
         String url = domain + "/platform/show/timetable";
         //构建一个课程推送的模板消息

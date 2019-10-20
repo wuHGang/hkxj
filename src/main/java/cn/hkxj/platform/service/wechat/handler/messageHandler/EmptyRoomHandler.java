@@ -25,22 +25,14 @@ public class EmptyRoomHandler implements WxMpMessageHandler {
 
     @Override
     public WxMpXmlOutMessage handle(WxMpXmlMessage wxMpXmlMessage, Map<String, Object> context, WxMpService wxMpService, WxSessionManager sessionManager) {
-        WxMpKefuMessage miniProgramMessage = buildKefuMessageWithMiniProgram(wxMpXmlMessage.getFromUser(), WxConsts.KefuMsgType.MINIPROGRAMPAGE);
+        WxMpKefuMessage miniProgramMessage = MiniProgram.EMPTY_CLASSROOM.genCard(wxMpXmlMessage.getFromUser(),
+                wxMpService.getWxMpConfigStorage().getAppId());
         sendKefuMessage(wxMpService, miniProgramMessage);
         log.info("check empty room success openid:{}", wxMpXmlMessage.getFromUser());
         return null;
     }
 
-    private WxMpKefuMessage buildKefuMessageWithMiniProgram(String openid, String msgType) {
-        WxMpKefuMessage wxMpKefuMessage = new WxMpKefuMessage();
-        wxMpKefuMessage.setMsgType(msgType);
-        wxMpKefuMessage.setToUser(openid);
-        wxMpKefuMessage.setMiniProgramAppId(MiniProgram.APP_ID.getValue());
-        wxMpKefuMessage.setMiniProgramPagePath(MiniProgram.INDEX.getValue());
-        wxMpKefuMessage.setTitle("小程序");
-        wxMpKefuMessage.setThumbMediaId("qcf_h2hm7P1RL81csrh8ML3i-9lmYJAP3ihNZbOzEks");
-        return wxMpKefuMessage;
-    }
+
 
     private void sendKefuMessage(WxMpService wxMpService, WxMpKefuMessage wxMpKefuMessage) {
         try {

@@ -165,7 +165,7 @@ public class GradeAutoUpdateTask extends BaseSubscriptionTask{
             //因为一次模板消息只能处理一个成绩，所以循环处理
             List<WxMpTemplateData> data = templateBuilder.assemblyTemplateContentForGradeUpdate(gradeAndCourse);
             WxMpTemplateMessage.MiniProgram miniProgram = new WxMpTemplateMessage.MiniProgram();
-            miniProgram.setAppid(MiniProgram.APP_ID.getValue());
+            miniProgram.setAppid(MiniProgram.APP_ID);
             miniProgram.setPagePath(MiniProgram.GRADE_PATH.getValue());
             WxMpTemplateMessage templateMessage =
                     templateBuilder.buildWithNoUrl(task.getOpenid(), data,  wechatTemplateProperties.getPlusGradeUpdateTemplateId(), miniProgram);
