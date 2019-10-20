@@ -43,7 +43,8 @@
         </javaClientGenerator>
 
 
-        <table tableName="urp_classroom">
+
+        <table tableName="urp_class">
             <property name="ignoreQualifiersAtRuntime" value="true"/>
         </table>
 

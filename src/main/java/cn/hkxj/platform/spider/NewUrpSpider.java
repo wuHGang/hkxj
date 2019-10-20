@@ -1,6 +1,7 @@
 package cn.hkxj.platform.spider;
 
 import cn.hkxj.platform.exceptions.*;
+import cn.hkxj.platform.pojo.Course;
 import cn.hkxj.platform.pojo.UrpClassroom;
 import cn.hkxj.platform.pojo.constant.RedisKeys;
 import cn.hkxj.platform.spider.model.UrpStudentInfo;
@@ -16,11 +17,11 @@ import cn.hkxj.platform.spider.newmodel.grade.CurrentGrade;
 import cn.hkxj.platform.spider.newmodel.grade.detail.UrpGradeDetailForSpider;
 import cn.hkxj.platform.spider.newmodel.grade.general.UrpGeneralGradeForSpider;
 import cn.hkxj.platform.spider.newmodel.grade.general.UrpGradeForSpider;
+import cn.hkxj.platform.spider.newmodel.searchclass.ClassInfoSearchResult;
 import cn.hkxj.platform.spider.newmodel.searchclassroom.SearchClassroomPost;
 import cn.hkxj.platform.spider.newmodel.searchclassroom.SearchClassroomResult;
 import cn.hkxj.platform.spider.newmodel.searchclassroom.SearchResultWrapper;
-import cn.hkxj.platform.spider.newmodel.searchclass.ClassCourseSearchResult;
-import cn.hkxj.platform.spider.newmodel.searchclass.ClassInfoSearchResult;
+import cn.hkxj.platform.spider.newmodel.searchclass.CourseTimetableSearchResult;
 import cn.hkxj.platform.spider.newmodel.searchclass.SearchClassInfoPost;
 import cn.hkxj.platform.spider.newmodel.searchcourse.SearchCoursePost;
 import cn.hkxj.platform.spider.newmodel.searchcourse.SearchCourseResult;
@@ -126,7 +127,7 @@ public class NewUrpSpider {
      * 查询课程对应的时间安排
      */
     private static final String COURSE_TIMETABLE = ROOT + "/student/teachingResources/courseCurriculum" +
-            "/searchCurriculumInfoLo";
+            "/searchCurriculum/callback?planCode=%s&courseCode=%s&courseSequenceCode=%s";
 
     private static StringRedisTemplate stringRedisTemplate;
 
@@ -136,11 +137,8 @@ public class NewUrpSpider {
     private static final TypeReference<List<UrpCourseForSpider>> courseTypeReference
             = new TypeReference<List<UrpCourseForSpider>>() {
     };
-    private static final TypeReference<List<ClassInfoSearchResult>> classInfoReference
-            = new TypeReference<List<ClassInfoSearchResult>>() {
-    };
-    private static final TypeReference<List<List<ClassCourseSearchResult>>> classCourseSearchResultReference
-            = new TypeReference<List<List<ClassCourseSearchResult>>>() {
+    private static final TypeReference<List<List<CourseTimetableSearchResult>>> classCourseSearchResultReference
+            = new TypeReference<List<List<CourseTimetableSearchResult>>>() {
     };
     private static final Splitter SPACE_SPLITTER = Splitter.on(" ").omitEmptyStrings().trimResults();
 
@@ -464,7 +462,7 @@ public class NewUrpSpider {
         return student;
     }
 
-    public List<ClassInfoSearchResult> getClassInfoSearchResult(SearchClassInfoPost searchClassInfoPost){
+    public List<SearchResult<ClassInfoSearchResult>> getClassInfoSearchResult(SearchClassInfoPost searchClassInfoPost){
         FormBody.Builder params = new FormBody.Builder();
         FormBody body = params.add("param_value", searchClassInfoPost.getParamValue())
                 .add("executiveEducationPlanNum", searchClassInfoPost.getExecutiveEducationPlanNum())
@@ -481,14 +479,16 @@ public class NewUrpSpider {
                 .post(body)
                 .build();
         String result = new String(execute(request));
-        return parseObject(result, classInfoReference);
+        TypeReference<List<SearchResult<ClassInfoSearchResult>>> reference = new TypeReference<List<SearchResult<ClassInfoSearchResult>>>(){};
+
+        return parseObject(result, reference);
     }
 
     /**
      * 通过教务网的班级号查询班级课表
      * @param classCode
      */
-    public List<List<ClassCourseSearchResult>> getUrpCourseTimeTableByClassCode(String classCode) {
+    public List<List<CourseTimetableSearchResult>> getUrpCourseTimeTableByClassCode(String classCode) {
 
         Request request = new Request.Builder()
                 .url(SEARCH_COURSE_INFO + "?planCode=2019-2020-1-1&classCode=" + classCode)
@@ -505,10 +505,29 @@ public class NewUrpSpider {
      * 通过教务网的班级号查询班级课表
      * @param urpClassroom
      */
-    public List<List<ClassCourseSearchResult>> getUrpCourseTimeTableByClassroomNum(UrpClassroom urpClassroom) {
+    public List<List<CourseTimetableSearchResult>> getUrpCourseTimeTableByClassroomNum(UrpClassroom urpClassroom) {
         String url = String.format(CLASSROOM_TIME_TABLE, "2019-2020-1-1", urpClassroom.getCampusNumber(),
                 urpClassroom.getTeachingBuildingNumber(), urpClassroom.getNumber());
-        System.out.println(url);
+
+        Request request = new Request.Builder()
+                .url(url)
+                .headers(HEADERS)
+                .get()
+                .build();
+        String result = new String(execute(request));
+
+        return parseObject(result, classCourseSearchResultReference);
+
+    }
+
+    /**
+     * 通过教务网的课程号查询班级课表
+     * @param course
+     */
+    public List<List<CourseTimetableSearchResult>> getUrpCourseTimeTableByCourse(Course course) {
+        String url = String.format(COURSE_TIMETABLE, "2019-2020-1-1", course.getNum(),
+                course.getCourseOrder());
+
         Request request = new Request.Builder()
                 .url(url)
                 .headers(HEADERS)
@@ -524,7 +543,7 @@ public class NewUrpSpider {
      * 通过教务网的教师号查询教师课表
      * @param teacherNumber
      */
-    public List<List<ClassCourseSearchResult>> getUrpCourseTimeTableByTeacherAccount(String teacherNumber) {
+    public List<List<CourseTimetableSearchResult>> getUrpCourseTimeTableByTeacherAccount(String teacherNumber) {
 
         Request request = new Request.Builder()
                 .url(TEACHER_COURSE_TIME_TABLE + "?planCode=2019-2020-1-1&teacherNum=" + teacherNumber)
@@ -610,7 +629,6 @@ public class NewUrpSpider {
                 .post(body)
                 .build();
 
-        TypeReference<List<SearchResult<SearchCourseResult>>> reference = new TypeReference<List<SearchResult<SearchCourseResult>>>(){};
         TypeReference<SearchResult<SearchCourseResult>> typeReference = new TypeReference<SearchResult<SearchCourseResult>>() {
         };
         return parseObject(new String(execute(request)) ,typeReference);
@@ -621,10 +639,12 @@ public class NewUrpSpider {
         try {
             return JSON.parseObject(text, type);
         }catch (JSONException e) {
-            COOKIE_JAR.clearSession();
+
             if (text.length() > 1000) {
+                log.error("parse courseTimeTable error {}", text, e);
                 throw new UrpEvaluationException("account: " + account + " 未完成评估无法查成绩");
             }
+            COOKIE_JAR.clearSession();
             if(!(text.contains("login") || text.contains("invalidSession"))){
                 log.error("parse courseTimeTable error {}", text, e);
             }

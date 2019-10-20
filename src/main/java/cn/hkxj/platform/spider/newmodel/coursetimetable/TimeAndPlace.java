@@ -8,7 +8,6 @@ import com.google.common.collect.Lists;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.CharUtils;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 
@@ -124,6 +123,7 @@ public class TimeAndPlace {
         return details;
     }
 
+
     private String specialProcess(String classroomName, String teachingBuildingName) {
         if (teachingBuildingName.startsWith(Building.MAIN.getChinese())) {
             return Building.MAIN.getChinese() + classroomName;
@@ -136,7 +136,7 @@ public class TimeAndPlace {
         return new String[]{results[0] + "-" + results[1], results[2]};
     }
 
-    private List<int[]> parseWeek(String weekDescription) {
+    public static List<int[]> parseWeek(String weekDescription) {
         String[] weeks = weekDescription.split(",");
         List<int[]> results = Lists.newArrayList();
         String key = "第";
@@ -164,7 +164,7 @@ public class TimeAndPlace {
         return results;
     }
 
-    private int[] parseNumber(String origin) {
+    private static int[] parseNumber(String origin) {
         String[] strs = origin.split("-");
         if (strs.length == 1) {
             int one = getLastNumberIndex(strs[0]);
@@ -181,7 +181,7 @@ public class TimeAndPlace {
      * @param target 目标字符串
      * @return 数字最后的下标
      */
-    private int getLastNumberIndex(String target){
+    private static int getLastNumberIndex(String target){
         int index = 0;
         for (int i = 0, length = target.length(); i < length; i++) {
             if (!CharUtils.isAsciiNumeric(target.charAt(i))) {
@@ -192,7 +192,7 @@ public class TimeAndPlace {
         return index;
     }
 
-    private int parseDistinct(String seq, int start, int end) {
+    public static int parseDistinct(String seq, int start, int end) {
         int count = 0, theoreticalValue = end - start + 1;
         for (int i = start - 1; i < end; i++) {
             if (seq.charAt(i) == '1') {

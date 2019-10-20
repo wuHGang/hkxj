@@ -1,0 +1,434 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.hkxj.platform.mapper.CourseTimetableMapper" >
+  <resultMap id="BaseResultMap" type="cn.hkxj.platform.pojo.CourseTimetable" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="room_name" property="roomName" jdbcType="VARCHAR" />
+    <result column="room_number" property="roomNumber" jdbcType="VARCHAR" />
+    <result column="campus_name" property="campusName" jdbcType="VARCHAR" />
+    <result column="continuing_session" property="continuingSession" jdbcType="INTEGER" />
+    <result column="course_id" property="courseId" jdbcType="VARCHAR" />
+    <result column="attend_class_teacher" property="attendClassTeacher" jdbcType="VARCHAR" />
+    <result column="student_count" property="studentCount" jdbcType="INTEGER" />
+    <result column="class_day" property="classDay" jdbcType="INTEGER" />
+    <result column="class_order" property="classOrder" jdbcType="INTEGER" />
+    <result column="start_week" property="startWeek" jdbcType="INTEGER" />
+    <result column="end_week" property="endWeek" jdbcType="INTEGER" />
+    <result column="class_in_school_week" property="classInSchoolWeek" jdbcType="VARCHAR" />
+    <result column="course_sequence_number" property="courseSequenceNumber" jdbcType="VARCHAR" />
+    <result column="week_description" property="weekDescription" jdbcType="VARCHAR" />
+    <result column="class_distinct" property="classDistinct" jdbcType="INTEGER" />
+    <result column="term_year" property="termYear" jdbcType="CHAR" />
+    <result column="term_order" property="termOrder" jdbcType="INTEGER" />
+    <result column="gmt_create" property="gmtCreate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, room_name, room_number, campus_name, continuing_session, course_id, attend_class_teacher, 
+    student_count, class_day, class_order, start_week, end_week, class_in_school_week, 
+    course_sequence_number, week_description, class_distinct, term_year, term_order, 
+    gmt_create
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="cn.hkxj.platform.pojo.example.CourseTimetableExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from course_timetable
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from course_timetable
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from course_timetable
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="cn.hkxj.platform.pojo.example.CourseTimetableExample" >
+    delete from course_timetable
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="cn.hkxj.platform.pojo.CourseTimetable" >
+    insert into course_timetable (id, room_name, room_number, 
+      campus_name, continuing_session, course_id, 
+      attend_class_teacher, student_count, class_day, 
+      class_order, start_week, end_week, 
+      class_in_school_week, course_sequence_number, 
+      week_description, class_distinct, term_year, 
+      term_order, gmt_create)
+    values (#{id,jdbcType=INTEGER}, #{roomName,jdbcType=VARCHAR}, #{roomNumber,jdbcType=VARCHAR}, 
+      #{campusName,jdbcType=VARCHAR}, #{continuingSession,jdbcType=INTEGER}, #{courseId,jdbcType=VARCHAR}, 
+      #{attendClassTeacher,jdbcType=VARCHAR}, #{studentCount,jdbcType=INTEGER}, #{classDay,jdbcType=INTEGER}, 
+      #{classOrder,jdbcType=INTEGER}, #{startWeek,jdbcType=INTEGER}, #{endWeek,jdbcType=INTEGER}, 
+      #{classInSchoolWeek,jdbcType=VARCHAR}, #{courseSequenceNumber,jdbcType=VARCHAR}, 
+      #{weekDescription,jdbcType=VARCHAR}, #{classDistinct,jdbcType=INTEGER}, #{termYear,jdbcType=CHAR}, 
+      #{termOrder,jdbcType=INTEGER}, #{gmtCreate,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="cn.hkxj.platform.pojo.CourseTimetable" >
+    insert into course_timetable
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="roomName != null" >
+        room_name,
+      </if>
+      <if test="roomNumber != null" >
+        room_number,
+      </if>
+      <if test="campusName != null" >
+        campus_name,
+      </if>
+      <if test="continuingSession != null" >
+        continuing_session,
+      </if>
+      <if test="courseId != null" >
+        course_id,
+      </if>
+      <if test="attendClassTeacher != null" >
+        attend_class_teacher,
+      </if>
+      <if test="studentCount != null" >
+        student_count,
+      </if>
+      <if test="classDay != null" >
+        class_day,
+      </if>
+      <if test="classOrder != null" >
+        class_order,
+      </if>
+      <if test="startWeek != null" >
+        start_week,
+      </if>
+      <if test="endWeek != null" >
+        end_week,
+      </if>
+      <if test="classInSchoolWeek != null" >
+        class_in_school_week,
+      </if>
+      <if test="courseSequenceNumber != null" >
+        course_sequence_number,
+      </if>
+      <if test="weekDescription != null" >
+        week_description,
+      </if>
+      <if test="classDistinct != null" >
+        class_distinct,
+      </if>
+      <if test="termYear != null" >
+        term_year,
+      </if>
+      <if test="termOrder != null" >
+        term_order,
+      </if>
+      <if test="gmtCreate != null" >
+        gmt_create,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="roomName != null" >
+        #{roomName,jdbcType=VARCHAR},
+      </if>
+      <if test="roomNumber != null" >
+        #{roomNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="campusName != null" >
+        #{campusName,jdbcType=VARCHAR},
+      </if>
+      <if test="continuingSession != null" >
+        #{continuingSession,jdbcType=INTEGER},
+      </if>
+      <if test="courseId != null" >
+        #{courseId,jdbcType=VARCHAR},
+      </if>
+      <if test="attendClassTeacher != null" >
+        #{attendClassTeacher,jdbcType=VARCHAR},
+      </if>
+      <if test="studentCount != null" >
+        #{studentCount,jdbcType=INTEGER},
+      </if>
+      <if test="classDay != null" >
+        #{classDay,jdbcType=INTEGER},
+      </if>
+      <if test="classOrder != null" >
+        #{classOrder,jdbcType=INTEGER},
+      </if>
+      <if test="startWeek != null" >
+        #{startWeek,jdbcType=INTEGER},
+      </if>
+      <if test="endWeek != null" >
+        #{endWeek,jdbcType=INTEGER},
+      </if>
+      <if test="classInSchoolWeek != null" >
+        #{classInSchoolWeek,jdbcType=VARCHAR},
+      </if>
+      <if test="courseSequenceNumber != null" >
+        #{courseSequenceNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="weekDescription != null" >
+        #{weekDescription,jdbcType=VARCHAR},
+      </if>
+      <if test="classDistinct != null" >
+        #{classDistinct,jdbcType=INTEGER},
+      </if>
+      <if test="termYear != null" >
+        #{termYear,jdbcType=CHAR},
+      </if>
+      <if test="termOrder != null" >
+        #{termOrder,jdbcType=INTEGER},
+      </if>
+      <if test="gmtCreate != null" >
+        #{gmtCreate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="cn.hkxj.platform.pojo.example.CourseTimetableExample" resultType="java.lang.Integer" >
+    select count(*) from course_timetable
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update course_timetable
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.roomName != null" >
+        room_name = #{record.roomName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.roomNumber != null" >
+        room_number = #{record.roomNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="record.campusName != null" >
+        campus_name = #{record.campusName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.continuingSession != null" >
+        continuing_session = #{record.continuingSession,jdbcType=INTEGER},
+      </if>
+      <if test="record.courseId != null" >
+        course_id = #{record.courseId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.attendClassTeacher != null" >
+        attend_class_teacher = #{record.attendClassTeacher,jdbcType=VARCHAR},
+      </if>
+      <if test="record.studentCount != null" >
+        student_count = #{record.studentCount,jdbcType=INTEGER},
+      </if>
+      <if test="record.classDay != null" >
+        class_day = #{record.classDay,jdbcType=INTEGER},
+      </if>
+      <if test="record.classOrder != null" >
+        class_order = #{record.classOrder,jdbcType=INTEGER},
+      </if>
+      <if test="record.startWeek != null" >
+        start_week = #{record.startWeek,jdbcType=INTEGER},
+      </if>
+      <if test="record.endWeek != null" >
+        end_week = #{record.endWeek,jdbcType=INTEGER},
+      </if>
+      <if test="record.classInSchoolWeek != null" >
+        class_in_school_week = #{record.classInSchoolWeek,jdbcType=VARCHAR},
+      </if>
+      <if test="record.courseSequenceNumber != null" >
+        course_sequence_number = #{record.courseSequenceNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="record.weekDescription != null" >
+        week_description = #{record.weekDescription,jdbcType=VARCHAR},
+      </if>
+      <if test="record.classDistinct != null" >
+        class_distinct = #{record.classDistinct,jdbcType=INTEGER},
+      </if>
+      <if test="record.termYear != null" >
+        term_year = #{record.termYear,jdbcType=CHAR},
+      </if>
+      <if test="record.termOrder != null" >
+        term_order = #{record.termOrder,jdbcType=INTEGER},
+      </if>
+      <if test="record.gmtCreate != null" >
+        gmt_create = #{record.gmtCreate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update course_timetable
+    set id = #{record.id,jdbcType=INTEGER},
+      room_name = #{record.roomName,jdbcType=VARCHAR},
+      room_number = #{record.roomNumber,jdbcType=VARCHAR},
+      campus_name = #{record.campusName,jdbcType=VARCHAR},
+      continuing_session = #{record.continuingSession,jdbcType=INTEGER},
+      course_id = #{record.courseId,jdbcType=VARCHAR},
+      attend_class_teacher = #{record.attendClassTeacher,jdbcType=VARCHAR},
+      student_count = #{record.studentCount,jdbcType=INTEGER},
+      class_day = #{record.classDay,jdbcType=INTEGER},
+      class_order = #{record.classOrder,jdbcType=INTEGER},
+      start_week = #{record.startWeek,jdbcType=INTEGER},
+      end_week = #{record.endWeek,jdbcType=INTEGER},
+      class_in_school_week = #{record.classInSchoolWeek,jdbcType=VARCHAR},
+      course_sequence_number = #{record.courseSequenceNumber,jdbcType=VARCHAR},
+      week_description = #{record.weekDescription,jdbcType=VARCHAR},
+      class_distinct = #{record.classDistinct,jdbcType=INTEGER},
+      term_year = #{record.termYear,jdbcType=CHAR},
+      term_order = #{record.termOrder,jdbcType=INTEGER},
+      gmt_create = #{record.gmtCreate,jdbcType=TIMESTAMP}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.hkxj.platform.pojo.CourseTimetable" >
+    update course_timetable
+    <set >
+      <if test="roomName != null" >
+        room_name = #{roomName,jdbcType=VARCHAR},
+      </if>
+      <if test="roomNumber != null" >
+        room_number = #{roomNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="campusName != null" >
+        campus_name = #{campusName,jdbcType=VARCHAR},
+      </if>
+      <if test="continuingSession != null" >
+        continuing_session = #{continuingSession,jdbcType=INTEGER},
+      </if>
+      <if test="courseId != null" >
+        course_id = #{courseId,jdbcType=VARCHAR},
+      </if>
+      <if test="attendClassTeacher != null" >
+        attend_class_teacher = #{attendClassTeacher,jdbcType=VARCHAR},
+      </if>
+      <if test="studentCount != null" >
+        student_count = #{studentCount,jdbcType=INTEGER},
+      </if>
+      <if test="classDay != null" >
+        class_day = #{classDay,jdbcType=INTEGER},
+      </if>
+      <if test="classOrder != null" >
+        class_order = #{classOrder,jdbcType=INTEGER},
+      </if>
+      <if test="startWeek != null" >
+        start_week = #{startWeek,jdbcType=INTEGER},
+      </if>
+      <if test="endWeek != null" >
+        end_week = #{endWeek,jdbcType=INTEGER},
+      </if>
+      <if test="classInSchoolWeek != null" >
+        class_in_school_week = #{classInSchoolWeek,jdbcType=VARCHAR},
+      </if>
+      <if test="courseSequenceNumber != null" >
+        course_sequence_number = #{courseSequenceNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="weekDescription != null" >
+        week_description = #{weekDescription,jdbcType=VARCHAR},
+      </if>
+      <if test="classDistinct != null" >
+        class_distinct = #{classDistinct,jdbcType=INTEGER},
+      </if>
+      <if test="termYear != null" >
+        term_year = #{termYear,jdbcType=CHAR},
+      </if>
+      <if test="termOrder != null" >
+        term_order = #{termOrder,jdbcType=INTEGER},
+      </if>
+      <if test="gmtCreate != null" >
+        gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.hkxj.platform.pojo.CourseTimetable" >
+    update course_timetable
+    set room_name = #{roomName,jdbcType=VARCHAR},
+      room_number = #{roomNumber,jdbcType=VARCHAR},
+      campus_name = #{campusName,jdbcType=VARCHAR},
+      continuing_session = #{continuingSession,jdbcType=INTEGER},
+      course_id = #{courseId,jdbcType=VARCHAR},
+      attend_class_teacher = #{attendClassTeacher,jdbcType=VARCHAR},
+      student_count = #{studentCount,jdbcType=INTEGER},
+      class_day = #{classDay,jdbcType=INTEGER},
+      class_order = #{classOrder,jdbcType=INTEGER},
+      start_week = #{startWeek,jdbcType=INTEGER},
+      end_week = #{endWeek,jdbcType=INTEGER},
+      class_in_school_week = #{classInSchoolWeek,jdbcType=VARCHAR},
+      course_sequence_number = #{courseSequenceNumber,jdbcType=VARCHAR},
+      week_description = #{weekDescription,jdbcType=VARCHAR},
+      class_distinct = #{classDistinct,jdbcType=INTEGER},
+      term_year = #{termYear,jdbcType=CHAR},
+      term_order = #{termOrder,jdbcType=INTEGER},
+      gmt_create = #{gmtCreate,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

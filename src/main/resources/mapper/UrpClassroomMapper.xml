@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.hkxj.platform.mapper.UrpClassroomMapper" >
+  <resultMap id="BaseResultMap" type="cn.hkxj.platform.pojo.UrpClassroom" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="number" property="number" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="campus_name" property="campusName" jdbcType="VARCHAR" />
+    <result column="campus_number" property="campusNumber" jdbcType="VARCHAR" />
+    <result column="seats" property="seats" jdbcType="INTEGER" />
+    <result column="teaching_building_name" property="teachingBuildingName" jdbcType="VARCHAR" />
+    <result column="teaching_building_number" property="teachingBuildingNumber" jdbcType="VARCHAR" />
+    <result column="department" property="department" jdbcType="VARCHAR" />
+    <result column="floor" property="floor" jdbcType="INTEGER" />
+    <result column="type" property="type" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, number, name, campus_name, campus_number, seats, teaching_building_name, teaching_building_number, 
+    department, floor, type
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="cn.hkxj.platform.pojo.example.UrpClassroomExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from urp_classroom
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from urp_classroom
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from urp_classroom
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="cn.hkxj.platform.pojo.example.UrpClassroomExample" >
+    delete from urp_classroom
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="cn.hkxj.platform.pojo.UrpClassroom" >
+    insert into urp_classroom (id, number, name, 
+      campus_name, campus_number, seats, 
+      teaching_building_name, teaching_building_number, 
+      department, floor, type
+      )
+    values (#{id,jdbcType=INTEGER}, #{number,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
+      #{campusName,jdbcType=VARCHAR}, #{campusNumber,jdbcType=VARCHAR}, #{seats,jdbcType=INTEGER}, 
+      #{teachingBuildingName,jdbcType=VARCHAR}, #{teachingBuildingNumber,jdbcType=VARCHAR}, 
+      #{department,jdbcType=VARCHAR}, #{floor,jdbcType=INTEGER}, #{type,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="cn.hkxj.platform.pojo.UrpClassroom" >
+    insert into urp_classroom
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="number != null" >
+        number,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="campusName != null" >
+        campus_name,
+      </if>
+      <if test="campusNumber != null" >
+        campus_number,
+      </if>
+      <if test="seats != null" >
+        seats,
+      </if>
+      <if test="teachingBuildingName != null" >
+        teaching_building_name,
+      </if>
+      <if test="teachingBuildingNumber != null" >
+        teaching_building_number,
+      </if>
+      <if test="department != null" >
+        department,
+      </if>
+      <if test="floor != null" >
+        floor,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="number != null" >
+        #{number,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="campusName != null" >
+        #{campusName,jdbcType=VARCHAR},
+      </if>
+      <if test="campusNumber != null" >
+        #{campusNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="seats != null" >
+        #{seats,jdbcType=INTEGER},
+      </if>
+      <if test="teachingBuildingName != null" >
+        #{teachingBuildingName,jdbcType=VARCHAR},
+      </if>
+      <if test="teachingBuildingNumber != null" >
+        #{teachingBuildingNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="department != null" >
+        #{department,jdbcType=VARCHAR},
+      </if>
+      <if test="floor != null" >
+        #{floor,jdbcType=INTEGER},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="cn.hkxj.platform.pojo.example.UrpClassroomExample" resultType="java.lang.Integer" >
+    select count(*) from urp_classroom
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update urp_classroom
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.number != null" >
+        number = #{record.number,jdbcType=VARCHAR},
+      </if>
+      <if test="record.name != null" >
+        name = #{record.name,jdbcType=VARCHAR},
+      </if>
+      <if test="record.campusName != null" >
+        campus_name = #{record.campusName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.campusNumber != null" >
+        campus_number = #{record.campusNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="record.seats != null" >
+        seats = #{record.seats,jdbcType=INTEGER},
+      </if>
+      <if test="record.teachingBuildingName != null" >
+        teaching_building_name = #{record.teachingBuildingName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.teachingBuildingNumber != null" >
+        teaching_building_number = #{record.teachingBuildingNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="record.department != null" >
+        department = #{record.department,jdbcType=VARCHAR},
+      </if>
+      <if test="record.floor != null" >
+        floor = #{record.floor,jdbcType=INTEGER},
+      </if>
+      <if test="record.type != null" >
+        type = #{record.type,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update urp_classroom
+    set id = #{record.id,jdbcType=INTEGER},
+      number = #{record.number,jdbcType=VARCHAR},
+      name = #{record.name,jdbcType=VARCHAR},
+      campus_name = #{record.campusName,jdbcType=VARCHAR},
+      campus_number = #{record.campusNumber,jdbcType=VARCHAR},
+      seats = #{record.seats,jdbcType=INTEGER},
+      teaching_building_name = #{record.teachingBuildingName,jdbcType=VARCHAR},
+      teaching_building_number = #{record.teachingBuildingNumber,jdbcType=VARCHAR},
+      department = #{record.department,jdbcType=VARCHAR},
+      floor = #{record.floor,jdbcType=INTEGER},
+      type = #{record.type,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.hkxj.platform.pojo.UrpClassroom" >
+    update urp_classroom
+    <set >
+      <if test="number != null" >
+        number = #{number,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="campusName != null" >
+        campus_name = #{campusName,jdbcType=VARCHAR},
+      </if>
+      <if test="campusNumber != null" >
+        campus_number = #{campusNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="seats != null" >
+        seats = #{seats,jdbcType=INTEGER},
+      </if>
+      <if test="teachingBuildingName != null" >
+        teaching_building_name = #{teachingBuildingName,jdbcType=VARCHAR},
+      </if>
+      <if test="teachingBuildingNumber != null" >
+        teaching_building_number = #{teachingBuildingNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="department != null" >
+        department = #{department,jdbcType=VARCHAR},
+      </if>
+      <if test="floor != null" >
+        floor = #{floor,jdbcType=INTEGER},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.hkxj.platform.pojo.UrpClassroom" >
+    update urp_classroom
+    set number = #{number,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR},
+      campus_name = #{campusName,jdbcType=VARCHAR},
+      campus_number = #{campusNumber,jdbcType=VARCHAR},
+      seats = #{seats,jdbcType=INTEGER},
+      teaching_building_name = #{teachingBuildingName,jdbcType=VARCHAR},
+      teaching_building_number = #{teachingBuildingNumber,jdbcType=VARCHAR},
+      department = #{department,jdbcType=VARCHAR},
+      floor = #{floor,jdbcType=INTEGER},
+      type = #{type,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

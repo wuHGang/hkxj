@@ -91,4 +91,12 @@ public class SearchCourseResult {
     private String RN;
 
 
+    public String getCredit(){
+        return credit.startsWith(".") ? "0" + credit : credit;
+    }
+
+    public String getTermYear(){
+        return termName.substring(0, 9);
+    }
+
 }

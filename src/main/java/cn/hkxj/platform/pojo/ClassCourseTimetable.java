@@ -5,14 +5,12 @@ import lombok.experimental.Accessors;
 
 @Data
 @Accessors(chain = true)
-public class TeacherCourse {
+public class ClassCourseTimetable {
     private Integer id;
 
-    private String teacherId;
+    private String classId;
 
-    private String courseId;
-
-    private String courseOrder;
+    private Integer courseTimetableId;
 
     private String termYear;
 

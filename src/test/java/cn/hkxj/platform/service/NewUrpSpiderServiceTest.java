@@ -1,23 +1,24 @@
 package cn.hkxj.platform.service;
 
 import cn.hkxj.platform.PlatformApplication;
+import cn.hkxj.platform.dao.CourseDao;
+import cn.hkxj.platform.dao.CourseTimeTableDao;
+import cn.hkxj.platform.dao.CourseTimeTableDetailDao;
 import cn.hkxj.platform.dao.StudentDao;
-import cn.hkxj.platform.pojo.Classes;
-import cn.hkxj.platform.pojo.GradeSearchResult;
-import cn.hkxj.platform.pojo.Student;
+import cn.hkxj.platform.pojo.*;
 import cn.hkxj.platform.spider.NewUrpSpider;
 import cn.hkxj.platform.spider.newmodel.SearchResult;
 import cn.hkxj.platform.spider.newmodel.coursetimetable.UrpCourseTimeTableForSpider;
+import cn.hkxj.platform.spider.newmodel.searchclass.ClassInfoSearchResult;
 import cn.hkxj.platform.spider.newmodel.searchclassroom.SearchClassroomPost;
 import cn.hkxj.platform.spider.newmodel.searchclassroom.SearchClassroomResult;
 import cn.hkxj.platform.spider.newmodel.searchclassroom.SearchResultWrapper;
-import cn.hkxj.platform.spider.newmodel.searchclass.ClassCourseSearchResult;
-import cn.hkxj.platform.spider.newmodel.searchclass.ClassInfoSearchResult;
-import cn.hkxj.platform.spider.newmodel.searchclass.Records;
+import cn.hkxj.platform.spider.newmodel.searchclass.CourseTimetableSearchResult;
 import cn.hkxj.platform.spider.newmodel.searchcourse.SearchCoursePost;
 import cn.hkxj.platform.spider.newmodel.searchcourse.SearchCourseResult;
 import cn.hkxj.platform.spider.newmodel.searchteacher.SearchTeacherPost;
 import cn.hkxj.platform.spider.newmodel.searchteacher.SearchTeacherResult;
+import com.google.common.base.Splitter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.junit.Test;
@@ -41,6 +42,12 @@ public class NewUrpSpiderServiceTest {
     private NewGradeSearchService newGradeSearchService;
     @Resource
     private StudentDao studentDao;
+    @Resource
+    private CourseDao courseDao;
+    @Resource
+    private CourseTimeTableDetailDao courseTimeTableDetailDao;
+    @Resource
+    private CourseTimeTableDao courseTimeTableDao;
 
     private ExecutorService cacheThreadPool = Executors.newFixedThreadPool(10);
 
@@ -134,10 +141,10 @@ public class NewUrpSpiderServiceTest {
 
     @Test
     public void testGetClassInfoSearchResult() {
-        List<ClassInfoSearchResult> result = newUrpSpiderService.getClassInfoSearchResult("2017023081", "1", null);
+        List<SearchResult<ClassInfoSearchResult>> result = newUrpSpiderService.getClassInfoSearchResult(null);
         if(CollectionUtils.isNotEmpty(result)){
-            for (ClassInfoSearchResult searchResult : result) {
-                for (Records record : searchResult.getRecords()) {
+            for (SearchResult<ClassInfoSearchResult> searchResult: result) {
+                for (ClassInfoSearchResult record : searchResult.getRecords()) {
                     System.out.println(record);
                 }
 
@@ -149,7 +156,7 @@ public class NewUrpSpiderServiceTest {
 
     @Test
     public void testSearchClassTimeTable() {
-        for (List<ClassCourseSearchResult> result : newUrpSpiderService.searchClassTimeTable("2017023081", "1", "2016020002")) {
+        for (List<CourseTimetableSearchResult> result : newUrpSpiderService.searchClassTimeTable("2017023081", "1", "2016020002")) {
             System.out.println(result.size());
         }
 
@@ -159,8 +166,7 @@ public class NewUrpSpiderServiceTest {
     public void searchTeacherInfo() {
         SearchTeacherPost post = new SearchTeacherPost();
         post.setExecutiveEducationPlanNum("2019-2020-1-1");
-        for (SearchResult<SearchTeacherResult> result : newUrpSpiderService.searchTeacherInfo("2014025838", "1",
-                post)) {
+        for (SearchResult<SearchTeacherResult> result : newUrpSpiderService.searchTeacherInfo(post)) {
             for (SearchTeacherResult record : result.getRecords()) {
                 System.out.println(record);
             }
@@ -169,8 +175,8 @@ public class NewUrpSpiderServiceTest {
 
     @Test
     public void getUrpCourseTimeTableByTeacherAccount() {
-        for (List<ClassCourseSearchResult> result : newUrpSpiderService.getUrpCourseTimeTableByTeacherAccount("2017023081", "1", "1982800009")) {
-            for (ClassCourseSearchResult searchResult : result) {
+        for (List<CourseTimetableSearchResult> result : newUrpSpiderService.searchCourseTimetableByTeacher( "1982800009")) {
+            for (CourseTimetableSearchResult searchResult : result) {
                 System.out.println(searchResult);
             }
 
@@ -201,17 +207,81 @@ public class NewUrpSpiderServiceTest {
             .setPageNum(Integer.toString(x))
             .setPageSize("30");
             for (SearchCourseResult record : newUrpSpiderService.searchCourseInfo(post).getRecords()) {
-                System.out.println(record);
+                String credit = record.getCredit();
+                String termName = record.getTermName();
+                String termYear = termName.substring(0, 9);
+                int termOrder = getTermOrder(termName);
+
+                Course course = new Course()
+                        .setName(record.getCourseName())
+                        .setNum(record.getCourseId())
+                        .setCourseOrder(record.getCourseOrder())
+                        .setCredit(credit)
+                        .setAcademyCode(record.getAcademyCode())
+                        .setAcademyName(record.getAcademyName())
+                        .setTeacherName(record.getTeacherNameList())
+                        .setTeacherAccount(record.getTermNumber())
+                        .setCourseType(record.getCourseTypeName())
+                        .setCourseTypeCode(record.getCourseTypeCode())
+                        .setExamType(record.getExamTypeName())
+                        .setExamTypeCode(record.getExamTypeCode())
+                        .setTermYear(termYear)
+                        .setTermOrder(termOrder);
+            }
+        }
+
+    }
+
+    @Test
+    public void searchCourseTimeTable(){
+
+        Splitter splitter = Splitter.on(",").omitEmptyStrings().trimResults();
+        for (Course course : courseDao.getAllCourse()) {
+            List<List<CourseTimetableSearchResult>> searchCourseTimeTable;
+            try {
+                searchCourseTimeTable = newUrpSpiderService.searchCourseTimeTable(course);
+            }catch (Exception e){
+                System.out.println(course);
+                continue;
+            }
+
+            for (List<CourseTimetableSearchResult> resultList : searchCourseTimeTable) {
+                for (CourseTimetableSearchResult result : resultList) {
+                    if(result.getClassIdList() == null){
+                        log.error("重修课{}", result.toString());
+                    }
+
+                    for (CourseTimetable timetable : result.transToCourseTimetable()) {
+                        List<CourseTimetable> timetableList = courseTimeTableDao.selectByCourseTimetable(timetable);
+
+                        // 这里19级的课数据库中没有对应的记录 应该插入一条新的记录
+                        if(timetableList.size() == 0){
+                            courseTimeTableDao.insertSelective(timetable);
+                        }if(timetableList.size() == 1){
+                            log.error("重复数据 {}", timetable);
+                        }
+                        //这里对应的是某节课存在跨周上课的问题
+                        else {
+                            for (CourseTimetable tableDetail : timetableList) {
+                                System.out.println(tableDetail);
+                            }
+                        }
+                    }
+                }
+
             }
         }
 
 
-//        for (SearchResult<SearchCourseResult> searchResult : ) {
-//            for (SearchCourseResult record : searchResult.getRecords()) {
-//                System.out.println(record);
-//            }
-//
-//        }
+
+    }
+
+    private int getTermOrder(String termName){
+        if(termName.contains("一")){
+            return 1;
+        }else {
+            return 2;
+        }
 
     }
 

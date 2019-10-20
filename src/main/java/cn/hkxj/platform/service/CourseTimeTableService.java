@@ -7,6 +7,7 @@ import cn.hkxj.platform.pojo.dto.CourseTimeTableDetailDto;
 import cn.hkxj.platform.spider.newmodel.coursetimetable.TimeAndPlace;
 import cn.hkxj.platform.spider.newmodel.coursetimetable.UrpCourseTimeTable;
 import cn.hkxj.platform.spider.newmodel.coursetimetable.UrpCourseTimeTableForSpider;
+import cn.hkxj.platform.spider.newmodel.searchclass.CourseTimetableSearchResult;
 import cn.hkxj.platform.utils.DateUtils;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
@@ -84,18 +85,6 @@ public class CourseTimeTableService {
     public List<CourseTimeTableDetailDto> getAllCourseTimeTableDetailDtos(int account) {
         Student student = studentDao.selectStudentByAccount(account);
         List<CourseTimeTableDetail> details = getAllCourseTimeTableDetails(student);
-        return assembleCourseTimeTableDto(details);
-    }
-
-    public List<CourseTimeTableDetailDto> getCurrentDayCourseTimeTableDetailDtos(int account) {
-        Student student = studentDao.selectStudentByAccount(account);
-        List<CourseTimeTableDetail> details = getDetailsForCurrentDay(student);
-        return assembleCourseTimeTableDto(details);
-    }
-
-    public List<CourseTimeTableDetailDto> getCurrentWeekCourseTimeTableDetailDtos(int account) {
-        Student student = studentDao.selectStudentByAccount(account);
-        List<CourseTimeTableDetail> details = getDetailsForCurrentWeek(student);
         return assembleCourseTimeTableDto(details);
     }
 
@@ -320,6 +309,9 @@ public class CourseTimeTableService {
         }
     }
 
+    /**
+     * 将课程搜索结果保存到数据库中
+     */
     @Transactional(rollbackFor = Exception.class)
     public void saveCourseTimeTableDetailsToDb(UrpCourseTimeTable urpCourseTimeTable, CourseTimeTableBasicInfo basicInfo, Student student)  {
         if (CollectionUtils.isEmpty(urpCourseTimeTable.getTimeAndPlaceList())) {
@@ -366,6 +358,19 @@ public class CourseTimeTableService {
                 saveClassAndDetailRelative(idList, student, basicInfo.getTermYear(), basicInfo.getTermOrder());
             }
         }
+    }
+
+    /**
+     * 将课程搜索结果保存到数据库中，数据来源是不包含学生信息
+     *
+     * @param result
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void saveCourseTimeTableDetailsFromSearch(CourseTimetableSearchResult result){
+        for (int[] ints : TimeAndPlace.parseWeek(result.getWeekDescription())) {
+
+        }
+
     }
 
     private void saveClassAndDetailRelative(List<Integer> needInsertIds, Student student, String termYear, Integer termOrder) {

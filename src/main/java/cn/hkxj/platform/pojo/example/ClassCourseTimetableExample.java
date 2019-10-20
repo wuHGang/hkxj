@@ -3,14 +3,14 @@ package cn.hkxj.platform.pojo.example;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TeacherCourseExample {
+public class ClassCourseTimetableExample {
     protected String orderByClause;
 
     protected boolean distinct;
 
     protected List<Criteria> oredCriteria;
 
-    public TeacherCourseExample() {
+    public ClassCourseTimetableExample() {
         oredCriteria = new ArrayList<Criteria>();
     }
 
@@ -164,213 +164,133 @@ public class TeacherCourseExample {
             return (Criteria) this;
         }
 
-        public Criteria andTeacherIdIsNull() {
-            addCriterion("teacher_id is null");
+        public Criteria andClassIdIsNull() {
+            addCriterion("class_id is null");
             return (Criteria) this;
         }
 
-        public Criteria andTeacherIdIsNotNull() {
-            addCriterion("teacher_id is not null");
+        public Criteria andClassIdIsNotNull() {
+            addCriterion("class_id is not null");
             return (Criteria) this;
         }
 
-        public Criteria andTeacherIdEqualTo(String value) {
-            addCriterion("teacher_id =", value, "teacherId");
+        public Criteria andClassIdEqualTo(String value) {
+            addCriterion("class_id =", value, "classId");
             return (Criteria) this;
         }
 
-        public Criteria andTeacherIdNotEqualTo(String value) {
-            addCriterion("teacher_id <>", value, "teacherId");
+        public Criteria andClassIdNotEqualTo(String value) {
+            addCriterion("class_id <>", value, "classId");
             return (Criteria) this;
         }
 
-        public Criteria andTeacherIdGreaterThan(String value) {
-            addCriterion("teacher_id >", value, "teacherId");
+        public Criteria andClassIdGreaterThan(String value) {
+            addCriterion("class_id >", value, "classId");
             return (Criteria) this;
         }
 
-        public Criteria andTeacherIdGreaterThanOrEqualTo(String value) {
-            addCriterion("teacher_id >=", value, "teacherId");
+        public Criteria andClassIdGreaterThanOrEqualTo(String value) {
+            addCriterion("class_id >=", value, "classId");
             return (Criteria) this;
         }
 
-        public Criteria andTeacherIdLessThan(String value) {
-            addCriterion("teacher_id <", value, "teacherId");
+        public Criteria andClassIdLessThan(String value) {
+            addCriterion("class_id <", value, "classId");
             return (Criteria) this;
         }
 
-        public Criteria andTeacherIdLessThanOrEqualTo(String value) {
-            addCriterion("teacher_id <=", value, "teacherId");
+        public Criteria andClassIdLessThanOrEqualTo(String value) {
+            addCriterion("class_id <=", value, "classId");
             return (Criteria) this;
         }
 
-        public Criteria andTeacherIdLike(String value) {
-            addCriterion("teacher_id like", value, "teacherId");
+        public Criteria andClassIdLike(String value) {
+            addCriterion("class_id like", value, "classId");
             return (Criteria) this;
         }
 
-        public Criteria andTeacherIdNotLike(String value) {
-            addCriterion("teacher_id not like", value, "teacherId");
+        public Criteria andClassIdNotLike(String value) {
+            addCriterion("class_id not like", value, "classId");
             return (Criteria) this;
         }
 
-        public Criteria andTeacherIdIn(List<String> values) {
-            addCriterion("teacher_id in", values, "teacherId");
+        public Criteria andClassIdIn(List<String> values) {
+            addCriterion("class_id in", values, "classId");
             return (Criteria) this;
         }
 
-        public Criteria andTeacherIdNotIn(List<String> values) {
-            addCriterion("teacher_id not in", values, "teacherId");
+        public Criteria andClassIdNotIn(List<String> values) {
+            addCriterion("class_id not in", values, "classId");
             return (Criteria) this;
         }
 
-        public Criteria andTeacherIdBetween(String value1, String value2) {
-            addCriterion("teacher_id between", value1, value2, "teacherId");
+        public Criteria andClassIdBetween(String value1, String value2) {
+            addCriterion("class_id between", value1, value2, "classId");
             return (Criteria) this;
         }
 
-        public Criteria andTeacherIdNotBetween(String value1, String value2) {
-            addCriterion("teacher_id not between", value1, value2, "teacherId");
+        public Criteria andClassIdNotBetween(String value1, String value2) {
+            addCriterion("class_id not between", value1, value2, "classId");
             return (Criteria) this;
         }
 
-        public Criteria andCourseIdIsNull() {
-            addCriterion("course_id is null");
+        public Criteria andCourseTimetableIdIsNull() {
+            addCriterion("course_timetable_id is null");
             return (Criteria) this;
         }
 
-        public Criteria andCourseIdIsNotNull() {
-            addCriterion("course_id is not null");
+        public Criteria andCourseTimetableIdIsNotNull() {
+            addCriterion("course_timetable_id is not null");
             return (Criteria) this;
         }
 
-        public Criteria andCourseIdEqualTo(String value) {
-            addCriterion("course_id =", value, "courseId");
+        public Criteria andCourseTimetableIdEqualTo(Integer value) {
+            addCriterion("course_timetable_id =", value, "courseTimetableId");
             return (Criteria) this;
         }
 
-        public Criteria andCourseIdNotEqualTo(String value) {
-            addCriterion("course_id <>", value, "courseId");
+        public Criteria andCourseTimetableIdNotEqualTo(Integer value) {
+            addCriterion("course_timetable_id <>", value, "courseTimetableId");
             return (Criteria) this;
         }
 
-        public Criteria andCourseIdGreaterThan(String value) {
-            addCriterion("course_id >", value, "courseId");
+        public Criteria andCourseTimetableIdGreaterThan(Integer value) {
+            addCriterion("course_timetable_id >", value, "courseTimetableId");
             return (Criteria) this;
         }
 
-        public Criteria andCourseIdGreaterThanOrEqualTo(String value) {
-            addCriterion("course_id >=", value, "courseId");
+        public Criteria andCourseTimetableIdGreaterThanOrEqualTo(Integer value) {
+            addCriterion("course_timetable_id >=", value, "courseTimetableId");
             return (Criteria) this;
         }
 
-        public Criteria andCourseIdLessThan(String value) {
-            addCriterion("course_id <", value, "courseId");
+        public Criteria andCourseTimetableIdLessThan(Integer value) {
+            addCriterion("course_timetable_id <", value, "courseTimetableId");
             return (Criteria) this;
         }
 
-        public Criteria andCourseIdLessThanOrEqualTo(String value) {
-            addCriterion("course_id <=", value, "courseId");
+        public Criteria andCourseTimetableIdLessThanOrEqualTo(Integer value) {
+            addCriterion("course_timetable_id <=", value, "courseTimetableId");
             return (Criteria) this;
         }
 
-        public Criteria andCourseIdLike(String value) {
-            addCriterion("course_id like", value, "courseId");
+        public Criteria andCourseTimetableIdIn(List<Integer> values) {
+            addCriterion("course_timetable_id in", values, "courseTimetableId");
             return (Criteria) this;
         }
 
-        public Criteria andCourseIdNotLike(String value) {
-            addCriterion("course_id not like", value, "courseId");
+        public Criteria andCourseTimetableIdNotIn(List<Integer> values) {
+            addCriterion("course_timetable_id not in", values, "courseTimetableId");
             return (Criteria) this;
         }
 
-        public Criteria andCourseIdIn(List<String> values) {
-            addCriterion("course_id in", values, "courseId");
+        public Criteria andCourseTimetableIdBetween(Integer value1, Integer value2) {
+            addCriterion("course_timetable_id between", value1, value2, "courseTimetableId");
             return (Criteria) this;
         }
 
-        public Criteria andCourseIdNotIn(List<String> values) {
-            addCriterion("course_id not in", values, "courseId");
-            return (Criteria) this;
-        }
-
-        public Criteria andCourseIdBetween(String value1, String value2) {
-            addCriterion("course_id between", value1, value2, "courseId");
-            return (Criteria) this;
-        }
-
-        public Criteria andCourseIdNotBetween(String value1, String value2) {
-            addCriterion("course_id not between", value1, value2, "courseId");
-            return (Criteria) this;
-        }
-
-        public Criteria andCourseOrderIsNull() {
-            addCriterion("course_order is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andCourseOrderIsNotNull() {
-            addCriterion("course_order is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andCourseOrderEqualTo(String value) {
-            addCriterion("course_order =", value, "courseOrder");
-            return (Criteria) this;
-        }
-
-        public Criteria andCourseOrderNotEqualTo(String value) {
-            addCriterion("course_order <>", value, "courseOrder");
-            return (Criteria) this;
-        }
-
-        public Criteria andCourseOrderGreaterThan(String value) {
-            addCriterion("course_order >", value, "courseOrder");
-            return (Criteria) this;
-        }
-
-        public Criteria andCourseOrderGreaterThanOrEqualTo(String value) {
-            addCriterion("course_order >=", value, "courseOrder");
-            return (Criteria) this;
-        }
-
-        public Criteria andCourseOrderLessThan(String value) {
-            addCriterion("course_order <", value, "courseOrder");
-            return (Criteria) this;
-        }
-
-        public Criteria andCourseOrderLessThanOrEqualTo(String value) {
-            addCriterion("course_order <=", value, "courseOrder");
-            return (Criteria) this;
-        }
-
-        public Criteria andCourseOrderLike(String value) {
-            addCriterion("course_order like", value, "courseOrder");
-            return (Criteria) this;
-        }
-
-        public Criteria andCourseOrderNotLike(String value) {
-            addCriterion("course_order not like", value, "courseOrder");
-            return (Criteria) this;
-        }
-
-        public Criteria andCourseOrderIn(List<String> values) {
-            addCriterion("course_order in", values, "courseOrder");
-            return (Criteria) this;
-        }
-
-        public Criteria andCourseOrderNotIn(List<String> values) {
-            addCriterion("course_order not in", values, "courseOrder");
-            return (Criteria) this;
-        }
-
-        public Criteria andCourseOrderBetween(String value1, String value2) {
-            addCriterion("course_order between", value1, value2, "courseOrder");
-            return (Criteria) this;
-        }
-
-        public Criteria andCourseOrderNotBetween(String value1, String value2) {
-            addCriterion("course_order not between", value1, value2, "courseOrder");
+        public Criteria andCourseTimetableIdNotBetween(Integer value1, Integer value2) {
+            addCriterion("course_timetable_id not between", value1, value2, "courseTimetableId");
             return (Criteria) this;
         }
 

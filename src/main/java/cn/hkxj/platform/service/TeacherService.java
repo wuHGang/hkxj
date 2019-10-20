@@ -10,7 +10,7 @@ import cn.hkxj.platform.pojo.TeacherClass;
 import cn.hkxj.platform.pojo.TeacherCourse;
 import cn.hkxj.platform.pojo.constant.Academy;
 import cn.hkxj.platform.spider.newmodel.SearchResult;
-import cn.hkxj.platform.spider.newmodel.searchclass.ClassCourseSearchResult;
+import cn.hkxj.platform.spider.newmodel.searchclass.CourseTimetableSearchResult;
 import cn.hkxj.platform.spider.newmodel.searchteacher.SearchTeacherPost;
 import cn.hkxj.platform.spider.newmodel.searchteacher.SearchTeacherResult;
 import com.google.common.base.Splitter;
@@ -42,7 +42,7 @@ public class TeacherService {
         SearchTeacherPost post = new SearchTeacherPost();
         post.setExecutiveEducationPlanNum("2019-2020-1-1");
 
-        for (SearchResult<SearchTeacherResult> result : newUrpSpiderService.searchTeacherInfo("2017023081", "1", post)) {
+        for (SearchResult<SearchTeacherResult> result : newUrpSpiderService.searchTeacherInfo( post)) {
             for (SearchTeacherResult record : result.getRecords()) {
                 Teacher teacher = spiderDataToPojo(record);
                 saveTeacherDate(teacher);
@@ -59,9 +59,8 @@ public class TeacherService {
         HashSet<TeacherClass> classNumSet = new HashSet<>();
         HashSet<TeacherCourse> courseIdSet = new HashSet<>();
 
-        for (List<ClassCourseSearchResult> searchResults : newUrpSpiderService.getUrpCourseTimeTableByTeacherAccount(student.getAccount().toString(),
-                student.getPassword(), teacher.getAccount())) {
-            for (ClassCourseSearchResult result : searchResults) {
+        for (List<CourseTimetableSearchResult> searchResults : newUrpSpiderService.searchCourseTimetableByTeacher(teacher.getAccount())) {
+            for (CourseTimetableSearchResult result : searchResults) {
 
                 String termName = result.getTermName();
                 String termYear = termName.substring(0, 9);

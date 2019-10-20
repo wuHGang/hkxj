@@ -140,7 +140,7 @@ public class RoomService {
 
 	private Room parseForScienceBuilding(String classroomName, Character second){
 		Room room = new Room();
-		int[] floorAndNumber = getFloorAndNumber(classroomName.substring(2, classroomName.length()), 1);
+		int[] floorAndNumber = getFloorAndNumber(classroomName.substring(2), 1);
 		room.setName(classroomName);
 		room.setArea(Building.SCIENCE);
 		room.setDirection(Direction.getDirectionObjectByDirection(second.toString()));

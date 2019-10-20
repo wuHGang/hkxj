@@ -4,9 +4,9 @@ package cn.hkxj.platform;
 import cn.hkxj.platform.pojo.UrpCourse;
 import cn.hkxj.platform.service.NewUrpSpiderService;
 import cn.hkxj.platform.service.UrpCourseService;
-import cn.hkxj.platform.spider.newmodel.searchclass.ClassCourseSearchResult;
+import cn.hkxj.platform.spider.newmodel.SearchResult;
 import cn.hkxj.platform.spider.newmodel.searchclass.ClassInfoSearchResult;
-import cn.hkxj.platform.spider.newmodel.searchclass.Records;
+import cn.hkxj.platform.spider.newmodel.searchclass.CourseTimetableSearchResult;
 import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
@@ -41,32 +41,32 @@ public class CourseRank {
 
     @Test
     public void testRank() throws IOException, InterruptedException {
-        ConcurrentHashMap<Records, Pair<Integer, Set<UrpCourse>>> map = new ConcurrentHashMap<>();
+        ConcurrentHashMap<ClassInfoSearchResult, Pair<Integer, Set<UrpCourse>>> map = new ConcurrentHashMap<>();
         LinkedBlockingQueue<Runnable> queue = new LinkedBlockingQueue<>();
 
         ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(9, 9, 0L, TimeUnit.MILLISECONDS, queue);
         HashSet<UrpCourse> allCourseSet = new HashSet<>();
 
         AtomicInteger sizeCount = new AtomicInteger(1);
-        List<ClassInfoSearchResult> classInfoSearchResult = newUrpSpiderService.getClassInfoSearchResult("2014025838"
-                , "1", null);
+        List<SearchResult<ClassInfoSearchResult>> classInfoSearchResult = newUrpSpiderService.getClassInfoSearchResult(null);
+
 
         int totalSize = classInfoSearchResult.get(0).getRecords().size();
 
         CountDownLatch latch = new CountDownLatch(totalSize);
 
-        for (ClassInfoSearchResult searchResult : classInfoSearchResult) {
+        for (SearchResult<ClassInfoSearchResult> searchResult : classInfoSearchResult) {
 
-            for (Records record : searchResult.getRecords()) {
+            for (ClassInfoSearchResult record : searchResult.getRecords()) {
                 threadPoolExecutor.submit(() -> {
                     long start = System.currentTimeMillis();
                     try{
 
                         String classNum = record.getId().getClassNum();
                         HashSet<UrpCourse> set = new HashSet<>();
-                        for (List<ClassCourseSearchResult> resultList : newUrpSpiderService.searchClassTimeTable("2014025838", "1", classNum)) {
+                        for (List<CourseTimetableSearchResult> resultList : newUrpSpiderService.searchClassTimeTable("2014025838", "1", classNum)) {
 
-                            for (ClassCourseSearchResult result : resultList) {
+                            for (CourseTimetableSearchResult result : resultList) {
                                 UrpCourse course = urpCourseService.getUrpCourseByCourseId(result.getId().getCourseId());
                                 set.add(course);
                             }
@@ -92,9 +92,9 @@ public class CourseRank {
         courseRank(allCourseSet);
     }
 
-    private void handlerClassCourseHour(Map<Records, Pair<Integer, Set<UrpCourse>>> map){
-        ArrayList<Map.Entry<Records, Pair<Integer, Set<UrpCourse>>>> list = Lists.newArrayList(map.entrySet());
-        list.sort(((Comparator<Map.Entry<Records, Pair<Integer, Set<UrpCourse>>>>) (o1, o2) -> {
+    private void handlerClassCourseHour(Map<ClassInfoSearchResult, Pair<Integer, Set<UrpCourse>>> map){
+        ArrayList<Map.Entry<ClassInfoSearchResult, Pair<Integer, Set<UrpCourse>>>> list = Lists.newArrayList(map.entrySet());
+        list.sort(((Comparator<Map.Entry<ClassInfoSearchResult, Pair<Integer, Set<UrpCourse>>>>) (o1, o2) -> {
             return Integer.compare(o1.getValue().getKey(), o2.getValue().getKey());
         }).reversed());
 
@@ -124,7 +124,7 @@ public class CourseRank {
     @lombok.Data
     @AllArgsConstructor
     private class ClassCourseHour {
-        private Records classInfo;
+        private ClassInfoSearchResult classInfo;
         private int courseHourCount;
         private Set<UrpCourse> urpCourseSet;
     }

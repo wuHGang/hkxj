@@ -1,110 +1,38 @@
 package cn.hkxj.platform.pojo;
 
-import cn.hkxj.platform.pojo.constant.Academy;
-import cn.hkxj.platform.pojo.constant.CourseType;
-import com.google.common.base.MoreObjects;
-import com.google.common.base.Objects;
+import lombok.Data;
+import lombok.experimental.Accessors;
 
-import java.util.Date;
-
+@Data
+@Accessors(chain = true)
 public class Course {
     private Integer id;
 
-    private String uid;
-
     private String name;
 
-    private Academy academy;
+    private String num;
 
-    private Integer credit;
+    private String courseOrder;
 
-    private CourseType type;
+    private String termYear;
 
-    private Date gmtCreate;
+    private Integer termOrder;
 
-    public Integer getId() {
-        return id;
-    }
+    private String teacherAccount;
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+    private String teacherName;
 
-    public String getUid() {
-        return uid;
-    }
+    private String examType;
 
-    public void setUid(String uid) {
-        this.uid = uid == null ? null : uid.trim();
-    }
+    private String examTypeCode;
 
-    public String getName() {
-        return name;
-    }
+    private String academyName;
 
-    public void setName(String name) {
-        this.name = name == null ? null : name.trim();
-    }
+    private String academyCode;
 
-    public Academy getAcademy() {
-        return academy;
-    }
+    private String courseType;
 
-    public void setAcademy(Academy academy) {
-        this.academy = academy;
-    }
+    private String courseTypeCode;
 
-    public Integer getCredit() {
-        return credit;
-    }
-
-    public void setCredit(Integer credit) {
-        this.credit = credit;
-    }
-
-    public CourseType getType() {
-        return type;
-    }
-
-    public void setType(CourseType type) {
-        this.type = type;
-    }
-
-    public Date getGmtCreate() {
-        return gmtCreate;
-    }
-
-    public void setGmtCreate(Date gmtCreate) {
-        this.gmtCreate = gmtCreate;
-    }
-
-    @Override
-    public String toString() {
-        return MoreObjects.toStringHelper(this)
-                .add("id", id)
-                .add("uid", uid)
-                .add("name", name)
-                .add("academy", academy)
-                .add("credit", credit)
-                .add("type", type)
-                .add("gmtCreate", gmtCreate)
-                .toString();
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Course that = (Course) o;
-
-        return Objects.equal(this.uid, that.uid) &&
-                Objects.equal(this.name, that.name) &&
-                Objects.equal(this.type, that.type);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(uid, name, credit);
-    }
+    private String credit;
 }

@@ -14,8 +14,21 @@ public class UrpClassRoomDao {
     private UrpClassroomMapper urpClassroomMapper;
 
     public List<UrpClassroom> getAllClassroom(){
+        return selectByClassroom(new UrpClassroom());
+    }
+
+    public List<UrpClassroom> selectByClassroom(UrpClassroom urpClassroom){
         UrpClassroomExample urpClassroomExample = new UrpClassroomExample();
+        UrpClassroomExample.Criteria criteria = urpClassroomExample.createCriteria();
+
+        if(urpClassroom.getNumber() != null){
+            criteria.andNumberEqualTo(urpClassroom.getNumber());
+        }
 
         return urpClassroomMapper.selectByExample(urpClassroomExample);
+    }
+
+    public void insertSelective(UrpClassroom urpClassroom){
+        urpClassroomMapper.insertSelective(urpClassroom);
     }
 }

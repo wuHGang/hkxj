@@ -5,7 +5,7 @@ import cn.hkxj.platform.pojo.constant.Academy;
 import cn.hkxj.platform.pojo.Classes;
 import cn.hkxj.platform.pojo.Subject;
 import cn.hkxj.platform.spider.model.UrpStudentInfo;
-import cn.hkxj.platform.spider.newmodel.searchclass.Records;
+import cn.hkxj.platform.spider.newmodel.searchclass.ClassInfoSearchResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -100,9 +100,9 @@ public class ClassService {
         return buildClazzByStudent(studentWrapper);
     }
 
-    public Classes parseClassFormSearchResult(Records records){
+    public Classes parseClassFormSearchResult(ClassInfoSearchResult classInfoSearchResult){
         Classes classes = new Classes();
-        String classname = records.getClassName();
+        String classname = classInfoSearchResult.getClassName();
         classes.setNum(1);
 
         if(classname.endsWith("班")){
@@ -119,9 +119,9 @@ public class ClassService {
             classes = parseText(classname);
         }
 
-        classes.setYear(Integer.valueOf(records.getAdmissionGrade().substring(2, 4)));
-        classes.setAcademy(Academy.getAcademyByUrpCode(Integer.valueOf(records.getDepartmentNum())).getAcademyCode());
-        Subject subjectByName = subjectService.getSubjectByName(records.getSubjectName());
+        classes.setYear(Integer.valueOf(classInfoSearchResult.getAdmissionGrade().substring(2, 4)));
+        classes.setAcademy(Academy.getAcademyByUrpCode(Integer.valueOf(classInfoSearchResult.getDepartmentNum())).getAcademyCode());
+        Subject subjectByName = subjectService.getSubjectByName(classInfoSearchResult.getSubjectName());
         classes.setSubject(subjectByName.getId());
 
         return classes;

@@ -93,17 +93,36 @@ public class CourseTimeTableDetailDao {
 
     public List<CourseTimeTableDetail> selectByDetail(CourseTimeTableDetail detail){
         CourseTimeTableDetailExample example = new CourseTimeTableDetailExample();
-        Term term = detail.getTermForCourseTimeTableDetail();
-        example.createCriteria()
-                .andTermOrderEqualTo(detail.getTermOrder())
-                .andTermYearEqualTo(term.getTermYear())
-                .andCourseIdEqualTo(detail.getCourseId())
-                .andRoomNameEqualTo(detail.getRoomName())
-                .andStartWeekEqualTo(detail.getStartWeek())
-                .andEndWeekEqualTo(detail.getEndWeek())
+
+
+        CourseTimeTableDetailExample.Criteria criteria = example.createCriteria()
                 .andDayEqualTo(detail.getDay())
-                .andWeekEqualTo(detail.getWeek())
                 .andOrderEqualTo(detail.getOrder());
+
+        if(detail.getTermYear() != null){
+            Term term = detail.getTermForCourseTimeTableDetail();
+            criteria.andTermYearEqualTo(term.getTermYear());
+        }
+        if(detail.getTermOrder() != null){
+            criteria.andTermOrderEqualTo(detail.getTermOrder());
+        }
+        if(detail.getRoomName() != null){
+            criteria.andRoomNameEqualTo(detail.getRoomName());
+        }
+
+        if(detail.getCourseId() != null){
+            criteria.andCourseIdEqualTo(detail.getCourseId());
+        }
+        if(detail.getStartWeek() != null){
+            criteria.andStartWeekEqualTo(detail.getStartWeek());
+        }
+        if(detail.getEndWeek() != null){
+            criteria.andEndWeekEqualTo(detail.getEndWeek());
+        }
+        if(detail.getWeek() != null){
+            criteria.andWeekEqualTo(detail.getWeek());
+        }
+
         return courseTimeTableDetailMapper.selectByExample(example);
     }
 

@@ -1,5 +1,6 @@
 package cn.hkxj.platform.spider.newmodel.searchclassroom;
 
+import cn.hkxj.platform.pojo.UrpClassroom;
 import lombok.Data;
 
 @Data
@@ -33,5 +34,18 @@ public class SearchClassroomResult {
 
         private String classroomNumber;
 
+    }
+
+    public UrpClassroom transToUrpClassRoom(){
+        return new UrpClassroom()
+                .setName(classroomName)
+                .setNumber(id.classroomNumber)
+                .setTeachingBuildingNumber(id.teachingBuildingNumber)
+                .setTeachingBuildingName(teachingBuildingName)
+                .setCampusNumber(id.campusNumber)
+                .setCampusName(campusName)
+                .setSeats(classNumberOfSeats)
+                .setType(classroomTypeDirections)
+                .setDepartment(departmentName);
     }
 }

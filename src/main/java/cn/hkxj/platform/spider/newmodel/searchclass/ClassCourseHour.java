@@ -11,7 +11,7 @@ public class ClassCourseHour {
     public ClassCourseHour(){
 
     }
-    private Records classInfo;
+    private ClassInfoSearchResult classInfo;
     private int courseHourCount;
     private Set<UrpCourse> urpCourseSet;
 }
