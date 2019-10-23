@@ -1,5 +1,7 @@
 package cn.hkxj.platform.controller;
 
+import cn.hkxj.platform.elasticsearch.CourseTimeTableSearchService;
+import cn.hkxj.platform.elasticsearch.document.CourseTimeTableDocument;
 import cn.hkxj.platform.pojo.WebResponse;
 import cn.hkxj.platform.pojo.constant.ErrorCode;
 import cn.hkxj.platform.pojo.dto.CourseTimeTableDetailDto;
@@ -27,6 +29,8 @@ public class CourseController {
 
     @Resource
     private CourseTimeTableService courseTimeTableService;
+    @Resource
+    private CourseTimeTableSearchService courseTimeTableSearchService;
 
     @Resource
     private HttpSession httpSession;
@@ -53,6 +57,20 @@ public class CourseController {
         List<CourseTimeTableDetailDto> details = courseTimeTableService.getAllCourseTimeTableDetailDtos(Integer.parseInt(account));
         log.info("course.json timetable success-- account:{}", account);
         return WebResponse.success(details);
+    }
+
+    @GetMapping("/timetable/search")
+    public WebResponse<List<CourseTimeTableDocument>> searchTimeTable(@RequestParam(value = "q") String query,
+                                                                      @RequestParam(value = "page", required = false) Integer page,
+                                                                      @RequestParam(value = "size", required = false) Integer size
+                                       ) {
+
+        if(page== null || size == null){
+            page = 0;
+            size = 10;
+        }
+
+        return WebResponse.success(courseTimeTableSearchService.searchCourseTimeTable(page, size ,query));
     }
 
     private boolean isAccountValid(String account) {

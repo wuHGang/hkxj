@@ -16,6 +16,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 public class PlatformApplication extends SpringBootServletInitializer {
 
 	public static void main(String[] args) {
+        System.setProperty("es.set.netty.runtime.available.processors","false");
         ConfigurableApplicationContext applicationContext = SpringApplication.run(PlatformApplication.class, args);
         ApplicationUtil.setApplicationContext(applicationContext);
     }

@@ -17,10 +17,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Slf4j
 public class WebAppConfigurer implements WebMvcConfigurer {
 
-	@Bean
-	public LoginInterceptor loginInterceptor() {
-		return new LoginInterceptor();
-	}
 
 	@Bean
 	public InterfaceStatisticsInterceptor interfaceStatisticsInterceptor () {
