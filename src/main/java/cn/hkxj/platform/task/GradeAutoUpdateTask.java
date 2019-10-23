@@ -4,14 +4,17 @@ import cn.hkxj.platform.builder.TemplateBuilder;
 import cn.hkxj.platform.config.wechat.WechatMpConfiguration;
 import cn.hkxj.platform.config.wechat.WechatMpPlusProperties;
 import cn.hkxj.platform.config.wechat.WechatTemplateProperties;
+import cn.hkxj.platform.pojo.GradeAndCourse;
 import cn.hkxj.platform.pojo.ScheduleTask;
 import cn.hkxj.platform.pojo.Student;
+import cn.hkxj.platform.pojo.constant.MiniProgram;
 import cn.hkxj.platform.pojo.constant.SubscribeScene;
 import cn.hkxj.platform.pojo.wechat.Openid;
 import cn.hkxj.platform.service.NewGradeSearchService;
 import cn.hkxj.platform.service.OpenIdService;
 import cn.hkxj.platform.service.ScheduleTaskService;
 import lombok.extern.slf4j.Slf4j;
+import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.kefu.WxMpKefuMessage;
 import me.chanjar.weixin.mp.bean.template.WxMpTemplateData;
@@ -19,6 +22,7 @@ import me.chanjar.weixin.mp.bean.template.WxMpTemplateMessage;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -95,6 +99,12 @@ public class GradeAutoUpdateTask extends BaseSubscriptionTask{
             processUrpPasswordNotCorrect(task, wxMpService, appid);
             return;
         }
+//        CompletableFuture.supplyAsync(() -> {
+//            //获取更新的结果，并将结果转换成一个字符串
+//            List<GradeAndCourse> crawlingResult = gradeSearchService.getCurrentGradeFromSpider(student);
+//            //saveGradeAndCourse会返回新更新的成绩
+//            return gradeSearchService.saveGradeAndCourse(student, crawlingResult);
+//        }, gradeAutoUpdatePool).whenComplete((result, exception) -> missionComplete(result, task, wxMpService, appid));
     }
 
     /**
@@ -122,8 +132,46 @@ public class GradeAutoUpdateTask extends BaseSubscriptionTask{
         }
     }
 
+    /**
+     * 当异步任务完成时进行执行这一步骤
+     * @param result 异步任务的计算结果
+     * @param task  定时任务
+     * @param wxMpService wxMpService
+     * @param appid 公众号的appid
+     */
+    private void missionComplete(List<GradeAndCourse> result, ScheduleTask task, WxMpService wxMpService, String appid){
+        //如果更新结果的集合是空，直接结束此任务
+        if (CollectionUtils.isEmpty(result)) {
+            return;
+        }
+        if (isPlus(appid)) {
+            //plus处理过程
+            sendTemplateMessage(task, wxMpService, result);
+        } else {
+            //pro处理过程
+//            String content = gradeSearchService.gradeListToText(result);
+//            sendKefuMessage(wxMpService, task.getOpenid(), content);
+        }
+    }
 
-
+    /**
+     * plus的处理过程
+     * @param task 定时任务
+     * @param wxMpService wxMpService
+     * @param pendingProcess 待处理的集合
+     */
+    private void sendTemplateMessage(ScheduleTask task, WxMpService wxMpService, List<GradeAndCourse> pendingProcess) {
+        for (GradeAndCourse gradeAndCourse : pendingProcess) {
+            //因为一次模板消息只能处理一个成绩，所以循环处理
+            List<WxMpTemplateData> data = templateBuilder.assemblyTemplateContentForGradeUpdate(gradeAndCourse);
+            WxMpTemplateMessage.MiniProgram miniProgram = new WxMpTemplateMessage.MiniProgram();
+            miniProgram.setAppid(MiniProgram.APP_ID);
+            miniProgram.setPagePath(MiniProgram.GRADE_PATH.getValue());
+            WxMpTemplateMessage templateMessage =
+                    templateBuilder.buildWithNoUrl(task.getOpenid(), data,  wechatTemplateProperties.getPlusGradeUpdateTemplateId(), miniProgram);
+            sendTemplateMessage(wxMpService, templateMessage, task);
+        }
+    }
 
     /**
      * 生成对应的客服消息，调用父类的方法来发送
