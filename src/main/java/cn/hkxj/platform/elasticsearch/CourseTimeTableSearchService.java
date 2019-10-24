@@ -90,11 +90,12 @@ public class CourseTimeTableSearchService {
                 .add(QueryBuilders.matchQuery("courseName", query))
                 .add(QueryBuilders.matchQuery("teacherNameList", query))
                 .add(QueryBuilders.matchQuery("classNameList", query))
-                .add(QueryBuilders.matchQuery("subjectNameList", query));
+                .add(QueryBuilders.matchQuery("subjectNameList", query))
+                .add(QueryBuilders.matchQuery("classRoomName", query));
 
 
         NativeSearchQuery searchQuery = new NativeSearchQueryBuilder()
-                .withQuery(builder1)
+                .withQuery(builder)
                 .withPageable(pageRequest)
                 .build();
 

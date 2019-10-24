@@ -27,7 +27,7 @@ public class CourseTimeTableSearchServiceTest {
 
     @Test
     public void search() {
-        for (CourseTimeTableDocument document : courseTimeTableSearchService.searchCourseTimeTable(0, 10, "国际贸易地理")) {
+        for (CourseTimeTableDocument document : courseTimeTableSearchService.searchCourseTimeTable(0, 10, "高数")) {
             System.out.println(document);
         }
         ;
