@@ -52,6 +52,12 @@ public class CourseTimeTableService {
     private CourseTimeTableBasicInfoDao courseTimeTableBasicInfoDao;
     @Resource
     private NewUrpSpiderService newUrpSpiderService;
+    @Resource
+    private ClassService classService;
+    @Resource
+    private ClassCourseTimetableDao classCourseTimetableDao;
+    @Resource
+    private CourseTimeTableDao courseTimeTableDao;
 
     /**
      * 这个方法只能将一天的数据转换成当日课表所需要的文本
@@ -105,11 +111,31 @@ public class CourseTimeTableService {
         List<Integer> detailIdList = getCourseTimeTableDetailIdByAccount(student.getAccount());
         if(detailIdList.isEmpty()){
             UrpCourseTimeTableForSpider tableForSpider = getCourseTimeTableDetails(student);
+            if(! hasSchoolCourse(tableForSpider)){
+                return getCourseTimetableByClass(student);
+            }
             return getCurrentTermDataFromSpider(tableForSpider, schoolTime);
         }else {
             return courseTimeTableDetailDao.getCourseTimeTableDetailForCurrentTerm(detailIdList, schoolTime);
         }
     }
+
+
+    /**
+     * 判断爬虫的返回结果是否只有网课
+     */
+    private boolean hasSchoolCourse(UrpCourseTimeTableForSpider tableForSpider){
+        for (HashMap<String, UrpCourseTimeTable> table : tableForSpider.getDetails()) {
+            for (Map.Entry<String, UrpCourseTimeTable> entry : table.entrySet()) {
+                if(entry.getValue().getTimeAndPlaceList().size() != 0){
+                    return true;
+                }
+            }
+        }
+        return false;
+
+    }
+
 
     /**
      * 获取当前学期当前周所有的课程时间表
@@ -166,8 +192,13 @@ public class CourseTimeTableService {
         List<Integer> detailIdList = getCourseTimeTableDetailIdByAccount(student.getAccount());
         if(detailIdList.isEmpty()){
             UrpCourseTimeTableForSpider tableForSpider = getCourseTimeTableDetails(student);
+            if(! hasSchoolCourse(tableForSpider)){
+                List<CourseTimeTableDetail> timetable = getCourseTimetableByClass(student);
+                return filterBySection(timetable, schoolTime, section);
+            }
             return getAppointSectionDataFromSpider(tableForSpider, schoolTime, section);
         }else {
+
             return courseTimeTableDetailDao.getCourseTimeTableDetailForSection(detailIdList, schoolTime, section);
         }
     }
@@ -283,16 +314,23 @@ public class CourseTimeTableService {
                     //所以TimeAndPlace转换的CourseTimeTableDetail返回的是一个集合
                     List<CourseTimeTableDetail> details =
                             timeAndPlace.convertToCourseTimeTableDetail(urpCourseTimeTable.getCourseRelativeInfo(), urpCourseTimeTable.getAttendClassTeacher());
-                    details.stream().filter(detail -> detail.getDay() == schoolTime.getDay())
-                            .filter(detail -> detail.isActiveWeek(schoolTime.getWeek()))
-                            .filter(detail -> Objects.equals(detail.getTermYear(), schoolTime.getTerm().getTermYear()))
-                            .filter(detail -> detail.getTermOrder() == schoolTime.getTerm().getOrder())
-                            .filter(detail -> detail.getOrder() == section)
-                            .forEach(result::add);
+                    result.addAll(filterBySection(details, schoolTime, section));
                 }
             }
         }
         return result;
+    }
+
+    private List<CourseTimeTableDetail> filterBySection(List<CourseTimeTableDetail> courseTimeTableDetailList,
+                                                                        SchoolTime schoolTime, int section){
+        return courseTimeTableDetailList.stream()
+                .filter(detail -> detail.getDay() == schoolTime.getDay())
+                .filter(detail -> detail.isActiveWeek(schoolTime.getWeek()))
+                .filter(detail -> Objects.equals(detail.getTermYear(), schoolTime.getTerm().getTermYear()))
+                .filter(detail -> detail.getTermOrder() == schoolTime.getTerm().getOrder())
+                .filter(detail -> detail.getOrder() == section)
+                .collect(Collectors.toList());
+
     }
 
     private void saveCourseTimeTableToDb(UrpCourseTimeTableForSpider spiderResult, Student student) {
@@ -427,6 +465,35 @@ public class CourseTimeTableService {
                 .setTermYear(schoolTime.getTerm().getTermYear());
         List<StudentCourseTimeTable> tableList = courseTimeTableDetailDao.selectStudentCourseTimeTableRelative(table);
         return tableList.stream().map(StudentCourseTimeTable::getCourseTimeTableId).collect(Collectors.toList());
+    }
+
+    private List<CourseTimeTableDetail> getCourseTimetableByClass(Student student){
+        UrpClass urpClass = classService.getUrpClassByStudent(student);
+        return classCourseTimetableDao.selectByPojo(new ClassCourseTimetable().setClassId(urpClass.getClassNum()))
+                .stream()
+                .map(ClassCourseTimetable::getCourseTimetableId)
+                .map(id -> {
+                    CourseTimetable timetable = courseTimeTableDao.selectByPrimaryKey(id);
+                    return new CourseTimeTableDetail()
+                            .setOrder(timetable.getClassOrder())
+                            .setDay(timetable.getClassDay())
+                            .setCourseId(timetable.getCourseId())
+                            .setCourseSequenceNumber(timetable.getCourseSequenceNumber())
+                            .setAttendClassTeacher(timetable.getAttendClassTeacher())
+                            .setCampusName(timetable.getCampusName())
+                            .setStartWeek(timetable.getStartWeek())
+                            .setEndWeek(timetable.getEndWeek())
+                            .setWeekDescription(timetable.getWeekDescription())
+                            .setWeek(timetable.getClassInSchoolWeek())
+                            .setTermYear(timetable.getTermYear())
+                            .setTermOrder(timetable.getTermOrder())
+                            .setRoomName(timetable.getRoomName());
+                })
+                .collect(Collectors.toList());
+
+
+
+
     }
 
 }

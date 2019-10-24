@@ -35,6 +35,11 @@ public class CourseTimeTableSearchService {
 
     private String termYear = "2019-2020";
 
+    static {
+        System.setProperty("es.set.netty.runtime.available.processors","false");
+    }
+
+
     public void saveTimeTableDate(){
 
         CourseTimetable courseTimetable = new CourseTimetable()

@@ -8,6 +8,7 @@ import cn.hkxj.platform.dao.StudentDao;
 import cn.hkxj.platform.pojo.*;
 import cn.hkxj.platform.spider.NewUrpSpider;
 import cn.hkxj.platform.spider.newmodel.SearchResult;
+import cn.hkxj.platform.spider.newmodel.coursetimetable.UrpCourseTimeTable;
 import cn.hkxj.platform.spider.newmodel.coursetimetable.UrpCourseTimeTableForSpider;
 import cn.hkxj.platform.spider.newmodel.searchclass.ClassInfoSearchResult;
 import cn.hkxj.platform.spider.newmodel.searchclassroom.SearchClassroomPost;
@@ -28,7 +29,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.*;
 
 @Slf4j
@@ -128,6 +131,12 @@ public class NewUrpSpiderServiceTest {
     public void testCourseTimeTable(){
         Student student = studentDao.selectStudentByAccount(2017025278);
         UrpCourseTimeTableForSpider timeTable = newUrpSpiderService.getUrpCourseTimeTable(student);
+        for (HashMap<String, UrpCourseTimeTable> map : timeTable.getDetails()) {
+            for (Map.Entry<String, UrpCourseTimeTable> entry : map.entrySet()) {
+                System.out.println(entry.getValue());
+            }
+
+        }
 
 
     }

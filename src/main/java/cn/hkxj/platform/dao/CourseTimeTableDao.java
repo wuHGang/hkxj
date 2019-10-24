@@ -14,6 +14,9 @@ public class CourseTimeTableDao {
     private CourseTimetableMapper courseTimetableMapper;
 
 
+    public CourseTimetable selectByPrimaryKey(Integer id){
+        return courseTimetableMapper.selectByPrimaryKey(id);
+    }
 
     public List<CourseTimetable> selectByCourseTimetable(CourseTimetable courseTimetable){
         CourseTimetableExample example = new CourseTimetableExample();

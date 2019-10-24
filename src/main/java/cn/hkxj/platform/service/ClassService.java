@@ -1,12 +1,15 @@
 package cn.hkxj.platform.service;
 
 import cn.hkxj.platform.dao.ClassDao;
+import cn.hkxj.platform.dao.UrpClassDao;
+import cn.hkxj.platform.pojo.*;
 import cn.hkxj.platform.pojo.constant.Academy;
-import cn.hkxj.platform.pojo.Classes;
-import cn.hkxj.platform.pojo.Subject;
+import cn.hkxj.platform.pojo.constant.RedisKeys;
 import cn.hkxj.platform.spider.model.UrpStudentInfo;
 import cn.hkxj.platform.spider.newmodel.searchclass.ClassInfoSearchResult;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.HashOperations;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -24,6 +27,11 @@ public class ClassService {
     private ClassDao classDao;
     @Resource
     private SubjectService subjectService;
+    @Resource
+    private RedisTemplate<String, String> redisTemplate;
+    @Resource
+    private UrpClassDao urpClassDao;
+
 
     private static Classes parseText(String classname) {
         String[] clazzSplitter = classname.split("-");
@@ -137,6 +145,12 @@ public class ClassService {
         classDao.insertClass(classes);
 
         return classes;
+    }
+
+    public UrpClass getUrpClassByStudent(Student student){
+        HashOperations<String, String, String> hash = redisTemplate.opsForHash();
+        String urpClassCode = hash.get(RedisKeys.URP_CLASS_CODE.getName(), student.getClasses().getId().toString());
+        return urpClassDao.selectByClassNumber(urpClassCode);
     }
 
 
