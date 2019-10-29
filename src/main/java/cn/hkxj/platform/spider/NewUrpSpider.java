@@ -338,7 +338,7 @@ public class NewUrpSpider {
 
         if (StringUtils.isEmpty(location)) {
             COOKIE_JAR.clearSession();
-            throw new UrpRequestException("url: " + request.url().toString() + " code: " + response.code() + " cause: " + response.message());
+            throw new UrpRequestException(request.url().toString(), response.code(),  response.message());
         } else if (location.contains("badCaptcha")) {
             COOKIE_JAR.clearSession();
             throw new UrpVerifyCodeException("captcha: " + captcha + " code uuid :" + uuid);
@@ -693,11 +693,11 @@ public class NewUrpSpider {
     private static byte[] execute(Request request) {
         try (Response response = CLIENT.newCall(request).execute()) {
             if (isResponseFail(response)) {
-                throw new UrpRequestException("url: " + request.url().toString() + " code: " + response.code() + " cause: " + response.message());
+                throw new UrpRequestException(request.url().toString(), response.code(),  response.message());
             }
             ResponseBody body = response.body();
             if(body == null){
-                throw new UrpRequestException("url: " + request.url().toString() + " code: " + response.code() + " " +
+                throw new UrpRequestException(request.url().toString(), response.code(),
                         "cause: response body is null");
             }
             return body.bytes();
@@ -710,7 +710,7 @@ public class NewUrpSpider {
     private Response getResponse(Request request) {
         try (Response response = CLIENT.newCall(request).execute()) {
             if (isResponseFail(response)) {
-                throw new UrpRequestException("url: " + request.url().toString() + " code: " + response.code() + " cause: " + response.message());
+                throw new UrpRequestException(request.url().toString(), response.code(),  response.message());
             }
             return response;
         } catch (IOException e) {

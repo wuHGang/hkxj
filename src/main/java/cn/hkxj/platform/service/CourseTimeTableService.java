@@ -2,6 +2,7 @@ package cn.hkxj.platform.service;
 
 import cn.hkxj.platform.dao.*;
 import cn.hkxj.platform.exceptions.RoomParseException;
+import cn.hkxj.platform.exceptions.UrpRequestException;
 import cn.hkxj.platform.pojo.*;
 import cn.hkxj.platform.pojo.dto.CourseTimeTableDetailDto;
 import cn.hkxj.platform.spider.newmodel.coursetimetable.TimeAndPlace;
@@ -110,11 +111,20 @@ public class CourseTimeTableService {
         SchoolTime schoolTime = DateUtils.getCurrentSchoolTime();
         List<Integer> detailIdList = getCourseTimeTableDetailIdByAccount(student.getAccount());
         if(detailIdList.isEmpty()){
-            UrpCourseTimeTableForSpider tableForSpider = getCourseTimeTableDetails(student);
-            if(! hasSchoolCourse(tableForSpider)){
-                return getCourseTimetableByClass(student);
+            try{
+                UrpCourseTimeTableForSpider tableForSpider = getCourseTimeTableDetails(student);
+                if(! hasSchoolCourse(tableForSpider)){
+                    return getCourseTimetableByClass(student);
+                }
+                return getCurrentTermDataFromSpider(tableForSpider, schoolTime);
+            }catch (UrpRequestException e){
+                if (e.getCode() == 404){
+                    return getCourseTimetableByClass(student);
+                }else {
+                    throw e;
+                }
             }
-            return getCurrentTermDataFromSpider(tableForSpider, schoolTime);
+
         }else {
             return courseTimeTableDetailDao.getCourseTimeTableDetailForCurrentTerm(detailIdList, schoolTime);
         }
@@ -191,12 +201,23 @@ public class CourseTimeTableService {
         SchoolTime schoolTime = DateUtils.getCurrentSchoolTime();
         List<Integer> detailIdList = getCourseTimeTableDetailIdByAccount(student.getAccount());
         if(detailIdList.isEmpty()){
-            UrpCourseTimeTableForSpider tableForSpider = getCourseTimeTableDetails(student);
-            if(! hasSchoolCourse(tableForSpider)){
-                List<CourseTimeTableDetail> timetable = getCourseTimetableByClass(student);
-                return filterBySection(timetable, schoolTime, section);
+            try {
+                UrpCourseTimeTableForSpider tableForSpider = getCourseTimeTableDetails(student);
+                if(! hasSchoolCourse(tableForSpider)){
+                    List<CourseTimeTableDetail> timetable = getCourseTimetableByClass(student);
+                    return filterBySection(timetable, schoolTime, section);
+                }
+                return getAppointSectionDataFromSpider(tableForSpider, schoolTime, section);
+            }catch (UrpRequestException e){
+                if (e.getCode() == 404){
+                    List<CourseTimeTableDetail> timetable = getCourseTimetableByClass(student);
+                    return filterBySection(timetable, schoolTime, section);
+                }else {
+                    throw e;
+                }
             }
-            return getAppointSectionDataFromSpider(tableForSpider, schoolTime, section);
+
+
         }else {
 
             return courseTimeTableDetailDao.getCourseTimeTableDetailForSection(detailIdList, schoolTime, section);
