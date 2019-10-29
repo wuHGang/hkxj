@@ -1,6 +1,7 @@
 package cn.hkxj.platform.service;
 
 import cn.hkxj.platform.PlatformApplication;
+import cn.hkxj.platform.dao.StudentDao;
 import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.spider.NewUrpSpider;
 import cn.hkxj.platform.spider.model.VerifyCode;
@@ -31,16 +32,13 @@ public class NewGradeSearchServiceTest {
     @Resource
     private NewGradeSearchService newGradeSearchService;
     @Resource
-    private HttpSession httpSession;
+    private StudentDao studentDao;
 
     @Test
     public void test(){
-        NewUrpSpider spider = new NewUrpSpider("xxx", "xxx");
-        VerifyCode captcha = spider.getCaptcha();
-        captcha.write("C:\\Users\\Yuki\\Desktop\\pic.jpg");
-        Student student = new Student();
-        student.setAccount(2016024170);
-        student.setPassword("1");
-        System.out.println(newGradeSearchService.getCurrentGrade(student));
+        long start = System.currentTimeMillis();
+        Student student = studentDao.selectStudentByAccount(2018022512);
+        newGradeSearchService.getCurrentGrade(student);
+        System.out.println(System.currentTimeMillis() - start);
     }
 }

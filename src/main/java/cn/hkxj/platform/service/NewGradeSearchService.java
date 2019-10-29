@@ -64,54 +64,9 @@ public class NewGradeSearchService {
         Student student = Optional.ofNullable(studentDao.selectStudentByAccount(Integer.parseInt(account)))
                 .orElseGet(() ->newUrpSpiderService.getStudentInfo(account, password));
 
-        CurrentGrade currentGrade = newUrpSpiderService.getCurrentTermGrade(account, password);
-
-        if(CollectionUtils.isEmpty(currentGrade.getList())){
-            return new GradeSearchResult(Lists.newArrayListWithCapacity(0), false);
-        }
-
-
-        return saveCurrentGradeToDb(student, currentGrade);
+        return getCurrentGrade(student);
     }
 
-    public List<UrpGradeAndUrpCourse> getUrpGradeAndUrpCourseFromDb(Student student) {
-        Map<String, NewGrade> courseAndGrade = getGradeFromDb(student);
-        List<UrpGradeAndUrpCourse> urpGradeAndUrpCourses = Lists.newArrayList();
-        courseAndGrade.forEach((courseId, newGrade) -> {
-            UrpCourse urpCourse = urpCourseService.getUrpCourseByCourseId(courseId);
-            UrpGradeAndUrpCourse urpGradeAndUrpCourse = new UrpGradeAndUrpCourse();
-            urpGradeAndUrpCourse.setNewGrade(newGrade);
-            urpGradeAndUrpCourse.setUrpCourse(urpCourse);
-            urpGradeAndUrpCourse.setTerm(currentTerm);
-            urpGradeAndUrpCourses.add(urpGradeAndUrpCourse);
-        });
-        return urpGradeAndUrpCourses;
-    }
-
-    private Map<String, NewGrade> getGradeFromDb(Student student) {
-        List<UrpExam> urpExamList = urpExamDao.getOneClassCurrentTermAllUrpExam(student.getClasses().getId(), currentTerm);
-        List<UrpGrade> urpGradeList = urpGradeDao.getCurrentTermAllUrpGrade(student.getAccount(),
-                urpExamList.stream().map(UrpExam::getId).collect(Collectors.toList()));
-        Map<String, NewGrade> results = Maps.newHashMap();
-        for (int i = 0, length = urpExamList.size(); i < length; i++) {
-            UrpExam exam = urpExamList.get(i);
-            UrpGrade grade = urpGradeList.get(i);
-            NewGrade newGrade = new NewGrade();
-            newGrade.setUrpGrade(grade);
-            newGrade.setDetails(urpGradeDetailDao.getUrpGradeDetail(grade.getId()));
-            results.put(exam.getCourseId(), newGrade);
-        }
-        return results;
-    }
-
-    private CurrentGrade getCurrentGradeFromSpider(Student student) {
-        CurrentGrade currentGrade = newUrpSpiderService.getCurrentTermGrade(student.getAccount().toString(),
-                student.getPassword());
-        if (CollectionUtils.isEmpty(currentGrade.getList())) {
-            return null;
-        }
-        return currentGrade;
-    }
 
     /**
      * 生成一个UrpGradeAndUrpCourse

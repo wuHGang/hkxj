@@ -77,4 +77,19 @@ public class CourseController {
         return !Objects.isNull(account) && account.length() == ACCOUNT_LENGTH && account.startsWith(ACCOUNT_PREFIX);
     }
 
+    @GetMapping("/timetable/searchV2")
+    public WebResponse<List<CourseTimeTableDocument>> searchTimeTableV2(@RequestParam(value = "q") String query,
+                                                                      @RequestParam(value = "page", required = false) Integer page,
+                                                                      @RequestParam(value = "size", required = false) Integer size
+    ) {
+
+        if(page== null || size == null){
+            page = 0;
+            size = 10;
+        }
+
+        return WebResponse.success(courseTimeTableSearchService.searchCourseTimeTable(page, size ,query));
+    }
+
+
 }

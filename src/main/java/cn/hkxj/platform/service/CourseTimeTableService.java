@@ -338,8 +338,10 @@ public class CourseTimeTableService {
             for (Map.Entry<String, UrpCourseTimeTable> entry : map.entrySet()) {
                 UrpCourseTimeTable urpCourseTimeTable = entry.getValue();
                 String courseId = urpCourseTimeTable.getCourseRelativeInfo().getCourseNumber();
+                String sequenceNumber = urpCourseTimeTable.getCourseRelativeInfo().getCourseSequenceNumber();
                 //查看课程是否存在，不存在就插入数据库
-                urpCourseService.checkOrSaveUrpCourseToDb(courseId, student);
+//                urpCourseService.checkOrSaveUrpCourseToDb(courseId, student);
+                urpCourseService.saveCourse(courseId, sequenceNumber);
                 CourseTimeTableBasicInfo basicInfo = getCourseTimeTableBasicInfo(urpCourseTimeTable);
                 //将课程时间表存储到数据库
                 saveCourseTimeTableDetailsToDb(urpCourseTimeTable, basicInfo, student);
@@ -400,14 +402,9 @@ public class CourseTimeTableService {
 
     /**
      * 将课程搜索结果保存到数据库中，数据来源是不包含学生信息
-     *
-     * @param result
      */
     @Transactional(rollbackFor = Exception.class)
-    public void saveCourseTimeTableDetailsFromSearch(CourseTimetableSearchResult result){
-        for (int[] ints : TimeAndPlace.parseWeek(result.getWeekDescription())) {
-
-        }
+    public void saveCourseTimeTableDetailsFromSearch(UrpCourseTimeTable urpCourseTimeTable){
 
     }
 

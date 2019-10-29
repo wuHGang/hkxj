@@ -71,6 +71,9 @@ public class Term {
         return this.startYear + "-" + this.endYear;
     }
 
+    public String getExecutiveEducationPlanNum() {
+        return this.startYear + "-" + this.endYear + "-" + this.order+ "-1";
+    }
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
