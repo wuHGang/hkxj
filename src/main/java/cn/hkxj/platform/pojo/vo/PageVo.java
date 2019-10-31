@@ -5,12 +5,12 @@ import lombok.Data;
 /**
  * @author zhouqinglai
  * @version 1.0
- * @title PagerVO
+ * @title PageVo
  * @desc 分页VO
  * @Date 2019/5/3
  */
 @Data
-public class PagerVO {
+public class PageVo {
 
     private Integer pageSize;
 
@@ -22,14 +22,14 @@ public class PagerVO {
 
     private Boolean hasMore;
 
-    public static PagerVO getPager(Integer count, Integer pageNo, Integer pageSize) {
-        PagerVO pagerVO = new PagerVO();
-        pagerVO.setCount(count);
-        pagerVO.setPageNum(pageNo);
-        pagerVO.setPageSize(pageSize);
-        pagerVO.setTotalPage((count + pageSize - 1) / pageSize);
-        pagerVO.setHasMore(pagerVO.getTotalPage() > pageNo);
-        return pagerVO;
+    public static PageVo getPage(Integer count, Integer pageNo, Integer pageSize) {
+        PageVo pageVo = new PageVo();
+        pageVo.setCount(count);
+        pageVo.setPageNum(pageNo);
+        pageVo.setPageSize(pageSize);
+        pageVo.setTotalPage((count + pageSize - 1) / pageSize);
+        pageVo.setHasMore(pageVo.getTotalPage() > pageNo);
+        return pageVo;
     }
 
     /**

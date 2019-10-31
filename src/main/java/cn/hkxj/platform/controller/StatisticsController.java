@@ -3,7 +3,7 @@ package cn.hkxj.platform.controller;
 
 import cn.hkxj.platform.pojo.WebResponse;
 import cn.hkxj.platform.pojo.request.StatisticsRequest;
-import cn.hkxj.platform.pojo.vo.StatisticsV0;
+import cn.hkxj.platform.pojo.vo.StatisticsVo;
 import cn.hkxj.platform.service.StatisticsService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,7 +31,7 @@ public class StatisticsController {
      * @return
      */
     @GetMapping("/interface")
-    public WebResponse<StatisticsV0> listStatisticsByPage(StatisticsRequest request) {
+    public WebResponse<StatisticsVo> listStatisticsByPage(StatisticsRequest request) {
         request.validateParam();
         return WebResponse.success(statisticsService.listByEveryDayOrMonth(request.getCurrentPage(),request.getSize(),request.getDate(),request.getIsEveryDay()));
     }

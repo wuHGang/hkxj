@@ -52,6 +52,14 @@ public class CourseTimeTableDao {
         return courseTimetableMapper.selectByExample(example);
     }
 
+    public List<CourseTimetable> selectByIdList(List<Integer> idList){
+        CourseTimetableExample example = new CourseTimetableExample();
+        CourseTimetableExample.Criteria criteria = example.createCriteria();
+        criteria.andIdIn(idList);
+
+        return courseTimetableMapper.selectByExample(example);
+    }
+
     public void insertSelective(CourseTimetable courseTimetable){
         courseTimetableMapper.insertSelective(courseTimetable);
     }

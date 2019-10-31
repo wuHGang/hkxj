@@ -3,6 +3,7 @@ package cn.hkxj.platform.dao;
 import cn.hkxj.platform.mapper.UrpClassroomMapper;
 import cn.hkxj.platform.pojo.UrpClassroom;
 import cn.hkxj.platform.pojo.example.UrpClassroomExample;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -23,6 +24,10 @@ public class UrpClassRoomDao {
 
         if(urpClassroom.getNumber() != null){
             criteria.andNumberEqualTo(urpClassroom.getNumber());
+        }
+
+        if(StringUtils.isNotEmpty(urpClassroom.getName())){
+            criteria.andNameEqualTo(urpClassroom.getName());
         }
 
         return urpClassroomMapper.selectByExample(urpClassroomExample);

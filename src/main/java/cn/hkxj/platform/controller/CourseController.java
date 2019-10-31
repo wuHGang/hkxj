@@ -5,6 +5,7 @@ import cn.hkxj.platform.elasticsearch.document.CourseTimeTableDocument;
 import cn.hkxj.platform.pojo.WebResponse;
 import cn.hkxj.platform.pojo.constant.ErrorCode;
 import cn.hkxj.platform.pojo.dto.CourseTimeTableDetailDto;
+import cn.hkxj.platform.pojo.vo.CourseTimeTableVo;
 import cn.hkxj.platform.service.CourseTimeTableService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -45,18 +46,34 @@ public class CourseController {
         }
 
         if (Objects.isNull(account)) {
-            log.info("course.json timetable fail-- 用户未绑定");
             return WebResponse.fail(ErrorCode.USER_UNAUTHORIZED.getErrorCode(), "用户未绑定");
         }
 
         if (!isAccountValid(account)) {
-            log.info("student getStudentInfo fail--invalid account:{}", account);
             return WebResponse.fail(ErrorCode.ACCOUNT_OR_PASSWORD_INVALID.getErrorCode(), "账号无效");
         }
 
         List<CourseTimeTableDetailDto> details = courseTimeTableService.getAllCourseTimeTableDetailDtos(Integer.parseInt(account));
-        log.info("course.json timetable success-- account:{}", account);
         return WebResponse.success(details);
+    }
+
+    @GetMapping("/timetableV2")
+    public WebResponse getTimeTableV2(@RequestParam(value = "account", required = false) String account) {
+
+        if (Objects.isNull(account)) {
+            account = (String) httpSession.getAttribute("account");
+        }
+
+        if (Objects.isNull(account)) {
+            return WebResponse.fail(ErrorCode.USER_UNAUTHORIZED.getErrorCode(), "用户未绑定");
+        }
+
+        if (!isAccountValid(account)) {
+            return WebResponse.fail(ErrorCode.ACCOUNT_OR_PASSWORD_INVALID.getErrorCode(), "账号无效");
+        }
+
+        List<CourseTimeTableVo> courseTimeTableVoList = courseTimeTableService.getCourseTimeTableByStudent(Integer.parseInt(account));
+        return WebResponse.success(courseTimeTableVoList);
     }
 
     @GetMapping("/timetable/search")
@@ -75,20 +92,6 @@ public class CourseController {
 
     private boolean isAccountValid(String account) {
         return !Objects.isNull(account) && account.length() == ACCOUNT_LENGTH && account.startsWith(ACCOUNT_PREFIX);
-    }
-
-    @GetMapping("/timetable/searchV2")
-    public WebResponse<List<CourseTimeTableDocument>> searchTimeTableV2(@RequestParam(value = "q") String query,
-                                                                      @RequestParam(value = "page", required = false) Integer page,
-                                                                      @RequestParam(value = "size", required = false) Integer size
-    ) {
-
-        if(page== null || size == null){
-            page = 0;
-            size = 10;
-        }
-
-        return WebResponse.success(courseTimeTableSearchService.searchCourseTimeTable(page, size ,query));
     }
 
 

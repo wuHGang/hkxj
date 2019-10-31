@@ -36,4 +36,8 @@ public class CourseDao {
 
         return courseMapper.selectByExample(example);
     }
+
+    public void insertSelective(Course course){
+        courseMapper.insertSelective(course);
+    }
 }

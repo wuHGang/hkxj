@@ -271,7 +271,7 @@ public class NewUrpSpider {
         return jsonArray.toJavaList(UrpGeneralGradeForSpider.class);
     }
 
-    public UrpGradeDetailForSpider getUrpGradeDetail(UrpGeneralGradeForSpider urpGeneralGradeForSpider) {
+    private UrpGradeDetailForSpider getUrpGradeDetail(UrpGeneralGradeForSpider urpGeneralGradeForSpider) {
         FormBody.Builder params = new FormBody.Builder();
         CourseRelativeInfo courseRelativeInfo = urpGeneralGradeForSpider.getId();
         FormBody body = params.add("zxjxjhh", courseRelativeInfo.getExecutiveEducationPlanNumber())
@@ -303,7 +303,7 @@ public class NewUrpSpider {
         return courses.get(0);
     }
 
-    public static VerifyCode getCaptcha() {
+    private static VerifyCode getCaptcha() {
         Request request = new Request.Builder()
                 .url(CAPTCHA)
                 .header("Referer", LOGIN)

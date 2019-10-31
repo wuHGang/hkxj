@@ -1,5 +1,6 @@
 package cn.hkxj.platform.mapper;
 
+import cn.hkxj.platform.pojo.StudentCourseTable;
 import cn.hkxj.platform.pojo.StudentCourseTimeTable;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.util.Lists;
@@ -31,11 +32,11 @@ public class CourseTimeTableDetailMapperTest {
 
     @Test
     public void selectStudentCourseTimeTableRelative() {
-        StudentCourseTimeTable table = new StudentCourseTimeTable()
-                .setAccount(2014025838)
+        StudentCourseTable table = new StudentCourseTable()
+                .setAccount(2017025299)
                 .setTermOrder(1)
                 .setTermYear("2019-2020");
-        List<StudentCourseTimeTable> tables = courseTimeTableDetailMapper.selectStudentCourseTimeTableRelative(table);
+        List<StudentCourseTable> tables = courseTimeTableDetailMapper.selectStudentCourseTimeTableRelative(table);
         System.out.println(tables);
     }
 }

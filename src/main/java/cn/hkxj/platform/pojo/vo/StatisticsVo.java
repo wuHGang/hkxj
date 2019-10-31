@@ -9,13 +9,13 @@ import lombok.experimental.Accessors;
 /**
  * @author zhouqinglai
  * @version version
- * @title StatisticsV0
+ * @title StatisticsVo
  * @desc
  * @date: 2019年05月03日
  */
 @Data
 @Accessors(chain = true)
-public class StatisticsV0 {
+public class StatisticsVo {
     private List<StatisticsDetailVo> statisticsDetail;
-    private PagerVO pagerVO;
+    private PageVo pageVo;
 }

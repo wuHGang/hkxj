@@ -1,14 +1,15 @@
 package cn.hkxj.platform.service;
 
 import cn.hkxj.platform.PlatformApplication;
+import cn.hkxj.platform.dao.CourseTimeTableDao;
 import cn.hkxj.platform.dao.StudentDao;
-import cn.hkxj.platform.pojo.Classes;
-import cn.hkxj.platform.pojo.CourseTimeTableDetail;
-import cn.hkxj.platform.pojo.SchoolTime;
-import cn.hkxj.platform.pojo.Student;
+import cn.hkxj.platform.dao.UrpClassRoomDao;
+import cn.hkxj.platform.pojo.*;
 import cn.hkxj.platform.pojo.dto.CourseTimeTableDetailDto;
+import cn.hkxj.platform.pojo.vo.CourseTimeTableVo;
 import cn.hkxj.platform.spider.newmodel.coursetimetable.UrpCourseTimeTableForSpider;
 import cn.hkxj.platform.utils.DateUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -28,12 +29,17 @@ import java.util.concurrent.Executors;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = PlatformApplication.class)
 @WebAppConfiguration
+@Slf4j
 public class CourseTimeTableServiceTest {
 
     @Resource
     private CourseTimeTableService courseTimeTableService;
     @Resource
     private StudentDao studentDao;
+    @Resource
+    private CourseTimeTableDao courseTimeTableDao;
+    @Resource
+    private UrpClassRoomDao urpClassRoomDao;
 
     @Test
     public void getAllCourseTimeTableDetails(){
@@ -48,13 +54,40 @@ public class CourseTimeTableServiceTest {
     @Test
     public void getAllCourseTimeTableDetailDtos() {
 
-        for (CourseTimeTableDetailDto dto : courseTimeTableService.getAllCourseTimeTableDetailDtos(2017025299)) {
+        for (CourseTimeTableDetailDto dto : courseTimeTableService.getAllCourseTimeTableDetailDtos(2017025717)) {
             System.out.println(dto);
         }
-        ;
+    }
 
+    @Test
+    public void getCourseTimeTableByStudent(){
+        Student student = studentDao.selectStudentByAccount(2017025717);
+        for (CourseTimeTableVo courseTimeTableVo : courseTimeTableService.getCourseTimeTableByStudent(student)) {
+            System.out.println(courseTimeTableVo);
+        }
 
     }
+
+
+    @Test
+    public void fix(){
+        for (CourseTimetable courseTimetable : courseTimeTableDao.selectByCourseTimetable(new CourseTimetable())) {
+            List<UrpClassroom> classroomList = urpClassRoomDao.selectByClassroom(new UrpClassroom().setName(courseTimetable.getRoomName()));
+
+            if(classroomList.size() == 0){
+                log.error("{} size 0", courseTimetable.getRoomName());
+            }else if(classroomList.size() == 1){
+                if(!classroomList.get(0).getNumber().equals(courseTimetable.getRoomNumber())){
+                    log.error("{} number error", courseTimetable);
+                }
+            }else {
+                log.error("{} size more than 1", classroomList);
+
+            }
+        }
+
+    }
+
 
     @Test
     public void task() throws InterruptedException {

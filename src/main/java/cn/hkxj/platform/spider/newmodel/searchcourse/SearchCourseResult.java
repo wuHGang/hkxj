@@ -1,5 +1,6 @@
 package cn.hkxj.platform.spider.newmodel.searchcourse;
 
+import cn.hkxj.platform.pojo.Course;
 import com.alibaba.fastjson.annotation.JSONField;
 import lombok.Data;
 
@@ -97,6 +98,33 @@ public class SearchCourseResult {
 
     public String getTermYear(){
         return termName.substring(0, 9);
+    }
+
+    public Course transToCourse(){
+        return new Course()
+                .setName(this.getCourseName())
+                .setNum(this.getCourseId())
+                .setCourseOrder(this.getCourseOrder())
+                .setCredit(this.getCredit())
+                .setAcademyCode(this.getAcademyCode())
+                .setAcademyName(this.getAcademyName())
+                .setTeacherName(this.getTeacherNameList())
+                .setTeacherAccount(this.getTermNumber())
+                .setCourseType(this.getCourseTypeName())
+                .setCourseTypeCode(this.getCourseTypeCode())
+                .setExamType(this.getExamTypeName())
+                .setExamTypeCode(this.getExamTypeCode())
+                .setTermYear(this.getTermYear())
+                .setTermOrder(this.getTermOrder(termName));
+    }
+
+    private int getTermOrder(String termName){
+        if(termName.contains("一")){
+            return 1;
+        }else {
+            return 2;
+        }
+
     }
 
 }

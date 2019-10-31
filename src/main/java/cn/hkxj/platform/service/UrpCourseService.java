@@ -6,8 +6,10 @@ import cn.hkxj.platform.pojo.Course;
 import cn.hkxj.platform.pojo.SchoolTime;
 import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.pojo.UrpCourse;
+import cn.hkxj.platform.spider.newmodel.SearchResult;
 import cn.hkxj.platform.spider.newmodel.course.UrpCourseForSpider;
 import cn.hkxj.platform.spider.newmodel.searchcourse.SearchCoursePost;
+import cn.hkxj.platform.spider.newmodel.searchcourse.SearchCourseResult;
 import cn.hkxj.platform.utils.DateUtils;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -15,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -46,14 +49,38 @@ public class UrpCourseService {
         }
     }
 
-    public void saveCourse(String courseId, String sequenceNumber){
+    void saveCourse(String courseId, String sequenceNumber){
         if(courseDao.selectCourseByPojo(new Course().setNum(courseId).setCourseOrder(sequenceNumber)).size() == 0){
             SearchCoursePost post = new SearchCoursePost();
-            post.setCourseNumber(courseId).setCourseNumber(sequenceNumber);
+            post.setCourseNumber(courseId).setCourseOrderNumber(sequenceNumber);
             SchoolTime time = DateUtils.getCurrentSchoolTime();
             post.setExecutiveEducationPlanNum(time.getTerm().getExecutiveEducationPlanNum());
             newUrpSpiderService.searchCourseInfo(post);
         }
+    }
+
+    public Course getCourse(String courseId, String sequenceNumber, String termYear, int termOrder){
+        List<Course> courseList = courseDao.selectCourseByPojo(
+                new Course()
+                .setNum(courseId)
+                .setCourseOrder(sequenceNumber)
+                .setTermYear(termYear)
+                .setTermOrder(termOrder));
+
+        if(courseList.size() == 0){
+            SearchCoursePost post = new SearchCoursePost();
+            post.setCourseNumber(courseId).setCourseNumber(sequenceNumber);
+            post.setExecutiveEducationPlanNum(termYear+"-"+ termOrder +"-1");
+            SearchResult<SearchCourseResult> searchResult = newUrpSpiderService.searchCourseInfo(post);
+            if(searchResult.getRecords().size() != 1){
+                throw new RuntimeException("search course result more than one");
+            }else {
+                Course course = searchResult.getRecords().get(0).transToCourse();
+                courseDao.insertSelective(course);
+                return course;
+            }
+        }
+        return courseList.stream().findFirst().get();
     }
 
     public UrpCourse getUrpCourseByCourseId(String courseId){
