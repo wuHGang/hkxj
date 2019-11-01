@@ -116,23 +116,21 @@ public class CourseTimeTableService {
         List<Integer> detailIdList = getCourseTimeTableDetailIdByAccount(student.getAccount());
         if (detailIdList.isEmpty()) {
             try {
-                UrpCourseTimeTableForSpider tableForSpider = getCourseTimeTableDetails(student);
+                CompletableFuture<UrpCourseTimeTableForSpider> future = CompletableFuture.supplyAsync(() -> getCourseTimeTableDetails(student));
+                UrpCourseTimeTableForSpider tableForSpider = future.get(1000L, TimeUnit.MILLISECONDS);
                 if (!hasSchoolCourse(tableForSpider)) {
                     return getCourseTimetableByClass(student);
                 }
                 return getCurrentTermDataFromSpider(tableForSpider, schoolTime);
-            } catch (UrpRequestException e) {
-                if (e.getCode() == 404) {
-                    return getCourseTimetableByClass(student);
-                } else {
-                    throw e;
-                }
+            } catch (UrpRequestException | InterruptedException | ExecutionException | TimeoutException e) {
+                return getCourseTimetableByClass(student);
             }
 
         } else {
             return courseTimeTableDetailDao.getCourseTimeTableDetailForCurrentTerm(detailIdList, schoolTime);
         }
     }
+
     public List<CourseTimeTableVo> getCourseTimeTableByStudent(int account){
         Student student = studentDao.selectStudentByAccount(account);
         return getCourseTimeTableByStudent(student);
@@ -142,7 +140,9 @@ public class CourseTimeTableService {
         List<Integer> idList = getCourseTimeTableIdByAccount(student.getAccount());
         if (idList.isEmpty()) {
             try {
-                UrpCourseTimeTableForSpider tableForSpider = getCourseTimeTableDetails(student);
+                CompletableFuture<UrpCourseTimeTableForSpider> future = CompletableFuture.supplyAsync(() -> getCourseTimeTableDetails(student));
+
+                UrpCourseTimeTableForSpider tableForSpider = future.get(1000L, TimeUnit.MILLISECONDS);
                 if (!hasSchoolCourse(tableForSpider)) {
                     return transCourseTimeTableToVo(getCourseTimetableByClazz(student));
                 } else {
@@ -151,12 +151,8 @@ public class CourseTimeTableService {
                     return transCourseTimeTableToVo(list);
                 }
 
-            } catch (UrpRequestException e) {
-                if (e.getCode() == 404) {
-                    return transCourseTimeTableToVo(getCourseTimetableByClazz(student));
-                } else {
-                    throw e;
-                }
+            } catch (UrpRequestException | InterruptedException | ExecutionException | TimeoutException e) {
+                return transCourseTimeTableToVo(getCourseTimetableByClazz(student));
             }
 
         } else {
