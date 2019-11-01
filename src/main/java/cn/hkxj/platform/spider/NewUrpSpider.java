@@ -751,7 +751,7 @@ public class NewUrpSpider {
                     PreLoadCaptcha preLoadCaptcha = new PreLoadCaptcha(captcha, uuid.toString(), new Date());
                     queue.put(preLoadCaptcha);
                 } catch (Throwable e) {
-                    log.error("preload captcha error", e);
+                    log.error("preload captcha error {}", e.getMessage());
                 } finally {
                     MDC.clear();
                     log.debug("captcha queue size {}", queue.size());
