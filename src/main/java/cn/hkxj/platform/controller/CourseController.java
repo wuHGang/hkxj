@@ -64,10 +64,6 @@ public class CourseController {
             account = (String) httpSession.getAttribute("account");
         }
 
-        if (Objects.isNull(account)) {
-            return WebResponse.fail(ErrorCode.USER_UNAUTHORIZED.getErrorCode(), "用户未绑定");
-        }
-
         if (!isAccountValid(account)) {
             return WebResponse.fail(ErrorCode.ACCOUNT_OR_PASSWORD_INVALID.getErrorCode(), "账号无效");
         }

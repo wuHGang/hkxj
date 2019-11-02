@@ -4,6 +4,7 @@ import cn.hkxj.platform.dao.*;
 import cn.hkxj.platform.elasticsearch.document.CourseTimeTableDocument;
 import cn.hkxj.platform.mapper.TeacherMapper;
 import cn.hkxj.platform.pojo.*;
+import cn.hkxj.platform.pojo.vo.CourseTimetableSearchResultVo;
 import org.elasticsearch.index.query.DisMaxQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.data.domain.PageRequest;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,15 +34,19 @@ public class CourseTimeTableSearchService {
     private ClassCourseTimetableDao classCourseTimetableDao;
     @Resource
     private UrpClassDao urpClassDao;
+    @Resource
+    private UrpClassRoomDao urpClassRoomDao;
+    @Resource
+    private TeacherDao teacherDao;
 
     private String termYear = "2019-2020";
 
     static {
-        System.setProperty("es.set.netty.runtime.available.processors","false");
+        System.setProperty("es.set.netty.runtime.available.processors", "false");
     }
 
 
-    public void saveTimeTableDate(){
+    public void saveTimeTableDate() {
 
         CourseTimetable courseTimetable = new CourseTimetable()
                 .setTermYear(termYear)
@@ -68,7 +74,7 @@ public class CourseTimeTableSearchService {
                     .setTeacherAccountList(teacherList.stream().map(Teacher::getAccount).collect(Collectors.toList()))
                     .setClassNameList(urpClassList.stream().map(UrpClass::getClassName).collect(Collectors.toList()))
                     .setClassNumList(urpClassList.stream().map(UrpClass::getClassNum).collect(Collectors.toList()))
-                    .setSubjectNameList(new ArrayList<>(urpClassList.stream().map(x-> x.getAdmissionGrade()+x.getSubjectName()).collect(Collectors.toSet())))
+                    .setSubjectNameList(new ArrayList<>(urpClassList.stream().map(x -> x.getAdmissionGrade() + x.getSubjectName()).collect(Collectors.toSet())))
                     .setTermYear(timetable.getTermYear())
                     .setTermOrder(timetable.getTermOrder());
             documents.add(courseTimeTableDocument);
@@ -79,7 +85,36 @@ public class CourseTimeTableSearchService {
 
     }
 
-    public List<CourseTimeTableDocument> searchCourseTimeTable(int page, int size, String query){
+    public List<CourseTimetableSearchResultVo> searchCourseTimeTableV2(int page, int size, String query) {
+        return searchCourseTimeTable(page, size, query).parallelStream()
+                .map(x -> new CourseTimetableSearchResultVo()
+                        .setAcademyName(x.getAcademyName())
+                        .setClassDay(x.getClassDay())
+                        .setClassOrder(x.getClassOrder())
+                        .setClassroom(urpClassRoomDao.selectByNumber(x.getClassRoomNumber()))
+                        .setStartWeek(x.getStartWeek())
+                        .setEndWeek(x.getEndWeek())
+                        .setUrpClassList(x.getClassNumList()
+                                .stream()
+                                .map(num -> urpClassDao.selectByClassNumber(num))
+                                .sorted(Comparator.comparing(UrpClass::getClassNum))
+                                .collect(Collectors.toList())
+                        )
+                        .setCourse(courseDao.selectByNumAndOrder(x.getCourseId(), x.getCourseOrder()))
+                        .setTeacherList(x.getTeacherAccountList()
+                                .stream()
+                                .map(account -> teacherDao.selectByAccount(account))
+                                .collect(Collectors.toList())
+                        )
+                        .setWeekDescription(x.getWeekDescription())
+                        .setSubjectNameList(x.getSubjectNameList())
+                        .setTermYear(x.getTermYear())
+                        .setTermOrder(x.getTermOrder()))
+                .collect(Collectors.toList());
+
+    }
+
+    public List<CourseTimeTableDocument> searchCourseTimeTable(int page, int size, String query) {
 
         // 分页参数
         PageRequest pageRequest = PageRequest.of(page, size);
@@ -107,7 +142,7 @@ public class CourseTimeTableSearchService {
         return courseTimeTableRepository.search(searchQuery).stream().collect(Collectors.toList());
     }
 
-    private List<Teacher> getTeacherByTable(CourseTimetable timetable){
+    private List<Teacher> getTeacherByTable(CourseTimetable timetable) {
         List<Teacher> teacherList = new ArrayList<>();
         for (TeacherCourseTimetable teacherCourseTimetable : teacherCourseTimeTableDao.selectByPojo(new TeacherCourseTimetable()
                 .setCourseTimetableId(timetable.getId())
@@ -120,7 +155,7 @@ public class CourseTimeTableSearchService {
     }
 
 
-    private List<UrpClass> getClassByTable(CourseTimetable timetable){
+    private List<UrpClass> getClassByTable(CourseTimetable timetable) {
         List<UrpClass> urpClassList = new ArrayList<>();
         for (ClassCourseTimetable courseTimetable : classCourseTimetableDao.selectByPojo(new ClassCourseTimetable()
                 .setTermYear(termYear)
@@ -139,7 +174,7 @@ public class CourseTimeTableSearchService {
                 .setTermYear(termYear)
                 .setTermOrder(1)
         );
-        if(courseList.size() != 1){
+        if (courseList.size() != 1) {
             System.out.println(courseList);
         }
         return courseList.get(0);

@@ -63,6 +63,12 @@ public class CourseTimeTableService {
     private StudentCourseTimeTableDao studentCourseTimeTableDao;
     @Resource
     private UrpClassRoomDao urpClassRoomDao;
+    @Resource
+    private TeacherCourseTimeTableDao teacherCourseTimeTableDao;
+    @Resource
+    private TeacherDao teacherDao;
+    @Resource
+    private UrpClassDao urpClassDao;
 
     /**
      * 这个方法只能将一天的数据转换成当日课表所需要的文本
@@ -131,7 +137,7 @@ public class CourseTimeTableService {
         }
     }
 
-    public List<CourseTimeTableVo> getCourseTimeTableByStudent(int account){
+    public List<CourseTimeTableVo> getCourseTimeTableByStudent(int account) {
         Student student = studentDao.selectStudentByAccount(account);
         return getCourseTimeTableByStudent(student);
     }
@@ -158,6 +164,38 @@ public class CourseTimeTableService {
         } else {
             return transCourseTimeTableToVo(courseTimeTableDao.selectByIdList(idList));
         }
+    }
+
+    public List<CourseTimeTableVo> getCourseTimeTableByTeacherAccount(String account) {
+        Teacher teacher = teacherDao.selectByAccount(account);
+        return getCourseTimeTableByTeacher(teacher.getId());
+    }
+
+    public List<CourseTimeTableVo> getCourseTimetableVoByClazz(String classNum){
+        UrpClass urpClass = urpClassDao.selectByClassNumber(classNum);
+        return transCourseTimeTableToVo(getCourseTimetableByClazz(urpClass));
+    }
+
+    public List<CourseTimeTableVo> getCourseTimeTableByTeacher(Integer teacherId) {
+        List<Integer> idList = teacherCourseTimeTableDao.selectByPojo(new TeacherCourseTimetable().setTeacherId(teacherId))
+                .stream()
+                .map(TeacherCourseTimetable::getCourseTimetableId)
+                .collect(Collectors.toList());
+
+        if(idList.isEmpty()){
+            return Collections.emptyList();
+        }
+        return transCourseTimeTableToVo(courseTimeTableDao.selectByIdList(idList));
+    }
+
+    public List<CourseTimeTableVo> getCourseTimeTableByClassroom(String roomId) {
+        List<CourseTimetable> courseTimetableList = courseTimeTableDao.selectByCourseTimetable(new CourseTimetable().setRoomNumber(roomId));
+        return transCourseTimeTableToVo(courseTimetableList);
+    }
+
+    public List<CourseTimeTableVo> getCourseTimeTableByCourse(String courseId, String courseOrder) {
+        List<CourseTimetable> courseTimetableList = courseTimeTableDao.selectByCourseTimetable(new CourseTimetable().setCourseId(courseId).setCourseSequenceNumber(courseOrder));
+        return transCourseTimeTableToVo(courseTimetableList);
     }
 
     private List<CourseTimetable> getCourseTimetableList(UrpCourseTimeTableForSpider tableForSpider) {
@@ -621,6 +659,11 @@ public class CourseTimeTableService {
 
     private List<CourseTimetable> getCourseTimetableByClazz(Student student) {
         UrpClass urpClass = classService.getUrpClassByStudent(student);
+        return getCourseTimetableByClazz(urpClass);
+    }
+
+
+    private List<CourseTimetable> getCourseTimetableByClazz(UrpClass urpClass){
         return classCourseTimetableDao.selectByPojo(new ClassCourseTimetable().setClassId(urpClass.getClassNum()))
                 .stream()
                 .map(x -> courseTimeTableDao.selectByPrimaryKey(x.getCourseTimetableId()))

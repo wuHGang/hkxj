@@ -37,6 +37,10 @@ public class CourseDao {
         return courseMapper.selectByExample(example);
     }
 
+    public Course selectByNumAndOrder(String number, String order){
+        return selectCourseByPojo(new Course().setNum(number).setCourseOrder(order)).stream().findFirst().get();
+    }
+
     public void insertSelective(Course course){
         courseMapper.insertSelective(course);
     }

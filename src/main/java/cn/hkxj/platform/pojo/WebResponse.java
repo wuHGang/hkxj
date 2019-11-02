@@ -32,10 +32,11 @@ public class WebResponse<T> {
 		return new WebResponse<T>().setStatus(SUCCESS_CODE).setMessage("").setData(data);
 	}
 
-	public static WebResponse<Void> fail(Integer status, String message) {
+	@SuppressWarnings({"unused"})
+	public static WebResponse fail(Integer status, String message) {
 		Objects.requireNonNull(status);
 		Objects.requireNonNull(message);
-		return new WebResponse<Void>().setStatus(status).setMessage(message);
+		return new WebResponse().setStatus(status).setMessage(message);
 	}
 
 	public Integer getStatus() {

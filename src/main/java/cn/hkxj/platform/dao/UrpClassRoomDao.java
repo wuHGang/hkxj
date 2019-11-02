@@ -36,4 +36,9 @@ public class UrpClassRoomDao {
     public void insertSelective(UrpClassroom urpClassroom){
         urpClassroomMapper.insertSelective(urpClassroom);
     }
+
+
+    public UrpClassroom selectByNumber(String number){
+        return selectByClassroom(new UrpClassroom().setNumber(number)).stream().findFirst().get();
+    }
 }
