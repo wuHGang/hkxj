@@ -32,7 +32,7 @@ public class EmptyRoomServiceTest {
 
     @Test
     public void getEmptyRoomReply() throws IOException {
-        List<EmptyRoom> emptyRoomReply = emptyRoomService.getEmptyRoomReply("8", "02", "4/3",3);
+        List<EmptyRoom> emptyRoomReply = emptyRoomService.getEmptyRoomReply("8", "02", 4,3,0);
         for (EmptyRoom s:emptyRoomReply){
             System.out.println(s.getName());
         }
