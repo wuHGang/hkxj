@@ -19,7 +19,7 @@ public class EmptyRoomTask {
      * 自动爬取三天内的所有空教室数据作为热点数据
      */
     @Async
-    @Scheduled(cron = "0 0 6 * * ?")
+    @Scheduled(cron = "0 0 1 * * ?")
     void autoGetEmptyRoom() {
         int day = SchoolTimeUtil.getDayOfWeek();
         for (int i = 0; i < 3; i++) {
