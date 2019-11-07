@@ -32,28 +32,43 @@ public class EmtpyRoomController {
                                     @RequestParam("floor") int floor) {
 
         try {
-            String wSection = dayOfWeek + "/" + order;
-            return WebResponse.success(emptyRoomService.getEmptyRoomReply(String.valueOf(schoolWeek), buildingName, wSection, floor));
+            return WebResponse.success(emptyRoomService.getEmptyRoomReply(String.valueOf(schoolWeek), buildingName, dayOfWeek, order, floor));
         } catch (Exception e) {
             log.error("fail to get emptyRoom data {},{},{},{},{}", schoolWeek, dayOfWeek, order, buildingName, floor, e);
         }
         return WebResponse.fail(ErrorCode.NO_DATA.getErrorCode(), "fail to get emptyRoom Data");
     }
 
+    /**
+     * 对order为0的请求进行不分节次的查询
+     * @param schoolWeek
+     * @param dayOfWeek
+     * @param order
+     * @param buildingName
+     * @param floor
+     * @return
+     */
     @RequestMapping(value = "/emptyRoomV2", method = RequestMethod.POST)
     public WebResponse getEmptyRoomV2(@RequestParam("schoolWeek") int schoolWeek,
+                                      @RequestParam("building") String buildingName,
                                       @RequestParam("dayOfWeek") int dayOfWeek,
                                       @RequestParam("order") int order,
-                                      @RequestParam("building") String buildingName,
                                       @RequestParam("floor") int floor) {
-        return WebResponse.success();
-//        try {
-//            List<RoomTimeTable> table = emptyRoomService.getRoomTimeTableByTime(schoolWeek, dayOfWeek, order, Building.getBuildingByName(buildingName), floor);
-//            return WebResponse.success(adapteResult(table));
-//        } catch (IOException e) {
-//            log.error("fail to get emptyRoom data {},{},{},{},{}", schoolWeek, dayOfWeek, order, buildingName, floor, e);
-//        }
-//        return WebResponse.fail(ErrorCode.NO_DATA.getErrorCode(), "fail to get emptyRoom Data");
+        if (order != 0) {
+            try {
+                return WebResponse.success(emptyRoomService.getEmptyRoomReply(String.valueOf(schoolWeek), buildingName, dayOfWeek, order, floor));
+            } catch (Exception e) {
+                log.error("fail to get emptyRoom data {},{},{},{},{}", schoolWeek, dayOfWeek, order, buildingName, floor, e);
+            }
+        } else {
+            try {
+                return WebResponse.success(emptyRoomService.getFullEmptyRoomReply(String.valueOf(schoolWeek), buildingName, dayOfWeek, floor));
+            } catch (Exception e) {
+                log.error("fail to get emptyRoom data {},{},{},{},{}", schoolWeek, dayOfWeek, order, buildingName, floor, e);
+            }
+        }
+
+        return WebResponse.fail(ErrorCode.NO_DATA.getErrorCode(), "fail to get emptyRoom Data");
     }
 
 
