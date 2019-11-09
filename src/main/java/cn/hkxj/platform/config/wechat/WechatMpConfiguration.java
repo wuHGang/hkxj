@@ -1,5 +1,6 @@
 package cn.hkxj.platform.config.wechat;
 
+import cn.hkxj.platform.interceptor.RandomMatchInterceptor;
 import cn.hkxj.platform.interceptor.StudentInfoInterceptor;
 import cn.hkxj.platform.interceptor.WechatOpenIdInterceptor;
 import cn.hkxj.platform.service.wechat.WxMessageRouter;
@@ -69,6 +70,9 @@ public class WechatMpConfiguration {
     private StudentInfoInterceptor studentInfoInterceptor;
 
     @Resource
+    private RandomMatchInterceptor randomMatchInterceptor;
+
+    @Resource
     private CourseRankHandler courseRankHandler;
 
     private static Map<String, WxMpMessageRouter> routers = Maps.newHashMap();
@@ -100,6 +104,7 @@ public class WechatMpConfiguration {
                 .rContent("(课表|课程|今日课表)")
                 .interceptor(wechatOpenIdInterceptor)
                 .interceptor(studentInfoInterceptor)
+                .interceptor(randomMatchInterceptor)
                 .handler(courseMessageHandler)
                 .end()
                 .rule()
@@ -107,12 +112,14 @@ public class WechatMpConfiguration {
                 .rContent("订阅|课表推送|成绩推送|考试推送")
                 .interceptor(wechatOpenIdInterceptor)
                 .interceptor(studentInfoInterceptor)
+                .interceptor(randomMatchInterceptor)
                 .handler(subscribeMessageHandler)
                 .end()
                 .rule()
                 .async(true)
                 .interceptor(wechatOpenIdInterceptor)
                 .interceptor(studentInfoInterceptor)
+                .interceptor(randomMatchInterceptor)
                 .rContent("补考成绩.*?")
                 .handler(makeUpGradeHandler)
                 .end()
@@ -120,6 +127,7 @@ public class WechatMpConfiguration {
                 .async(true)
                 .interceptor(wechatOpenIdInterceptor)
                 .interceptor(studentInfoInterceptor)
+                .interceptor(randomMatchInterceptor)
                 .rContent(".*?成绩.*?")
                 .handler(gradeMessageHandler)
                 .end()
@@ -134,6 +142,7 @@ public class WechatMpConfiguration {
                 .async(false)
                 .interceptor(wechatOpenIdInterceptor)
                 .interceptor(studentInfoInterceptor)
+                .interceptor(randomMatchInterceptor)
                 .content("openid")
                 .handler(openidMessageHandler)
                 .end()
@@ -141,6 +150,7 @@ public class WechatMpConfiguration {
                 .async(false)
                 .interceptor(wechatOpenIdInterceptor)
                 .interceptor(studentInfoInterceptor)
+                .interceptor(randomMatchInterceptor)
                 .rContent("解绑|解除绑定")
                 .handler(unbindMessageHandler)
                 .end()
@@ -149,6 +159,7 @@ public class WechatMpConfiguration {
                 .rContent(".*?考试.*?")
                 .interceptor(wechatOpenIdInterceptor)
                 .interceptor(studentInfoInterceptor)
+                .interceptor(randomMatchInterceptor)
                 .handler(examMessageHandler)
                 .end()
                 .rule()
@@ -161,12 +172,22 @@ public class WechatMpConfiguration {
                 .rContent("退订.*?")
                 .interceptor(wechatOpenIdInterceptor)
                 .interceptor(studentInfoInterceptor)
+                .interceptor(randomMatchInterceptor)
                 .handler(unsubscribeMessageHandler)
                 .async(false)
                 .rContent("课时排行|课时安排|课时排名|课表排行|科时排行|科时排名")
                 .interceptor(wechatOpenIdInterceptor)
                 .interceptor(studentInfoInterceptor)
+                .interceptor(randomMatchInterceptor)
                 .handler(courseRankHandler)
+                .end()
+                .rule()
+                .async(false)
+                .rContent("配对")
+                .interceptor(wechatOpenIdInterceptor)
+                .interceptor(studentInfoInterceptor)
+                .interceptor(randomMatchInterceptor)
+                .handler(courseMessageHandler)
                 .end();
         return newRouter;
     }
