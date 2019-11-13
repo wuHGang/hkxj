@@ -208,7 +208,7 @@ public class TemplateBuilder {
     private WxMpTemplateData getCourseRemark(){
         WxMpTemplateData remark = new WxMpTemplateData();
         remark.setName("remark");
-        remark.setValue("查询仅供参考，以学校下发的课表为准，如有疑问微信添加吴彦祖【hkdhd666】");
+        remark.setValue("有疑问请加吴彦祖微信hkdhdj666，这次微信号是对的！！！");
         return remark;
     }
 

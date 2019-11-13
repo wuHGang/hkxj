@@ -8,12 +8,14 @@ import me.chanjar.weixin.common.session.WxSessionManager;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
+import org.springframework.stereotype.Service;
 
 
 import javax.annotation.Resource;
 import java.util.Map;
 import java.util.Objects;
 
+@Service
 public class RandomMatchInterceptor implements WxMessageInterceptor {
     @Resource
     private OpenIdService openIdService;
