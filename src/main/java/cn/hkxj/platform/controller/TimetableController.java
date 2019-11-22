@@ -3,10 +3,13 @@ package cn.hkxj.platform.controller;
 
 import cn.hkxj.platform.elasticsearch.CourseTimeTableSearchService;
 import cn.hkxj.platform.elasticsearch.document.CourseTimeTableDocument;
+import cn.hkxj.platform.pojo.Exam;
 import cn.hkxj.platform.pojo.WebResponse;
 import cn.hkxj.platform.pojo.constant.ErrorCode;
 import cn.hkxj.platform.pojo.vo.CourseTimeTableVo;
 import cn.hkxj.platform.service.CourseTimeTableService;
+import cn.hkxj.platform.service.ExamTimeTableService;
+import cn.hkxj.platform.spider.newmodel.examtime.UrpExamTime;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,6 +28,8 @@ public class TimetableController {
     private CourseTimeTableService courseTimeTableService;
     @Resource
     private CourseTimeTableSearchService courseTimeTableSearchService;
+    @Resource
+    private ExamTimeTableService examTimeTableService;
 
     @GetMapping("/student")
     public WebResponse getTimeTableByStudent(@RequestParam(value = "account") String account) {
@@ -76,16 +81,26 @@ public class TimetableController {
 
     @GetMapping("/search")
     public WebResponse searchTimeTable(@RequestParam(value = "q") String query,
-                                                                      @RequestParam(value = "page", required = false) Integer page,
-                                                                      @RequestParam(value = "size", required = false) Integer size
+                                       @RequestParam(value = "page", required = false) Integer page,
+                                       @RequestParam(value = "size", required = false) Integer size
     ) {
 
-        if(page== null || size == null){
+        if (page == null || size == null) {
             page = 0;
             size = 10;
         }
 
-        return WebResponse.success(courseTimeTableSearchService.searchCourseTimeTableV2(page, size ,query));
+        return WebResponse.success(courseTimeTableSearchService.searchCourseTimeTableV2(page, size, query));
+    }
+
+    @GetMapping("/exam")
+    public WebResponse getExamTimeTableByStudent(@RequestParam(value = "account") String account) {
+        if (Objects.isNull(account)) {
+            return WebResponse.fail(ErrorCode.ACCOUNT_OR_PASSWORD_INVALID.getErrorCode(), "账号无效");
+        }
+
+        List<Exam> examTimeList = examTimeTableService.getExamtimeList(Integer.parseInt(account));
+        return WebResponse.success(examTimeList);
     }
 
 

@@ -423,6 +423,7 @@ public class NewUrpSpider {
             }
 
         }
+        result.sort(Comparator.comparing(UrpExamTime::getDate));
         return result;
     }
 

@@ -9,6 +9,7 @@ import cn.hkxj.platform.pojo.vo.CourseTimeTableVo;
 import cn.hkxj.platform.spider.newmodel.coursetimetable.TimeAndPlace;
 import cn.hkxj.platform.spider.newmodel.coursetimetable.UrpCourseTimeTable;
 import cn.hkxj.platform.spider.newmodel.coursetimetable.UrpCourseTimeTableForSpider;
+import cn.hkxj.platform.spider.newmodel.examtime.UrpExamTime;
 import cn.hkxj.platform.utils.DateUtils;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
@@ -140,6 +141,11 @@ public class CourseTimeTableService {
     public List<CourseTimeTableVo> getCourseTimeTableByStudent(int account) {
         Student student = studentDao.selectStudentByAccount(account);
         return getCourseTimeTableByStudent(student);
+    }
+
+    public List<UrpExamTime> getExamTimeTableByStudent(int account) {
+        Student student = studentDao.selectStudentByAccount(account);
+        return newUrpSpiderService.getExamTime(student);
     }
 
     public List<CourseTimeTableVo> getCourseTimeTableByStudent(Student student) {

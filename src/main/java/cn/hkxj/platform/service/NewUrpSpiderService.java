@@ -148,6 +148,12 @@ public class NewUrpSpiderService {
 
         return spider.getExamTime();
     }
+
+    public List<UrpExamTime> getExamTime(Student student){
+
+        return getExamTime(student.getAccount().toString(), student.getPassword());
+    }
+
     private Student getUserInfo(UrpStudentInfo studentInfo){
 
         Classes classes = classService.parseSpiderResult(studentInfo);
