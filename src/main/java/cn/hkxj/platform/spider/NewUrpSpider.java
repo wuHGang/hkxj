@@ -196,8 +196,9 @@ public class NewUrpSpider {
         }
         PreLoadCaptcha preLoadCaptcha;
         VerifyCode verifyCode = null;
+
         while ((preLoadCaptcha = queue.poll()) != null){
-            if(System.currentTimeMillis() - preLoadCaptcha.createDate.getTime() < 1000*60*20){
+            if(!preLoadCaptcha.isExpire()){
                 MDC.put("preLoad", preLoadCaptcha.preloadCookieId);
                 verifyCode = preLoadCaptcha.captcha;
                 break;

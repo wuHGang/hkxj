@@ -36,4 +36,12 @@ public class StudentCourseTimeTableDao {
 
         return studentCourseTimeTableMapper.selectByExample(example);
     }
+
+    public int deleteByAccount(Integer account){
+        StudentCourseTimeTableExample example = new StudentCourseTimeTableExample();
+        StudentCourseTimeTableExample.Criteria criteria = example.createCriteria();
+
+        criteria.andStudentIdEqualTo(account);
+        return studentCourseTimeTableMapper.deleteByExample(example);
+    }
 }

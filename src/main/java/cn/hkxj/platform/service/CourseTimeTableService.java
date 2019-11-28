@@ -1,5 +1,6 @@
 package cn.hkxj.platform.service;
 
+import cn.hkxj.platform.MDCThreadPool;
 import cn.hkxj.platform.dao.*;
 import cn.hkxj.platform.exceptions.RoomParseException;
 import cn.hkxj.platform.exceptions.UrpRequestException;
@@ -123,7 +124,9 @@ public class CourseTimeTableService {
         List<Integer> detailIdList = getCourseTimeTableDetailIdByAccount(student.getAccount());
         if (detailIdList.isEmpty()) {
             try {
-                CompletableFuture<UrpCourseTimeTableForSpider> future = CompletableFuture.supplyAsync(() -> getCourseTimeTableDetails(student));
+                CompletableFuture<UrpCourseTimeTableForSpider> future =
+                        CompletableFuture.supplyAsync(() -> getCourseTimeTableDetails(student), new MDCThreadPool(7, 7, 0L, TimeUnit.SECONDS,
+                                new LinkedBlockingQueue<>(), r -> new Thread(r, "courseSpider")));
                 UrpCourseTimeTableForSpider tableForSpider = future.get(1000L, TimeUnit.MILLISECONDS);
                 if (!hasSchoolCourse(tableForSpider)) {
                     return getCourseTimetableByClass(student);
@@ -138,37 +141,46 @@ public class CourseTimeTableService {
         }
     }
 
+
+    public List<CourseTimeTableVo> updateCourseTimeTableByStudent(int account) {
+        studentCourseTimeTableDao.deleteByAccount(account);
+        return getCourseTimeTableByStudent(account);
+    }
+
+
     public List<CourseTimeTableVo> getCourseTimeTableByStudent(int account) {
         Student student = studentDao.selectStudentByAccount(account);
         return getCourseTimeTableByStudent(student);
     }
 
-    public List<UrpExamTime> getExamTimeTableByStudent(int account) {
-        Student student = studentDao.selectStudentByAccount(account);
-        return newUrpSpiderService.getExamTime(student);
-    }
 
     public List<CourseTimeTableVo> getCourseTimeTableByStudent(Student student) {
         List<Integer> idList = getCourseTimeTableIdByAccount(student.getAccount());
         if (idList.isEmpty()) {
-            try {
-                CompletableFuture<UrpCourseTimeTableForSpider> future = CompletableFuture.supplyAsync(() -> getCourseTimeTableDetails(student));
-
-                UrpCourseTimeTableForSpider tableForSpider = future.get(1000L, TimeUnit.MILLISECONDS);
-                if (!hasSchoolCourse(tableForSpider)) {
-                    return transCourseTimeTableToVo(getCourseTimetableByClazz(student));
-                } else {
-                    List<CourseTimetable> list = getCourseTimetableList(tableForSpider);
-                    saveCourseTimeTableDetailsFromSearch(list, student);
-                    return transCourseTimeTableToVo(list);
-                }
-
-            } catch (UrpRequestException | InterruptedException | ExecutionException | TimeoutException e) {
-                return transCourseTimeTableToVo(getCourseTimetableByClazz(student));
-            }
-
+            return getCourseTimeTableByStudentFromSpider(student);
         } else {
             return transCourseTimeTableToVo(courseTimeTableDao.selectByIdList(idList));
+        }
+    }
+
+    List<CourseTimeTableVo> getCourseTimeTableByStudentFromSpider(Student student){
+        try {
+            CompletableFuture<UrpCourseTimeTableForSpider> future =
+                    CompletableFuture.supplyAsync(() -> getCourseTimeTableDetails(student),
+                            new MDCThreadPool(7, 7, 0L, TimeUnit.SECONDS,
+                            new LinkedBlockingQueue<>(), r -> new Thread(r, "courseSpider")));
+
+            UrpCourseTimeTableForSpider tableForSpider = future.get(10000L, TimeUnit.MILLISECONDS);
+            if (!hasSchoolCourse(tableForSpider)) {
+                return transCourseTimeTableToVo(getCourseTimetableByClazz(student));
+            } else {
+                List<CourseTimetable> list = getCourseTimetableList(tableForSpider);
+                saveCourseTimeTableDetailsFromSearch(list, student);
+                return transCourseTimeTableToVo(list);
+            }
+
+        } catch (UrpRequestException | InterruptedException | ExecutionException | TimeoutException e) {
+            return transCourseTimeTableToVo(getCourseTimetableByClazz(student));
         }
     }
 
@@ -466,7 +478,6 @@ public class CourseTimeTableService {
             for (Map.Entry<String, UrpCourseTimeTable> entry : map.entrySet()) {
                 UrpCourseTimeTable urpCourseTimeTable = entry.getValue();
                 String courseId = urpCourseTimeTable.getCourseRelativeInfo().getCourseNumber();
-                String sequenceNumber = urpCourseTimeTable.getCourseRelativeInfo().getCourseSequenceNumber();
                 //查看课程是否存在，不存在就插入数据库
                 urpCourseService.checkOrSaveUrpCourseToDb(courseId, student);
 //                urpCourseService.saveCourse(courseId, sequenceNumber);

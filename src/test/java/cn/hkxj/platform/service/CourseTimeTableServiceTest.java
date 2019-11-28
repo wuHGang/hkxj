@@ -119,4 +119,29 @@ public class CourseTimeTableServiceTest {
 
     }
 
+    @Test
+    public void getCourseTimeTableByStudentFromSpider(){
+        Student student = studentDao.selectStudentByAccount(2017021881);
+        for (CourseTimeTableVo vo : courseTimeTableService.getCourseTimeTableByStudentFromSpider(student)) {
+            System.out.println(vo);
+        }
+
+    }
+
+    @Test
+    public void testUpdate(){
+        for (CourseTimeTableVo vo : courseTimeTableService.getCourseTimeTableByStudent( 2019021228)) {
+            System.out.println(vo);
+        }
+
+        System.out.println("####################");
+
+        for (CourseTimeTableVo vo : courseTimeTableService.updateCourseTimeTableByStudent( 2019021228)) {
+            System.out.println(vo);
+        }
+
+
+    }
+
+
 }

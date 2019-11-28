@@ -28,7 +28,7 @@ import java.util.concurrent.TimeUnit;
 @EverythingIsNonNull
 public class UrpCookieJar implements ClearableCookieJar {
 
-    private final Cache<String,CookieCache> accountCookieCache;
+    private final Cache<String, CookieCache> accountCookieCache;
 
     private final RedisCookiePersistor persistor;
 
@@ -38,14 +38,14 @@ public class UrpCookieJar implements ClearableCookieJar {
                 .maximumSize(100)
                 .expireAfterAccess(20L, TimeUnit.MINUTES)
                 .build();
-        try{
+        try {
             Map<String, List<Cookie>> accountCookieMap = persistor.loadAll();
             for (Map.Entry<String, List<Cookie>> entry : accountCookieMap.entrySet()) {
                 CookieCache cookieCache = new SetCookieCache();
                 cookieCache.addAll(entry.getValue());
                 accountCookieCache.put(entry.getKey(), cookieCache);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             log.error("UrpCookieJar init error ", e);
         }
 
@@ -56,7 +56,7 @@ public class UrpCookieJar implements ClearableCookieJar {
 
         CookieCache cookieCache = selectCookieCache();
         cookieCache.addAll(cookies);
-        if(StringUtils.isNotEmpty(MDC.get("account"))){
+        if (StringUtils.isNotEmpty(MDC.get("account"))) {
             persistor.saveByAccount(cookies, MDC.get("account"));
         }
 
@@ -91,10 +91,11 @@ public class UrpCookieJar implements ClearableCookieJar {
      */
     private CookieCache selectCookieCache() {
         CookieCache result = null;
-        if(StringUtils.isNotEmpty(MDC.get("preLoad"))){
+        // preLoad不为空的情况  1.预加载线程访问  2.读取预加载验证码的线程访问
+        if (StringUtils.isNotEmpty(MDC.get("preLoad"))) {
             result = accountCookieCache.getIfPresent(MDC.get("preLoad"));
-            // 这里如果是预加载的请求  cookieJar会为空  然后新建一个
-            if(result == null){
+            // 如果是预加载的请求  返回一个新的cookieJar
+            if (result == null) {
                 CookieCache cookieCache = new SetCookieCache();
                 accountCookieCache.put(MDC.get("preLoad"), cookieCache);
                 return cookieCache;
@@ -102,25 +103,27 @@ public class UrpCookieJar implements ClearableCookieJar {
         }
 
         //TODO 这个逻辑怎么会写得跟浆糊一样
+        // 用户访问的请求  account必定不为空
         if (StringUtils.isNotEmpty(MDC.get("account"))) {
             // 这里对应的情况是没有预加载的代码  cookieJar会为空  然后新建一个
-            if (result == null){
+            if (result == null) {
                 result = accountCookieCache.getIfPresent(MDC.get("account"));
 
-                if(result == null){
+                if (result == null) {
                     CookieCache cookieCache = new SetCookieCache();
                     accountCookieCache.put(MDC.get("account"), cookieCache);
                     result = cookieCache;
                 }
-            }else {
 
+            } else {
+                // 预加载的验证码
                 accountCookieCache.put(MDC.get("account"), result);
                 persistor.saveByAccount(result, MDC.get("account"));
             }
 
             return result;
         }
-        if(result != null){
+        if (result != null) {
             return result;
         } else {
             throw new RuntimeException("no cookie jar can use");
@@ -135,7 +138,7 @@ public class UrpCookieJar implements ClearableCookieJar {
     @Override
     public void clearSession() {
         String account = MDC.get("account");
-        if(StringUtils.isNotEmpty(account)){
+        if (StringUtils.isNotEmpty(account)) {
             accountCookieCache.invalidate(account);
             persistor.clearByAccount(account);
         }
@@ -147,7 +150,4 @@ public class UrpCookieJar implements ClearableCookieJar {
     }
 
 
-    public static void main(String[] args) {
-        System.out.println(2186 / 30);
-    }
 }

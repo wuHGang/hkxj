@@ -33,12 +33,15 @@ public class RedisCookiePersistor implements AccountCookiePersistor{
     @Override
     synchronized public Map<String, List<Cookie>> loadAll() {
         Set<String> accountSet = Optional
-                .ofNullable(redisTemplate.keys(RedisKeys.URP_LOGIN_COOKIE.getName()+"*")).orElse(new HashSet<>())
+                .ofNullable(redisTemplate.keys(RedisKeys.URP_LOGIN_COOKIE.getName()+"*")).orElse(Collections.emptySet())
                 .stream()
                 .map(key -> key.split(RedisKeys.URP_LOGIN_COOKIE.getName() + "_")[1])
-                .collect(Collectors.toSet());;
+                .collect(Collectors.toSet());
+
         HashMap<String, List<Cookie>> accountCookieMap = Maps.newHashMapWithExpectedSize(accountSet.size());
+
         HashOperations<String, String, String> opsForHash = redisTemplate.opsForHash();
+
         for (String account : accountSet) {
             List<Cookie> cookies = Lists.newArrayList();
 
