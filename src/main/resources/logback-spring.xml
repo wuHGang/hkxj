@@ -38,7 +38,7 @@
         <file>${LOG_PATH}/urp_spider.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- 文件名称 -->
-            <fileNamePattern>wechat-%d{yyyy-MM-dd}.log
+            <fileNamePattern>urp_spider-%d{yyyy-MM-dd}.log
             </fileNamePattern>
             <!-- 文件最大保存历史数量 -->
             <MaxHistory>15</MaxHistory>
