@@ -31,6 +31,28 @@
         </filter>
     </appender>
 
+    <!-- INFO -->
+    <appender name="urpSpiderAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- 文件路径 ，注意LOG_PATH是默认值，
+            它的配置对应application.properties里的logging.path值-->
+        <file>${LOG_PATH}/urp_spider.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- 文件名称 -->
+            <fileNamePattern>wechat-%d{yyyy-MM-dd}.log
+            </fileNamePattern>
+            <!-- 文件最大保存历史数量 -->
+            <MaxHistory>15</MaxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{traceId}][%X{openid}] %-5level %logger{50} %line - %m%n</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
     <!-- ERROR -->
     <appender name="errorAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <!-- 文件路径 ，注意LOG_PATH是默认值，
@@ -73,11 +95,17 @@
     </logger>
 
     <!-- 默认spring boot导入hibernate很多的依赖包，启动的时候，会有hibernate相关的内容，直接去除 -->
-    <logger name="org.hibernate.validator" additivity="false">
-        <level value="ERROR"/>
+    <logger name="org.springframework" additivity="false">
+        <level value="INFO"/>
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="errorAppender"/>
     </logger>
+
+    <logger name="cn.hkxj.platform.spider.NewUrpSpider" additivity="false">
+        <level value="INFO"/>
+        <appender-ref ref="urpSpiderAppender"/>
+    </logger>
+
     <root level="DEBUG">
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="errorAppender"/>
