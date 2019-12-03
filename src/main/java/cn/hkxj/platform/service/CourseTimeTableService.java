@@ -476,6 +476,10 @@ public class CourseTimeTableService {
         for (Map<String, UrpCourseTimeTable> map : spiderResult.getDetails()) {
             for (Map.Entry<String, UrpCourseTimeTable> entry : map.entrySet()) {
                 UrpCourseTimeTable urpCourseTimeTable = entry.getValue();
+
+                if(!urpCourseTimeTable.getCourseRelativeInfo().getStudentNumber().equals(String.valueOf(student.getAccount()))){
+                    return;
+                }
                 String courseId = urpCourseTimeTable.getCourseRelativeInfo().getCourseNumber();
                 //查看课程是否存在，不存在就插入数据库
                 urpCourseService.checkOrSaveUrpCourseToDb(courseId, student);
