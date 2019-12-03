@@ -266,7 +266,7 @@ public class NewUrpSpider {
                 .get()
                 .build();
         String result = new String(execute(request));
-        log.info("urp grade result {}", result);
+        log.info("{} urp grade result {}", MDC.get("account"), result);
         List<Map<String, Object>> list = parseObject(result, new TypeReference<List<Map<String, Object>>>() {
         });
         JSONArray jsonArray = (JSONArray) list.get(0).get("list");
@@ -438,7 +438,7 @@ public class NewUrpSpider {
         String result = new String(execute(request));
         String regex = "\"dateList\": [.*]}$";
         result = result.replaceAll(regex, "");
-        log.info("urp course timetable {}", result);
+        log.info("{} urp course timetable {}", MDC.get("account"), result);
         return parseObject(result, UrpCourseTimeTableForSpider.class);
 
     }

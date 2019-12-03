@@ -10,7 +10,6 @@ import cn.hkxj.platform.pojo.vo.CourseTimeTableVo;
 import cn.hkxj.platform.spider.newmodel.coursetimetable.TimeAndPlace;
 import cn.hkxj.platform.spider.newmodel.coursetimetable.UrpCourseTimeTable;
 import cn.hkxj.platform.spider.newmodel.coursetimetable.UrpCourseTimeTableForSpider;
-import cn.hkxj.platform.spider.newmodel.examtime.UrpExamTime;
 import cn.hkxj.platform.utils.DateUtils;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
@@ -72,6 +71,9 @@ public class CourseTimeTableService {
     @Resource
     private UrpClassDao urpClassDao;
 
+    private Executor courseSpiderExecutor = new MDCThreadPool(7, 7, 0L, TimeUnit.SECONDS,
+            new LinkedBlockingQueue<>(), r -> new Thread(r, "courseSpider"));
+
     /**
      * 这个方法只能将一天的数据转换成当日课表所需要的文本
      *
@@ -125,8 +127,7 @@ public class CourseTimeTableService {
         if (detailIdList.isEmpty()) {
             try {
                 CompletableFuture<UrpCourseTimeTableForSpider> future =
-                        CompletableFuture.supplyAsync(() -> getCourseTimeTableDetails(student), new MDCThreadPool(7, 7, 0L, TimeUnit.SECONDS,
-                                new LinkedBlockingQueue<>(), r -> new Thread(r, "courseSpider")));
+                        CompletableFuture.supplyAsync(() -> getCourseTimeTableDetails(student), courseSpiderExecutor);
                 UrpCourseTimeTableForSpider tableForSpider = future.get(1000L, TimeUnit.MILLISECONDS);
                 if (!hasSchoolCourse(tableForSpider)) {
                     return getCourseTimetableByClass(student);
@@ -166,9 +167,7 @@ public class CourseTimeTableService {
     List<CourseTimeTableVo> getCourseTimeTableByStudentFromSpider(Student student){
         try {
             CompletableFuture<UrpCourseTimeTableForSpider> future =
-                    CompletableFuture.supplyAsync(() -> getCourseTimeTableDetails(student),
-                            new MDCThreadPool(7, 7, 0L, TimeUnit.SECONDS,
-                            new LinkedBlockingQueue<>(), r -> new Thread(r, "courseSpider")));
+                    CompletableFuture.supplyAsync(() -> getCourseTimeTableDetails(student), courseSpiderExecutor);
 
             UrpCourseTimeTableForSpider tableForSpider = future.get(10000L, TimeUnit.MILLISECONDS);
             if (!hasSchoolCourse(tableForSpider)) {
