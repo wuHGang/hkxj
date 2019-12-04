@@ -1,6 +1,8 @@
 package cn.hkxj.platform.service;
 
+import cn.hkxj.platform.dao.UrpClassRoomDao;
 import cn.hkxj.platform.pojo.EmptyRoom;
+import cn.hkxj.platform.pojo.vo.EmptyRoomVo;
 import cn.hkxj.platform.spider.NewUrpSpider;
 import cn.hkxj.platform.spider.newmodel.emptyroom.EmptyRoomPojo;
 import cn.hkxj.platform.spider.newmodel.emptyroom.EmptyRoomPost;
@@ -14,8 +16,10 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * @author Xie
@@ -31,6 +35,8 @@ public class EmptyRoomService {
 
     @Autowired
     RedisTemplate redisTemplate;
+    @Resource
+    private UrpClassRoomDao urpClassRoomDao;
 
 
     /**
@@ -107,9 +113,10 @@ public class EmptyRoomService {
      * @param floor
      * @return
      */
-    public List<EmptyRoom> getFullEmptyRoomReply(String week, String teaNum, int dayOfWeek, int floor) {
-        HashMap<String, EmptyRoom> classRoomMap = new HashMap<>();
+    public List<EmptyRoomVo> getFullEmptyRoomReply(String week, String teaNum, int dayOfWeek, int floor) {
+        Map<String, EmptyRoom> classRoomMap = new HashMap<>();
         List<Integer> orderList = Lists.newArrayList(1, 3, 5, 7, 9);
+
         for (int order : orderList) {
             List<EmptyRoom> roomList = getEmptyRoomReply(week, teaNum, dayOfWeek, order, floor);
             for (EmptyRoom room : roomList) {
@@ -120,11 +127,13 @@ public class EmptyRoomService {
                 }
             }
         }
-        List<EmptyRoom> result = new ArrayList<>();
-        for (Map.Entry<String, EmptyRoom> entry : classRoomMap.entrySet()) {
-            result.add(entry.getValue());
-        }
-        return result;
+
+        return classRoomMap.values().stream()
+                .map(emptyRoom -> new EmptyRoomVo(urpClassRoomDao.selectByName(emptyRoom.getName()),
+                        emptyRoom.getOrderList()))
+                .filter(emptyRoomVo -> emptyRoomVo.getUrpClassroom() != null)
+                .sorted(Comparator.comparing(o -> o.getUrpClassroom().getNumber()))
+                .collect(Collectors.toList());
     }
 
 

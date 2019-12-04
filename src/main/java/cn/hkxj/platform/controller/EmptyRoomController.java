@@ -19,7 +19,7 @@ import javax.annotation.Resource;
  */
 @RestController
 @Slf4j
-public class EmtpyRoomController {
+public class EmptyRoomController {
 
     @Resource(name = "emptyRoomService")
     private EmptyRoomService emptyRoomService;
@@ -52,8 +52,17 @@ public class EmtpyRoomController {
     public WebResponse getEmptyRoomV2(@RequestParam("schoolWeek") int schoolWeek,
                                       @RequestParam("building") String buildingName,
                                       @RequestParam("dayOfWeek") int dayOfWeek,
-                                      @RequestParam("order") int order,
-                                      @RequestParam("floor") int floor) {
+                                      @RequestParam(value = "order", required = false) Integer order,
+                                      @RequestParam(value = "floor", required = false) Integer floor) {
+
+        if(order == null){
+            order = 0;
+        }
+
+        if(floor == null){
+            floor = 0;
+        }
+
         if (order != 0) {
             try {
                 return WebResponse.success(emptyRoomService.getEmptyRoomReply(String.valueOf(schoolWeek), buildingName, dayOfWeek, order, floor));

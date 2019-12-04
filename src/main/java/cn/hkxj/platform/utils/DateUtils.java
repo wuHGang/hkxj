@@ -32,12 +32,6 @@ public class DateUtils {
 
     public final static String HH_MM_SS_PATTERN = "hh:mm:ss";
 
-    public static Integer getCurrentYear() {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(new Date());
-        return calendar.get(Calendar.YEAR);
-    }
-
     public static Integer getCurrentWeek() {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.CHINA);
         Calendar calendar = Calendar.getInstance(Locale.CHINA);

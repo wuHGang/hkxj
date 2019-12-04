@@ -43,6 +43,6 @@ public class UrpClassRoomDao {
     }
 
     public UrpClassroom selectByName(String name){
-        return selectByClassroom(new UrpClassroom().setName(name)).stream().findFirst().get();
+        return selectByClassroom(new UrpClassroom().setName(name)).stream().findFirst().orElse(null);
     }
 }

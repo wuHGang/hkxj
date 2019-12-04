@@ -3,6 +3,7 @@ package cn.hkxj.platform.controller;
 import cn.hkxj.platform.pojo.EmptyRoom;
 import cn.hkxj.platform.pojo.WebResponse;
 import cn.hkxj.platform.pojo.constant.Building;
+import cn.hkxj.platform.pojo.vo.EmptyRoomVo;
 import cn.hkxj.platform.service.EmptyRoomService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
@@ -20,7 +21,7 @@ import static org.junit.Assert.*;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @Slf4j
-public class EmtpyRoomControllerTest {
+public class EmptyRoomControllerTest {
     @Resource(name = "emptyRoomService")
     private EmptyRoomService emptyRoomService;
 
@@ -35,9 +36,10 @@ public class EmtpyRoomControllerTest {
         int floor = 2;
         try {
 
-            List<EmptyRoom> list = emptyRoomService.getFullEmptyRoomReply(String.valueOf(schoolWeek), buildingName, dayOfWeek, floor);
-            for (EmptyRoom emptyRoom:list){
-                System.out.println(emptyRoom.getName());
+            List<EmptyRoomVo> list = emptyRoomService.getFullEmptyRoomReply(String.valueOf(schoolWeek), buildingName,
+                    dayOfWeek, floor);
+            for (EmptyRoomVo emptyRoom:list){
+                System.out.println(emptyRoom.getUrpClassroom().getName());
                 System.out.println(emptyRoom.getOrderList());
             }
 
