@@ -13,10 +13,11 @@ import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.text.DecimalFormat;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
 /**
@@ -43,6 +44,8 @@ public class NewGradeSearchService {
     private UrpGradeDetailDao urpGradeDetailDao;
     @Resource
     private NewUrpSpiderService newUrpSpiderService;
+    @Resource
+    private GradeDao gradeDao;
 
     private static final Term currentTerm = new Term(2019, 2020, 1);
 
@@ -52,7 +55,7 @@ public class NewGradeSearchService {
         CurrentGrade currentGrade = newUrpSpiderService.getCurrentTermGrade(student.getAccount().toString(),
                 student.getPassword());
 
-        if(CollectionUtils.isEmpty(currentGrade.getList())){
+        if (CollectionUtils.isEmpty(currentGrade.getList())) {
             return new GradeSearchResult(Lists.newArrayListWithCapacity(0), false);
         }
 
@@ -60,9 +63,94 @@ public class NewGradeSearchService {
         return saveCurrentGradeToDb(student, currentGrade);
     }
 
+    public List<GradeDetail> getCurrentTermGradeFromSpider(Student student) {
+        CurrentGrade currentGrade = newUrpSpiderService.getCurrentTermGrade(student);
+
+        return currentGrade.getList().stream().map(urpGradeForSpider -> {
+            UrpGeneralGradeForSpider generalGradeForSpider = urpGradeForSpider.getUrpGeneralGradeForSpider();
+
+            //对教学计划相关的信息进行判断是否需要保存
+            Plan plan = getPlan(generalGradeForSpider);
+            //对专业相关的信息进行判断是否需要保存
+            Major major = getMajor(generalGradeForSpider);
+            UrpExam urpExam = getUrpExam(generalGradeForSpider, plan, major, student);
+            Grade grade = urpGradeForSpider.convertToGrade();
+            grade.setExamId(urpExam.getId());
+            List<UrpGradeDetail> detailList = urpGradeForSpider.getUrpGradeDetailForSpider().convertToUrpGradeDetail();
+
+            return new GradeDetail(grade, detailList);
+
+        }).collect(Collectors.toList());
+
+    }
+
+    /**
+     *
+     * @param student 学生实体
+     * @return 学生成绩
+     */
+    public List<Grade> getCurrentTermGrade(Student student) {
+        CompletableFuture<List<GradeDetail>> future = CompletableFuture.supplyAsync(() -> getCurrentTermGradeFromSpider(student));
+        List<GradeDetail> gradeDetailList;
+        try {
+            gradeDetailList = future.get(1000L, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException | ExecutionException | TimeoutException e) {
+            return gradeDao.getCurrentTermGradeByAccount(student.getAccount());
+        }
+
+        List<Grade> gradeList = gradeDetailList.stream().map(GradeDetail::getGrade).collect(Collectors.toList());
+        // 检查哪些是新的成绩数据
+        List<Grade> updateList = checkUpdate(student, gradeList);
+        // 新的数据插入，原有得数据更新
+        saveUpdateGrade(updateList);
+
+
+        return gradeList;
+    }
+
+    /**
+     * 返回新一个新成绩的list，旧的的成绩会被过滤
+     */
+    public List<Grade> checkUpdate(Student student, List<Grade> gradeList) {
+        List<Grade> gradeListFromDb = gradeDao.getCurrentTermGradeByAccount(student.getAccount());
+        if (CollectionUtils.isEmpty(gradeListFromDb)) {
+            return gradeList;
+        }
+
+        Map<String, Grade> gradeMap = gradeListFromDb.stream().collect(Collectors.toMap(x -> x.getCourseNumber() + x.getCourseOrder(), x -> x));
+        return gradeList.stream()
+                .filter(grade -> {
+                    Grade checkGrade = gradeMap.get(grade.getCourseNumber() + grade.getCourseOrder());
+
+                    if (checkGrade == null) {
+                        return true;
+                    }
+                    boolean update = !Objects.equals(grade, checkGrade);
+
+                    grade.setId(checkGrade.getId());
+                    grade.setUpdate(update);
+
+                    return update;
+                }).collect(Collectors.toList());
+    }
+
+
+    public void saveUpdateGrade(List<Grade> gradeList){
+        for (Grade grade : gradeList) {
+            if(grade.getId() != null){
+                gradeDao.updateByPrimaryKeySelective(grade);
+            }
+            else {
+                gradeDao.insertSelective(grade);
+            }
+        }
+
+
+    }
+
     public GradeSearchResult getCurrentGrade(String account, String password) {
         Student student = Optional.ofNullable(studentDao.selectStudentByAccount(Integer.parseInt(account)))
-                .orElseGet(() ->newUrpSpiderService.getStudentInfo(account, password));
+                .orElseGet(() -> newUrpSpiderService.getStudentInfo(account, password));
 
         return getCurrentGrade(student);
     }
@@ -70,13 +158,14 @@ public class NewGradeSearchService {
 
     /**
      * 生成一个UrpGradeAndUrpCourse
-     * @param courseId 课程号
-     * @param term 学期
-     * @param urpGrade 成绩实体
+     *
+     * @param courseId           课程号
+     * @param term               学期
+     * @param urpGrade           成绩实体
      * @param urpGradeDetailList 成绩详情实体
      * @return UrpGradeAndUrpCourse
      */
-    private UrpGradeAndUrpCourse generateUrpGradeAndUrpCourse(String courseId, Term term, UrpGrade urpGrade, List<UrpGradeDetail> urpGradeDetailList){
+    private UrpGradeAndUrpCourse generateUrpGradeAndUrpCourse(String courseId, Term term, UrpGrade urpGrade, List<UrpGradeDetail> urpGradeDetailList) {
         UrpGradeAndUrpCourse target = new UrpGradeAndUrpCourse();
         NewGrade newGrade = new NewGrade();
         newGrade.setDetails(urpGradeDetailList);
@@ -89,11 +178,12 @@ public class NewGradeSearchService {
 
     /**
      * 检查爬虫结果中是否需要存储的同时，返回包含着所有要显示的内容的集合
-     * @param student 学生实体
+     *
+     * @param student      学生实体
      * @param currentGrade 从爬虫爬取的当前学期的成绩
      * @return 所有内容
      */
-    private List<UrpGradeAndUrpCourse> getUrpGradeAndUrpCourse(Student student, CurrentGrade currentGrade){
+    private List<UrpGradeAndUrpCourse> getUrpGradeAndUrpCourse(Student student, CurrentGrade currentGrade) {
         return currentGrade.getList().stream().map(urpGradeForSpider -> {
             UrpGeneralGradeForSpider generalGradeForSpider = urpGradeForSpider.getUrpGeneralGradeForSpider();
             String uid = generalGradeForSpider.getId().getCourseNumber();
@@ -111,7 +201,7 @@ public class NewGradeSearchService {
 
     }
 
-    private GradeSearchResult saveCurrentGradeToDb(Student student, CurrentGrade currentGrade){
+    private GradeSearchResult saveCurrentGradeToDb(Student student, CurrentGrade currentGrade) {
         GradeSearchResult result = new GradeSearchResult();
         int beforeUpdateCount = urpGradeDao.getTotalCount();
         List<UrpGradeAndUrpCourse> allContent = getUrpGradeAndUrpCourse(student, currentGrade);
@@ -132,7 +222,7 @@ public class NewGradeSearchService {
             for (UrpGradeAndUrpCourse urpGradeAndUrpCourse : studentGrades) {
                 Double grade = urpGradeAndUrpCourse.getNewGrade().getUrpGrade().getScore();
                 //如果分数为空，就直接跳过当前元素
-                if(Objects.isNull(grade)) continue;
+                if (Objects.isNull(grade)) continue;
                 buffer.append("考试名称：").append(urpGradeAndUrpCourse.getUrpCourse().getCourseName()).append("\n")
                         .append("成绩：").append(grade == -1 ? "" : decimalFormat.format(grade)).append("   学分：")
                         .append((decimalFormat.format(urpGradeAndUrpCourse.getUrpCourse().getCredit()))).append("\n\n");
@@ -143,15 +233,15 @@ public class NewGradeSearchService {
     }
 
 
-    private Plan getPlan(UrpGeneralGradeForSpider generalGradeForSpider){
+    private Plan getPlan(UrpGeneralGradeForSpider generalGradeForSpider) {
         return planDao.saveOrGetPlanFromDb(generalGradeForSpider.convertToPlan());
     }
 
-    private Major getMajor(UrpGeneralGradeForSpider generalGradeForSpider){
+    private Major getMajor(UrpGeneralGradeForSpider generalGradeForSpider) {
         return majorDao.saveOrGetMajorFromDb(generalGradeForSpider.convertToMajor(), generalGradeForSpider.getZyh());
     }
 
-    private UrpExam getUrpExam(UrpGeneralGradeForSpider generalGradeForSpider, Plan plan, Major major, Student student){
+    private UrpExam getUrpExam(UrpGeneralGradeForSpider generalGradeForSpider, Plan plan, Major major, Student student) {
         UrpExam urpExamFromSpider = generalGradeForSpider.convertToUrpExam();
         urpExamFromSpider.setPlanId(plan.getId());
         urpExamFromSpider.setMajorId(major.getId());
@@ -160,14 +250,14 @@ public class NewGradeSearchService {
         return urpExamDao.saveOrGetUrpExamFromDb(urpExamFromSpider, currentTerm);
     }
 
-    private UrpGrade getUrpGrade(UrpGeneralGradeForSpider generalGradeForSpider, UrpExam urpExam, Student student){
+    private UrpGrade getUrpGrade(UrpGeneralGradeForSpider generalGradeForSpider, UrpExam urpExam, Student student) {
         UrpGrade urpGradeFromSpider = generalGradeForSpider.convertToUrpGrade();
         urpGradeFromSpider.setExamId(urpExam.getId());
         urpGradeFromSpider.setAccount(student.getAccount());
         return urpGradeDao.saveOrGetUrpGradeFromDb(urpGradeFromSpider);
     }
 
-    private List<UrpGradeDetail> getUrpGradeDetail(UrpGradeDetailForSpider gradeDetailForSpider, UrpGrade urpGrade){
+    private List<UrpGradeDetail> getUrpGradeDetail(UrpGradeDetailForSpider gradeDetailForSpider, UrpGrade urpGrade) {
         List<UrpGradeDetail> urpGradeDetailListFromSpider = gradeDetailForSpider.convertToUrpGradeDetail();
         return urpGradeDetailDao.saveOrGetUrpGradeDetailFromDb(urpGradeDetailListFromSpider, urpGrade.getId());
     }

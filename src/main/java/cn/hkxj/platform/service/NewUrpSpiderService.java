@@ -54,6 +54,11 @@ public class NewUrpSpiderService {
         return spider.getCurrentGrade();
     }
 
+    CurrentGrade getCurrentTermGrade(Student student){
+        NewUrpSpider spider = getSpider(student.getAccount().toString(), student.getPassword());
+        return spider.getCurrentGrade();
+    }
+
     UrpCourseForSpider getCourseFromSpider(String account, String password, String uid){
         NewUrpSpider spider = getSpider(account, password);
         return spider.getUrpCourse(uid);

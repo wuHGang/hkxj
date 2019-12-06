@@ -24,4 +24,13 @@ public class CourseRelativeInfo {
 
     private String scoreTypeCode;
 
+    public String getTermYear(){
+        return executiveEducationPlanNumber.substring(0, 9);
+    }
+
+    public int getTermOrder(){
+        return Integer.parseInt(executiveEducationPlanNumber.substring(10, 11));
+    }
+
+
 }

@@ -2,8 +2,6 @@
 !.mvn/wrapper/maven-wrapper.jar
 
 *.properties
-
-generatorConfig.xml
 ### STS ###
 .apt_generated
 .classpath
@@ -27,3 +25,5 @@ generatorConfig.xml
 /dist/
 /nbdist/
 /.nb-gradle/
+/src/main/resources/generatorConfig.xml
+/src/main/resources/generatorConfig.xml

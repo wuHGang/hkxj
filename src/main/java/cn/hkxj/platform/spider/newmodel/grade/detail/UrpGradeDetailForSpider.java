@@ -7,6 +7,7 @@ import com.google.common.collect.Lists;
 import lombok.Data;
 import org.springframework.util.CollectionUtils;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -31,7 +32,7 @@ public class UrpGradeDetailForSpider {
     public List<UrpGradeDetail> convertToUrpGradeDetail(){
         List<UrpGradeDetail> urpGradeDetailList = Lists.newArrayList();
         if(CollectionUtils.isEmpty(xs) || CollectionUtils.isEmpty(mx)){
-            return null;
+            return Collections.emptyList();
         }
         //因为xs和mx都只有3个元素，所以直接for循环
         for(int i = 0; i < 3; i ++){

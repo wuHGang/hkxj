@@ -11,6 +11,8 @@ import cn.hkxj.platform.spider.newmodel.SearchResult;
 import cn.hkxj.platform.spider.newmodel.coursetimetable.UrpCourseTimeTable;
 import cn.hkxj.platform.spider.newmodel.coursetimetable.UrpCourseTimeTableForSpider;
 import cn.hkxj.platform.spider.newmodel.examtime.UrpExamTime;
+import cn.hkxj.platform.spider.newmodel.grade.CurrentGrade;
+import cn.hkxj.platform.spider.newmodel.grade.general.UrpGradeForSpider;
 import cn.hkxj.platform.spider.newmodel.searchclass.ClassInfoSearchResult;
 import cn.hkxj.platform.spider.newmodel.searchclassroom.SearchClassroomPost;
 import cn.hkxj.platform.spider.newmodel.searchclassroom.SearchClassroomResult;
@@ -64,6 +66,19 @@ public class NewUrpSpiderServiceTest {
 
         for (UrpExamTime urpExamTime : examTime) {
             System.out.println(urpExamTime);
+        }
+
+
+    }
+
+    @Test
+    public void getCurrentTermGrade(){
+        Student student = studentDao.selectStudentByAccount(2019020856);
+
+        CurrentGrade grade = newUrpSpiderService.getCurrentTermGrade(student);
+
+        for (UrpGradeForSpider gradeForSpider : grade.getList()) {
+            System.out.println(gradeForSpider);
         }
 
 

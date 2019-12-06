@@ -246,6 +246,7 @@ public class NewUrpSpider {
         List<UrpGradeForSpider> urpGradeForSpiderList = Lists.newArrayList();
         urpGeneralGradeForSpiders.forEach(urpGeneralGradeForSpider -> {
             UrpGradeForSpider urpGradeForSpider = getUrpGradeForSpider(urpGeneralGradeForSpider);
+            urpGeneralGradeForSpider.getId().setCourseSequenceNumber(urpGeneralGradeForSpider.getCoureSequenceNumber());
             urpGradeForSpiderList.add(urpGradeForSpider);
         });
         CurrentGrade currentGrade = new CurrentGrade();

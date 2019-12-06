@@ -2,23 +2,18 @@ package cn.hkxj.platform.service;
 
 import cn.hkxj.platform.PlatformApplication;
 import cn.hkxj.platform.dao.StudentDao;
+import cn.hkxj.platform.pojo.Grade;
+import cn.hkxj.platform.pojo.GradeDetail;
 import cn.hkxj.platform.pojo.Student;
-import cn.hkxj.platform.spider.NewUrpSpider;
-import cn.hkxj.platform.spider.model.VerifyCode;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.slf4j.MDC;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpSession;
-
-import java.util.Scanner;
-
-import static org.junit.Assert.*;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Yuki
@@ -40,5 +35,45 @@ public class NewGradeSearchServiceTest {
         Student student = studentDao.selectStudentByAccount(2018022512);
         newGradeSearchService.getCurrentGrade(student);
         System.out.println(System.currentTimeMillis() - start);
+    }
+
+
+    @Test
+    public void getCurrentTermGradeFromSpider(){
+        Student student = studentDao.selectStudentByAccount(2019020856);
+        List<GradeDetail> gradeDetailList = newGradeSearchService.getCurrentTermGradeFromSpider(student);
+        List<Grade> gradeList = gradeDetailList.stream().map(GradeDetail::getGrade).collect(Collectors.toList());
+
+        newGradeSearchService.saveUpdateGrade(gradeList);
+
+
+    }
+
+    @Test
+    public void checkUpdate(){
+        Student student = studentDao.selectStudentByAccount(2019020856);
+        List<GradeDetail> gradeDetailList = newGradeSearchService.getCurrentTermGradeFromSpider(student);
+        List<Grade> gradeList = gradeDetailList.stream().map(GradeDetail::getGrade).collect(Collectors.toList());
+        gradeList.stream().findAny().ifPresent(x-> x.setId(11));
+        List<Grade> updateList = newGradeSearchService.checkUpdate(student, gradeList);
+        for (Grade update : updateList) {
+            System.out.println(update);
+        }
+        newGradeSearchService.saveUpdateGrade(updateList);
+
+    }
+
+    @Test
+    public void getCurrentTermGrade(){
+        Student student = studentDao.selectStudentByAccount(2019020856);
+        for (Grade grade : newGradeSearchService.getCurrentTermGrade(student)) {
+            System.out.println(grade);
+        }
+        ;
+
+
+
+
+
     }
 }
