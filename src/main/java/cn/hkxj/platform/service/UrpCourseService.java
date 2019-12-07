@@ -2,10 +2,7 @@ package cn.hkxj.platform.service;
 
 import cn.hkxj.platform.dao.CourseDao;
 import cn.hkxj.platform.dao.UrpCourseDao;
-import cn.hkxj.platform.pojo.Course;
-import cn.hkxj.platform.pojo.SchoolTime;
-import cn.hkxj.platform.pojo.Student;
-import cn.hkxj.platform.pojo.UrpCourse;
+import cn.hkxj.platform.pojo.*;
 import cn.hkxj.platform.spider.newmodel.SearchResult;
 import cn.hkxj.platform.spider.newmodel.course.UrpCourseForSpider;
 import cn.hkxj.platform.spider.newmodel.searchcourse.SearchCoursePost;
@@ -16,12 +13,14 @@ import com.google.common.cache.CacheBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * @author Yuki
@@ -43,56 +42,88 @@ public class UrpCourseService {
             .maximumSize(500)
             .build();
 
-    public void checkOrSaveUrpCourseToDb(String uid, Student student){
+    public void checkOrSaveUrpCourseToDb(String uid, Student student) {
         if (!urpCourseDao.ifExistCourse(uid)) {
             UrpCourseForSpider urpCourseForSpider = newUrpSpiderService.getCourseFromSpider(student, uid);
             urpCourseDao.insertUrpCourse(urpCourseForSpider.convertToUrpCourse());
         }
     }
 
-    public Course getCurrentTermCourse(String courseId, String sequenceNumber){
-        SchoolTime schoolTime = DateUtils.getCurrentSchoolTime();
-        return getCourse(courseId, sequenceNumber, schoolTime.getTerm().getTermYear(), schoolTime.getTerm().getOrder());
+    public Course getCurrentTermCourse(String courseId, String sequenceNumber) {
+        return getCurrentTermCourse(courseId, sequenceNumber, null);
 
     }
 
-    public Course getCourse(String courseId, String sequenceNumber, String termYear, int termOrder){
+    public Course getCurrentTermCourse(String courseId, String sequenceNumber, Grade grade) {
+        SchoolTime schoolTime = DateUtils.getCurrentSchoolTime();
+        return getCourse(courseId, sequenceNumber, schoolTime.getTerm().getTermYear(),
+                schoolTime.getTerm().getOrder(), grade);
+
+    }
+
+    public Course getCourse(String courseId, String sequenceNumber, String termYear, int termOrder) {
+        return getCourse(courseId, sequenceNumber, termYear, termOrder, null);
+    }
+
+    /**
+     * @param courseId
+     * @param sequenceNumber
+     * @param termYear
+     * @param termOrder
+     * @param grade          这个传入的grade主要作用是课程查询的时候有比较多缺省的值，从该对象中获取
+     * @return
+     */
+    public Course getCourse(String courseId, String sequenceNumber, String termYear, int termOrder, Grade grade) {
         List<Course> courseList = courseDao.selectCourseByPojo(
                 new Course()
-                .setNum(courseId)
-                .setCourseOrder(sequenceNumber)
-                .setTermYear(termYear)
-                .setTermOrder(termOrder));
+                        .setNum(courseId)
+                        .setCourseOrder(sequenceNumber)
+                        .setTermYear(termYear)
+                        .setTermOrder(termOrder));
 
-        if(courseList.size() == 0){
+        if (courseList.size() == 0) {
             SearchCoursePost post = new SearchCoursePost();
             post.setCourseNumber(courseId).setCourseOrderNumber(sequenceNumber);
-            post.setExecutiveEducationPlanNum(termYear+"-"+ termOrder +"-1");
-            log.info("post {}", post);
+            post.setExecutiveEducationPlanNum(termYear + "-" + termOrder + "-1");
             SearchResult<SearchCourseResult> searchResult = newUrpSpiderService.searchCourseInfo(post);
-            log.info("searchResult {}", searchResult);
-            if(CollectionUtils.isEmpty(searchResult.getRecords())){
+            if (CollectionUtils.isEmpty(searchResult.getRecords())) {
                 searchResult = newUrpSpiderService.searchCourseBasicInfo(post);
-                log.info("searchResult {}", searchResult);
             }
 
-            if(searchResult.getRecords().size() != 1){
+            List<SearchCourseResult> resultList = searchResult.getRecords();
+            if (resultList.size() > 1) {
+                resultList = resultList.stream()
+                        .filter(x -> post.getCourseNumber().equals(x.getCourseId()))
+                        .collect(Collectors.toList());
+                if (resultList.size() != 1) {
+                    log.error("search course result more than one. post {} records {}", post, searchResult.getRecords());
+                    throw new RuntimeException("search course result more than one");
+                }
+
+            } else if (resultList.size() == 0) {
+                log.error("search course result empty. post {}", post);
                 throw new RuntimeException("search course result more than one");
-            }else {
-                Course course = searchResult.getRecords().get(0).transToCourse();
-                courseDao.insertSelective(course);
-                return course;
             }
+
+            Course course = resultList.get(0).transToCourse();
+            if (grade != null) {
+                course.setCredit(grade.getCredit().toString());
+                course.setExamType(grade.getExamTypeName());
+                course.setExamTypeCode(grade.getExamTypeCode());
+                course.setCourseOrder(grade.getCourseOrder());
+            }
+            courseDao.insertSelective(course);
+            return course;
         }
         return courseList.stream().findFirst().get();
     }
 
-    public UrpCourse getUrpCourseByCourseId(String courseId){
+    public UrpCourse getUrpCourseByCourseId(String courseId) {
 
         try {
             return cache.get(courseId, () -> {
                 UrpCourse urpCourse = urpCourseDao.getUrpCourseByCourseId(courseId);
-                if(urpCourse == null){
+                if (urpCourse == null) {
                     UrpCourseForSpider urpCourseForSpider = newUrpSpiderService.getCourseFromSpider("2014025838", "1", courseId);
                     urpCourse = urpCourseForSpider.convertToUrpCourse();
                     urpCourseDao.insertUrpCourse(urpCourse);

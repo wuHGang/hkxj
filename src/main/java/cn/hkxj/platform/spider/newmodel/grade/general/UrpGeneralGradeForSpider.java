@@ -53,7 +53,7 @@ public class UrpGeneralGradeForSpider {
     /**
      * 考试类型编号
      */
-    private int examTypeCode;
+    private String examTypeCode;
     /**
      * 考试类型名称
      */

@@ -134,7 +134,7 @@ public class NewGradeSearchService {
     public List<GradeVo> gradeToVo(List<Grade> gradeList) {
         return gradeList.stream().map(x ->
                 new GradeVo()
-                        .setCourse(urpCourseService.getCurrentTermCourse(x.getCourseNumber(), x.getCourseOrder()))
+                        .setCourse(urpCourseService.getCurrentTermCourse(x.getCourseNumber(), x.getCourseOrder(), x))
                         .setAccount(x.getAccount())
                         .setScore(x.getScore())
                         .setGradePoint(x.getGradePoint())

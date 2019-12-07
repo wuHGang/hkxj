@@ -66,8 +66,8 @@ public class NewGradeSearchServiceTest {
 
     @Test
     public void getCurrentTermGrade(){
-        Student student = studentDao.selectStudentByAccount(2019020856);
-        for (GradeVo grade : newGradeSearchService.getCurrentTermGrade(student)) {
+        Student student = studentDao.selectStudentByAccount(2018024221);
+        for (GradeVo grade : newGradeSearchService.getCurrentTermGradeSync(student)) {
             System.out.println(grade);
         }
         ;

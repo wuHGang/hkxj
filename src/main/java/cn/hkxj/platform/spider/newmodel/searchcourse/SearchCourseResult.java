@@ -1,6 +1,7 @@
 package cn.hkxj.platform.spider.newmodel.searchcourse;
 
 import cn.hkxj.platform.pojo.Course;
+import cn.hkxj.platform.pojo.constant.Academy;
 import cn.hkxj.platform.utils.DateUtils;
 import com.alibaba.fastjson.annotation.JSONField;
 import lombok.Data;
@@ -107,6 +108,14 @@ public class SearchCourseResult {
             return DateUtils.getCurrentSchoolTime().getTerm().getTermYear();
         }
         return termName.substring(0, 9);
+    }
+
+    public String getAcademyName(){
+        if (StringUtils.isEmpty(academyName) && !StringUtils.isEmpty(academyCode)){
+            return Academy.getAcademyByUrpCode(Integer.parseInt(academyCode)).getAcademyName();
+        }else{
+            return "";
+        }
     }
 
     public Course transToCourse() {

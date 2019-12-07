@@ -1,5 +1,6 @@
 package cn.hkxj.platform.task;
 
+import cn.hkxj.platform.MDCThreadPool;
 import cn.hkxj.platform.builder.TemplateBuilder;
 import cn.hkxj.platform.config.wechat.WechatMpConfiguration;
 import cn.hkxj.platform.config.wechat.WechatMpPlusProperties;
@@ -21,6 +22,7 @@ import me.chanjar.weixin.mp.bean.kefu.WxMpKefuMessage;
 import me.chanjar.weixin.mp.bean.template.WxMpTemplateData;
 import me.chanjar.weixin.mp.bean.template.WxMpTemplateMessage;
 import org.apache.commons.lang3.BooleanUtils;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -30,10 +32,8 @@ import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.LinkedBlockingDeque;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.UUID;
+import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 /**
@@ -44,8 +44,8 @@ import java.util.stream.Collectors;
 @Service
 public class GradeAutoUpdateTask extends BaseSubscriptionTask {
     //这里设置拒绝策略为调用者运行，这样可以降低产生任务的速率
-    private static ExecutorService gradeAutoUpdatePool = new ThreadPoolExecutor(10, 10,
-            0L, TimeUnit.MILLISECONDS, new LinkedBlockingDeque<>(20), new ThreadPoolExecutor.CallerRunsPolicy());
+    private static ExecutorService gradeAutoUpdatePool = new MDCThreadPool(8, 8,
+            0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(), r -> new Thread(r, "gradeUpdate"));
 
     private static final String ERROR_CONTENT = "请更新你的账号\n" +
             "你的账号密码可能有误，请点击这里的链接进行更新。否则部分功能将无法使用\n";
@@ -70,17 +70,33 @@ public class GradeAutoUpdateTask extends BaseSubscriptionTask {
     private String updateSwitch;
 
     //    @Async
-    @Scheduled(cron = "0 0/20 * * * ? ") //每20分钟执行一次
+    @Scheduled(cron = "0 0/20 * * * ? ")
+    //每20分钟执行一次
     void autoUpdateGrade() {
         //执行前，检查定时任务的可用性
         if (isTaskEnable()) {
             return;
         }
+        List<ScheduleTask> subscribeTask = scheduleTaskDao.getPlusSubscribeTask(SubscribeScene.GRADE_AUTO_UPDATE);
+        log.info("{} grade update task to run", subscribeTask.size());
 
-        for (ScheduleTask task : scheduleTaskDao.getPlusSubscribeTask(SubscribeScene.GRADE_AUTO_UPDATE)) {
-            processScheduleTask(task);
+
+        for (ScheduleTask task : subscribeTask) {
+            CompletableFuture.runAsync(() -> {
+                try {
+                    UUID uuid = UUID.randomUUID();
+                    MDC.put("traceId", "gradeUpdateTask-"+uuid.toString());
+                    processScheduleTask(task);
+                } catch (Exception e) {
+                    log.error("grade update task {} error ",task, e);
+                } finally {
+                    MDC.clear();
+                }
+
+            }, gradeAutoUpdatePool);
         }
-        ;
+
+        log.info("{} grade update task finish", subscribeTask.size());
 
     }
 
@@ -111,32 +127,6 @@ public class GradeAutoUpdateTask extends BaseSubscriptionTask {
         }
     }
 
-    /**
-     * 当使用urp爬虫密码错误时，会将student的isCorrect属性置为0。
-     * 所以当isUrpPassowrdCorrect返回false时。解绑所有的绑定
-     *
-     * @param task        定时任务
-     * @param wxMpService wxMpService
-     * @param appid       公众号的appid
-     */
-    private void processUrpPasswordNotCorrect(ScheduleTask task, WxMpService wxMpService, String appid) {
-        Openid openid = openIdService.getOpenid(task.getOpenid(), appid).get(0);
-        //将plus和pro都解绑
-        openIdService.openIdUnbindAllPlatform(openid, appid);
-        //将其相关联的定时任务也设为不可用
-        scheduleTaskService.updateSubscribeStatus(task, ScheduleTaskService.FUNCTION_DISABLE);
-        if (isPlus(appid)) {
-            List<WxMpTemplateData> templateData = templateBuilder.assemblyTemplateContentForTips(ERROR_CONTENT);
-            WxMpTemplateMessage templateMessage =
-                    templateBuilder.buildWithNoMiniProgram(task.getOpenid(),
-                            templateData, wechatTemplateProperties.getPlusTipsTemplateId(), BIND_URL);
-            sendTemplateMessage(wxMpService, templateMessage, task);
-        } else {
-            sendKefuMessage(wxMpService, task.getOpenid(), ERROR_CONTENT);
-            sendKefuMessage(wxMpService, task.getOpenid(), BIND_URL);
-        }
-    }
-
 
     /**
      * 生成对应的客服消息，调用父类的方法来发送
@@ -162,16 +152,6 @@ public class GradeAutoUpdateTask extends BaseSubscriptionTask {
      */
     private boolean isPlus(String appid) {
         return Objects.equals(wechatMpPlusProperties.getAppId(), appid);
-    }
-
-    /**
-     * 判断student的isCorrect属性
-     *
-     * @param student 学生实体
-     * @return isCorrect的值
-     */
-    private boolean isUrpPasswordCorrect(Student student) {
-        return student.getIsCorrect();
     }
 
     /**

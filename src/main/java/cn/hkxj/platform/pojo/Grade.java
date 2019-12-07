@@ -19,6 +19,8 @@ public class Grade {
 
     private Double score;
 
+    private Double credit;
+
     private Double gradePoint;
 
     private String levelName;
@@ -27,9 +29,21 @@ public class Grade {
 
     private Integer rank;
 
+    private String courseName;
+
     private String courseNumber;
 
     private String courseOrder;
+
+    private String coursePropertyCode;
+
+    private String coursePropertyName;
+
+    private String examTypeCode;
+
+    private String examTypeName;
+
+    private Integer studyHour;
 
     private String operateTime;
 

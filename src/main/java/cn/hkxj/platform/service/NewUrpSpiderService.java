@@ -54,6 +54,7 @@ public class NewUrpSpiderService {
         return spider.getCurrentGrade();
     }
 
+    @Retryable(value = UrpException.class, maxAttempts = 3)
     CurrentGrade getCurrentTermGrade(Student student){
         NewUrpSpider spider = getSpider(student.getAccount().toString(), student.getPassword());
         return spider.getCurrentGrade();

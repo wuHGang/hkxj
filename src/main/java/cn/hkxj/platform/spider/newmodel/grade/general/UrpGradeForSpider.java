@@ -3,6 +3,7 @@ package cn.hkxj.platform.spider.newmodel.grade.general;
 import cn.hkxj.platform.pojo.Grade;
 import cn.hkxj.platform.spider.newmodel.grade.detail.UrpGradeDetailForSpider;
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 
 
 /**
@@ -45,6 +46,15 @@ public class UrpGradeForSpider {
                 .setExamTime(urpGeneralGradeForSpider.getId().getExamtime())
                 .setOperateTime(urpGeneralGradeForSpider.getOperatetime())
                 .setOperator(urpGeneralGradeForSpider.getOperator())
+                .setStudyHour(StringUtils.isEmpty(urpGeneralGradeForSpider.getStudyHour()) ? 0 :
+                        Integer.parseInt(urpGeneralGradeForSpider.getStudyHour()))
+                .setCourseName(urpGeneralGradeForSpider.getCourseName())
+                .setCoursePropertyCode(urpGeneralGradeForSpider.getCoursePropertyCode())
+                .setCoursePropertyName(urpGeneralGradeForSpider.getCoursePropertyName())
+                .setExamTypeName(urpGeneralGradeForSpider.getExamTypeName())
+                .setExamTypeCode(urpGeneralGradeForSpider.getExamTypeCode())
+                .setCredit(urpGeneralGradeForSpider.getCredit())
+
                 ;
     }
 
