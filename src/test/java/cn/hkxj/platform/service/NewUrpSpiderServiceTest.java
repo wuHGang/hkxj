@@ -8,6 +8,7 @@ import cn.hkxj.platform.dao.StudentDao;
 import cn.hkxj.platform.pojo.*;
 import cn.hkxj.platform.spider.NewUrpSpider;
 import cn.hkxj.platform.spider.newmodel.SearchResult;
+import cn.hkxj.platform.spider.newmodel.course.UrpCourseForSpider;
 import cn.hkxj.platform.spider.newmodel.coursetimetable.UrpCourseTimeTable;
 import cn.hkxj.platform.spider.newmodel.coursetimetable.UrpCourseTimeTableForSpider;
 import cn.hkxj.platform.spider.newmodel.examtime.UrpExamTime;
@@ -80,6 +81,17 @@ public class NewUrpSpiderServiceTest {
         for (UrpGradeForSpider gradeForSpider : grade.getList()) {
             System.out.println(gradeForSpider);
         }
+
+
+    }
+
+    @Test
+    public void get(){
+        Student student = studentDao.selectStudentByAccount(2019020856);
+
+        UrpCourseForSpider course = newUrpSpiderService.getCourseFromSpider(student, "2106147");
+
+        System.out.println(course);
 
 
     }

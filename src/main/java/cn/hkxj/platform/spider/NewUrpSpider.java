@@ -8,6 +8,7 @@ import cn.hkxj.platform.spider.model.UrpStudentInfo;
 import cn.hkxj.platform.spider.model.VerifyCode;
 import cn.hkxj.platform.spider.newmodel.CourseRelativeInfo;
 import cn.hkxj.platform.spider.newmodel.SearchResult;
+import cn.hkxj.platform.spider.newmodel.SearchResultDateWrapper;
 import cn.hkxj.platform.spider.newmodel.course.UrpCourseForSpider;
 import cn.hkxj.platform.spider.newmodel.coursetimetable.UrpCourseTimeTableForSpider;
 import cn.hkxj.platform.spider.newmodel.emptyroom.EmptyRoomPojo;
@@ -128,6 +129,11 @@ public class NewUrpSpider {
      */
     private static final String COURSE_TIMETABLE = ROOT + "/student/teachingResources/courseCurriculum" +
             "/searchCurriculum/callback?planCode=%s&courseCode=%s&courseSequenceCode=%s";
+
+    /**
+     * 课程基本信息 这个url抓取的主要目的是，有些课程的详细信息无法查询到，只能用这个来查询基本信息
+     */
+    private static final String COURSE_BASIC_INFO = ROOT + "/student/integratedQuery/course/courseBasicInformation/show";
 
     private static StringRedisTemplate stringRedisTemplate;
 
@@ -659,6 +665,32 @@ public class NewUrpSpider {
         return parseObject(new String(execute(request)), typeReference);
     }
 
+    /**
+     * 查询课程信息
+     *
+     * @param searchCoursePost
+     */
+    public SearchResultDateWrapper<SearchCourseResult> searchCourseBasicInfo(SearchCoursePost searchCoursePost) {
+        FormBody.Builder params = new FormBody.Builder();
+        FormBody body = params
+                .add("kkxsh", searchCoursePost.getAcademyCode())
+                .add("kcm", searchCoursePost.getCourseName())
+                .add("kch", searchCoursePost.getCourseNumber())
+                .add("pageSize", searchCoursePost.getPageSize())
+                .add("pageNum", searchCoursePost.getPageNum())
+                .build();
+
+        Request request = new Request.Builder()
+                .url(COURSE_BASIC_INFO)
+                .headers(HEADERS)
+                .post(body)
+                .build();
+
+        TypeReference<SearchResultDateWrapper<SearchCourseResult>> typeReference =
+                new TypeReference<SearchResultDateWrapper<SearchCourseResult>>() {
+        };
+        return parseObject(new String(execute(request)), typeReference);
+    }
 
     private <T> T parseObject(String text, TypeReference<T> type) {
         try {

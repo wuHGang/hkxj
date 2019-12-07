@@ -5,6 +5,7 @@ import cn.hkxj.platform.elasticsearch.document.CourseTimeTableDocument;
 import cn.hkxj.platform.mapper.TeacherMapper;
 import cn.hkxj.platform.pojo.*;
 import cn.hkxj.platform.pojo.vo.CourseTimetableSearchResultVo;
+import cn.hkxj.platform.service.UrpCourseService;
 import org.elasticsearch.index.query.DisMaxQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.data.domain.PageRequest;
@@ -38,6 +39,8 @@ public class CourseTimeTableSearchService {
     private UrpClassRoomDao urpClassRoomDao;
     @Resource
     private TeacherDao teacherDao;
+    @Resource
+    private UrpCourseService urpCourseService;
 
     private String termYear = "2019-2020";
 
@@ -100,7 +103,7 @@ public class CourseTimeTableSearchService {
                                 .sorted(Comparator.comparing(UrpClass::getClassNum))
                                 .collect(Collectors.toList())
                         )
-                        .setCourse(courseDao.selectByNumAndOrder(x.getCourseId(), x.getCourseOrder()))
+                        .setCourse(urpCourseService.getCurrentTermCourse(x.getCourseId(), x.getCourseOrder()))
                         .setTeacherList(x.getTeacherAccountList()
                                 .stream()
                                 .map(account -> teacherDao.selectByAccount(account))

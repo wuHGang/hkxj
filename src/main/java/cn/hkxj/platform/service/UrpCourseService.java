@@ -15,6 +15,7 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -49,14 +50,10 @@ public class UrpCourseService {
         }
     }
 
-    void saveCourse(String courseId, String sequenceNumber){
-        if(courseDao.selectCourseByPojo(new Course().setNum(courseId).setCourseOrder(sequenceNumber)).size() == 0){
-            SearchCoursePost post = new SearchCoursePost();
-            post.setCourseNumber(courseId).setCourseOrderNumber(sequenceNumber);
-            SchoolTime time = DateUtils.getCurrentSchoolTime();
-            post.setExecutiveEducationPlanNum(time.getTerm().getExecutiveEducationPlanNum());
-            newUrpSpiderService.searchCourseInfo(post);
-        }
+    public Course getCurrentTermCourse(String courseId, String sequenceNumber){
+        SchoolTime schoolTime = DateUtils.getCurrentSchoolTime();
+        return getCourse(courseId, sequenceNumber, schoolTime.getTerm().getTermYear(), schoolTime.getTerm().getOrder());
+
     }
 
     public Course getCourse(String courseId, String sequenceNumber, String termYear, int termOrder){
@@ -69,9 +66,16 @@ public class UrpCourseService {
 
         if(courseList.size() == 0){
             SearchCoursePost post = new SearchCoursePost();
-            post.setCourseNumber(courseId).setCourseNumber(sequenceNumber);
+            post.setCourseNumber(courseId).setCourseOrderNumber(sequenceNumber);
             post.setExecutiveEducationPlanNum(termYear+"-"+ termOrder +"-1");
+            log.info("post {}", post);
             SearchResult<SearchCourseResult> searchResult = newUrpSpiderService.searchCourseInfo(post);
+            log.info("searchResult {}", searchResult);
+            if(CollectionUtils.isEmpty(searchResult.getRecords())){
+                searchResult = newUrpSpiderService.searchCourseBasicInfo(post);
+                log.info("searchResult {}", searchResult);
+            }
+
             if(searchResult.getRecords().size() != 1){
                 throw new RuntimeException("search course result more than one");
             }else {

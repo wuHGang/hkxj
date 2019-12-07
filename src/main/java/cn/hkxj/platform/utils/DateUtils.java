@@ -2,6 +2,7 @@ package cn.hkxj.platform.utils;
 
 import cn.hkxj.platform.pojo.SchoolTime;
 import cn.hkxj.platform.pojo.Term;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.CharUtils;
 import org.springframework.stereotype.Component;
@@ -26,11 +27,14 @@ public class DateUtils {
 
     public final static String YYYY_MM_DD_PATTERN = "yyyyMMdd";
 
+    public final static String PATTERN_WITHOUT_SPILT = "yyyyMMddHHmmSS";
+
     public final static String YYYY_MM_PATTERN = "yyyyMM";
 
     public final static String DEFAULT_PATTERN = "yyyy-MM-dd";
 
     public final static String HH_MM_SS_PATTERN = "hh:mm:ss";
+
 
     public static Integer getCurrentWeek() {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.CHINA);
@@ -73,17 +77,19 @@ public class DateUtils {
 
 
     /**
-     * 将LocalDate 转换成 Date
-     *
-     * @param localDate
+     * 格式化时间转换为标准Java时间
      * @return
      */
     public static Date localDateToDate(String time, String pattern) {
-        ZoneId zoneId = ZoneId.systemDefault();
-        DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern(pattern);
-        LocalDate localDate = LocalDate.parse(time, inputFormatter);
-        ZonedDateTime zdt = localDate.atStartOfDay(zoneId);
-        return Date.from(zdt.toInstant());
+
+        SimpleDateFormat format =  new SimpleDateFormat(pattern);
+
+
+        try {
+            return format.parse(time);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static SchoolTime getCurrentSchoolTime() {
@@ -94,11 +100,29 @@ public class DateUtils {
         return schoolTime;
     }
 
+    public static String dateToChinese(Date date){
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        StringBuffer buffer = new StringBuffer();
+        buffer.append(cal.get(Calendar.YEAR)).append("年")
+                .append(cal.get(Calendar.MONTH)+1).append("月")
+                .append(cal.get(Calendar.DAY_OF_MONTH)).append("日")
+                .append(cal.get(Calendar.HOUR)).append("时")
+                .append(cal.get(Calendar.MINUTE)).append("分");
+        return buffer.toString();
+    }
+
     public static byte getDistinct() {
         return (byte) (getCurrentWeek() % 2 == 0 ? 2 : 1);
     }
 
     public static byte getContraryDistinct() {
         return (byte) (getCurrentWeek() % 2 == 0 ? 1 : 2);
+    }
+
+    public static void main(String[] args) {
+        Date date = localDateToDate("20191105102840", PATTERN_WITHOUT_SPILT);
+        System.out.println(date);
+        System.out.println(dateToChinese(date));
     }
 }

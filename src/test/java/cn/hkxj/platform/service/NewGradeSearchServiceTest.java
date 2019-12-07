@@ -5,6 +5,7 @@ import cn.hkxj.platform.dao.StudentDao;
 import cn.hkxj.platform.pojo.Grade;
 import cn.hkxj.platform.pojo.GradeDetail;
 import cn.hkxj.platform.pojo.Student;
+import cn.hkxj.platform.pojo.vo.GradeVo;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -66,7 +67,7 @@ public class NewGradeSearchServiceTest {
     @Test
     public void getCurrentTermGrade(){
         Student student = studentDao.selectStudentByAccount(2019020856);
-        for (Grade grade : newGradeSearchService.getCurrentTermGrade(student)) {
+        for (GradeVo grade : newGradeSearchService.getCurrentTermGrade(student)) {
             System.out.println(grade);
         }
         ;

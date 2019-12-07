@@ -117,6 +117,13 @@ public class NewUrpSpiderService {
     }
 
     @Retryable(value = UrpException.class, maxAttempts = 3)
+    public SearchResult<SearchCourseResult> searchCourseBasicInfo(SearchCoursePost searchCoursePost){
+        Student student = studentDao.selectStudentByAccount(2014025838);
+        NewUrpSpider spider = getSpider(student.getAccount().toString(), student.getPassword());
+        return spider.searchCourseBasicInfo(searchCoursePost).getData();
+    }
+
+    @Retryable(value = UrpException.class, maxAttempts = 3)
     public List<List<CourseTimetableSearchResult>> searchCourseTimeTable(Course course){
         Student student = studentDao.selectStudentByAccount(2014025838);
         NewUrpSpider spider = getSpider(student.getAccount().toString(), student.getPassword());

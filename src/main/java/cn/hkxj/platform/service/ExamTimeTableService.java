@@ -26,7 +26,7 @@ public class ExamTimeTableService {
     @Resource
     private StudentDao studentDao;
     @Resource
-    private CourseDao courseDao;
+    private UrpCourseService urpCourseService;
     @Resource
     private UrpClassRoomDao urpClassRoomDao;
 
@@ -64,7 +64,7 @@ public class ExamTimeTableService {
         if (m.find()) {
             String num = m.group(1);
             String order = m.group(2);
-            Course course = courseDao.selectByNumAndOrder(num, order);
+            Course course = urpCourseService.getCurrentTermCourse(num, order);
             if (course == null) {
                 log.error("can not find course {} {}", num, order);
             }

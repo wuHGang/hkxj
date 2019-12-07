@@ -1,8 +1,10 @@
 package cn.hkxj.platform.spider.newmodel.searchcourse;
 
 import cn.hkxj.platform.pojo.Course;
+import cn.hkxj.platform.utils.DateUtils;
 import com.alibaba.fastjson.annotation.JSONField;
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 
 @Data
 public class SearchCourseResult {
@@ -92,19 +94,26 @@ public class SearchCourseResult {
     private String RN;
 
 
-    public String getCredit(){
+    public String getCredit() {
+        if (StringUtils.isEmpty(credit)) {
+            return "0";
+        }
         return credit.startsWith(".") ? "0" + credit : credit;
     }
 
-    public String getTermYear(){
+    public String getTermYear() {
+        // 这里是个补偿做法 由于有些课程没有该数据  所以存储当前的学期
+        if (StringUtils.isEmpty(termName)) {
+            return DateUtils.getCurrentSchoolTime().getTerm().getTermYear();
+        }
         return termName.substring(0, 9);
     }
 
-    public Course transToCourse(){
+    public Course transToCourse() {
         return new Course()
                 .setName(this.getCourseName())
                 .setNum(this.getCourseId())
-                .setCourseOrder(this.getCourseOrder())
+                .setCourseOrder(StringUtils.isEmpty(this.getCourseOrder()) ? "01" : this.getCourseOrder())
                 .setCredit(this.getCredit())
                 .setAcademyCode(this.getAcademyCode())
                 .setAcademyName(this.getAcademyName())
@@ -118,10 +127,14 @@ public class SearchCourseResult {
                 .setTermOrder(this.getTermOrder(termName));
     }
 
-    private int getTermOrder(String termName){
-        if(termName.contains("一")){
+    private int getTermOrder(String termName) {
+        if (StringUtils.isEmpty(termName)) {
+            return DateUtils.getCurrentSchoolTime().getTerm().getOrder();
+        }
+
+        if (termName.contains("一")) {
             return 1;
-        }else {
+        } else {
             return 2;
         }
 

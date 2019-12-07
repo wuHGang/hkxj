@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CourseDao {
@@ -38,7 +39,8 @@ public class CourseDao {
     }
 
     public Course selectByNumAndOrder(String number, String order){
-        return selectCourseByPojo(new Course().setNum(number).setCourseOrder(order)).stream().findFirst().get();
+
+        return selectCourseByPojo(new Course().setNum(number).setCourseOrder(order)).stream().findFirst().orElse(null);
     }
 
     public void insertSelective(Course course){

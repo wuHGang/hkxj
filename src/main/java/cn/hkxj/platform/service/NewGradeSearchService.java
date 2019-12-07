@@ -2,9 +2,11 @@ package cn.hkxj.platform.service;
 
 import cn.hkxj.platform.dao.*;
 import cn.hkxj.platform.pojo.*;
+import cn.hkxj.platform.pojo.vo.GradeVo;
 import cn.hkxj.platform.spider.newmodel.grade.CurrentGrade;
 import cn.hkxj.platform.spider.newmodel.grade.detail.UrpGradeDetailForSpider;
 import cn.hkxj.platform.spider.newmodel.grade.general.UrpGeneralGradeForSpider;
+import cn.hkxj.platform.utils.DateUtils;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
@@ -47,6 +49,7 @@ public class NewGradeSearchService {
     @Resource
     private GradeDao gradeDao;
 
+
     private static final Term currentTerm = new Term(2019, 2020, 1);
 
     private static DecimalFormat decimalFormat = new DecimalFormat("###################.###########");
@@ -85,17 +88,18 @@ public class NewGradeSearchService {
     }
 
     /**
+     * 这个方法是提供给前端使用，当抓取超时或者错误得时候会从数据库中读取数据，能保证一个有返回
      *
      * @param student 学生实体
      * @return 学生成绩
      */
-    public List<Grade> getCurrentTermGrade(Student student) {
+    public List<GradeVo> getCurrentTermGrade(Student student) {
         CompletableFuture<List<GradeDetail>> future = CompletableFuture.supplyAsync(() -> getCurrentTermGradeFromSpider(student));
         List<GradeDetail> gradeDetailList;
         try {
             gradeDetailList = future.get(1000L, TimeUnit.MILLISECONDS);
         } catch (InterruptedException | ExecutionException | TimeoutException e) {
-            return gradeDao.getCurrentTermGradeByAccount(student.getAccount());
+            return gradeToVo(gradeDao.getCurrentTermGradeByAccount(student.getAccount()));
         }
 
         List<Grade> gradeList = gradeDetailList.stream().map(GradeDetail::getGrade).collect(Collectors.toList());
@@ -104,8 +108,55 @@ public class NewGradeSearchService {
         // 新的数据插入，原有得数据更新
         saveUpdateGrade(updateList);
 
+        return gradeToVo(gradeList);
+    }
 
-        return gradeList;
+
+    /**
+     * 这个方法主要得主要目的是为了提供给关注抓取错误，而对返回结果时间不敏感的调用方使用
+     *
+     * @param student 学生实体
+     * @return 学生成绩
+     */
+    public List<GradeVo> getCurrentTermGradeSync(Student student) {
+        List<GradeDetail> gradeDetailList = getCurrentTermGradeFromSpider(student);
+        List<Grade> gradeList = gradeDetailList.stream().map(GradeDetail::getGrade).collect(Collectors.toList());
+        // 检查哪些是新的成绩数据
+        List<Grade> updateList = checkUpdate(student, gradeList);
+        // 新的数据插入，原有得数据更新
+        saveUpdateGrade(updateList);
+
+
+        return gradeToVo(gradeList);
+    }
+
+
+    public List<GradeVo> gradeToVo(List<Grade> gradeList) {
+        return gradeList.stream().map(x ->
+                new GradeVo()
+                        .setCourse(urpCourseService.getCurrentTermCourse(x.getCourseNumber(), x.getCourseOrder()))
+                        .setAccount(x.getAccount())
+                        .setScore(x.getScore())
+                        .setGradePoint(x.getGradePoint())
+                        .setLevelName(x.getLevelName())
+                        .setLevelPoint(x.getLevelPoint())
+                        .setRank(x.getRank())
+                        .setReplaceCourseNumber(x.getReplaceCourseNumber())
+                        .setRemark(x.getRemark())
+                        .setRetakeCourseMark(x.getRetakeCourseMark())
+                        .setRetakecourseModeCode(x.getRetakecourseModeCode())
+                        .setRetakeCourseModeExplain(x.getRetakeCourseModeExplain())
+                        .setUnpassedReasonCode(x.getUnpassedReasonCode())
+                        .setUnpassedReasonExplain(x.getUnpassedReasonExplain())
+                        .setStandardPoint(x.getStandardPoint())
+                        .setTermYear(x.getTermYear())
+                        .setTermOrder(x.getTermOrder())
+                        .setUpdate(x.isUpdate())
+                        .setExamTime(DateUtils.localDateToDate(x.getExamTime(), DateUtils.YYYY_MM_DD_PATTERN))
+                        .setOperateTime(DateUtils.localDateToDate(x.getOperateTime(), DateUtils.PATTERN_WITHOUT_SPILT))
+                        .setOperator(x.getOperator()))
+                .collect(Collectors.toList());
+
     }
 
     /**
@@ -135,12 +186,11 @@ public class NewGradeSearchService {
     }
 
 
-    public void saveUpdateGrade(List<Grade> gradeList){
+    public void saveUpdateGrade(List<Grade> gradeList) {
         for (Grade grade : gradeList) {
-            if(grade.getId() != null){
+            if (grade.getId() != null) {
                 gradeDao.updateByPrimaryKeySelective(grade);
-            }
-            else {
+            } else {
                 gradeDao.insertSelective(grade);
             }
         }

@@ -1,5 +1,8 @@
 package cn.hkxj.platform.builder;
 
+import cn.hkxj.platform.pojo.Grade;
+import cn.hkxj.platform.pojo.Student;
+import cn.hkxj.platform.pojo.vo.GradeVo;
 import cn.hkxj.platform.pojo.wechat.CourseGroupMsg;
 import cn.hkxj.platform.pojo.wechat.CourseSubscriptionMessage;
 import cn.hkxj.platform.utils.DateUtils;
@@ -8,10 +11,14 @@ import me.chanjar.weixin.mp.bean.template.WxMpTemplateData;
 import me.chanjar.weixin.mp.bean.template.WxMpTemplateMessage;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Syaeldon
@@ -40,7 +47,7 @@ public class TemplateBuilder {
      * @param miniProgram 小程序跳转
      * @return 模板消息
      */
-    public WxMpTemplateMessage buildWithNoUrl(String openid, List<WxMpTemplateData> list, String templateId, WxMpTemplateMessage.MiniProgram miniProgram) {
+    public WxMpTemplateMessage build(String openid, List<WxMpTemplateData> list, String templateId, WxMpTemplateMessage.MiniProgram miniProgram) {
         return build(openid, list, templateId, miniProgram, null);
     }
 
@@ -222,5 +229,32 @@ public class TemplateBuilder {
         date.setName("keyword2");
         date.setValue("\n第" + SchoolTimeUtil.getSchoolWeek() + "周   " + SchoolTimeUtil.getDayOfWeekChinese());
         return date;
+    }
+
+
+    public List<WxMpTemplateData> gradeToTemplateData(Student student, GradeVo grade){
+        List<WxMpTemplateData> templateDataList = new ArrayList<>();
+
+        WxMpTemplateData first = new WxMpTemplateData();
+        first.setName("first");
+        first.setValue(student.getName()+"同学！你的成绩更新啦");
+        //keyword2关键字
+        WxMpTemplateData key1 = new WxMpTemplateData();
+        key1.setName("keyword1");
+        key1.setValue(grade.getCourse().getName() + "\n更新时间:"+DateUtils.dateToChinese(grade.getOperateTime())+"\n");
+        //remark关键字
+        WxMpTemplateData key2 = new WxMpTemplateData();
+        key2.setName("keyword2");
+        key2.setValue(grade.getScore().toString()+ "  排名："+grade.getRank()+" 绩点: "+grade.getGradePoint().toString()+
+                        "\n");
+
+        WxMpTemplateData remark = new WxMpTemplateData();
+        remark.setName("remark");
+        remark.setValue("点击即可查看详情，有问题烦请后台留言~\n推荐给更多同学会优先发消息哦");
+        templateDataList.add(first);
+        templateDataList.add(key1);
+        templateDataList.add(key2);
+        templateDataList.add(remark);
+        return templateDataList;
     }
 }
