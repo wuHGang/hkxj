@@ -55,7 +55,7 @@ class CaptchaBreaker {
             throw new RuntimeException(e);
         }finally {
             long end = System.currentTimeMillis();
-            log.info("get code in {}", end-strat);
+            log.debug("get code in {}", end-strat);
         }
 
 

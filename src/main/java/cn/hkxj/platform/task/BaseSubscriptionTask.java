@@ -38,11 +38,12 @@ public class BaseSubscriptionTask {
             //发送成功的同时更新发送状态
             wxMpService.getTemplateMsgService().sendTemplateMsg(templateMessage);
             scheduleTaskService.updateSendStatus(task, ScheduleTaskService.SEND_SUCCESS);
-            log.info("send Message to appid:{} openid:{} success", wxMpService.getWxMpConfigStorage().getAppId(), task.getOpenid());
+            log.info("send Message to appid:{} openid:{} message:{} success",
+                    wxMpService.getWxMpConfigStorage().getAppId(), task.getOpenid(), templateMessage);
             return true;
         } catch (WxErrorException e) {
             scheduleTaskService.updateSendStatus(task, ScheduleTaskService.SEND_FAIL);
-            log.error("send Message to appid:{} openid:{} failed message:{}",
+            log.error("send Message to appid:{} openid:{} failed",
                     wxMpService.getWxMpConfigStorage().getAppId(), task.getOpenid(), e);
             return false;
         }

@@ -10,6 +10,7 @@ import cn.hkxj.platform.utils.DateUtils;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -87,6 +88,12 @@ public class NewGradeSearchService {
 
     }
 
+
+    public List<GradeVo> getCurrentTermGrade(String account, String password) {
+        Student student = studentDao.selectStudentByAccount(Integer.parseInt(account));
+        return getCurrentTermGrade(student);
+    }
+
     /**
      * 这个方法是提供给前端使用，当抓取超时或者错误得时候会从数据库中读取数据，能保证一个有返回
      *
@@ -97,7 +104,7 @@ public class NewGradeSearchService {
         CompletableFuture<List<GradeDetail>> future = CompletableFuture.supplyAsync(() -> getCurrentTermGradeFromSpider(student));
         List<GradeDetail> gradeDetailList;
         try {
-            gradeDetailList = future.get(1000L, TimeUnit.MILLISECONDS);
+            gradeDetailList = future.get(5000L, TimeUnit.MILLISECONDS);
         } catch (InterruptedException | ExecutionException | TimeoutException e) {
             return gradeToVo(gradeDao.getCurrentTermGradeByAccount(student.getAccount()));
         }
@@ -155,6 +162,7 @@ public class NewGradeSearchService {
                         .setExamTime(DateUtils.localDateToDate(x.getExamTime(), DateUtils.YYYY_MM_DD_PATTERN))
                         .setOperateTime(DateUtils.localDateToDate(x.getOperateTime(), DateUtils.PATTERN_WITHOUT_SPILT))
                         .setOperator(x.getOperator()))
+                .sorted(Comparator.comparing(GradeVo::getOperateTime).reversed())
                 .collect(Collectors.toList());
 
     }

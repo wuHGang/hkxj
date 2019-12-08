@@ -74,7 +74,7 @@ public class GradeAutoUpdateTask extends BaseSubscriptionTask {
     //每20分钟执行一次
     void autoUpdateGrade() {
         //执行前，检查定时任务的可用性
-        if (isTaskEnable()) {
+        if (!isTaskEnable()) {
             return;
         }
         List<ScheduleTask> subscribeTask = scheduleTaskDao.getPlusSubscribeTask(SubscribeScene.GRADE_AUTO_UPDATE);
@@ -163,7 +163,7 @@ public class GradeAutoUpdateTask extends BaseSubscriptionTask {
      *
      * @return 可用结果
      */
-    private boolean isTaskEnable() {
+    boolean isTaskEnable() {
         return BooleanUtils.toBoolean(updateSwitch);
     }
 

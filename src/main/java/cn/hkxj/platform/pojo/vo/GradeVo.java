@@ -11,6 +11,7 @@ import java.util.Date;
 @Accessors(chain = true)
 public class GradeVo {
     private Course course;
+
     private Integer account;
 
     private Double score;
