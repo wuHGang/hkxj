@@ -63,16 +63,16 @@ public class GradeAutoUpdateTask extends BaseSubscriptionTask {
     @Resource
     private ScheduleTaskDao scheduleTaskDao;
 
-    @Value("scheduled.gradeUpdate")
+    @Value("${scheduled.gradeUpdate}")
     private String updateSwitch;
 
     //    @Async
     @Scheduled(cron = "0 0/20 * * * ? ")
     //每20分钟执行一次
     void autoUpdateGrade() {
-        //执行前，检查定时任务的可用性
-        log.info(updateSwitch);
-        log.info("is switch on {}", isSwitchOn());
+        if(!isSwitchOn()){
+            return;
+        }
         List<ScheduleTask> subscribeTask = scheduleTaskDao.getPlusSubscribeTask(SubscribeScene.GRADE_AUTO_UPDATE);
         log.info("{} grade update task to run", subscribeTask.size());
 
@@ -160,6 +160,7 @@ public class GradeAutoUpdateTask extends BaseSubscriptionTask {
      * @return 可用结果
      */
     boolean isSwitchOn() {
+        log.info(updateSwitch);
         return BooleanUtils.toBoolean(updateSwitch);
     }
 
