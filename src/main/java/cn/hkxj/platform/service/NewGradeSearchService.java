@@ -68,6 +68,7 @@ public class NewGradeSearchService {
                         .setUrpCourse(new UrpCourse().setCourseName(x.getCourse().getName())
                                 .setCredit(Double.parseDouble(x.getCourse().getCredit()))
                         )
+                        .setTerm(DateUtils.getCurrentSchoolTime().getTerm())
 
                 ).collect(Collectors.toList());
 
