@@ -3,6 +3,7 @@ package cn.hkxj.platform.spider.newmodel.grade.general;
 import cn.hkxj.platform.pojo.*;
 import cn.hkxj.platform.spider.newmodel.CourseRelativeInfo;
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author Yuki
@@ -246,6 +247,39 @@ public class UrpGeneralGradeForSpider {
         plan.setPlanNumber(this.getPlanNumber());
         plan.setProgramName(this.programName);
         return plan;
+    }
+
+    public Grade convertToGrade() {
+        return new Grade()
+                .setAccount(Integer.parseInt(this.getId().getStudentNumber()))
+                .setCourseNumber(this.getId().getCourseNumber())
+                .setCourseOrder(this.getCoureSequenceNumber())
+                .setScore(this.getCourseScore() == null ? -1 : this.getCourseScore())
+                .setGradePoint(this.getGradePoint())
+                .setLevelName(this.getLevelName())
+                .setLevelPoint(this.getLevlePoint())
+                .setRank(this.getRank())
+                .setReplaceCourseNumber(this.getReplaceCourseNumber())
+                .setRemark(this.getRemark())
+                .setRetakeCourseMark(this.getRetakeCourseMark())
+                .setRetakecourseModeCode(this.getRetakeCourseModeCode())
+                .setRetakeCourseModeExplain(this.getRetakeCourseModeExplain())
+                .setUnpassedReasonCode(this.getUnpassedReasonCode())
+                .setUnpassedReasonExplain(this.getUnpassedReasonExplain())
+                .setStandardPoint(this.getStandardPoint())
+                .setTermYear(this.getId().getTermYear())
+                .setTermOrder(this.getId().getTermOrder())
+                .setExamTime(this.getId().getExamtime())
+                .setOperateTime(this.getOperatetime())
+                .setOperator(this.getOperator())
+                .setStudyHour(StringUtils.isEmpty(this.getStudyHour()) ? 0 :
+                        Integer.parseInt(this.getStudyHour()))
+                .setCourseName(this.getCourseName())
+                .setCoursePropertyCode(this.getCoursePropertyCode())
+                .setCoursePropertyName(this.getCoursePropertyName())
+                .setExamTypeName(this.getExamTypeName())
+                .setExamTypeCode(this.getExamTypeCode())
+                .setCredit(this.getCredit());
     }
 }
 

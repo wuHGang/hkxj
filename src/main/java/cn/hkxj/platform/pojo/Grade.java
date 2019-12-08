@@ -13,7 +13,7 @@ public class Grade {
     private Integer id;
 
     @EqualsAndHashCode.Exclude
-    private Integer examId;
+    private Integer examId = 0;
 
     private Integer account;
 

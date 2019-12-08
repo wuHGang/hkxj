@@ -13,6 +13,7 @@ import cn.hkxj.platform.spider.newmodel.coursetimetable.UrpCourseTimeTable;
 import cn.hkxj.platform.spider.newmodel.coursetimetable.UrpCourseTimeTableForSpider;
 import cn.hkxj.platform.spider.newmodel.examtime.UrpExamTime;
 import cn.hkxj.platform.spider.newmodel.grade.CurrentGrade;
+import cn.hkxj.platform.spider.newmodel.grade.general.UrpGeneralGradeForSpider;
 import cn.hkxj.platform.spider.newmodel.grade.general.UrpGradeForSpider;
 import cn.hkxj.platform.spider.newmodel.searchclass.ClassInfoSearchResult;
 import cn.hkxj.platform.spider.newmodel.searchclassroom.SearchClassroomPost;
@@ -81,6 +82,18 @@ public class NewUrpSpiderServiceTest {
         for (UrpGradeForSpider gradeForSpider : grade.getList()) {
             System.out.println(gradeForSpider);
         }
+
+
+    }
+
+    @Test
+    public void getCurrentGeneralGrade(){
+        Student student = studentDao.selectStudentByAccount(2018024221);
+
+        for (UrpGeneralGradeForSpider grade : newUrpSpiderService.getCurrentGeneralGrade(student)) {
+            System.out.println(grade);
+        }
+
 
 
     }

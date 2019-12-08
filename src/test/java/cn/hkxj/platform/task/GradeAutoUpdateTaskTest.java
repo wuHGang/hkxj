@@ -1,9 +1,12 @@
 package cn.hkxj.platform.task;
 
 import cn.hkxj.platform.MDCThreadPool;
+import cn.hkxj.platform.dao.GradeDao;
 import cn.hkxj.platform.dao.ScheduleTaskDao;
 import cn.hkxj.platform.pojo.ScheduleTask;
+import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.pojo.constant.SubscribeScene;
+import cn.hkxj.platform.service.OpenIdService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,8 +20,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.*;
 
-import static org.junit.Assert.*;
-
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @Slf4j
@@ -27,6 +28,10 @@ public class GradeAutoUpdateTaskTest {
     private GradeAutoUpdateTask gradeAutoUpdateTask;
     @Resource
     private ScheduleTaskDao scheduleTaskDao;
+    @Resource
+    private OpenIdService openIdService;
+    @Resource
+    private GradeDao gradeDao;
 
     //这里设置拒绝策略为调用者运行，这样可以降低产生任务的速率
     private static ExecutorService gradeAutoUpdatePool = new MDCThreadPool(8, 8,
@@ -35,8 +40,11 @@ public class GradeAutoUpdateTaskTest {
     @Test
     public void processScheduleTask() {
         // 2106147
-        ScheduleTask task = scheduleTaskDao.selectByOpenid("oCxRO1G9N755dOY5dwcT5l3IlS3Y", SubscribeScene.GRADE_AUTO_UPDATE);
-        gradeAutoUpdateTask.processScheduleTask(task);
+        ScheduleTask task = scheduleTaskDao.selectByOpenid("oCxRO1Aj7EqhIq8Jy3u_AJoY-8p4", SubscribeScene.GRADE_AUTO_UPDATE);
+        Student student = openIdService.getStudentByOpenId(task.getOpenid(), task.getAppid());
+        System.out.println(student);
+
+//        gradeAutoUpdateTask.processScheduleTask(task);
     }
 
     @Test
@@ -67,5 +75,10 @@ public class GradeAutoUpdateTaskTest {
             e.printStackTrace();
         }
         log.info("{} grade update task finish", subscribeTask.size());
+    }
+
+    @Test
+    public void test(){
+        System.out.println(gradeAutoUpdateTask.isSwitchOn());
     }
 }

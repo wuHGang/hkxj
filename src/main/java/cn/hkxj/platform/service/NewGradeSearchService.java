@@ -55,34 +55,41 @@ public class NewGradeSearchService {
 
     private static DecimalFormat decimalFormat = new DecimalFormat("###################.###########");
 
+    /**
+     * 这个方法已经过时，冗余出来给还没更新小程序新版本的用户使用
+     * 请使用新方法{@linkplain #getCurrentTermGrade}
+     */
+    @Deprecated
     public GradeSearchResult getCurrentGrade(Student student) {
-        CurrentGrade currentGrade = newUrpSpiderService.getCurrentTermGrade(student.getAccount().toString(),
-                student.getPassword());
+        List<GradeVo> currentTermGrade = getCurrentTermGrade(student);
+        List<UrpGradeAndUrpCourse> result = currentTermGrade.stream()
+                .map(x -> new UrpGradeAndUrpCourse()
+                        .setNewGrade(new NewGrade().setUrpGrade(new UrpGrade().setScore(x.getScore())))
+                        .setUrpCourse(new UrpCourse().setCourseName(x.getCourse().getName())
+                                .setCredit(Double.parseDouble(x.getCourse().getCredit()))
+                        )
 
-        if (CollectionUtils.isEmpty(currentGrade.getList())) {
-            return new GradeSearchResult(Lists.newArrayListWithCapacity(0), false);
-        }
+                ).collect(Collectors.toList());
 
-
-        return saveCurrentGradeToDb(student, currentGrade);
+        return new GradeSearchResult(result, false);
     }
 
     public List<GradeDetail> getCurrentTermGradeFromSpider(Student student) {
-        CurrentGrade currentGrade = newUrpSpiderService.getCurrentTermGrade(student);
+        List<UrpGeneralGradeForSpider> generalGrade = newUrpSpiderService.getCurrentGeneralGrade(student);
 
-        return currentGrade.getList().stream().map(urpGradeForSpider -> {
-            UrpGeneralGradeForSpider generalGradeForSpider = urpGradeForSpider.getUrpGeneralGradeForSpider();
 
+        return generalGrade.stream().map(urpGradeForSpider -> {
+
+            // TODO 将其它对象重新整理入库
             //对教学计划相关的信息进行判断是否需要保存
-            Plan plan = getPlan(generalGradeForSpider);
+//            Plan plan = getPlan(generalGradeForSpider);
             //对专业相关的信息进行判断是否需要保存
-            Major major = getMajor(generalGradeForSpider);
-            UrpExam urpExam = getUrpExam(generalGradeForSpider, plan, major, student);
+//            Major major = getMajor(generalGradeForSpider);
+//            UrpExam urpExam = getUrpExam(generalGradeForSpider, plan, major, student);
             Grade grade = urpGradeForSpider.convertToGrade();
-            grade.setExamId(urpExam.getId());
-            List<UrpGradeDetail> detailList = urpGradeForSpider.getUrpGradeDetailForSpider().convertToUrpGradeDetail();
 
-            return new GradeDetail(grade, detailList);
+
+            return new GradeDetail(grade, null);
 
         }).collect(Collectors.toList());
 

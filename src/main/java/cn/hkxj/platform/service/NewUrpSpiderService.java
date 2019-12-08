@@ -14,6 +14,7 @@ import cn.hkxj.platform.spider.newmodel.course.UrpCourseForSpider;
 import cn.hkxj.platform.spider.newmodel.coursetimetable.UrpCourseTimeTableForSpider;
 import cn.hkxj.platform.spider.newmodel.examtime.UrpExamTime;
 import cn.hkxj.platform.spider.newmodel.grade.CurrentGrade;
+import cn.hkxj.platform.spider.newmodel.grade.general.UrpGeneralGradeForSpider;
 import cn.hkxj.platform.spider.newmodel.searchclass.ClassInfoSearchResult;
 import cn.hkxj.platform.spider.newmodel.searchclassroom.SearchClassroomPost;
 import cn.hkxj.platform.spider.newmodel.searchclassroom.SearchClassroomResult;
@@ -60,10 +61,21 @@ public class NewUrpSpiderService {
         return spider.getCurrentGrade();
     }
 
+    /**
+     * 这个方法只有基本得成绩信息  包括相信成绩信息的抓取使用{@see #getCurrentTermGrade()}
+     */
+    @Retryable(value = UrpException.class, maxAttempts = 3)
+    List<UrpGeneralGradeForSpider> getCurrentGeneralGrade(Student student){
+        NewUrpSpider spider = getSpider(student.getAccount().toString(), student.getPassword());
+        return spider.getCurrentGeneralGrade();
+    }
+
     UrpCourseForSpider getCourseFromSpider(String account, String password, String uid){
         NewUrpSpider spider = getSpider(account, password);
         return spider.getUrpCourse(uid);
     }
+
+
 
     UrpCourseForSpider getCourseFromSpider(Student student, String uid){
         return getCourseFromSpider(student.getAccount().toString(), student.getPassword(), uid);

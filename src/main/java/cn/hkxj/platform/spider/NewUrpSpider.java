@@ -248,7 +248,7 @@ public class NewUrpSpider {
     }
 
     public CurrentGrade getCurrentGrade() {
-        List<UrpGeneralGradeForSpider> urpGeneralGradeForSpiders = getUrpGeneralGrades();
+        List<UrpGeneralGradeForSpider> urpGeneralGradeForSpiders = getCurrentGeneralGrade();
         List<UrpGradeForSpider> urpGradeForSpiderList = Lists.newArrayList();
         urpGeneralGradeForSpiders.forEach(urpGeneralGradeForSpider -> {
             UrpGradeForSpider urpGradeForSpider = getUrpGradeForSpider(urpGeneralGradeForSpider);
@@ -260,6 +260,7 @@ public class NewUrpSpider {
         return currentGrade;
     }
 
+
     private UrpGradeForSpider getUrpGradeForSpider(UrpGeneralGradeForSpider urpGeneralGradeForSpider) {
         UrpGradeForSpider urpGradeForSpider = new UrpGradeForSpider();
         urpGradeForSpider.setUrpGeneralGradeForSpider(urpGeneralGradeForSpider);
@@ -267,7 +268,7 @@ public class NewUrpSpider {
         return urpGradeForSpider;
     }
 
-    private List<UrpGeneralGradeForSpider> getUrpGeneralGrades() {
+    public List<UrpGeneralGradeForSpider> getCurrentGeneralGrade() {
         Request request = new Request.Builder()
                 .url(CURRENT_TERM_GRADE)
                 .get()

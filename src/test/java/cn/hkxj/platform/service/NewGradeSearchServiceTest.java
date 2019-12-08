@@ -5,6 +5,7 @@ import cn.hkxj.platform.dao.StudentDao;
 import cn.hkxj.platform.pojo.Grade;
 import cn.hkxj.platform.pojo.GradeDetail;
 import cn.hkxj.platform.pojo.Student;
+import cn.hkxj.platform.pojo.UrpGradeAndUrpCourse;
 import cn.hkxj.platform.pojo.vo.GradeVo;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,10 +33,11 @@ public class NewGradeSearchServiceTest {
 
     @Test
     public void test(){
-        long start = System.currentTimeMillis();
         Student student = studentDao.selectStudentByAccount(2018022512);
-        newGradeSearchService.getCurrentGrade(student);
-        System.out.println(System.currentTimeMillis() - start);
+        for (UrpGradeAndUrpCourse course : newGradeSearchService.getCurrentGrade(student).getData()) {
+            System.out.println(course);
+        }
+
     }
 
 
