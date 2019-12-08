@@ -111,7 +111,10 @@ public class GradeAutoUpdateTask extends BaseSubscriptionTask {
         List<GradeVo> updateList = termGrade.stream().filter(GradeVo::isUpdate).collect(Collectors.toList());
         WxMpService service = WechatMpConfiguration.getMpServices().get(task.getAppid());
         if (!CollectionUtils.isEmpty(updateList)) {
-            for (GradeVo gradeVo : updateList) {
+            for (GradeVo gradeVo : updateList.stream()
+                    .filter(x -> !x.getScore().equals(-1.0))
+                    .collect(Collectors.toList())) {
+
                 List<WxMpTemplateData> templateData = templateBuilder.gradeToTemplateData(student, gradeVo);
                 WxMpTemplateMessage.MiniProgram miniProgram = new WxMpTemplateMessage.MiniProgram();
                 miniProgram.setAppid(MiniProgram.APP_ID);
@@ -122,6 +125,7 @@ public class GradeAutoUpdateTask extends BaseSubscriptionTask {
                                 miniProgram);
 
                 sendTemplateMessage(service, templateMessage, task);
+
             }
 
         }
