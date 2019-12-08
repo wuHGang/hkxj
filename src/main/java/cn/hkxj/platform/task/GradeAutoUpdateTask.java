@@ -6,13 +6,11 @@ import cn.hkxj.platform.config.wechat.WechatMpConfiguration;
 import cn.hkxj.platform.config.wechat.WechatMpPlusProperties;
 import cn.hkxj.platform.config.wechat.WechatTemplateProperties;
 import cn.hkxj.platform.dao.ScheduleTaskDao;
-import cn.hkxj.platform.pojo.Grade;
 import cn.hkxj.platform.pojo.ScheduleTask;
 import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.pojo.constant.MiniProgram;
 import cn.hkxj.platform.pojo.constant.SubscribeScene;
 import cn.hkxj.platform.pojo.vo.GradeVo;
-import cn.hkxj.platform.pojo.wechat.Openid;
 import cn.hkxj.platform.service.NewGradeSearchService;
 import cn.hkxj.platform.service.OpenIdService;
 import cn.hkxj.platform.service.ScheduleTaskService;
@@ -30,7 +28,6 @@ import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.*;
@@ -74,7 +71,7 @@ public class GradeAutoUpdateTask extends BaseSubscriptionTask {
     //每20分钟执行一次
     void autoUpdateGrade() {
         //执行前，检查定时任务的可用性
-        if (!isTaskEnable()) {
+        if (!isSwitchOn()) {
             return;
         }
         List<ScheduleTask> subscribeTask = scheduleTaskDao.getPlusSubscribeTask(SubscribeScene.GRADE_AUTO_UPDATE);
@@ -163,7 +160,7 @@ public class GradeAutoUpdateTask extends BaseSubscriptionTask {
      *
      * @return 可用结果
      */
-    boolean isTaskEnable() {
+    boolean isSwitchOn() {
         return BooleanUtils.toBoolean(updateSwitch);
     }
 
