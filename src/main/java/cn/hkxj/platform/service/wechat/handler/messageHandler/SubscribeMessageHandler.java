@@ -44,7 +44,7 @@ public class SubscribeMessageHandler implements WxMpMessageHandler{
         String appid = wxMpService.getWxMpConfigStorage().getAppId();
 
 
-        if(wechatMpPlusProperties.getAppId().equals(appid)){
+        if(!wechatMpPlusProperties.getAppId().equals(appid)){
             return textBuilder.build("当前订阅号不支持提醒功能"+"\n\n请关注我们的服务号【黑科校际plus】进行订阅哦！~", wxMessage, wxMpService);
         }
         if(wxMessage.getContent().equals("订阅")){
