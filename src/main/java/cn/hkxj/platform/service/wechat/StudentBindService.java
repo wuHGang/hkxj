@@ -12,6 +12,7 @@ import cn.hkxj.platform.pojo.example.OpenidExample;
 import cn.hkxj.platform.pojo.wechat.Openid;
 import cn.hkxj.platform.service.NewUrpSpiderService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -37,6 +38,9 @@ public class StudentBindService {
     private StudentDao studentDao;
     @Resource
     private NewUrpSpiderService newUrpSpiderService;
+    @Value("${domain}")
+    private String domain;
+    private static final String PATTERN = "<a href=\"%s/bind?openid=%s&appid=%s\">%s</a>";
 
     /**
      * 学号与微信公众平台openID关联
@@ -161,6 +165,10 @@ public class StudentBindService {
             return openidPlusMapper.updateByPrimaryKey(update);
         }
         return openidMapper.updateByPrimaryKey(update);
+    }
+
+    public String getBindUrlByOpenid(String fromUser, String appId, String content){
+        return String.format(PATTERN, domain, fromUser, appId, content);
     }
 
 }

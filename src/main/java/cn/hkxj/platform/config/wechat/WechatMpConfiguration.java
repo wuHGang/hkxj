@@ -181,6 +181,7 @@ public class WechatMpConfiguration {
                 .interceptor(randomMatchInterceptor)
                 .handler(courseRankHandler)
                 .end()
+
                 .rule()
                 .async(false)
                 .rContent("配对")
@@ -188,7 +189,15 @@ public class WechatMpConfiguration {
                 .interceptor(studentInfoInterceptor)
                 .interceptor(randomMatchInterceptor)
                 .handler(courseMessageHandler)
+                .end()
+
+                .rule()
+                .async(false)
+                .event("subscribe")
+                .handler(courseMessageHandler)
                 .end();
+
+        ;
         return newRouter;
     }
 

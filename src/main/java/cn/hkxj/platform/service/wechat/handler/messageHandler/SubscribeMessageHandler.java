@@ -1,6 +1,7 @@
 package cn.hkxj.platform.service.wechat.handler.messageHandler;
 
 import cn.hkxj.platform.builder.TextBuilder;
+import cn.hkxj.platform.config.wechat.WechatMpPlusProperties;
 import cn.hkxj.platform.pojo.ScheduleTask;
 import cn.hkxj.platform.pojo.constant.SubscribeScene;
 import cn.hkxj.platform.service.ScheduleTaskService;
@@ -34,12 +35,18 @@ public class SubscribeMessageHandler implements WxMpMessageHandler{
     private ScheduleTaskService scheduleTaskService;
     @Resource
     private TextBuilder textBuilder;
+    @Resource
+    private WechatMpPlusProperties wechatMpPlusProperties;
 
     @Override
     public WxMpXmlOutMessage handle(WxMpXmlMessage wxMessage, Map<String, Object> context, WxMpService wxMpService, WxSessionManager sessionManager) {
         String openid = wxMessage.getFromUser();
         String appid = wxMpService.getWxMpConfigStorage().getAppId();
 
+
+        if(wechatMpPlusProperties.getAppId().equals(appid)){
+            return textBuilder.build("当前订阅号不支持提醒功能"+"\n\n请关注我们的服务号【黑科校际plus】进行订阅哦！~", wxMessage, wxMpService);
+        }
         if(wxMessage.getContent().equals("订阅")){
             for (SubscribeScene scene : SubscribeScene.values()) {
                 ScheduleTask scheduleTask = new ScheduleTask(appid, openid, scene.getScene());

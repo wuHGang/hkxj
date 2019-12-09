@@ -1,6 +1,7 @@
 package cn.hkxj.platform.service;
 
 import cn.hkxj.platform.config.wechat.WechatMpPlusProperties;
+import cn.hkxj.platform.dao.ScheduleTaskDao;
 import cn.hkxj.platform.mapper.*;
 import cn.hkxj.platform.pojo.*;
 import cn.hkxj.platform.pojo.constant.SubscribeScene;
@@ -53,28 +54,27 @@ public class CourseSubscribeService {
     @Resource
     private OpenidMapper openidMapper;
     @Resource
-    private ScheduleTaskService scheduleTaskService;
-    @Resource
     private WechatMpPlusProperties wechatMpPlusProperties;
     @Resource
     private OpenidPlusMapper openidPlusMapper;
     @Resource
     private CourseTimeTableService courseTimeTableService;
+    @Resource
+    private ScheduleTaskDao scheduleTaskDao;
 
 
-    public Map<String, Set<CourseSubscriptionMessage>> getSubscriptionMessages(int condition){
+    public Set<CourseSubscriptionMessage> getSubscriptionMessages(int condition){
         //获取appId和scheduleTask的映射关系
-        Map<String, List<ScheduleTask>> scheduleTaskMap = scheduleTaskService.getSubscribeData(Integer.parseInt(SubscribeScene.COURSE_PUSH.getScene()));
-        Map<String, Set<CourseSubscriptionMessage>> subscriptionMessageMap = Maps.newHashMap();
-        scheduleTaskMap.forEach((appId, scheduleTaskList) -> {
-            List<String> openidList = scheduleTaskList.stream().map(ScheduleTask::getOpenid).collect(Collectors.toList());
-            //获取openid和学生的映射关系
-            Map<String, Student> studentMapping = getOpenIdMap(openidList, appId);
-            //根据这个获取相应的课程信息
-            Set<CourseSubscriptionMessage> subscriptionMessages = getCourseSubscriptionMessages(scheduleTaskList, studentMapping, condition);
-            subscriptionMessageMap.put(appId, subscriptionMessages);
-        });
-        return subscriptionMessageMap;
+
+
+        List<ScheduleTask> taskList = scheduleTaskDao.getPlusSubscribeTask(SubscribeScene.COURSE_PUSH);
+
+        List<String> openidList = taskList.stream().map(ScheduleTask::getOpenid).collect(Collectors.toList());
+        Map<String, Student> studentMapping = getOpenIdMap(openidList, wechatMpPlusProperties.getAppId());
+
+        return getCourseSubscriptionMessages(taskList, studentMapping,
+                condition);
+
     }
 
     /**

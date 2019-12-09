@@ -22,7 +22,6 @@ import java.util.Set;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = PlatformApplication.class)
 @WebAppConfiguration
-@TestPropertySource(locations = "classpath:application-local.properties")
 public class CourseSubscribeServiceTest {
 
     @Resource
@@ -30,18 +29,7 @@ public class CourseSubscribeServiceTest {
 
     @Test
     public void getCoursesSubscribeForCurrentDay() {
-        System.out.println("entering");
-        for(int i =  0; i <= 8; i+=2){
-            Map<String, Set<CourseSubscriptionMessage>> map = courseSubscribeService.getSubscriptionMessages(CourseSubscribeService.FIRST_SECTION + i);
-            map.forEach((appid, msgs) -> {
-                if(msgs == null) return;
-                System.out.println("appid = " + appid);
-                System.err.println(msgs);
-                for(CourseSubscriptionMessage msg : msgs){
-                    System.err.println("课程内容 " + msg.getPushContent());
-                }
-            });
-        }
+        courseSubscribeService.getSubscriptionMessages(CourseSubscribeService.FIRST_SECTION);
     }
 
     @Test
