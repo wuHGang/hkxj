@@ -75,6 +75,9 @@ public class WechatMpConfiguration {
     @Resource
     private CourseRankHandler courseRankHandler;
 
+    @Resource
+    private SubscribeEventHandler subscribeEventHandler;
+
     private static Map<String, WxMpMessageRouter> routers = Maps.newHashMap();
     private static Map<String, WxMpService> mpServices = Maps.newHashMap();
 
@@ -194,7 +197,7 @@ public class WechatMpConfiguration {
                 .rule()
                 .async(false)
                 .event("subscribe")
-                .handler(courseMessageHandler)
+                .handler(subscribeEventHandler)
                 .end();
 
         ;
