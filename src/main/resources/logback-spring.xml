@@ -98,7 +98,7 @@
         </filter>
     </appender>
 
-    <logger name="cn.hkxj.platform.controller.wechat.*" additivity="fales">
+    <logger name="cn.hkxj.platform.controller.wechat" additivity="fales">
         <level value="INFO"/>
         <appender-ref ref="wechatAppender"/>
     </logger>
