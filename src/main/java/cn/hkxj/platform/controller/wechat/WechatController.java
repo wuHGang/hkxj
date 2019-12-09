@@ -22,8 +22,6 @@ import javax.servlet.http.HttpSession;
 @RequestMapping("/wechat/portal/{appid}")
 public class WechatController {
 
-	private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
 	@Resource
 	private HttpSession httpSession;
 
@@ -34,7 +32,7 @@ public class WechatController {
 			@RequestParam(name = "nonce", required = false) String nonce,
 			@RequestParam(name = "echostr", required = false) String echostr) {
 
-		this.logger.info("\n接收到来自微信服务器的认证消息：[{}, {}, {}, {}]", signature,
+		log.info("\n接收到来自微信服务器的认证消息：[{}, {}, {}, {}]", signature,
 				timestamp, nonce, echostr);
 
         String result = "非法请求";
@@ -88,7 +86,7 @@ public class WechatController {
 			WxMpXmlMessage inMessage = WxMpXmlMessage.fromEncryptedXml(
 					requestBody, wxService.getWxMpConfigStorage(), timestamp,
 					nonce, msgSignature);
-			this.logger.debug("\n消息解密后内容为：\n{} ", inMessage.toString());
+			log.debug("\n消息解密后内容为：\n{} ", inMessage.toString());
 			httpSession.setAttribute("appid", appid);
 			WxMpXmlOutMessage outMessage = this.route(inMessage, appid);
 			if (outMessage == null) {
@@ -106,7 +104,7 @@ public class WechatController {
 		try {
 			return WechatMpConfiguration.getRouters().get(appid).route(message);
 		} catch (Exception e) {
-			this.logger.error(e.getMessage(), e);
+			log.error(e.getMessage(), e);
 		}
 
 		return null;
