@@ -136,6 +136,5 @@
     <root level="DEBUG">
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="errorAppender"/>
-        <appender-ref ref="wechatAppender"/>
     </root>
 </configuration>

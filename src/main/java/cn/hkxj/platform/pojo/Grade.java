@@ -27,6 +27,7 @@ public class Grade {
 
     private String levelPoint;
 
+    @EqualsAndHashCode.Exclude
     private Integer rank;
 
     private String courseName;
