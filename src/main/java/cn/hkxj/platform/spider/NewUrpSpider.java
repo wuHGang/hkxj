@@ -52,6 +52,7 @@ import org.springframework.data.redis.core.ValueOperations;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -172,7 +173,7 @@ public class NewUrpSpider {
     private String account;
     private String password;
 
-    private static ArrayBlockingQueue<PreLoadCaptcha> queue = new ArrayBlockingQueue<>(5);
+    private static BlockingQueue<PreLoadCaptcha> queue = new ArrayBlockingQueue<>(20);
 
 
     static {

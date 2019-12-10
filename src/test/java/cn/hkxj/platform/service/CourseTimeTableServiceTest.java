@@ -130,13 +130,13 @@ public class CourseTimeTableServiceTest {
 
     @Test
     public void testUpdate(){
-        for (CourseTimeTableVo vo : courseTimeTableService.getCourseTimeTableByStudent( 2017023388)) {
+        for (CourseTimeTableVo vo : courseTimeTableService.getCourseTimeTableByStudent( 2017023437)) {
             System.out.println(vo);
         }
 
         System.out.println("####################");
 
-        for (CourseTimeTableVo vo : courseTimeTableService.updateCourseTimeTableByStudent( 2017023388)) {
+        for (CourseTimeTableVo vo : courseTimeTableService.updateCourseTimeTableByStudent( 2017023437)) {
             System.out.println(vo);
         }
 

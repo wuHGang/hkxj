@@ -92,8 +92,6 @@ public class GradeAutoUpdateTask extends BaseSubscriptionTask {
             }, gradeAutoUpdatePool);
         }
 
-        log.info("{} grade update task finish", subscribeTask.size());
-
     }
 
     /**

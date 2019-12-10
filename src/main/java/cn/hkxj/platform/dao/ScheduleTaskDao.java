@@ -5,6 +5,7 @@ import cn.hkxj.platform.mapper.ScheduleTaskMapper;
 import cn.hkxj.platform.pojo.ScheduleTask;
 import cn.hkxj.platform.pojo.constant.SubscribeScene;
 import cn.hkxj.platform.pojo.example.ScheduleTaskExample;
+import cn.hkxj.platform.pojo.example.SubscribeOpenidExample;
 import cn.hkxj.platform.service.ScheduleTaskService;
 import org.springframework.stereotype.Service;
 
@@ -61,4 +62,5 @@ public class ScheduleTaskDao {
 
         return selectByPojo(pojo).stream().findFirst().orElse(null);
     }
+
 }

@@ -40,11 +40,10 @@ public class GradeAutoUpdateTaskTest {
     @Test
     public void processScheduleTask() {
         // 2106147
-        ScheduleTask task = scheduleTaskDao.selectByOpenid("oCxRO1Aj7EqhIq8Jy3u_AJoY-8p4", SubscribeScene.GRADE_AUTO_UPDATE);
+        ScheduleTask task = scheduleTaskDao.selectByOpenid("oCxRO1G9N755dOY5dwcT5l3IlS3Y", SubscribeScene.GRADE_AUTO_UPDATE);
         Student student = openIdService.getStudentByOpenId(task.getOpenid(), task.getAppid());
-        System.out.println(student);
 
-//        gradeAutoUpdateTask.processScheduleTask(task);
+        gradeAutoUpdateTask.processScheduleTask(task);
     }
 
     @Test

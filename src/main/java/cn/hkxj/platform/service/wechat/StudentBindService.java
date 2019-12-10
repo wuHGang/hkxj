@@ -7,7 +7,9 @@ import cn.hkxj.platform.exceptions.PasswordUncorrectException;
 import cn.hkxj.platform.exceptions.ReadTimeoutException;
 import cn.hkxj.platform.mapper.OpenidMapper;
 import cn.hkxj.platform.mapper.OpenidPlusMapper;
+import cn.hkxj.platform.pojo.ScheduleTask;
 import cn.hkxj.platform.pojo.Student;
+import cn.hkxj.platform.pojo.constant.SubscribeScene;
 import cn.hkxj.platform.pojo.example.OpenidExample;
 import cn.hkxj.platform.pojo.wechat.Openid;
 import cn.hkxj.platform.service.NewUrpSpiderService;
@@ -169,6 +171,11 @@ public class StudentBindService {
 
     public String getBindUrlByOpenid(String fromUser, String appId, String content){
         return String.format(PATTERN, domain, fromUser, appId, content);
+    }
+
+
+    private void subscribeGradeUpdateTask(String openid, String account, String appid){
+        ScheduleTask scheduleTask = new ScheduleTask(appid, openid, SubscribeScene.GRADE_AUTO_UPDATE.getScene());
     }
 
 }
