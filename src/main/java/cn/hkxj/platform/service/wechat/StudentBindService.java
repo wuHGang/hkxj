@@ -13,6 +13,7 @@ import cn.hkxj.platform.pojo.constant.SubscribeScene;
 import cn.hkxj.platform.pojo.example.OpenidExample;
 import cn.hkxj.platform.pojo.wechat.Openid;
 import cn.hkxj.platform.service.NewUrpSpiderService;
+import cn.hkxj.platform.service.ScheduleTaskService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -43,6 +44,8 @@ public class StudentBindService {
     @Value("${domain}")
     private String domain;
     private static final String PATTERN = "<a href=\"%s/bind?openid=%s&appid=%s\">%s</a>";
+    @Resource
+    private ScheduleTaskService scheduleTaskService;
 
     /**
      * 学号与微信公众平台openID关联
@@ -154,6 +157,7 @@ public class StudentBindService {
         save.setAccount(Integer.parseInt(account));
         save.setIsBind(true);
         if (Objects.equals(wechatMpPlusProperties.getAppId(), appid)) {
+            subscribeGradeUpdateTask(openid, appid);
             return openidPlusMapper.insertSelective(save);
         }
         return openidMapper.insertSelective(save);
@@ -174,8 +178,9 @@ public class StudentBindService {
     }
 
 
-    private void subscribeGradeUpdateTask(String openid, String account, String appid){
+    private void subscribeGradeUpdateTask(String openid, String appid){
         ScheduleTask scheduleTask = new ScheduleTask(appid, openid, SubscribeScene.GRADE_AUTO_UPDATE.getScene());
+        scheduleTaskService.checkAndSetSubscribeStatus(scheduleTask, true);
     }
 
 }
