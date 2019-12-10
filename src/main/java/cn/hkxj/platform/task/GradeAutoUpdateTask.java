@@ -128,21 +128,6 @@ public class GradeAutoUpdateTask extends BaseSubscriptionTask {
     }
 
 
-    /**
-     * 生成对应的客服消息，调用父类的方法来发送
-     *
-     * @param wxMpService wxMpService
-     * @param openid      openid
-     * @param content     内容
-     */
-    private void sendKefuMessage(WxMpService wxMpService, String openid, String content) {
-        WxMpKefuMessage wxMpKefuMessage = new WxMpKefuMessage();
-        wxMpKefuMessage.setToUser(openid);
-        wxMpKefuMessage.setMsgType("text");
-        wxMpKefuMessage.setContent(content);
-        //调用BaseSubscriptionTask的方法来发送消息
-        sendKefuMessage(wxMpService, wxMpKefuMessage);
-    }
 
     /**
      * 判断当前任务属于那个公众号

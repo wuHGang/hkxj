@@ -49,21 +49,4 @@ public class BaseSubscriptionTask {
         }
     }
 
-    /**
-     * 提供模板的客服消息发送函数
-     * @param wxMpService wxMpService
-     * @param wxMpKefuMessage 客服消息
-     * @return 是否发送成功
-     */
-    protected boolean sendKefuMessage(WxMpService wxMpService, WxMpKefuMessage wxMpKefuMessage){
-        try {
-            wxMpService.getKefuService().sendKefuMessage(wxMpKefuMessage);
-            log.info("send to openid:{} kefuMessage success content:{}", wxMpKefuMessage.getToUser(), wxMpKefuMessage.getContent());
-            return true;
-        } catch (WxErrorException e) {
-            log.error("send to openid:{} kefuMessage fail content:{} message:{}",
-                    wxMpKefuMessage.getToUser(), wxMpKefuMessage.getContent() ,e);
-            return false;
-        }
-    }
 }

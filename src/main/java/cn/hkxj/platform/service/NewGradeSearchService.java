@@ -1,5 +1,6 @@
 package cn.hkxj.platform.service;
 
+import cn.hkxj.platform.MDCThreadPool;
 import cn.hkxj.platform.dao.*;
 import cn.hkxj.platform.pojo.*;
 import cn.hkxj.platform.pojo.vo.GradeVo;
@@ -17,10 +18,7 @@ import org.springframework.util.CollectionUtils;
 import javax.annotation.Resource;
 import java.text.DecimalFormat;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 /**
@@ -54,6 +52,9 @@ public class NewGradeSearchService {
     private static final Term currentTerm = new Term(2019, 2020, 1);
 
     private static DecimalFormat decimalFormat = new DecimalFormat("###################.###########");
+
+    private static ExecutorService gradeAutoUpdatePool = new MDCThreadPool(8, 8,
+            0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(), r -> new Thread(r, "gradeSearch"));
 
     /**
      * 这个方法已经过时，冗余出来给还没更新小程序新版本的用户使用
@@ -109,7 +110,8 @@ public class NewGradeSearchService {
      * @return 学生成绩
      */
     public List<GradeVo> getCurrentTermGrade(Student student) {
-        CompletableFuture<List<GradeDetail>> future = CompletableFuture.supplyAsync(() -> getCurrentTermGradeFromSpider(student));
+        CompletableFuture<List<GradeDetail>> future =
+                CompletableFuture.supplyAsync(() -> getCurrentTermGradeFromSpider(student), gradeAutoUpdatePool);
         List<GradeDetail> gradeDetailList;
         try {
             gradeDetailList = future.get(5000L, TimeUnit.MILLISECONDS);
