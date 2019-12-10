@@ -106,7 +106,7 @@ public class CourseSubscriptionTask extends BaseSubscriptionTask {
         //构建一个课程推送的模板消息
         WxMpTemplateMessage templateMessage =
                 templateBuilder.build(task.getOpenid(), templateData, wechatTemplateProperties.getPlusCourseTemplateId(), miniProgram, url);
-        sendTemplateMessage(wxMpService, templateMessage, task);
+        sendTemplateMessage(wxMpService, templateMessage, task, "course");
     }
 
 

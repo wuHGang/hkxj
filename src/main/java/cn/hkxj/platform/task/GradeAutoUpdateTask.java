@@ -101,6 +101,9 @@ public class GradeAutoUpdateTask extends BaseSubscriptionTask {
      */
     void processScheduleTask(ScheduleTask task) {
         Student student = openIdService.getStudentByOpenId(task.getOpenid(), task.getAppid());
+        if(!student.getIsCorrect()){
+            return;
+        }
         List<GradeVo> termGrade = newGradeSearchService.getCurrentTermGradeSync(student);
         List<GradeVo> updateList = termGrade.stream().filter(GradeVo::isUpdate).collect(Collectors.toList());
         WxMpService service = WechatMpConfiguration.getMpServices().get(task.getAppid());
@@ -118,7 +121,7 @@ public class GradeAutoUpdateTask extends BaseSubscriptionTask {
                         templateBuilder.build(task.getOpenid(), templateData, wechatTemplateProperties.getPlusGradeUpdateTemplateId(),
                                 miniProgram);
 
-                sendTemplateMessage(service, templateMessage, task);
+                sendTemplateMessage(service, templateMessage, task, "gradeUpdate");
 
             }
 

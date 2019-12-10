@@ -33,17 +33,18 @@ public class BaseSubscriptionTask {
      * @param task 定时任务实体
      * @return 消息是否发送成功
      */
-    protected boolean sendTemplateMessage(WxMpService wxMpService, WxMpTemplateMessage templateMessage, ScheduleTask task){
+    protected boolean sendTemplateMessage(WxMpService wxMpService, WxMpTemplateMessage templateMessage,
+                                          ScheduleTask task, String logTitle){
         try {
             //发送成功的同时更新发送状态
             wxMpService.getTemplateMsgService().sendTemplateMsg(templateMessage);
             scheduleTaskService.updateSendStatus(task, ScheduleTaskService.SEND_SUCCESS);
-            log.info("send Message to appid:{} openid:{} message:{} success",
+            log.info("send {} Message to appid:{} openid:{} message:{} success", logTitle,
                     wxMpService.getWxMpConfigStorage().getAppId(), task.getOpenid(), templateMessage);
             return true;
         } catch (WxErrorException e) {
             scheduleTaskService.updateSendStatus(task, ScheduleTaskService.SEND_FAIL);
-            log.error("send Message to appid:{} openid:{} failed",
+            log.error("send {} Message to appid:{} openid:{} failed", logTitle,
                     wxMpService.getWxMpConfigStorage().getAppId(), task.getOpenid(), e);
             return false;
         }
