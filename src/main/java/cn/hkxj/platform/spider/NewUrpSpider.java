@@ -455,7 +455,7 @@ public class NewUrpSpider {
                 .findFirst().ifPresent(entry -> {
                     if (!MDC.get("account").equals(entry.getValue().getCourseRelativeInfo().getStudentNumber())) {
                         log.error("data error preloadTrace:{}  account:{}", MDC.get("preLoad"), MDC.get("account"));
-                        throw new UrpException("data error");
+                        throw new UrpException("data error account:"+MDC.get("account"));
                     }
                 }));
         return tableForSpider;

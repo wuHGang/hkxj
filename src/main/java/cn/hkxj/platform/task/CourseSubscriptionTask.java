@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.template.WxMpTemplateData;
 import me.chanjar.weixin.mp.bean.template.WxMpTemplateMessage;
+import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -49,6 +50,8 @@ public class CourseSubscriptionTask extends BaseSubscriptionTask {
     private WechatTemplateProperties wechatTemplateProperties;
     @Resource
     private WechatMpPlusProperties wechatMpPlusProperties;
+    @Value("${scheduled.sendCourse}")
+    private String updateSwitch;
 
     @Scheduled(cron = "0 0 8 * * ?")//这个cron表达式的意思是星期一到星期五的早上8点执行一次
     void sendCourseRemindMsgForFirstSection() {
@@ -76,6 +79,9 @@ public class CourseSubscriptionTask extends BaseSubscriptionTask {
     }
 
     public void execute(int section) {
+        if(!BooleanUtils.toBoolean(updateSwitch)){
+            return;
+        }
         Set<CourseSubscriptionMessage> messageSet = courseSubscribeService.getSubscriptionMessages(section);
 
         WxMpService wxMpService = getWxMpService(wechatMpPlusProperties.getAppId());

@@ -78,7 +78,11 @@ public class NewGradeSearchService {
 
     public List<GradeDetail> getCurrentTermGradeFromSpider(Student student) {
         List<UrpGeneralGradeForSpider> generalGrade = newUrpSpiderService.getCurrentGeneralGrade(student);
-
+        generalGrade.stream().findFirst().ifPresent(x-> {
+            if(!x.getId().getStudentNumber().equals(student.getAccount().toString())){
+                log.error("account {} grade error data {}", student.getAccount(), generalGrade);
+            }
+        });
 
         return generalGrade.stream().map(urpGradeForSpider -> {
 
@@ -137,6 +141,7 @@ public class NewGradeSearchService {
      */
     public List<GradeVo> getCurrentTermGradeSync(Student student) {
         List<GradeDetail> gradeDetailList = getCurrentTermGradeFromSpider(student);
+
         List<Grade> gradeList = gradeDetailList.stream().map(GradeDetail::getGrade).collect(Collectors.toList());
         // 检查哪些是新的成绩数据
         List<Grade> updateList = checkUpdate(student, gradeList);

@@ -44,7 +44,7 @@
 
 
 
-        <table tableName="grade">
+        <table tableName="wechat_bind_record">
             <property name="ignoreQualifiersAtRuntime" value="true"/>
         </table>
 

@@ -54,15 +54,15 @@ public class NewGradeSearchServiceTest {
 
     @Test
     public void checkUpdate(){
-        Student student = studentDao.selectStudentByAccount(2019020856);
+        Student student = studentDao.selectStudentByAccount(2017021593);
         List<GradeDetail> gradeDetailList = newGradeSearchService.getCurrentTermGradeFromSpider(student);
         List<Grade> gradeList = gradeDetailList.stream().map(GradeDetail::getGrade).collect(Collectors.toList());
-        gradeList.stream().findAny().ifPresent(x-> x.setId(11));
+
         List<Grade> updateList = newGradeSearchService.checkUpdate(student, gradeList);
         for (Grade update : updateList) {
             System.out.println(update);
         }
-        newGradeSearchService.saveUpdateGrade(updateList);
+//        newGradeSearchService.saveUpdateGrade(updateList);
 
     }
 

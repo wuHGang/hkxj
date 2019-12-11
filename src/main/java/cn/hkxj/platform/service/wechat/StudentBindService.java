@@ -1,14 +1,20 @@
 package cn.hkxj.platform.service.wechat;
 
+import cn.hkxj.platform.config.wechat.MiniProgramProperties;
 import cn.hkxj.platform.config.wechat.WechatMpPlusProperties;
+import cn.hkxj.platform.config.wechat.WechatMpProProperties;
+import cn.hkxj.platform.dao.MiniProgramOpenIdDao;
 import cn.hkxj.platform.dao.StudentDao;
+import cn.hkxj.platform.dao.WechatBindRecordDao;
 import cn.hkxj.platform.exceptions.OpenidExistException;
 import cn.hkxj.platform.exceptions.PasswordUncorrectException;
 import cn.hkxj.platform.exceptions.ReadTimeoutException;
 import cn.hkxj.platform.mapper.OpenidMapper;
 import cn.hkxj.platform.mapper.OpenidPlusMapper;
+import cn.hkxj.platform.pojo.MiniProgramOpenid;
 import cn.hkxj.platform.pojo.ScheduleTask;
 import cn.hkxj.platform.pojo.Student;
+import cn.hkxj.platform.pojo.WechatBindRecord;
 import cn.hkxj.platform.pojo.constant.SubscribeScene;
 import cn.hkxj.platform.pojo.example.OpenidExample;
 import cn.hkxj.platform.pojo.wechat.Openid;
@@ -38,6 +44,8 @@ public class StudentBindService {
     @Resource
     private WechatMpPlusProperties wechatMpPlusProperties;
     @Resource
+    private WechatMpProProperties wechatMpProProperties;
+    @Resource
     private StudentDao studentDao;
     @Resource
     private NewUrpSpiderService newUrpSpiderService;
@@ -46,6 +54,12 @@ public class StudentBindService {
     private static final String PATTERN = "<a href=\"%s/bind?openid=%s&appid=%s\">%s</a>";
     @Resource
     private ScheduleTaskService scheduleTaskService;
+    @Resource
+    private MiniProgramProperties miniProgramProperties;
+    @Resource
+    private MiniProgramOpenIdDao miniProgramOpenIdDao;
+    @Resource
+    private WechatBindRecordDao wechatBindRecordDao;
 
     /**
      * 学号与微信公众平台openID关联
@@ -65,13 +79,18 @@ public class StudentBindService {
      * @throws OpenidExistException       Openid已存在
      */
     public Student studentBind(String openid, String account, String password, String appid) throws OpenidExistException {
-        if (isStudentBind(openid, appid)) {
+        if(miniProgramProperties.getAppId().equals(appid)){
+
+
+        }else if (isStudentBind(openid, appid)) {
             throw new OpenidExistException(String.format(template, account, openid));
         }
 
         Student student = studentLogin(account, password);
 
-        return studentBind(student, openid, appid);
+        studentBind(student, openid, appid);
+
+        return student;
 
     }
 
@@ -104,12 +123,16 @@ public class StudentBindService {
      * @param openid 微信用户唯一标识
      * @param appid 微信平台对应的id
      */
-    private Student studentBind(Student student, String openid, String appid) {
+    private void studentBind(Student student, String openid, String appid) {
         boolean haveOpenId;
         if (Objects.equals(wechatMpPlusProperties.getAppId(), appid)) {
             haveOpenId = openidPlusMapper.isOpenidExist(openid) != null && openidPlusMapper.isOpenidBind(openid) == 0;
-        } else {
+        } else if(Objects.equals(wechatMpProProperties.getAppId(), appid)){
             haveOpenId = openidMapper.isOpenidExist(openid) != null && openidMapper.isOpenidBind(openid) == 0;
+        }else if(Objects.equals(miniProgramProperties.getAppId(), appid)){
+            haveOpenId = miniProgramOpenIdDao.isOpenidExist(openid);
+        }else {
+            throw new RuntimeException("unSupport appid: "+ appid);
         }
 
         if (haveOpenId){
@@ -118,7 +141,6 @@ public class StudentBindService {
             saveOpenid(openid, student.getAccount().toString(), appid);
         }
 
-        return student;
     }
 
     public boolean isStudentBind(String openid, String appid) {
@@ -151,26 +173,60 @@ public class StudentBindService {
         return openidMapper.selectByExample(openidExample);
     }
 
-    private int saveOpenid(String openid, String account, String appid) {
+    private void saveOpenid(String openid, String account, String appid) {
         Openid save = new Openid();
         save.setOpenid(openid);
         save.setAccount(Integer.parseInt(account));
         save.setIsBind(true);
         if (Objects.equals(wechatMpPlusProperties.getAppId(), appid)) {
             subscribeGradeUpdateTask(openid, appid);
-            return openidPlusMapper.insertSelective(save);
+            openidPlusMapper.insertSelective(save);
+        } else if(Objects.equals(wechatMpProProperties.getAppId(), appid)){
+            openidMapper.insertSelective(save);
+        }else if(Objects.equals(miniProgramProperties.getAppId(), appid)){
+            miniProgramOpenIdDao.insertSelective(new MiniProgramOpenid().setOpenid(openid).setAccount(Integer.parseInt(account)));
+        }else {
+            throw new RuntimeException("unSupport appid: "+appid);
         }
-        return openidMapper.insertSelective(save);
+
     }
 
-    private int updateOpenid(String openid, String account, String appid) {
-        Openid update = getOpenID(openid, appid).get(0);
-        update.setAccount(Integer.parseInt(account));
-        update.setIsBind(true);
-        if (Objects.equals(wechatMpPlusProperties.getAppId(), appid)) {
-            return openidPlusMapper.updateByPrimaryKey(update);
+    private void updateOpenid(String openid, String account, String appid) {
+        Openid update = null;
+        String origin = null;
+        if(!Objects.equals(miniProgramProperties.getAppId(), appid)){
+            update = getOpenID(openid, appid).get(0);
+            update.setAccount(Integer.parseInt(account));
+            update.setIsBind(true);
+            origin = update.getAccount().toString();
+            if(update.getAccount().toString().equals(account)){
+                return;
+            }
         }
-        return openidMapper.updateByPrimaryKey(update);
+
+
+        if (Objects.equals(wechatMpPlusProperties.getAppId(), appid)) {
+            openidPlusMapper.updateByPrimaryKey(update);
+        } else if(Objects.equals(wechatMpProProperties.getAppId(), appid)){
+            openidMapper.updateByPrimaryKey(update);
+        }else if(Objects.equals(miniProgramProperties.getAppId(), appid)){
+            MiniProgramOpenid miniProgramOpenid = miniProgramOpenIdDao.selectByOpenId(openid);
+            origin = miniProgramOpenid.getAccount().toString();
+            if(!miniProgramOpenid.getAccount().toString().equals(account)){
+                miniProgramOpenIdDao.updateByPrimaryKey(miniProgramOpenid.setAccount(Integer.parseInt(account)).setGmtModified(null));
+            }else {
+                return;
+            }
+
+        }else {
+            throw new RuntimeException("unSupport appid: "+appid);
+        }
+
+        wechatBindRecordDao.insertSelective(new WechatBindRecord()
+                .setOriginAccount(origin)
+                .setUpdateAccount(account)
+                .setAppid(appid).setOpenid(openid));
+
     }
 
     public String getBindUrlByOpenid(String fromUser, String appId, String content){

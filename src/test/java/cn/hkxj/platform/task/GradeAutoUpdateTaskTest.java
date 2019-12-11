@@ -6,6 +6,7 @@ import cn.hkxj.platform.dao.ScheduleTaskDao;
 import cn.hkxj.platform.pojo.ScheduleTask;
 import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.pojo.constant.SubscribeScene;
+import cn.hkxj.platform.service.NewGradeSearchService;
 import cn.hkxj.platform.service.OpenIdService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
@@ -32,6 +33,8 @@ public class GradeAutoUpdateTaskTest {
     private OpenIdService openIdService;
     @Resource
     private GradeDao gradeDao;
+    @Resource
+    private NewGradeSearchService newGradeSearchService;
 
     //这里设置拒绝策略为调用者运行，这样可以降低产生任务的速率
     private static ExecutorService gradeAutoUpdatePool = new MDCThreadPool(8, 8,
@@ -40,24 +43,27 @@ public class GradeAutoUpdateTaskTest {
     @Test
     public void processScheduleTask() {
         // 2106147
-        ScheduleTask task = scheduleTaskDao.selectByOpenid("oCxRO1G9N755dOY5dwcT5l3IlS3Y", SubscribeScene.GRADE_AUTO_UPDATE);
+        ScheduleTask task = scheduleTaskDao.selectByOpenid("oCxRO1IyJi3uMaNkkS_QmDuka5w8", SubscribeScene.GRADE_AUTO_UPDATE);
         Student student = openIdService.getStudentByOpenId(task.getOpenid(), task.getAppid());
 
-        gradeAutoUpdateTask.processScheduleTask(task);
+        System.out.println(student);
+//        gradeAutoUpdateTask.processScheduleTask(task);
     }
 
     @Test
     public void autoUpdateGrade() {
         List<ScheduleTask> subscribeTask = scheduleTaskDao.getPlusSubscribeTask(SubscribeScene.GRADE_AUTO_UPDATE);
-        log.info("{} grade update task to run", subscribeTask.size());
+
 
         CountDownLatch latch = new CountDownLatch(subscribeTask.size());
         for (ScheduleTask task : subscribeTask) {
             CompletableFuture.runAsync(() -> {
                 try {
+                    Student student = openIdService.getStudentByOpenId(task.getOpenid(), task.getAppid());
                     UUID uuid = UUID.randomUUID();
+                    newGradeSearchService.getCurrentTermGradeFromSpider(student);
                     MDC.put("traceId", "gradeUpdateTask-"+uuid.toString());
-                    gradeAutoUpdateTask.processScheduleTask(task);
+
                 } catch (Exception e) {
                     log.error("grade update task {} error ",task, e);
 
