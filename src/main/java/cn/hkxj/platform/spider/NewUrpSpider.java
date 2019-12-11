@@ -177,9 +177,11 @@ public class NewUrpSpider {
 
 
     static {
-        Thread produceThread = new Thread(new CaptchaProducer());
+        Thread produceThread1 = new Thread(new CaptchaProducer());
+        Thread produceThread2 = new Thread(new CaptchaProducer());
         Thread cleanThread = new Thread(new CaptchaCleaner());
-        produceThread.start();
+        produceThread1.start();
+        produceThread2.start();
         cleanThread.start();
         try {
             stringRedisTemplate = ApplicationUtil.getBean("stringRedisTemplate");
@@ -275,11 +277,23 @@ public class NewUrpSpider {
                 .get()
                 .build();
         String result = new String(execute(request));
-        log.info("{} {} current grade {}",MDC.get("preLoad"), MDC.get("account"), result);
+        log.debug("{} {} current grade {}", MDC.get("preLoad"), MDC.get("account"), result);
         List<Map<String, Object>> list = parseObject(result, new TypeReference<List<Map<String, Object>>>() {
         });
         JSONArray jsonArray = (JSONArray) list.get(0).get("list");
-        return jsonArray.toJavaList(UrpGeneralGradeForSpider.class);
+
+        List<UrpGeneralGradeForSpider> grade = jsonArray.toJavaList(UrpGeneralGradeForSpider.class);
+
+        grade.stream().findFirst().ifPresent(x -> {
+            if(!account.equals(x.getId().getStudentNumber())){
+                log.error("date error. user account: {} return account {} data {}", account,
+                        x.getId().getStudentNumber(), grade);
+                throw new UrpException(String.format("date error. user account: %s return account %s", account,
+                        x.getId().getStudentNumber()));
+            }
+        });
+
+        return grade;
     }
 
     private UrpGradeDetailForSpider getUrpGradeDetail(UrpGeneralGradeForSpider urpGeneralGradeForSpider) {
@@ -447,17 +461,22 @@ public class NewUrpSpider {
         String result = new String(execute(request));
         String regex = "\"dateList\": [.*]}$";
         result = result.replaceAll(regex, "");
-        log.info("{} {} urp course timetable {}",MDC.get("preLoad"), MDC.get("account"), result);
+        if(log.isDebugEnabled()){
+            log.debug("{} {} urp course timetable {}", MDC.get("preLoad"), MDC.get("account"), result);
+        }
+
         UrpCourseTimeTableForSpider tableForSpider = parseObject(result, UrpCourseTimeTableForSpider.class);
 
         tableForSpider.getDetails().stream()
-                .findFirst().ifPresent(detail -> detail.entrySet().stream()
-                .findFirst().ifPresent(entry -> {
-                    if (!MDC.get("account").equals(entry.getValue().getCourseRelativeInfo().getStudentNumber())) {
-                        log.error("data error preloadTrace:{}  account:{}", MDC.get("preLoad"), MDC.get("account"));
-                        throw new UrpException("data error account:"+MDC.get("account"));
-                    }
-                }));
+                .findFirst().flatMap(detail -> detail.entrySet().stream()
+                .findFirst()).ifPresent(entry -> {
+            String number = entry.getValue().getCourseRelativeInfo().getStudentNumber();
+            if (!account.equals(number)) {
+                log.error("data error preloadTrace:{}  account:{} date:{}", MDC.get("preLoad"), MDC.get("account"), tableForSpider);
+                throw new UrpException(String.format("date error. user account: %s return account %s", account,
+                        number));
+            }
+        });
         return tableForSpider;
 
     }
@@ -690,7 +709,7 @@ public class NewUrpSpider {
 
         TypeReference<SearchResultDateWrapper<SearchCourseResult>> typeReference =
                 new TypeReference<SearchResultDateWrapper<SearchCourseResult>>() {
-        };
+                };
         return parseObject(new String(execute(request)), typeReference);
     }
 

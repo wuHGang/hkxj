@@ -59,10 +59,12 @@ public class GradeAutoUpdateTaskTest {
         for (ScheduleTask task : subscribeTask) {
             CompletableFuture.runAsync(() -> {
                 try {
-                    Student student = openIdService.getStudentByOpenId(task.getOpenid(), task.getAppid());
                     UUID uuid = UUID.randomUUID();
-                    newGradeSearchService.getCurrentTermGradeFromSpider(student);
                     MDC.put("traceId", "gradeUpdateTask-"+uuid.toString());
+
+                    Student student = openIdService.getStudentByOpenId(task.getOpenid(), task.getAppid());
+
+                    gradeAutoUpdateTask.getUpdateList(student);
 
                 } catch (Exception e) {
                     log.error("grade update task {} error ",task, e);

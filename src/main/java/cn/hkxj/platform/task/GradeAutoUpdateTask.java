@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -101,11 +102,7 @@ public class GradeAutoUpdateTask extends BaseSubscriptionTask {
      */
     void processScheduleTask(ScheduleTask task) {
         Student student = openIdService.getStudentByOpenId(task.getOpenid(), task.getAppid());
-        if(!student.getIsCorrect()){
-            return;
-        }
-        List<GradeVo> termGrade = newGradeSearchService.getCurrentTermGradeSync(student);
-        List<GradeVo> updateList = termGrade.stream().filter(GradeVo::isUpdate).collect(Collectors.toList());
+        List<GradeVo> updateList = getUpdateList(student);
         WxMpService service = WechatMpConfiguration.getMpServices().get(task.getAppid());
         if (!CollectionUtils.isEmpty(updateList)) {
             for (GradeVo gradeVo : updateList.stream()
@@ -126,6 +123,15 @@ public class GradeAutoUpdateTask extends BaseSubscriptionTask {
             }
 
         }
+    }
+
+
+    List<GradeVo> getUpdateList(Student student){
+        if(!student.getIsCorrect()){
+            return Collections.emptyList();
+        }
+        List<GradeVo> termGrade = newGradeSearchService.getCurrentTermGradeSync(student);
+        return termGrade.stream().filter(GradeVo::isUpdate).collect(Collectors.toList());
     }
 
 
