@@ -22,7 +22,7 @@ public class MiniProgramOpenIdDao {
         MiniProgramOpenidExample example = new MiniProgramOpenidExample();
         MiniProgramOpenidExample.Criteria criteria = example.createCriteria();
 
-        if(miniProgramOpenid.getOpenid() == null){
+        if(miniProgramOpenid.getOpenid() != null){
             criteria.andOpenidEqualTo(miniProgramOpenid.getOpenid());
         }
 
