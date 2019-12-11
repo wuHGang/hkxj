@@ -9,6 +9,7 @@ import cn.hkxj.platform.pojo.WebResponse;
 import cn.hkxj.platform.pojo.constant.ErrorCode;
 import cn.hkxj.platform.service.wechat.StudentBindService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -62,7 +63,7 @@ public class UserBindingController {
 
         Student student;
         try {
-            if (Objects.isNull(openid)) {
+            if (StringUtils.isEmpty(openid)) {
                 student = studentBindService.studentLogin(account, password);
             } else {
                 student = studentBindService.studentBind(openid, account, password, appid);
