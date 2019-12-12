@@ -288,6 +288,7 @@ public class NewUrpSpider {
             if(!account.equals(x.getId().getStudentNumber())){
                 log.error("date error. user account: {} return account {} data {}", account,
                         x.getId().getStudentNumber(), grade);
+                COOKIE_JAR.clearSession();
                 throw new UrpException(String.format("date error. user account: %s return account %s", account,
                         x.getId().getStudentNumber()));
             }
@@ -473,6 +474,7 @@ public class NewUrpSpider {
             String number = entry.getValue().getCourseRelativeInfo().getStudentNumber();
             if (!account.equals(number)) {
                 log.error("data error preloadTrace:{}  account:{} date:{}", MDC.get("preLoad"), MDC.get("account"), tableForSpider);
+                COOKIE_JAR.clearSession();
                 throw new UrpException(String.format("date error. user account: %s return account %s", account,
                         number));
             }
