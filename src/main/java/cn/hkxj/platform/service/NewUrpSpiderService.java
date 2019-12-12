@@ -1,7 +1,7 @@
 package cn.hkxj.platform.service;
 
 import cn.hkxj.platform.dao.StudentDao;
-import cn.hkxj.platform.exceptions.PasswordUncorrectException;
+import cn.hkxj.platform.exceptions.PasswordUnCorrectException;
 import cn.hkxj.platform.exceptions.UrpException;
 import cn.hkxj.platform.pojo.Classes;
 import cn.hkxj.platform.pojo.Course;
@@ -191,7 +191,7 @@ public class NewUrpSpiderService {
     private NewUrpSpider getSpider(String account, String password){
         try {
             return new NewUrpSpider(account, password);
-        }catch (PasswordUncorrectException e){
+        }catch (PasswordUnCorrectException e){
             studentDao.updatePasswordUnCorrect(Integer.parseInt(account));
             throw e;
         }

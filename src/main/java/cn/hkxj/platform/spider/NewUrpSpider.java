@@ -369,7 +369,7 @@ public class NewUrpSpider {
             COOKIE_JAR.clearSession();
             throw new UrpVerifyCodeException("captcha: " + captcha + " code uuid :" + uuid);
         } else if (location.contains("badCredentials")) {
-            throw new PasswordUncorrectException("account: " + account);
+            throw new PasswordUnCorrectException("account: " + account);
         } else if (location.contains("concurrentSessionExpired")) {
             COOKIE_JAR.clearSession();
             throw new UrpSessionExpiredException("account: " + account + "session expired");

@@ -3,6 +3,7 @@ package cn.hkxj.platform.task;
 import cn.hkxj.platform.MDCThreadPool;
 import cn.hkxj.platform.dao.GradeDao;
 import cn.hkxj.platform.dao.ScheduleTaskDao;
+import cn.hkxj.platform.exceptions.UrpException;
 import cn.hkxj.platform.pojo.ScheduleTask;
 import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.pojo.constant.SubscribeScene;
@@ -51,36 +52,43 @@ public class GradeAutoUpdateTaskTest {
     }
 
     @Test
-    public void autoUpdateGrade() {
+    public void autoUpdateGrade() throws InterruptedException {
         List<ScheduleTask> subscribeTask = scheduleTaskDao.getPlusSubscribeTask(SubscribeScene.GRADE_AUTO_UPDATE);
 
 
-        CountDownLatch latch = new CountDownLatch(subscribeTask.size());
-        for (ScheduleTask task : subscribeTask) {
+        CountDownLatch latch = new CountDownLatch(8);
+        BlockingQueue<ScheduleTask> queue = new LinkedBlockingQueue<>(subscribeTask);
+        for(int x =0; x<8 ; x++ ){
             CompletableFuture.runAsync(() -> {
+
+                ScheduleTask task;
                 try {
-                    UUID uuid = UUID.randomUUID();
-                    MDC.put("traceId", "gradeUpdateTask-"+uuid.toString());
+                    while ((task = queue.poll(1000L, TimeUnit.MILLISECONDS)) != null){
+                        UUID uuid = UUID.randomUUID();
+                        try {
+                            MDC.put("traceId", "gradeUpdateTask-"+uuid.toString());
+                            Student student = openIdService.getStudentByOpenId(task.getOpenid(), task.getAppid());
+                            newGradeSearchService.getCurrentTermGradeFromSpider(student);
+                        }catch (UrpException e){
+                            log.error("grade update task {} urp exception {}",task, e.getMessage());
+                            queue.add(task);
+                        } catch (Exception e) {
+                            log.error("grade update task {} error ",task, e);
+                        }
+                        log.info("{}", queue.size());
+                    }
 
-                    Student student = openIdService.getStudentByOpenId(task.getOpenid(), task.getAppid());
-
-                    gradeAutoUpdateTask.getUpdateList(student);
-
-                } catch (Exception e) {
-                    log.error("grade update task {} error ",task, e);
-
-                } finally {
+                } catch (InterruptedException e) {
+                    log.error("grade update error ", e);
+                }finally {
                     MDC.clear();
                     latch.countDown();
                 }
-
             }, gradeAutoUpdatePool);
         }
-        try {
-            latch.await();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+
+        latch.await();
+
         log.info("{} grade update task finish", subscribeTask.size());
     }
 

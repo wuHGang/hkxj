@@ -1,6 +1,6 @@
 package cn.hkxj.platform.service.wechat;
 
-import cn.hkxj.platform.exceptions.PasswordUncorrectException;
+import cn.hkxj.platform.exceptions.PasswordUnCorrectException;
 import cn.hkxj.platform.interceptor.WxMessageInterceptor;
 import cn.hkxj.platform.service.OpenIdService;
 import cn.hkxj.platform.utils.ApplicationUtil;
@@ -187,7 +187,7 @@ public class WxMessageRouterRule extends WxMpMessageRouterRule {
 				}
 				try {
 					res = handler.handle(wxMessage, context, wxMpService, sessionManager);
-				}catch (PasswordUncorrectException e) {
+				}catch (PasswordUnCorrectException e) {
 					String fromUser = wxMessage.getFromUser();
 					String appId = wxMpService.getWxMpConfigStorage().getAppId();
 					openIdService.openIdUnbind(fromUser, appId);

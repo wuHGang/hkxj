@@ -1,10 +1,9 @@
 package cn.hkxj.platform.controller;
 
-import cn.hkxj.platform.config.wechat.WechatMpConfiguration;
 import cn.hkxj.platform.config.wechat.WechatMpProProperties;
 import cn.hkxj.platform.dao.ClassDao;
 import cn.hkxj.platform.dao.StudentDao;
-import cn.hkxj.platform.exceptions.PasswordUncorrectException;
+import cn.hkxj.platform.exceptions.PasswordUnCorrectException;
 import cn.hkxj.platform.pojo.Classes;
 import cn.hkxj.platform.pojo.CourseTimeTableDetail;
 import cn.hkxj.platform.pojo.Student;
@@ -12,10 +11,7 @@ import cn.hkxj.platform.service.CourseTimeTableService;
 import cn.hkxj.platform.service.NewUrpSpiderService;
 import cn.hkxj.platform.spider.NewUrpSpider;
 import lombok.extern.slf4j.Slf4j;
-import me.chanjar.weixin.common.api.WxConsts;
 import me.chanjar.weixin.common.error.WxErrorException;
-import me.chanjar.weixin.mp.api.WxMpService;
-import me.chanjar.weixin.mp.bean.material.WxMpMaterialFileBatchGetResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -52,7 +48,7 @@ public class TestController {
                         courseTimeTableService.getAllCourseTimeTableDetails(student);
                         log.info("class {} student {} success",classes.getId(), student.getName());
                         break;
-                    }catch (PasswordUncorrectException e){
+                    }catch (PasswordUnCorrectException e){
                         studentDao.updatePasswordUnCorrect(student.getAccount());
                         log.error("class {} student {} password not correct", classes.getId(), student.getName());
                     } catch (Exception e){

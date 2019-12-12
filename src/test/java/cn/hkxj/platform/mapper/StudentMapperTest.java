@@ -1,6 +1,6 @@
 package cn.hkxj.platform.mapper;
 
-import cn.hkxj.platform.exceptions.PasswordUncorrectException;
+import cn.hkxj.platform.exceptions.PasswordUnCorrectException;
 import cn.hkxj.platform.exceptions.ReadTimeoutException;
 import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.spider.UrpSpider;
@@ -27,7 +27,7 @@ public class StudentMapperTest {
 	}
 
 	@Test
-	public void insertByStudent() throws PasswordUncorrectException, ReadTimeoutException {
+	public void insertByStudent() throws PasswordUnCorrectException, ReadTimeoutException {
         UrpSpider urpSpider = new UrpSpider(2017025971, "1");
 
 //        studentMapper.insert(urpSpider.getInformation());

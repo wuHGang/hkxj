@@ -1,8 +1,5 @@
 package cn.hkxj.platform.service.wechat;
 
-import cn.hkxj.platform.exceptions.OpenidExistException;
-import cn.hkxj.platform.exceptions.PasswordUncorrectException;
-import cn.hkxj.platform.exceptions.ReadTimeoutException;
 import cn.hkxj.platform.pojo.Student;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;

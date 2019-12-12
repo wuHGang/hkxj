@@ -6,6 +6,8 @@ import cn.hkxj.platform.config.wechat.WechatMpConfiguration;
 import cn.hkxj.platform.config.wechat.WechatMpPlusProperties;
 import cn.hkxj.platform.config.wechat.WechatTemplateProperties;
 import cn.hkxj.platform.dao.ScheduleTaskDao;
+import cn.hkxj.platform.exceptions.UrpException;
+import cn.hkxj.platform.exceptions.UrpTimeoutException;
 import cn.hkxj.platform.pojo.ScheduleTask;
 import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.pojo.constant.MiniProgram;
@@ -14,6 +16,7 @@ import cn.hkxj.platform.pojo.vo.GradeVo;
 import cn.hkxj.platform.service.NewGradeSearchService;
 import cn.hkxj.platform.service.OpenIdService;
 import cn.hkxj.platform.service.ScheduleTaskService;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.kefu.WxMpKefuMessage;
@@ -64,6 +67,8 @@ public class GradeAutoUpdateTask extends BaseSubscriptionTask {
     @Resource
     private ScheduleTaskDao scheduleTaskDao;
 
+    private static final BlockingQueue<UrpFetchTask> queue = new LinkedBlockingQueue<>();
+
     @Value("${scheduled.gradeUpdate}")
     private String updateSwitch;
 
@@ -71,36 +76,50 @@ public class GradeAutoUpdateTask extends BaseSubscriptionTask {
     @Scheduled(cron = "0 0/20 * * * ? ")
     //每20分钟执行一次
     void autoUpdateGrade() {
-        if(!isSwitchOn()){
+        if (!isSwitchOn()) {
             return;
         }
         List<ScheduleTask> subscribeTask = scheduleTaskDao.getPlusSubscribeTask(SubscribeScene.GRADE_AUTO_UPDATE);
         log.info("{} grade update task to run", subscribeTask.size());
-
-
-        for (ScheduleTask task : subscribeTask) {
+        queue.addAll(subscribeTask.stream().map(UrpFetchTask::new).collect(Collectors.toList()));
+        for (int x = 0; x < 8; x++) {
             CompletableFuture.runAsync(() -> {
+                UrpFetchTask task;
                 try {
-                    UUID uuid = UUID.randomUUID();
-                    MDC.put("traceId", "gradeUpdateTask-"+uuid.toString());
-                    processScheduleTask(task);
-                } catch (Exception e) {
-                    log.error("grade update task {} error ",task, e);
-                } finally {
-                    MDC.clear();
+                    while ((task = queue.take()) != null) {
+                        UUID uuid = UUID.randomUUID();
+                        MDC.put("traceId", "gradeUpdateTask-" + uuid.toString());
+                        try {
+                            processScheduleTask(task);
+                        } catch (UrpException e) {
+                            // TODO  这个可以根据异常类来优化
+                            task.timeoutCount++;
+                            log.error("grade update task {} urp exception {}", task, e.getMessage());
+
+                            if (task.timeoutCount < 3) {
+                                queue.add(task);
+                            }
+                        } catch (Exception e) {
+                            log.error("grade update task {} error ", task, e);
+                        } finally {
+                            MDC.clear();
+                        }
+                    }
+                } catch (InterruptedException e) {
+                    log.error("get grade update task error", e);
                 }
 
             }, gradeAutoUpdatePool);
         }
 
+
     }
 
     /**
      * 处理每一个定时任务
-     *
-     * @param task 定时任务
      */
-    void processScheduleTask(ScheduleTask task) {
+    void processScheduleTask(UrpFetchTask urpFetchTask) {
+        ScheduleTask task = urpFetchTask.scheduleTask;
         Student student = openIdService.getStudentByOpenId(task.getOpenid(), task.getAppid());
         List<GradeVo> updateList = getUpdateList(student);
         WxMpService service = WechatMpConfiguration.getMpServices().get(task.getAppid());
@@ -126,14 +145,13 @@ public class GradeAutoUpdateTask extends BaseSubscriptionTask {
     }
 
 
-    List<GradeVo> getUpdateList(Student student){
-        if(!student.getIsCorrect()){
+    List<GradeVo> getUpdateList(Student student) {
+        if (!student.getIsCorrect()) {
             return Collections.emptyList();
         }
         List<GradeVo> termGrade = newGradeSearchService.getCurrentTermGradeSync(student);
         return termGrade.stream().filter(GradeVo::isUpdate).collect(Collectors.toList());
     }
-
 
 
     /**
@@ -155,5 +173,16 @@ public class GradeAutoUpdateTask extends BaseSubscriptionTask {
         log.info(updateSwitch);
         return BooleanUtils.toBoolean(updateSwitch);
     }
+
+    @Data
+    private static class UrpFetchTask {
+        private int timeoutCount;
+        private ScheduleTask scheduleTask;
+
+        UrpFetchTask(ScheduleTask scheduleTask) {
+            this.scheduleTask = scheduleTask;
+        }
+    }
+
 
 }

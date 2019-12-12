@@ -7,7 +7,7 @@ import cn.hkxj.platform.dao.MiniProgramOpenIdDao;
 import cn.hkxj.platform.dao.StudentDao;
 import cn.hkxj.platform.dao.WechatBindRecordDao;
 import cn.hkxj.platform.exceptions.OpenidExistException;
-import cn.hkxj.platform.exceptions.PasswordUncorrectException;
+import cn.hkxj.platform.exceptions.PasswordUnCorrectException;
 import cn.hkxj.platform.exceptions.ReadTimeoutException;
 import cn.hkxj.platform.mapper.OpenidMapper;
 import cn.hkxj.platform.mapper.OpenidPlusMapper;
@@ -74,7 +74,7 @@ public class StudentBindService {
      * @param openid   微信用户唯一标识
      * @param account  学生教务网账号
      * @param password 学生教务网密码
-     * @throws PasswordUncorrectException 密码不正确异常
+     * @throws PasswordUnCorrectException 密码不正确异常
      * @throws ReadTimeoutException       读取信息超时异常
      * @throws OpenidExistException       Openid已存在
      */
@@ -102,7 +102,7 @@ public class StudentBindService {
      * @param password 密码
      * @return 学生信息
      */
-    public Student studentLogin(String account, String password) throws PasswordUncorrectException {
+    public Student studentLogin(String account, String password) throws PasswordUnCorrectException {
         Student student = studentDao.selectStudentByAccount(Integer.parseInt(account));
 
         if(student != null && !student.getIsCorrect()){

@@ -36,10 +36,10 @@ public class MiniProgramServiceTest {
          message.setToUser("oOzb90OTAmqThH_sXTdhWoxXiCAg")
                 .setTemplateId("dmE0nyulM8OVcUs-KojDxCYECrKTmzOGDkEUUm2T5UE")
                 .setData(new SubscribeGradeData()
-                        .setCourseName(new SubscribeValue("做黑科技最垃圾的公共号"))
+                        .setCourseName(new SubscribeValue("低等数学"))
                         .setName(new SubscribeValue("吴彦祖"))
-                        .setScore(new SubscribeValue("99"))
-                        .setRemark(new SubscribeValue("永远相信有人比你更糟糕"))
+                        .setScore(new SubscribeValue("59.99"))
+                        .setRemark(new SubscribeValue("挂科了？原来是自己编的，哦！那没事了"))
                 );
 
         String s = JSON.toJSONString(message);

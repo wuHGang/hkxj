@@ -2,7 +2,7 @@ package cn.hkxj.platform.controller;
 
 
 import cn.hkxj.platform.exceptions.OpenidExistException;
-import cn.hkxj.platform.exceptions.PasswordUncorrectException;
+import cn.hkxj.platform.exceptions.PasswordUnCorrectException;
 import cn.hkxj.platform.exceptions.UrpVerifyCodeException;
 import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.pojo.WebResponse;
@@ -73,7 +73,7 @@ public class UserBindingController {
             log.info("student bind fail verify code error account:{} password:{} openid:{}", account, password,
                     openid);
             return WebResponse.fail(ErrorCode.VERIFY_CODE_ERROR.getErrorCode(), "验证码错误");
-        } catch (PasswordUncorrectException e) {
+        } catch (PasswordUnCorrectException e) {
             log.info("student bind fail Password not correct account:{} password:{} openid:{}", account, password, openid);
             return WebResponse.fail(ErrorCode.ACCOUNT_OR_PASSWORD_INVALID.getErrorCode(), "账号或者密码错误");
         } catch (OpenidExistException e) {
