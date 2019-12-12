@@ -63,4 +63,9 @@ public class ScheduleTaskDao {
         return selectByPojo(pojo).stream().findFirst().orElse(null);
     }
 
+
+    public void insertSelective(ScheduleTask scheduleTask){
+        scheduleTaskMapper.insertSelective(scheduleTask);
+    }
+
 }

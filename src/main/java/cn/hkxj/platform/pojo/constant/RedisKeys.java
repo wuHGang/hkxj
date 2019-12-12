@@ -30,6 +30,12 @@ public enum RedisKeys {
      * 班级课时排行详情
      */
     CLASS_COURSE_HOUR_DETAIL("class_courseHour_detail"),
+    /**
+     * 班级课时排行详情
+     */
+    MINI_PROGRAM_ACCESS_TOKEN("miniProgram_AccessToken"),
+
+
     ;
     private String name;
 

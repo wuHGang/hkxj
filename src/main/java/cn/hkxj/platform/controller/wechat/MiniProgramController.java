@@ -21,4 +21,13 @@ public class MiniProgramController {
 
         return WebResponse.success(miniProgramService.auth(code));
     }
+
+
+    @RequestMapping("/subscribe")
+    public WebResponse subscribe(@RequestParam(value = "openid") String openid,
+                                 @RequestParam(value = "templateId") String templateId){
+
+        miniProgramService.subscribe(templateId, openid);
+        return WebResponse.success("success");
+    }
 }

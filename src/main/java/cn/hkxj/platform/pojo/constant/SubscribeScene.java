@@ -10,17 +10,20 @@ import com.google.common.base.Objects;
  */
 public enum SubscribeScene {
 
-    COURSE_PUSH("课表推送", "1005"),
-    GRADE_AUTO_UPDATE("成绩推送", "1010"),
-    EXAM_SUBSCRUBE("考试推送","1015");
+    COURSE_PUSH("课表推送", "1005", ""),
+    GRADE_AUTO_UPDATE("成绩推送", "1010", "dmE0nyulM8OVcUs-KojDxCYECrKTmzOGDkEUUm2T5UE"),
+    EXAM_SUBSCRUBE("考试推送","1015", "");
 
     private String chinese;
 
     private String scene;
 
-    SubscribeScene(String chinese, String scene){
+    private String miniProgramTemplateId;
+
+    SubscribeScene(String chinese, String scene, String miniProgramTemplateId){
         this.chinese = chinese;
         this.scene = scene;
+        this.miniProgramTemplateId = miniProgramTemplateId;
     }
 
     public static SubscribeScene getSubscribeSceneByChinese(String chinese){
@@ -36,12 +39,12 @@ public enum SubscribeScene {
         }
     }
 
-    public String getChinese() {
-        return chinese;
-    }
-
-    public void setChinese(String chinese) {
-        this.chinese = chinese;
+    public static SubscribeScene getByMiniProgramTemplateId(String miniProgramTemplateId){
+        // TODO  我这里偷懒这样写 后面改的同学按照规范来
+        if(miniProgramTemplateId.equals(GRADE_AUTO_UPDATE.miniProgramTemplateId)){
+            return GRADE_AUTO_UPDATE;
+        }
+        return null;
     }
 
     public String getScene() {
