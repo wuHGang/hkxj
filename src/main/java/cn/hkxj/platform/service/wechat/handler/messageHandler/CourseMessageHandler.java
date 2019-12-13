@@ -87,9 +87,13 @@ public class CourseMessageHandler implements WxMpMessageHandler {
     private void plusProcessing(WxMpXmlMessage wxMpXmlMessage, WxMpService wxMpService){
         String replyContent = getReplyContent(wxMpXmlMessage, wxMpService);
         List<WxMpTemplateData> templateData = templateBuilder.assemblyTemplateContentForCourse(replyContent);
-        WxMpTemplateMessage templateMessage =
-                templateBuilder.buildWithNoMiniProgram(wxMpXmlMessage.getFromUser(), templateData,
-                        wechatTemplateProperties.getPlusCourseTemplateId(), TEMPLATE_REDIRECT_URL);
+        WxMpTemplateMessage.MiniProgram miniProgram = new WxMpTemplateMessage.MiniProgram();
+        miniProgram.setAppid(MiniProgram.APP_ID);
+        miniProgram.setPagePath(MiniProgram.COURSE_PATH.getValue());
+        WxMpTemplateMessage templateMessage = templateBuilder.build(wxMpXmlMessage.getFromUser(), templateData,
+                wechatTemplateProperties.getPlusGradeUpdateTemplateId(),
+                miniProgram);
+
         try {
             wxMpService.getTemplateMsgService().sendTemplateMsg(templateMessage);
         } catch (WxErrorException e) {
