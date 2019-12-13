@@ -107,7 +107,7 @@ public class DateUtils {
         buffer.append(cal.get(Calendar.YEAR)).append("年")
                 .append(cal.get(Calendar.MONTH)+1).append("月")
                 .append(cal.get(Calendar.DAY_OF_MONTH)).append("日")
-                .append(cal.get(Calendar.HOUR)).append("时")
+                .append(cal.get(Calendar.HOUR_OF_DAY)).append("时")
                 .append(cal.get(Calendar.MINUTE)).append("分");
         return buffer.toString();
     }
