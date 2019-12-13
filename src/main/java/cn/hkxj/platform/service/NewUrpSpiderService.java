@@ -143,8 +143,9 @@ public class NewUrpSpiderService {
         return spider.getUrpCourseTimeTableByCourse(course);
     }
 
+    @Retryable(value = UrpException.class, maxAttempts = 3)
     public void checkStudentPassword(String account, String password){
-        NewUrpSpider spider = getSpider(account, password);
+        new NewUrpSpider(account, password);
     }
 
     @Retryable(value = UrpException.class, maxAttempts = 3)
@@ -156,6 +157,7 @@ public class NewUrpSpiderService {
     /**
      * 获取学生信息
      */
+    @Retryable(value = UrpException.class, maxAttempts = 3)
     public Student getStudentInfo(String account, String password){
         NewUrpSpider spider = getSpider(account, password);
 

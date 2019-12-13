@@ -1,5 +1,6 @@
 package cn.hkxj.platform.dao;
 
+import cn.hkxj.platform.config.wechat.MiniProgramProperties;
 import cn.hkxj.platform.config.wechat.WechatMpPlusProperties;
 import cn.hkxj.platform.mapper.ScheduleTaskMapper;
 import cn.hkxj.platform.pojo.ScheduleTask;
@@ -19,6 +20,8 @@ public class ScheduleTaskDao {
     private ScheduleTaskMapper scheduleTaskMapper;
     @Resource
     private WechatMpPlusProperties wechatMpPlusProperties;
+    @Resource
+    private MiniProgramProperties miniProgramProperties;
 
 
     public List<ScheduleTask> selectByPojo(ScheduleTask scheduleTask){
@@ -53,9 +56,18 @@ public class ScheduleTaskDao {
         return selectByPojo(pojo);
     }
 
-    public ScheduleTask selectByOpenid(String openid, SubscribeScene subscribeScene){
+    public List<ScheduleTask> getMiniProgramSubscribeTask(SubscribeScene subscribeScene){
         ScheduleTask pojo = new ScheduleTask()
-                .setAppid(wechatMpPlusProperties.getAppId())
+                .setAppid(miniProgramProperties.getAppId())
+                .setIsSubscribe(ScheduleTaskService.FUNCTION_ENABLE)
+                .setScene(Integer.parseInt(subscribeScene.getScene()));
+
+        return selectByPojo(pojo);
+    }
+
+    public ScheduleTask selectByOpenid(String openid, String appId, SubscribeScene subscribeScene){
+        ScheduleTask pojo = new ScheduleTask()
+                .setAppid(appId)
                 .setIsSubscribe(ScheduleTaskService.FUNCTION_ENABLE)
                 .setOpenid(openid)
                 .setScene(Integer.parseInt(subscribeScene.getScene()));

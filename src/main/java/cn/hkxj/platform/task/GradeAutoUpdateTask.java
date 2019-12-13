@@ -2,6 +2,7 @@ package cn.hkxj.platform.task;
 
 import cn.hkxj.platform.MDCThreadPool;
 import cn.hkxj.platform.builder.TemplateBuilder;
+import cn.hkxj.platform.config.wechat.MiniProgramProperties;
 import cn.hkxj.platform.config.wechat.WechatMpConfiguration;
 import cn.hkxj.platform.config.wechat.WechatMpPlusProperties;
 import cn.hkxj.platform.config.wechat.WechatTemplateProperties;
@@ -13,9 +14,13 @@ import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.pojo.constant.MiniProgram;
 import cn.hkxj.platform.pojo.constant.SubscribeScene;
 import cn.hkxj.platform.pojo.vo.GradeVo;
+import cn.hkxj.platform.pojo.wechat.miniprogram.SubscribeGradeData;
+import cn.hkxj.platform.pojo.wechat.miniprogram.SubscribeMessage;
+import cn.hkxj.platform.pojo.wechat.miniprogram.SubscribeValue;
 import cn.hkxj.platform.service.NewGradeSearchService;
 import cn.hkxj.platform.service.OpenIdService;
 import cn.hkxj.platform.service.ScheduleTaskService;
+import cn.hkxj.platform.service.wechat.MiniProgramService;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.mp.api.WxMpService;
@@ -52,8 +57,7 @@ public class GradeAutoUpdateTask extends BaseSubscriptionTask {
             "你的账号密码可能有误，请点击这里的链接进行更新。否则部分功能将无法使用\n";
     private static final String BIND_URL = "https://platform.hackerda.com/platform/bind";
 
-    @Resource
-    private ScheduleTaskService scheduleTaskService;
+
     @Resource
     private NewGradeSearchService newGradeSearchService;
     @Resource
@@ -66,6 +70,10 @@ public class GradeAutoUpdateTask extends BaseSubscriptionTask {
     private WechatTemplateProperties wechatTemplateProperties;
     @Resource
     private ScheduleTaskDao scheduleTaskDao;
+    @Resource
+    private MiniProgramProperties miniProgramProperties;
+    @Resource
+    private MiniProgramService miniProgramService;
 
     private static final BlockingQueue<UrpFetchTask> queue = new LinkedBlockingQueue<>();
 
@@ -80,8 +88,11 @@ public class GradeAutoUpdateTask extends BaseSubscriptionTask {
             return;
         }
         List<ScheduleTask> subscribeTask = scheduleTaskDao.getPlusSubscribeTask(SubscribeScene.GRADE_AUTO_UPDATE);
+        List<ScheduleTask> miniProgramSubscribeTask = scheduleTaskDao.getMiniProgramSubscribeTask(SubscribeScene.GRADE_AUTO_UPDATE);
+
         log.info("{} grade update task to run", subscribeTask.size());
         queue.addAll(subscribeTask.stream().map(UrpFetchTask::new).collect(Collectors.toList()));
+        queue.addAll(miniProgramSubscribeTask.stream().map(UrpFetchTask::new).collect(Collectors.toList()));
         for (int x = 0; x < 8; x++) {
             CompletableFuture.runAsync(() -> {
                 UrpFetchTask task;
@@ -114,30 +125,52 @@ public class GradeAutoUpdateTask extends BaseSubscriptionTask {
 
 
     }
+    void processScheduleTask(ScheduleTask urpFetchTask){
+        processScheduleTask(new UrpFetchTask(urpFetchTask));
+    }
 
     /**
      * 处理每一个定时任务
      */
-    void processScheduleTask(UrpFetchTask urpFetchTask) {
+    private void processScheduleTask(UrpFetchTask urpFetchTask) {
         ScheduleTask task = urpFetchTask.scheduleTask;
         Student student = openIdService.getStudentByOpenId(task.getOpenid(), task.getAppid());
         List<GradeVo> updateList = getUpdateList(student);
         WxMpService service = WechatMpConfiguration.getMpServices().get(task.getAppid());
         if (!CollectionUtils.isEmpty(updateList)) {
             for (GradeVo gradeVo : updateList.stream()
-                    .filter(x -> !x.getScore().equals(-1.0))
+//                    .filter(x -> !x.getScore().equals(-1.0))
                     .collect(Collectors.toList())) {
 
-                List<WxMpTemplateData> templateData = templateBuilder.gradeToTemplateData(student, gradeVo);
-                WxMpTemplateMessage.MiniProgram miniProgram = new WxMpTemplateMessage.MiniProgram();
-                miniProgram.setAppid(MiniProgram.APP_ID);
-                miniProgram.setPagePath(MiniProgram.GRADE_PATH.getValue());
-                //构建一个课程推送的模板消息
-                WxMpTemplateMessage templateMessage =
-                        templateBuilder.build(task.getOpenid(), templateData, wechatTemplateProperties.getPlusGradeUpdateTemplateId(),
-                                miniProgram);
+                if(miniProgramProperties.getAppId().equals(task.getAppid())){
+                    SubscribeMessage message = new SubscribeMessage();
+                    message.setToUser(task.getOpenid())
+                            .setTemplateId("dmE0nyulM8OVcUs-KojDxCYECrKTmzOGDkEUUm2T5UE")
+                            .setPage(MiniProgram.GRADE_PATH.getValue())
+                            .setData(new SubscribeGradeData()
+                                    .setCourseName(new SubscribeValue(gradeVo.getCourse().getName()))
+                                    .setName(new SubscribeValue(student.getName()))
+                                    .setScore(new SubscribeValue(gradeVo.getScore().toString()))
+                                    .setRemark(new SubscribeValue("这是一条测试消息"))
+                            );
 
-                sendTemplateMessage(service, templateMessage, task, "gradeUpdate");
+                    miniProgramService.sendSubscribeMessage(message);
+                }else if(wechatMpPlusProperties.getAppId().equals(task.getAppid())){
+                    List<WxMpTemplateData> templateData = templateBuilder.gradeToTemplateData(student, gradeVo);
+                    WxMpTemplateMessage.MiniProgram miniProgram = new WxMpTemplateMessage.MiniProgram();
+                    miniProgram.setAppid(MiniProgram.APP_ID);
+                    miniProgram.setPagePath(MiniProgram.GRADE_PATH.getValue());
+                    //构建一个课程推送的模板消息
+                    WxMpTemplateMessage templateMessage =
+                            templateBuilder.build(task.getOpenid(), templateData, wechatTemplateProperties.getPlusGradeUpdateTemplateId(),
+                                    miniProgram);
+
+                    sendTemplateMessage(service, templateMessage, task, "gradeUpdate");
+                }else {
+                    throw new RuntimeException("unknown appId "+ task.getAppid());
+                }
+
+
 
             }
 

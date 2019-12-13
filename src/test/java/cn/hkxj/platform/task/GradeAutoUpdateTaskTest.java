@@ -1,6 +1,8 @@
 package cn.hkxj.platform.task;
 
 import cn.hkxj.platform.MDCThreadPool;
+import cn.hkxj.platform.config.wechat.MiniProgramProperties;
+import cn.hkxj.platform.config.wechat.WechatMpPlusProperties;
 import cn.hkxj.platform.dao.GradeDao;
 import cn.hkxj.platform.dao.ScheduleTaskDao;
 import cn.hkxj.platform.exceptions.UrpException;
@@ -36,6 +38,10 @@ public class GradeAutoUpdateTaskTest {
     private GradeDao gradeDao;
     @Resource
     private NewGradeSearchService newGradeSearchService;
+    @Resource
+    private MiniProgramProperties miniProgramProperties;
+    @Resource
+    private WechatMpPlusProperties wechatMpPlusProperties;
 
     //这里设置拒绝策略为调用者运行，这样可以降低产生任务的速率
     private static ExecutorService gradeAutoUpdatePool = new MDCThreadPool(8, 8,
@@ -44,7 +50,8 @@ public class GradeAutoUpdateTaskTest {
     @Test
     public void processScheduleTask() {
         // 2106147
-        ScheduleTask task = scheduleTaskDao.selectByOpenid("oCxRO1IyJi3uMaNkkS_QmDuka5w8", SubscribeScene.GRADE_AUTO_UPDATE);
+        ScheduleTask task = scheduleTaskDao.selectByOpenid("oCxRO1IyJi3uMaNkkS_QmDuka5w8",
+                wechatMpPlusProperties.getAppId(), SubscribeScene.GRADE_AUTO_UPDATE);
         Student student = openIdService.getStudentByOpenId(task.getOpenid(), task.getAppid());
 
         System.out.println(student);
@@ -58,29 +65,29 @@ public class GradeAutoUpdateTaskTest {
 
         CountDownLatch latch = new CountDownLatch(8);
         BlockingQueue<ScheduleTask> queue = new LinkedBlockingQueue<>(subscribeTask);
-        for(int x =0; x<8 ; x++ ){
+        for (int x = 0; x < 8; x++) {
             CompletableFuture.runAsync(() -> {
 
                 ScheduleTask task;
                 try {
-                    while ((task = queue.poll(1000L, TimeUnit.MILLISECONDS)) != null){
+                    while ((task = queue.poll(1000L, TimeUnit.MILLISECONDS)) != null) {
                         UUID uuid = UUID.randomUUID();
                         try {
-                            MDC.put("traceId", "gradeUpdateTask-"+uuid.toString());
+                            MDC.put("traceId", "gradeUpdateTask-" + uuid.toString());
                             Student student = openIdService.getStudentByOpenId(task.getOpenid(), task.getAppid());
                             newGradeSearchService.getCurrentTermGradeFromSpider(student);
-                        }catch (UrpException e){
-                            log.error("grade update task {} urp exception {}",task, e.getMessage());
+                        } catch (UrpException e) {
+                            log.error("grade update task {} urp exception {}", task, e.getMessage());
                             queue.add(task);
                         } catch (Exception e) {
-                            log.error("grade update task {} error ",task, e);
+                            log.error("grade update task {} error ", task, e);
                         }
                         log.info("{}", queue.size());
                     }
 
                 } catch (InterruptedException e) {
                     log.error("grade update error ", e);
-                }finally {
+                } finally {
                     MDC.clear();
                     latch.countDown();
                 }
@@ -93,7 +100,16 @@ public class GradeAutoUpdateTaskTest {
     }
 
     @Test
-    public void test(){
+    public void test() {
+
         System.out.println(gradeAutoUpdateTask.isSwitchOn());
+    }
+
+    @Test
+    public void miniProgramUpdateTest() {
+
+        ScheduleTask task = scheduleTaskDao.selectByOpenid("oOzb90OTAmqThH_sXTdhWoxXiCAg",
+                miniProgramProperties.getAppId(), SubscribeScene.GRADE_AUTO_UPDATE);
+        gradeAutoUpdateTask.processScheduleTask(task);
     }
 }

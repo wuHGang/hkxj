@@ -106,14 +106,9 @@ public class StudentBindService {
         Student student = studentDao.selectStudentByAccount(Integer.parseInt(account));
 
         if (student != null && (!student.getIsCorrect() || !student.getPassword().equals(password))) {
-            if(!student.getPassword().equals(password)){
-                throw new PasswordUnCorrectException("account "+account + " password error");
-            }
 
-            if(!student.getIsCorrect()){
-                newUrpSpiderService.checkStudentPassword(account, password);
-                studentDao.updatePassword(account, password);
-            }
+            newUrpSpiderService.checkStudentPassword(account, password);
+            studentDao.updatePassword(account, password);
 
         } else if (student == null) {
             student = newUrpSpiderService.getStudentInfo(account, password);

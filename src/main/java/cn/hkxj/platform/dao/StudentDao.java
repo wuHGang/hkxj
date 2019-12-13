@@ -31,7 +31,7 @@ public class StudentDao {
         Student student = new Student();
         student.setAccount(Integer.parseInt(account));
         student.setPassword(password);
-
+        student.setIsCorrect(true);
 
         StudentExample studentExample = new StudentExample();
         studentExample.createCriteria()
@@ -43,7 +43,6 @@ public class StudentDao {
         Student student = new Student();
         student.setAccount(account);
         student.setIsCorrect(false);
-
 
         StudentExample studentExample = new StudentExample();
         studentExample.createCriteria()

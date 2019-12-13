@@ -121,8 +121,15 @@ public class MiniProgramService {
         String url = String.format(SEND_SUBSCRIBE, getAccessToken());
 
         HttpEntity<String> request = new HttpEntity<>(JSON.toJSONString(message), headers);
-        ResponseEntity<String> response = restTemplate.postForEntity(url, request , String.class );
-        log.info(response.getBody());
+        log.info("send mini app subscribe message data {}", message);
+        try {
+            ResponseEntity<String> response = restTemplate.postForEntity(url, request , String.class );
+            log.info("send mini app subscribe message success response {}", response.getBody());
+        }catch (Exception e){
+            log.error("send mini app subscribe message error", e);
+        }
+
+
     }
 
     boolean isAccessTokenExpire(){
