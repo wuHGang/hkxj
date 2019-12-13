@@ -135,11 +135,14 @@ public class GradeAutoUpdateTask extends BaseSubscriptionTask {
     private void processScheduleTask(UrpFetchTask urpFetchTask) {
         ScheduleTask task = urpFetchTask.scheduleTask;
         Student student = openIdService.getStudentByOpenId(task.getOpenid(), task.getAppid());
+        if(student == null){
+            return;
+        }
         List<GradeVo> updateList = getUpdateList(student);
         WxMpService service = WechatMpConfiguration.getMpServices().get(task.getAppid());
         if (!CollectionUtils.isEmpty(updateList)) {
             for (GradeVo gradeVo : updateList.stream()
-//                    .filter(x -> !x.getScore().equals(-1.0))
+                    .filter(x -> !x.getScore().equals(-1.0))
                     .collect(Collectors.toList())) {
 
                 if(miniProgramProperties.getAppId().equals(task.getAppid())){
