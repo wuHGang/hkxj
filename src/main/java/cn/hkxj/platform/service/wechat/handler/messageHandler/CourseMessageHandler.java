@@ -91,7 +91,7 @@ public class CourseMessageHandler implements WxMpMessageHandler {
         miniProgram.setAppid(MiniProgram.APP_ID);
         miniProgram.setPagePath(MiniProgram.COURSE_PATH.getValue());
         WxMpTemplateMessage templateMessage = templateBuilder.build(wxMpXmlMessage.getFromUser(), templateData,
-                wechatTemplateProperties.getPlusGradeUpdateTemplateId(),
+                wechatTemplateProperties.getPlusCourseTemplateId(),
                 miniProgram);
 
         try {
