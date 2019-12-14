@@ -42,7 +42,9 @@ public class ExamTimeTableService {
                                 return new Exam()
                                         .setCourse(getCourseFromExamText(x.getCourseName()))
                                         .setDate(new Date())
-                                        .setExamName(x.getExamName());
+                                        .setExamName(x.getExamName())
+                                        .setClassRoom(new UrpClassroom())
+                                        ;
 
                             }
 
