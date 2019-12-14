@@ -10,7 +10,7 @@ public class UrpClassroom {
 
     private String number;
 
-    private String name;
+    private String name = "";
 
     private String campusName;
 

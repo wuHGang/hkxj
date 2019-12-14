@@ -90,7 +90,11 @@ public class ExamTimeTableService {
 
     private UrpClassroom getClassRoomFromText(String date) {
         String[] split = date.split(" ");
-        return urpClassRoomDao.selectByName(split[3]);
+
+        if(urpClassRoomDao.selectByName(split[3]) != null){
+            return urpClassRoomDao.selectByName(split[3]);
+        }
+        return new UrpClassroom();
     }
 
     public static void main(String[] args) {
