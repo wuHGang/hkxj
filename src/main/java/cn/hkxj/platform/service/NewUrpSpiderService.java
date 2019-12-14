@@ -176,6 +176,7 @@ public class NewUrpSpiderService {
         return spider.getExamTime();
     }
 
+    @Retryable(value = UrpException.class, maxAttempts = 3)
     public List<UrpExamTime> getExamTime(Student student){
 
         return getExamTime(student.getAccount().toString(), student.getPassword());

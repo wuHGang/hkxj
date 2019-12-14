@@ -6,9 +6,11 @@ import cn.hkxj.platform.dao.UrpClassRoomDao;
 import cn.hkxj.platform.pojo.*;
 import cn.hkxj.platform.utils.DateUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -36,6 +38,14 @@ public class ExamTimeTableService {
 
         return newUrpSpiderService.getExamTime(student).stream()
                 .map(x -> {
+                            if(StringUtils.isEmpty(x.getExamTime())){
+                                return new Exam()
+                                        .setCourse(getCourseFromExamText(x.getCourseName()))
+                                        .setDate(new Date())
+                                        .setExamName(x.getExamName());
+
+                            }
+
                             String[] timeSplit = x.getExamTime().split("-");
                             return new Exam()
                                     .setCourse(getCourseFromExamText(x.getCourseName()))

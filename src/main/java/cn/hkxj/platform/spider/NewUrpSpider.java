@@ -423,7 +423,7 @@ public class NewUrpSpider {
                 .get()
                 .build();
         String s = new String(execute(request));
-        if (s.contains("invalidSession")) {
+        if (s.contains("invalidSession") || s.contains("login")) {
             COOKIE_JAR.clearSession();
             throw new UrpSessionExpiredException("account: " + account + "session expired");
         }
@@ -435,6 +435,7 @@ public class NewUrpSpider {
             if (list.size() == 7) {
                 result.add(new UrpExamTime()
                         .setCourseName(list.get(0))
+                        .setDate("")
                         .setExamName(list.get(1)));
             }
             if (list.size() == 11) {
