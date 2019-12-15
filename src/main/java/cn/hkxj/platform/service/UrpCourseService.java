@@ -54,10 +54,10 @@ public class UrpCourseService {
 
     }
 
-    public Course getCurrentTermCourse(String courseId, String sequenceNumber, Grade grade) {
+    public Course getCurrentTermCourse(String courseId, String sequenceNumber, Course updateCourse) {
         SchoolTime schoolTime = DateUtils.getCurrentSchoolTime();
         return getCourse(courseId, sequenceNumber, schoolTime.getTerm().getTermYear(),
-                schoolTime.getTerm().getOrder(), grade);
+                schoolTime.getTerm().getOrder(), updateCourse);
 
     }
 
@@ -70,10 +70,10 @@ public class UrpCourseService {
      * @param sequenceNumber
      * @param termYear
      * @param termOrder
-     * @param grade          这个传入的grade主要作用是课程查询的时候有比较多缺省的值，从该对象中获取
+     * @param updateCourse          这个传入的course主要作用是课程查询的时候有比较多缺省的值，从该对象中获取
      * @return
      */
-    public Course getCourse(String courseId, String sequenceNumber, String termYear, int termOrder, Grade grade) {
+    public Course getCourse(String courseId, String sequenceNumber, String termYear, int termOrder, Course updateCourse) {
         List<Course> courseList = courseDao.selectCourseByPojo(
                 new Course()
                         .setNum(courseId)
@@ -106,11 +106,11 @@ public class UrpCourseService {
             }
 
             Course course = resultList.get(0).transToCourse();
-            if (grade != null) {
-                course.setCredit(grade.getCredit().toString());
-                course.setExamType(grade.getExamTypeName());
-                course.setExamTypeCode(grade.getExamTypeCode());
-                course.setCourseOrder(grade.getCourseOrder());
+            if (updateCourse != null) {
+                course.setCredit(updateCourse.getCredit());
+                course.setExamType(updateCourse.getExamType());
+                course.setExamTypeCode(updateCourse.getExamTypeCode());
+                course.setCourseOrder(updateCourse.getCourseOrder());
             }
             courseDao.insertSelective(course);
             return course;

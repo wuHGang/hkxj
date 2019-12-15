@@ -155,28 +155,37 @@ public class NewGradeSearchService {
 
     public List<GradeVo> gradeToVo(List<Grade> gradeList) {
         return gradeList.stream().map(x ->
-                new GradeVo()
-                        .setCourse(urpCourseService.getCurrentTermCourse(x.getCourseNumber(), x.getCourseOrder(), x))
-                        .setAccount(x.getAccount())
-                        .setScore(x.getScore())
-                        .setGradePoint(x.getGradePoint())
-                        .setLevelName(x.getLevelName())
-                        .setLevelPoint(x.getLevelPoint())
-                        .setRank(x.getRank())
-                        .setReplaceCourseNumber(x.getReplaceCourseNumber())
-                        .setRemark(x.getRemark())
-                        .setRetakeCourseMark(x.getRetakeCourseMark())
-                        .setRetakecourseModeCode(x.getRetakecourseModeCode())
-                        .setRetakeCourseModeExplain(x.getRetakeCourseModeExplain())
-                        .setUnpassedReasonCode(x.getUnpassedReasonCode())
-                        .setUnpassedReasonExplain(x.getUnpassedReasonExplain())
-                        .setStandardPoint(x.getStandardPoint())
-                        .setTermYear(x.getTermYear())
-                        .setTermOrder(x.getTermOrder())
-                        .setUpdate(x.isUpdate())
-                        .setExamTime(DateUtils.localDateToDate(x.getExamTime(), DateUtils.YYYY_MM_DD_PATTERN))
-                        .setOperateTime(DateUtils.localDateToDate(x.getOperateTime(), DateUtils.PATTERN_WITHOUT_SPILT))
-                        .setOperator(x.getOperator()))
+                {
+                    Course course = new Course();
+                    course.setCredit(x.getCredit().toString());
+                    course.setExamType(x.getExamTypeName());
+                    course.setExamTypeCode(x.getExamTypeCode());
+                    course.setCourseOrder(x.getCourseOrder());
+                    return new GradeVo()
+                            .setCourse(urpCourseService.getCurrentTermCourse(x.getCourseNumber(), x.getCourseOrder(),
+                                    course))
+                            .setAccount(x.getAccount())
+                            .setScore(x.getScore())
+                            .setGradePoint(x.getGradePoint())
+                            .setLevelName(x.getLevelName())
+                            .setLevelPoint(x.getLevelPoint())
+                            .setRank(x.getRank())
+                            .setReplaceCourseNumber(x.getReplaceCourseNumber())
+                            .setRemark(x.getRemark())
+                            .setRetakeCourseMark(x.getRetakeCourseMark())
+                            .setRetakecourseModeCode(x.getRetakecourseModeCode())
+                            .setRetakeCourseModeExplain(x.getRetakeCourseModeExplain())
+                            .setUnpassedReasonCode(x.getUnpassedReasonCode())
+                            .setUnpassedReasonExplain(x.getUnpassedReasonExplain())
+                            .setStandardPoint(x.getStandardPoint())
+                            .setTermYear(x.getTermYear())
+                            .setTermOrder(x.getTermOrder())
+                            .setUpdate(x.isUpdate())
+                            .setExamTime(DateUtils.localDateToDate(x.getExamTime(), DateUtils.YYYY_MM_DD_PATTERN))
+                            .setOperateTime(DateUtils.localDateToDate(x.getOperateTime(), DateUtils.PATTERN_WITHOUT_SPILT))
+                            .setOperator(x.getOperator());
+                })
+
                 .sorted(Comparator.comparing(GradeVo::getOperateTime).reversed())
                 .collect(Collectors.toList());
 

@@ -21,33 +21,34 @@ import javax.servlet.http.HttpServletRequest;
 public class ControllerLogger {
 
     @Pointcut("execution(public * cn.hkxj.platform.controller..*Controller.*(..))")
-    public void addAdvice(){}
+    public void addAdvice() {
+    }
 
     @Around("addAdvice()")
     public Object Interceptor(ProceedingJoinPoint pjp) throws Throwable {
         long start = System.currentTimeMillis();
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         log.info("request start path:{} method:{} parameter{}"
-                ,request.getRequestURI(), request.getMethod(), JSONObject.toJSONString(request.getParameterMap()));
+                , request.getRequestURI(), request.getMethod(), JSONObject.toJSONString(request.getParameterMap()));
         try {
 
             Object[] args = pjp.getArgs();
-            Object result =pjp.proceed(args);
+            Object result = pjp.proceed(args);
 
-            log.info("request success in {}ms path:{} response:{}", request.getRequestURI(),
+            log.info("request success in {}ms path:{} response:{}",
                     System.currentTimeMillis() - start,
+                    request.getRequestURI(),
                     JSONObject.toJSONString(result));
 
             return result;
-        }catch (Throwable throwable){
+        } catch (Throwable throwable) {
 
             log.error("request fail in {}ms path:{} method:{} parameter{}",
                     System.currentTimeMillis() - start
-                    ,request.getRequestURI(), request.getMethod(), JSONObject.toJSONString(request.getParameterMap()), throwable);
+                    , request.getRequestURI(), request.getMethod(), JSONObject.toJSONString(request.getParameterMap()), throwable);
 
             throw throwable;
         }
-
 
 
     }

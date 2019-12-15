@@ -67,7 +67,7 @@ public class ExamTimeTableService {
 
     private Course getCourseFromExamText(String examText) {
 
-        String pattern = "（(.*?)-(.*?)）.*?";
+        String pattern = "（(.*?)-(.*?)）(.*?)";
         // 创建 Pattern 对象
         Pattern r = Pattern.compile(pattern);
 
@@ -77,7 +77,8 @@ public class ExamTimeTableService {
         if (m.find()) {
             String num = m.group(1);
             String order = m.group(2);
-            Course course = urpCourseService.getCurrentTermCourse(num, order);
+            String courseName = m.group(3);
+            Course course = urpCourseService.getCurrentTermCourse(num, order, new Course().setCourseOrder(order));
             if (course == null) {
                 log.error("can not find course {} {}", num, order);
             }
@@ -86,7 +87,7 @@ public class ExamTimeTableService {
 
         } else {
             log.error("can not parse exam text {}", examText);
-            return null;
+            return new Course();
         }
 
     }
