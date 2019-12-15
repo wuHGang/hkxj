@@ -37,6 +37,7 @@ public class ExamTimeTableService {
         Student student = studentDao.selectStudentByAccount(account);
 
         return newUrpSpiderService.getExamTime(student).stream()
+                .filter(x-> StringUtils.isNotEmpty(x.getDate()))
                 .map(x -> {
                             if(StringUtils.isEmpty(x.getExamTime())){
                                 return new Exam()

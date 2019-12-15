@@ -25,7 +25,7 @@ public class ExceptionHandlerAdvice {
 		} else if (e instanceof ReadTimeoutException) {
 			return WebResponse.fail(ErrorCode.READ_TIMEOUT.getErrorCode(), e.getMessage());
 		}
-
+		log.error("request fail", e);
 		return WebResponse.fail(ErrorCode.SYSTEM_ERROR.getErrorCode(), "服务器出了点小问题");
 	}
 }

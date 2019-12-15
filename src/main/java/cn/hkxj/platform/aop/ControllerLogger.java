@@ -34,7 +34,7 @@ public class ControllerLogger {
             Object[] args = pjp.getArgs();
             Object result =pjp.proceed(args);
 
-            log.info("request success in {}ms response:{}",
+            log.info("request success in {}ms path:{} response:{}", request.getRequestURI(),
                     System.currentTimeMillis() - start,
                     JSONObject.toJSONString(result));
 

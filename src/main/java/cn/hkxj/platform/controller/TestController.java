@@ -121,6 +121,13 @@ public class TestController {
         return "ok";
     }
 
+
+    @RequestMapping("/log")
+    public String testLog(){
+        throw new NullPointerException();
+    }
+
+
     public static void main(String[] args) throws IOException {
 
 
