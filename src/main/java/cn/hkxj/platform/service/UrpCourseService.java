@@ -5,6 +5,7 @@ import cn.hkxj.platform.dao.UrpCourseDao;
 import cn.hkxj.platform.pojo.*;
 import cn.hkxj.platform.spider.newmodel.SearchResult;
 import cn.hkxj.platform.spider.newmodel.course.UrpCourseForSpider;
+import cn.hkxj.platform.spider.newmodel.searchclass.CourseTimetableSearchResult;
 import cn.hkxj.platform.spider.newmodel.searchcourse.SearchCoursePost;
 import cn.hkxj.platform.spider.newmodel.searchcourse.SearchCourseResult;
 import cn.hkxj.platform.utils.DateUtils;
@@ -37,6 +38,8 @@ public class UrpCourseService {
 
     @Resource
     private NewUrpSpiderService newUrpSpiderService;
+    @Resource
+    private UrpSearchService urpSearchService;
 
     private static final Cache<String, UrpCourse> cache = CacheBuilder.newBuilder()
             .maximumSize(500)
@@ -116,6 +119,29 @@ public class UrpCourseService {
             return course;
         }
         return courseList.stream().findFirst().get();
+    }
+
+
+    public void getTimetable(String courseId, String sequenceNumber, String termYear, int termOrder){
+        List<Course> courseList = courseDao.selectCourseByPojo(
+                new Course()
+                        .setNum(courseId)
+                        .setCourseOrder(sequenceNumber)
+                        .setTermYear(termYear)
+                        .setTermOrder(termOrder));
+
+        if (courseList.size() == 0) {
+            SearchCoursePost post = new SearchCoursePost();
+            post.setCourseNumber(courseId).setCourseOrderNumber(sequenceNumber);
+            post.setExecutiveEducationPlanNum(termYear + "-" + termOrder + "-1");
+            SearchResult<SearchCourseResult> searchResult = newUrpSpiderService.searchCourseInfo(post);
+            searchResult.getRecords().stream()
+                    .flatMap(x -> urpSearchService.searchTimetableByCourse(x.transToCourse()).stream())
+                    .map(CourseTimetableSearchResult::transToCourseTimetable)
+                    .collect(Collectors.toList());
+
+
+        }
     }
 
     public UrpCourse getUrpCourseByCourseId(String courseId) {

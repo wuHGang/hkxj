@@ -132,29 +132,30 @@ public class UrpCourseTimeTable {
 
     /**
      * 将学生的个人课表信息适配为课表的搜索结果，仅做查询使用。不存库
+     *
      * @return
      */
-    public List<CourseTimetable> adapterToCourseTimetable(){
+    public List<CourseTimetable> adapterToCourseTimetable() {
         List<CourseTimetable> result = Lists.newArrayList();
         String[] termYearAndTermOrder = parseTermYearAndTermOrder(this.courseRelativeInfo.getExecutiveEducationPlanNumber());
         for (TimeAndPlace timeAndPlace : timeAndPlaceList) {
             for (int[] weekArray : TimeAndPlace.parseWeek(timeAndPlace.getWeekDescription())) {
                 result.add(
                         new CourseTimetable()
-                        .setTermYear(termYearAndTermOrder[0])
-                        .setTermOrder(Integer.parseInt(termYearAndTermOrder[1]))
-                        .setCourseId(timeAndPlace.getCourseNumber())
-                        .setCourseSequenceNumber(timeAndPlace.getCourseSequenceNumber())
-                        .setStartWeek(weekArray[0])
-                        .setEndWeek(weekArray[1])
-                        .setWeekDescription(timeAndPlace.getWeekDescription())
-                        .setClassOrder(timeAndPlace.getClassSessions())
-                        .setClassDay(timeAndPlace.getClassDay())
-                        .setContinuingSession(timeAndPlace.getContinuingSession())
-                        .setCampusName(timeAndPlace.getCampusName())
-                        .setRoomName(timeAndPlace.getClassroomName())
-                        .setAttendClassTeacher(timeAndPlace.getCourseTeacher())
-                        .setClassInSchoolWeek(timeAndPlace.getClassWeek()));
+                                .setTermYear(termYearAndTermOrder[0])
+                                .setTermOrder(Integer.parseInt(termYearAndTermOrder[1]))
+                                .setCourseId(timeAndPlace.getCourseNumber())
+                                .setCourseSequenceNumber(timeAndPlace.getCourseSequenceNumber())
+                                .setStartWeek(weekArray[0])
+                                .setEndWeek(weekArray[1])
+                                .setWeekDescription(timeAndPlace.getWeekDescription())
+                                .setClassOrder(timeAndPlace.getClassSessions())
+                                .setClassDay(timeAndPlace.getClassDay())
+                                .setAttendClassTeacher(this.getAttendClassTeacher())
+                                .setContinuingSession(timeAndPlace.getContinuingSession())
+                                .setCampusName(timeAndPlace.getCampusName())
+                                .setRoomName(timeAndPlace.getClassroomName())
+                                .setClassInSchoolWeek(timeAndPlace.getClassWeek()));
             }
 
         }

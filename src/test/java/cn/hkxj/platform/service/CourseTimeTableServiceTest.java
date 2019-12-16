@@ -82,7 +82,6 @@ public class CourseTimeTableServiceTest {
                 }
             }else {
                 log.error("{} size more than 1", classroomList);
-
             }
         }
 
@@ -140,6 +139,15 @@ public class CourseTimeTableServiceTest {
             System.out.println(vo);
         }
 
+
+    }
+
+
+    @Test
+    public void test(){
+        UrpCourseTimeTableForSpider details = courseTimeTableService.getCourseTimeTableDetails(studentDao.selectStudentByAccount(2019025788));
+        List<CourseTimetable> list = courseTimeTableService.getCourseTimetableList(details);
+        courseTimeTableService.getCourseTimetableIdList(list);
 
     }
 

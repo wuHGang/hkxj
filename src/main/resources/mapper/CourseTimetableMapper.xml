@@ -132,7 +132,8 @@
       #{weekDescription,jdbcType=VARCHAR}, #{classDistinct,jdbcType=INTEGER}, #{termYear,jdbcType=CHAR}, 
       #{termOrder,jdbcType=INTEGER}, #{gmtCreate,jdbcType=TIMESTAMP})
   </insert>
-  <insert id="insertSelective" parameterType="cn.hkxj.platform.pojo.CourseTimetable" >
+  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id"
+          parameterType="cn.hkxj.platform.pojo.CourseTimetable" >
     insert into course_timetable
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
