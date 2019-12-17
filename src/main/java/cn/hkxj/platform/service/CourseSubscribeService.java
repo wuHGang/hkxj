@@ -63,7 +63,7 @@ public class CourseSubscribeService {
     private ScheduleTaskDao scheduleTaskDao;
 
 
-    public Set<CourseSubscriptionMessage> getSubscriptionMessages(int condition){
+    public Set<CourseSubscriptionMessage> getSubscriptionMessages(int condition) {
         //获取appId和scheduleTask的映射关系
 
 
@@ -72,20 +72,20 @@ public class CourseSubscribeService {
         List<String> openidList = taskList.stream().map(ScheduleTask::getOpenid).collect(Collectors.toList());
         Map<String, Student> studentMapping = getOpenIdMap(openidList, wechatMpPlusProperties.getAppId());
 
-        return getCourseSubscriptionMessages(taskList, studentMapping,
-                condition);
+        return getCourseSubscriptionMessages(taskList, studentMapping, condition);
 
     }
 
     /**
      * 获取订阅消息列表
-     * @param scheduleTasks 订阅任务列表
+     *
+     * @param scheduleTasks  订阅任务列表
      * @param studentMapping openid和学生实体的映射
-     * @param section 节数
+     * @param section        节数
      * @return 返回订阅消息列表
      */
     private Set<CourseSubscriptionMessage> getCourseSubscriptionMessages(List<ScheduleTask> scheduleTasks,
-                                                                         Map<String, Student> studentMapping, int section){
+                                                                         Map<String, Student> studentMapping, int section) {
         Set<CourseSubscriptionMessage> subscriptionMessages = Sets.newHashSet();
         for (ScheduleTask task : scheduleTasks) {
             for (Map.Entry<String, Student> entry : studentMapping.entrySet()) {
@@ -108,19 +108,24 @@ public class CourseSubscribeService {
 
     /**
      * 生成一个openid和学生实体映射的map
+     *
      * @param openIdList openid集合
-     * @param appId appId
+     * @param appId      appId
      * @return openid和学生实体映射的map
      */
-    private Map<String, Student> getOpenIdMap(List<String> openIdList, String appId){
+    private Map<String, Student> getOpenIdMap(List<String> openIdList, String appId) {
         //获得所有openid的实体
         List<Openid> openidObjects = getOpenIdList(openIdList, appId);
         //如果openidObjects为null，说明没有订阅该任务的人，直接返回一个EmptyMap
-        if(Objects.isNull(openidObjects)) { return Collections.emptyMap(); }
+        if (Objects.isNull(openidObjects)) {
+            return Collections.emptyMap();
+        }
         //根据openid实体的信息，找到对应的学生信息实体
         List<Student> students = getAllStudentsByOpenidList(openidObjects);
         //如果students为null，说明可能程序出现问题，或者没有对应的学生信息，直接返回一个EmptyMap来处理这个情况
-        if(Objects.isNull(students)) { return Collections.emptyMap(); }
+        if (Objects.isNull(students)) {
+            return Collections.emptyMap();
+        }
         Map<String, Student> openIdMap = new HashMap<>(16);
         //学生openid如果和openid列表的一项相同，则放入到openIdMap中
         students.forEach(student ->
@@ -144,10 +149,11 @@ public class CourseSubscribeService {
 
     /**
      * 根据班级信息获取当天的课程时间表
+     *
      * @param account 学号
      * @return 课表时间表实体列表
      */
-    private CourseTimeTableDetailDto getCourseTimeTablesSection(int account, int section) {
+    CourseTimeTableDetailDto getCourseTimeTablesSection(int account, int section) {
         List<CourseTimeTableDetailDto> detailDtoList = courseTimeTableService.getAppointSectionCourseTimeTableDetailDto(account, section);
         //因为查询的是当前节的课程，只会有一节，所以直接get(0)
         return detailDtoList.size() > 0 ? detailDtoList.get(0) : null;
@@ -157,7 +163,7 @@ public class CourseSubscribeService {
      * 根据openid列表获取相应的openid实体
      *
      * @param openIdList openid列表
-     * @param appId   appId
+     * @param appId      appId
      * @return openid实体列表
      */
     private List<Openid> getOpenIdList(List<String> openIdList, String appId) {

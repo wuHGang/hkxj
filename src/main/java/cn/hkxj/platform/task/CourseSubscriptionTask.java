@@ -15,6 +15,7 @@ import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.template.WxMpTemplateData;
 import me.chanjar.weixin.mp.bean.template.WxMpTemplateMessage;
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -27,6 +28,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Yuki
@@ -85,10 +87,15 @@ public class CourseSubscriptionTask extends BaseSubscriptionTask {
         Set<CourseSubscriptionMessage> messageSet = courseSubscribeService.getSubscriptionMessages(section);
 
         WxMpService wxMpService = getWxMpService(wechatMpPlusProperties.getAppId());
-        messageSet.stream()
+        List<CourseSubscriptionMessage> collect = messageSet.stream()
                 .filter(subscriptionMessage -> !Objects.isNull(subscriptionMessage))
                 .filter(subscriptionMessage -> !Objects.isNull(subscriptionMessage.getDetailDto()))
-                .forEach(subscriptionMessage -> courseSubscriptionSendPool.execute(() ->
+                .filter(x -> !StringUtils.isEmpty(x.getPushContent()))
+                .collect(Collectors.toList());
+
+        log.info("send course message size {}", collect.size());
+
+        collect.forEach(subscriptionMessage -> courseSubscriptionSendPool.execute(() ->
                         plusMpProcess(subscriptionMessage.getTask(), subscriptionMessage, wxMpService)));
     }
 

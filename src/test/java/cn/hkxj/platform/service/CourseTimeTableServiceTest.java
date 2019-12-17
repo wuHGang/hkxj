@@ -145,7 +145,7 @@ public class CourseTimeTableServiceTest {
 
     @Test
     public void test(){
-        UrpCourseTimeTableForSpider details = courseTimeTableService.getCourseTimeTableDetails(studentDao.selectStudentByAccount(2019025788));
+        UrpCourseTimeTableForSpider details = courseTimeTableService.getCourseTimeTableDetails(studentDao.selectStudentByAccount(2017026003));
         List<CourseTimetable> list = courseTimeTableService.getCourseTimetableList(details);
         courseTimeTableService.getCourseTimetableIdList(list);
 

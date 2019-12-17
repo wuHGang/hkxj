@@ -15,7 +15,7 @@ public enum MiniProgram {
     /**
      * 小程序课表的网页url
      */
-    COURSE_PATH("pages/core/cj/cj") {
+    COURSE_PATH("pages/core/kb/kb") {
         @Override
         public WxMpKefuMessage genCard(String openid, String appId) {
             WxMpKefuMessage wxMpKefuMessage = getWxMpKefuMessage(openid);
@@ -48,7 +48,7 @@ public enum MiniProgram {
     /**
      * 小程序成绩网页的url
      */
-    GRADE_PATH("pages/core/kb/kb") {
+    GRADE_PATH("pages/core/cj/cj") {
         @Override
         public WxMpKefuMessage genCard(String openid, String appId) {
             WxMpKefuMessage wxMpKefuMessage = getWxMpKefuMessage(openid);

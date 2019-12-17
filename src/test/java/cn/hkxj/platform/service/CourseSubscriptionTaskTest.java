@@ -23,6 +23,7 @@ public class CourseSubscriptionTaskTest {
 
     @Test
     public void sendCourseRemindMsg() {
+        courseSubscriptionTask.execute(1);
     }
 
     @Test
