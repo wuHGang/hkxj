@@ -13,6 +13,10 @@ public enum  ErrorCode {
 	ACCOUNT_OR_PASSWORD_INVALID(402),
 	OPENID_EXIST(403),
 	VERIFY_CODE_ERROR(404),
+	/**
+	 * 无法登录，通常是输入密码次数过多
+	 */
+	LOGIN_ERROR(405),
 
 	/**
 	 *服务器端错误

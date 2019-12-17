@@ -2,6 +2,7 @@ package cn.hkxj.platform.controller;
 
 import cn.hkxj.platform.exceptions.PasswordUnCorrectException;
 import cn.hkxj.platform.exceptions.ReadTimeoutException;
+import cn.hkxj.platform.exceptions.UrpRequestException;
 import cn.hkxj.platform.pojo.WebResponse;
 import cn.hkxj.platform.pojo.constant.ErrorCode;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +25,8 @@ public class ExceptionHandlerAdvice {
 			return WebResponse.fail(ErrorCode.ACCOUNT_OR_PASSWORD_INVALID.getErrorCode(), e.getMessage());
 		} else if (e instanceof ReadTimeoutException) {
 			return WebResponse.fail(ErrorCode.READ_TIMEOUT.getErrorCode(), e.getMessage());
+		}else if(e instanceof UrpRequestException) {
+			return WebResponse.fail(ErrorCode.LOGIN_ERROR.getErrorCode(), "can`t verify user");
 		}
 		log.error("request fail", e);
 		return WebResponse.fail(ErrorCode.SYSTEM_ERROR.getErrorCode(), "服务器出了点小问题");
