@@ -15,6 +15,7 @@ import cn.hkxj.platform.spider.newmodel.emptyroom.EmptyRoomPojo;
 import cn.hkxj.platform.spider.newmodel.emptyroom.EmptyRoomPost;
 import cn.hkxj.platform.spider.newmodel.examtime.UrpExamTime;
 import cn.hkxj.platform.spider.newmodel.grade.CurrentGrade;
+import cn.hkxj.platform.spider.newmodel.grade.detail.GradeDetailSearchPost;
 import cn.hkxj.platform.spider.newmodel.grade.detail.UrpGradeDetailForSpider;
 import cn.hkxj.platform.spider.newmodel.grade.general.UrpGeneralGradeForSpider;
 import cn.hkxj.platform.spider.newmodel.grade.general.UrpGradeForSpider;
@@ -267,7 +268,7 @@ public class NewUrpSpider {
     private UrpGradeForSpider getUrpGradeForSpider(UrpGeneralGradeForSpider urpGeneralGradeForSpider) {
         UrpGradeForSpider urpGradeForSpider = new UrpGradeForSpider();
         urpGradeForSpider.setUrpGeneralGradeForSpider(urpGeneralGradeForSpider);
-        urpGradeForSpider.setUrpGradeDetailForSpider(getUrpGradeDetail(urpGeneralGradeForSpider));
+        urpGradeForSpider.setUrpGradeDetailForSpider(getUrpGradeDetail(null));
         return urpGradeForSpider;
     }
 
@@ -297,13 +298,13 @@ public class NewUrpSpider {
         return grade;
     }
 
-    private UrpGradeDetailForSpider getUrpGradeDetail(UrpGeneralGradeForSpider urpGeneralGradeForSpider) {
+
+    public UrpGradeDetailForSpider getUrpGradeDetail(GradeDetailSearchPost gradeDetailSearchPost) {
         FormBody.Builder params = new FormBody.Builder();
-        CourseRelativeInfo courseRelativeInfo = urpGeneralGradeForSpider.getId();
-        FormBody body = params.add("zxjxjhh", courseRelativeInfo.getExecutiveEducationPlanNumber())
-                .add("kch", courseRelativeInfo.getCourseNumber())
-                .add("kssj", courseRelativeInfo.getExamtime())
-                .add("kxh", urpGeneralGradeForSpider.getCoureSequenceNumber())
+        FormBody body = params.add("zxjxjhh", gradeDetailSearchPost.getExecutiveEducationPlanNumber())
+                .add("kch", gradeDetailSearchPost.getCourseNumber())
+                .add("kssj", gradeDetailSearchPost.getExamTime())
+                .add("kxh", gradeDetailSearchPost.getCourseSequenceNumber())
                 .build();
 
         Request request = new Request.Builder()

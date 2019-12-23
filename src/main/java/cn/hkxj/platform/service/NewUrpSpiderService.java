@@ -14,6 +14,8 @@ import cn.hkxj.platform.spider.newmodel.course.UrpCourseForSpider;
 import cn.hkxj.platform.spider.newmodel.coursetimetable.UrpCourseTimeTableForSpider;
 import cn.hkxj.platform.spider.newmodel.examtime.UrpExamTime;
 import cn.hkxj.platform.spider.newmodel.grade.CurrentGrade;
+import cn.hkxj.platform.spider.newmodel.grade.detail.GradeDetailSearchPost;
+import cn.hkxj.platform.spider.newmodel.grade.detail.UrpGradeDetailForSpider;
 import cn.hkxj.platform.spider.newmodel.grade.general.UrpGeneralGradeForSpider;
 import cn.hkxj.platform.spider.newmodel.searchclass.ClassInfoSearchResult;
 import cn.hkxj.platform.spider.newmodel.searchclassroom.SearchClassroomPost;
@@ -180,6 +182,12 @@ public class NewUrpSpiderService {
     public List<UrpExamTime> getExamTime(Student student){
 
         return getExamTime(student.getAccount().toString(), student.getPassword());
+    }
+
+    @Retryable(value = UrpException.class, maxAttempts = 3)
+    public UrpGradeDetailForSpider getGradeDetail(Student student, GradeDetailSearchPost gradeDetailSearchPost){
+        NewUrpSpider spider = getSpider(student.getAccount().toString(), student.getPassword());
+        return spider.getUrpGradeDetail(gradeDetailSearchPost);
     }
 
     private Student getUserInfo(UrpStudentInfo studentInfo){

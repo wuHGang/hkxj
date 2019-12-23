@@ -13,6 +13,10 @@ import cn.hkxj.platform.spider.newmodel.coursetimetable.UrpCourseTimeTable;
 import cn.hkxj.platform.spider.newmodel.coursetimetable.UrpCourseTimeTableForSpider;
 import cn.hkxj.platform.spider.newmodel.examtime.UrpExamTime;
 import cn.hkxj.platform.spider.newmodel.grade.CurrentGrade;
+import cn.hkxj.platform.spider.newmodel.grade.detail.GradeDetailSearchPost;
+import cn.hkxj.platform.spider.newmodel.grade.detail.MxGradeDetail;
+import cn.hkxj.platform.spider.newmodel.grade.detail.UrpGradeDetailForSpider;
+import cn.hkxj.platform.spider.newmodel.grade.detail.XsGradeDetail;
 import cn.hkxj.platform.spider.newmodel.grade.general.UrpGeneralGradeForSpider;
 import cn.hkxj.platform.spider.newmodel.grade.general.UrpGradeForSpider;
 import cn.hkxj.platform.spider.newmodel.searchclass.ClassInfoSearchResult;
@@ -105,6 +109,30 @@ public class NewUrpSpiderServiceTest {
         UrpCourseForSpider course = newUrpSpiderService.getCourseFromSpider(student, "2106147");
 
         System.out.println(course);
+
+
+    }
+
+    @Test
+    public void getGradeDetail(){
+        Student student = studentDao.selectStudentByAccount(2018025838);
+        GradeDetailSearchPost searchPost = new GradeDetailSearchPost()
+                .setExecutiveEducationPlanNumber("2019-2020-1-1")
+                .setCourseNumber("282041")
+                .setCourseSequenceNumber("01")
+                .setExamTime("20191018");
+        UrpGradeDetailForSpider detail = newUrpSpiderService.getGradeDetail(student, searchPost);
+
+        for (XsGradeDetail x : detail.getXs()) {
+            System.out.println(x);
+        }
+
+
+        for (MxGradeDetail mx : detail.getMx()) {
+            System.out.println(mx);
+        }
+
+//        System.out.println(detail);
 
 
     }

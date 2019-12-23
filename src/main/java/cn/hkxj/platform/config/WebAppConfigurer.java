@@ -26,7 +26,7 @@ public class WebAppConfigurer implements WebMvcConfigurer {
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new TraceIDInterceptor()).addPathPatterns("/**");
-		registry.addInterceptor(interfaceStatisticsInterceptor ()).addPathPatterns("/**");
+//		registry.addInterceptor(interfaceStatisticsInterceptor ()).addPathPatterns("/**");
 //        registry.addInterceptor(loginInterceptor()).addPathPatterns("/course.json/timetable");
 
 	}

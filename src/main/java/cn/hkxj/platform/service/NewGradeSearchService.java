@@ -3,8 +3,10 @@ package cn.hkxj.platform.service;
 import cn.hkxj.platform.MDCThreadPool;
 import cn.hkxj.platform.dao.*;
 import cn.hkxj.platform.pojo.*;
+import cn.hkxj.platform.pojo.vo.GradeDetailVo;
 import cn.hkxj.platform.pojo.vo.GradeVo;
 import cn.hkxj.platform.spider.newmodel.grade.CurrentGrade;
+import cn.hkxj.platform.spider.newmodel.grade.detail.GradeDetailSearchPost;
 import cn.hkxj.platform.spider.newmodel.grade.detail.UrpGradeDetailForSpider;
 import cn.hkxj.platform.spider.newmodel.grade.general.UrpGeneralGradeForSpider;
 import cn.hkxj.platform.utils.DateUtils;
@@ -78,8 +80,8 @@ public class NewGradeSearchService {
 
     public List<GradeDetail> getCurrentTermGradeFromSpider(Student student) {
         List<UrpGeneralGradeForSpider> generalGrade = newUrpSpiderService.getCurrentGeneralGrade(student);
-        generalGrade.stream().findFirst().ifPresent(x-> {
-            if(!x.getId().getStudentNumber().equals(student.getAccount().toString())){
+        generalGrade.stream().findFirst().ifPresent(x -> {
+            if (!x.getId().getStudentNumber().equals(student.getAccount().toString())) {
                 log.error("account {} grade error data {}", student.getAccount(), generalGrade);
             }
         });
@@ -155,36 +157,37 @@ public class NewGradeSearchService {
 
     public List<GradeVo> gradeToVo(List<Grade> gradeList) {
         return gradeList.stream().map(x ->
-                {
-                    Course course = new Course();
-                    course.setCredit(x.getCredit().toString());
-                    course.setExamType(x.getExamTypeName());
-                    course.setExamTypeCode(x.getExamTypeCode());
-                    course.setCourseOrder(x.getCourseOrder());
-                    return new GradeVo()
-                            .setCourse(urpCourseService.getCurrentTermCourse(x.getCourseNumber(), x.getCourseOrder(),
-                                    course))
-                            .setAccount(x.getAccount())
-                            .setScore(x.getScore())
-                            .setGradePoint(x.getGradePoint())
-                            .setLevelName(x.getLevelName())
-                            .setLevelPoint(x.getLevelPoint())
-                            .setRank(x.getRank())
-                            .setReplaceCourseNumber(x.getReplaceCourseNumber())
-                            .setRemark(x.getRemark())
-                            .setRetakeCourseMark(x.getRetakeCourseMark())
-                            .setRetakecourseModeCode(x.getRetakecourseModeCode())
-                            .setRetakeCourseModeExplain(x.getRetakeCourseModeExplain())
-                            .setUnpassedReasonCode(x.getUnpassedReasonCode())
-                            .setUnpassedReasonExplain(x.getUnpassedReasonExplain())
-                            .setStandardPoint(x.getStandardPoint())
-                            .setTermYear(x.getTermYear())
-                            .setTermOrder(x.getTermOrder())
-                            .setUpdate(x.isUpdate())
-                            .setExamTime(DateUtils.localDateToDate(x.getExamTime(), DateUtils.YYYY_MM_DD_PATTERN))
-                            .setOperateTime(DateUtils.localDateToDate(x.getOperateTime(), DateUtils.PATTERN_WITHOUT_SPILT))
-                            .setOperator(x.getOperator());
-                })
+        {
+            Course course = new Course();
+            course.setCredit(x.getCredit().toString());
+            course.setExamType(x.getExamTypeName());
+            course.setExamTypeCode(x.getExamTypeCode());
+            course.setCourseOrder(x.getCourseOrder());
+            return new GradeVo()
+                    .setCourse(urpCourseService.getCurrentTermCourse(x.getCourseNumber(), x.getCourseOrder(),
+                            course))
+                    .setAccount(x.getAccount())
+                    .setScore(x.getScore())
+                    .setGradePoint(x.getGradePoint())
+                    .setLevelName(x.getLevelName())
+                    .setLevelPoint(x.getLevelPoint())
+                    .setRank(x.getRank())
+                    .setReplaceCourseNumber(x.getReplaceCourseNumber())
+                    .setRemark(x.getRemark())
+                    .setRetakeCourseMark(x.getRetakeCourseMark())
+                    .setRetakecourseModeCode(x.getRetakecourseModeCode())
+                    .setRetakeCourseModeExplain(x.getRetakeCourseModeExplain())
+                    .setUnpassedReasonCode(x.getUnpassedReasonCode())
+                    .setUnpassedReasonExplain(x.getUnpassedReasonExplain())
+                    .setStandardPoint(x.getStandardPoint())
+                    .setTermYear(x.getTermYear())
+                    .setTermOrder(x.getTermOrder())
+                    .setUpdate(x.isUpdate())
+                    .setExamTime(DateUtils.localDateToDate(x.getExamTime(), DateUtils.YYYY_MM_DD_PATTERN))
+                    .setExamTimeStr(x.getExamTime())
+                    .setOperateTime(DateUtils.localDateToDate(x.getOperateTime(), DateUtils.PATTERN_WITHOUT_SPILT))
+                    .setOperator(x.getOperator());
+        })
 
                 .sorted(Comparator.comparing(GradeVo::getOperateTime).reversed())
                 .collect(Collectors.toList());
@@ -237,59 +240,30 @@ public class NewGradeSearchService {
         return getCurrentGrade(student);
     }
 
+    public GradeDetailVo getGradeDetail(String account, GradeDetailSearchPost gradeDetailSearchPost) {
 
-    /**
-     * 生成一个UrpGradeAndUrpCourse
-     *
-     * @param courseId           课程号
-     * @param term               学期
-     * @param urpGrade           成绩实体
-     * @param urpGradeDetailList 成绩详情实体
-     * @return UrpGradeAndUrpCourse
-     */
-    private UrpGradeAndUrpCourse generateUrpGradeAndUrpCourse(String courseId, Term term, UrpGrade urpGrade, List<UrpGradeDetail> urpGradeDetailList) {
-        UrpGradeAndUrpCourse target = new UrpGradeAndUrpCourse();
-        NewGrade newGrade = new NewGrade();
-        newGrade.setDetails(urpGradeDetailList);
-        newGrade.setUrpGrade(urpGrade);
-        target.setNewGrade(newGrade);
-        target.setTerm(term);
-        target.setUrpCourse(urpCourseService.getUrpCourseByCourseId(courseId));
-        return target;
-    }
+        Student student = studentDao.selectStudentByAccount(Integer.parseInt(account));
 
-    /**
-     * 检查爬虫结果中是否需要存储的同时，返回包含着所有要显示的内容的集合
-     *
-     * @param student      学生实体
-     * @param currentGrade 从爬虫爬取的当前学期的成绩
-     * @return 所有内容
-     */
-    private List<UrpGradeAndUrpCourse> getUrpGradeAndUrpCourse(Student student, CurrentGrade currentGrade) {
-        return currentGrade.getList().stream().map(urpGradeForSpider -> {
-            UrpGeneralGradeForSpider generalGradeForSpider = urpGradeForSpider.getUrpGeneralGradeForSpider();
-            String uid = generalGradeForSpider.getId().getCourseNumber();
-            //判断对应的课程是否存在，不存在就从爬虫获取后保存到数据库
-            urpCourseService.checkOrSaveUrpCourseToDb(uid, student);
-            //对教学计划相关的信息进行判断是否需要保存
-            Plan plan = getPlan(generalGradeForSpider);
-            //对专业相关的信息进行判断是否需要保存
-            Major major = getMajor(generalGradeForSpider);
-            UrpExam urpExam = getUrpExam(generalGradeForSpider, plan, major, student);
-            UrpGrade urpGrade = getUrpGrade(generalGradeForSpider, urpExam, student);
-            List<UrpGradeDetail> urpGradeDetailList = getUrpGradeDetail(urpGradeForSpider.getUrpGradeDetailForSpider(), urpGrade);
-            return generateUrpGradeAndUrpCourse(uid, currentTerm, urpGrade, urpGradeDetailList);
-        }).collect(Collectors.toList());
+        UrpGradeDetailForSpider detail = newUrpSpiderService.getGradeDetail(student, gradeDetailSearchPost);
 
-    }
+        Map<String, UrpGradeDetail> detailMap = detail.convertToUrpGradeDetail().stream().collect(Collectors.toMap(UrpGradeDetail::getScoreTypeCode, x -> x));
 
-    private GradeSearchResult saveCurrentGradeToDb(Student student, CurrentGrade currentGrade) {
-        GradeSearchResult result = new GradeSearchResult();
-        int beforeUpdateCount = urpGradeDao.getTotalCount();
-        List<UrpGradeAndUrpCourse> allContent = getUrpGradeAndUrpCourse(student, currentGrade);
-        result.setData(allContent);
-        result.setUpdate(allContent.size() - beforeUpdateCount > 0);
-        return result;
+        GradeDetailVo vo = new GradeDetailVo();
+        if (detailMap.containsKey("001")) {
+            UrpGradeDetail urpGradeDetail = detailMap.get("001");
+            vo.setClassGrade(new GradeDetailVo.GradeDetailVoItem(urpGradeDetail));
+        }
+        if (detailMap.containsKey("002")) {
+            UrpGradeDetail urpGradeDetail = detailMap.get("002");
+            vo.setExperimentGrade(new GradeDetailVo.GradeDetailVoItem(urpGradeDetail));
+        }
+        if (detailMap.containsKey("003")) {
+            UrpGradeDetail urpGradeDetail = detailMap.get("003");
+            vo.setPracticeGrade(new GradeDetailVo.GradeDetailVoItem(urpGradeDetail));
+        }
+
+        return vo;
+
     }
 
     public static String gradeListToText(List<UrpGradeAndUrpCourse> studentGrades) {

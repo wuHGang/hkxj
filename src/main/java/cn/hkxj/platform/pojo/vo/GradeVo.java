@@ -30,6 +30,8 @@ public class GradeVo {
 
     private Date examTime;
 
+    private String examTimeStr;
+
     private String unpassedReasonCode;
 
     private String unpassedReasonExplain;
