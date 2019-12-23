@@ -144,6 +144,12 @@ public class UrpCourseService {
         }
     }
 
+    /**
+     *
+     * @param courseId
+     * @return
+     */
+    @Deprecated
     public UrpCourse getUrpCourseByCourseId(String courseId) {
 
         try {

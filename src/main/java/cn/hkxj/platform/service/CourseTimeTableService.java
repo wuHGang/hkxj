@@ -94,7 +94,9 @@ public class CourseTimeTableService {
             }
             count++;
             builder.append(computationOfKnots(detail)).append("节").append("\n")
-                    .append(urpCourseService.getUrpCourseByCourseId(detail.getCourseId()).getCourseName()).append("\n")
+                    .append(urpCourseService.getCurrentTermCourse(detail.getCourseId(),
+                            detail.getCourseSequenceNumber()).getName()).append(
+                            "\n")
                     .append(detail.getRoomName());
             if (count != length) {
                 builder.append("\n\n");
@@ -263,24 +265,6 @@ public class CourseTimeTableService {
 
     }
 
-
-    /**
-     * 获取当前学期当前周所有的课程时间表
-     *
-     * @param student 学生实体
-     * @return 课程时间表详情
-     */
-    public List<CourseTimeTableDetail> getDetailsForCurrentWeek(Student student) {
-        SchoolTime schoolTime = DateUtils.getCurrentSchoolTime();
-        List<Integer> detailIdList = getCourseTimeTableDetailIdByAccount(student.getAccount());
-        if (detailIdList.isEmpty()) {
-            UrpCourseTimeTableForSpider tableForSpider = getCourseTimeTableDetails(student);
-            return getCurrentWeekDataFromSpider(tableForSpider, schoolTime);
-        } else {
-            return courseTimeTableDetailDao.getCourseTimeTableDetailForCurrentWeek(detailIdList, schoolTime);
-        }
-
-    }
 
     UrpCourseTimeTableForSpider getCourseTimeTableDetails(Student student) {
         UrpCourseTimeTableForSpider spiderResult = newUrpSpiderService.getUrpCourseTimeTable(student);
@@ -634,7 +618,11 @@ public class CourseTimeTableService {
         return details.stream().map(detail -> {
             CourseTimeTableDetailDto detailVo = new CourseTimeTableDetailDto();
             detailVo.setDetail(detail);
-            detailVo.setUrpCourse(urpCourseService.getUrpCourseByCourseId(detail.getCourseId()));
+
+            Course course = urpCourseService.getCurrentTermCourse(detail.getCourseId(), detail.getCourseSequenceNumber());
+            UrpCourse urpCourse = new UrpCourse();
+            urpCourse.setCourseName(course.getName());
+            detailVo.setUrpCourse(urpCourse);
             return detailVo;
         }).collect(Collectors.toList());
     }

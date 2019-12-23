@@ -94,19 +94,6 @@ public class TestController {
         System.out.println(courseTimeTableService.convertToText(courseTimeTableService.getDetailsForCurrentDay(student)));
     }
 
-    @RequestMapping("/testcttweek")
-    public void testCourseTimeTableWeek(){
-
-        Student student = new Student();
-        student.setAccount(2016024170);
-        student.setPassword("1");
-        Classes classes = new Classes();
-        classes.setId(316);
-        student.setClasses(classes);
-        List<CourseTimeTableDetail> details = courseTimeTableService.getDetailsForCurrentWeek(student);
-        System.out.println("size = " + details.size());
-        System.out.println(courseTimeTableService.convertToText(details));
-    }
 
     @RequestMapping("tests")
     public String test(String echostr){
