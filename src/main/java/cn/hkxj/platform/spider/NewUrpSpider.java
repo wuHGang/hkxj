@@ -413,7 +413,7 @@ public class NewUrpSpider {
             }
             log.error("parse grade error {}", result, e);
             COOKIE_JAR.clearSession();
-            throw new UrpSessionExpiredException("account: " + account + "session expired");
+            throw new UrpSessionExpiredException("account: " + account + " session expired");
         }
     }
 
@@ -426,7 +426,7 @@ public class NewUrpSpider {
         String s = new String(execute(request));
         if (s.contains("invalidSession") || s.contains("login")) {
             COOKIE_JAR.clearSession();
-            throw new UrpSessionExpiredException("account: " + account + "session expired");
+            throw new UrpSessionExpiredException("account: " + account + " session expired");
         }
         Document document = Jsoup.parse(s);
         Elements elements = document.getElementsByClass("clearfix");

@@ -8,6 +8,7 @@ import cn.hkxj.platform.pojo.constant.RedisKeys;
 import cn.hkxj.platform.spider.model.UrpStudentInfo;
 import cn.hkxj.platform.spider.newmodel.searchclass.ClassInfoSearchResult;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -149,8 +150,34 @@ public class ClassService {
 
     public UrpClass getUrpClassByStudent(Student student){
         HashOperations<String, String, String> hash = redisTemplate.opsForHash();
-        String urpClassCode = hash.get(RedisKeys.URP_CLASS_CODE.getName(), student.getClasses().getId().toString());
-        return urpClassDao.selectByClassNumber(urpClassCode);
+
+        UrpClass urpClass;
+
+        Classes classes = student.getClasses();
+        String urpClassCode = hash.get(RedisKeys.URP_CLASS_CODE.getName(), classes.getId().toString());
+
+        if(StringUtils.isEmpty(urpClassCode)){
+            String s = classes.getName() + classes.getYear() + "-" + classes.getNum();
+
+            urpClass = urpClassDao.selectByName(s);
+
+            if(urpClass == null){
+                log.error("student {}  can`t find urp class", student);
+                return null;
+            }
+
+            hash.put(RedisKeys.URP_CLASS_CODE.getName(), classes.getId().toString(), urpClass.getClassNum());
+
+
+        }
+        urpClass = urpClassDao.selectByClassNumber(urpClassCode);
+
+        if(urpClass == null){
+            log.error("student {}  can`t find urp class", student);
+            return null;
+        }
+
+        return urpClass;
     }
 
 

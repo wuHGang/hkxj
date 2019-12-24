@@ -18,7 +18,17 @@ public class UrpClassDao {
         example.createCriteria()
                 .andClassNumEqualTo(classNumber);
 
-        return urpClassMapper.selectByExample(example).get(0);
+        return urpClassMapper.selectByExample(example).stream().findFirst().orElse(null);
+
+    }
+
+
+    public UrpClass selectByName(String name){
+        UrpClassExample example = new UrpClassExample();
+        example.createCriteria()
+                .andClassNameEqualTo(name);
+
+        return urpClassMapper.selectByExample(example).stream().findFirst().orElse(null);
     }
 
 }

@@ -79,7 +79,7 @@ public class NewUrpSpiderService {
 
 
 
-    UrpCourseForSpider getCourseFromSpider(Student student, String uid){
+    UrpCourseForSpider getCourseFrFomSpider(Student student, String uid){
         return getCourseFromSpider(student.getAccount().toString(), student.getPassword(), uid);
     }
 

@@ -171,7 +171,7 @@ public class CourseTimeTableService {
             CompletableFuture<UrpCourseTimeTableForSpider> future =
                     CompletableFuture.supplyAsync(() -> getCourseTimeTableDetails(student), courseSpiderExecutor);
 
-            UrpCourseTimeTableForSpider tableForSpider = future.get(10000L, TimeUnit.MILLISECONDS);
+            UrpCourseTimeTableForSpider tableForSpider = future.get(3000L, TimeUnit.MILLISECONDS);
             if (!hasSchoolCourse(tableForSpider)) {
                 return transCourseTimeTableToVo(getCourseTimetableByClazz(student));
             } else {
@@ -651,6 +651,11 @@ public class CourseTimeTableService {
 
     private List<CourseTimeTableDetail> getCourseTimetableByClass(Student student) {
         UrpClass urpClass = classService.getUrpClassByStudent(student);
+
+        if(urpClass == null){
+            return Collections.emptyList();
+        }
+
         return classCourseTimetableDao.selectByPojo(new ClassCourseTimetable().setClassId(urpClass.getClassNum()))
                 .stream()
                 .map(ClassCourseTimetable::getCourseTimetableId)
@@ -676,6 +681,11 @@ public class CourseTimeTableService {
 
     private List<CourseTimetable> getCourseTimetableByClazz(Student student) {
         UrpClass urpClass = classService.getUrpClassByStudent(student);
+
+        if(urpClass == null){
+            return Collections.emptyList();
+        }
+
         return getCourseTimetableByClazz(urpClass);
     }
 
