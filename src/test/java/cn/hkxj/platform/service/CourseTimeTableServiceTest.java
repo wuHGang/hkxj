@@ -120,7 +120,7 @@ public class CourseTimeTableServiceTest {
 
     @Test
     public void getCourseTimeTableByStudentFromSpider() {
-        Student student = studentDao.selectStudentByAccount(2019023533);
+        Student student = studentDao.selectStudentByAccount(2016024986);
         for (CourseTimeTableVo vo : courseTimeTableService.getCourseTimeTableByStudentFromSpider(student)) {
             System.out.println(vo);
         }

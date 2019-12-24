@@ -81,9 +81,12 @@ public class CourseSubscriptionTask extends BaseSubscriptionTask {
     }
 
     public void execute(int section) {
+        log.info("send course message task switch {}", updateSwitch);
+
         if(!BooleanUtils.toBoolean(updateSwitch)){
             return;
         }
+
         Set<CourseSubscriptionMessage> messageSet = courseSubscribeService.getSubscriptionMessages(section);
 
         WxMpService wxMpService = getWxMpService(wechatMpPlusProperties.getAppId());
