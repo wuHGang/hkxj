@@ -215,7 +215,7 @@ public class TemplateBuilder {
     private WxMpTemplateData getCourseRemark(){
         WxMpTemplateData remark = new WxMpTemplateData();
         remark.setName("remark");
-        remark.setValue("有疑问请加吴彦祖微信hkdhdj666，这次微信号是对的！！！");
+        remark.setValue("本周末想去滑雪的同学加吴彦祖微信hkdhdj666");
         return remark;
     }
 
@@ -250,7 +250,7 @@ public class TemplateBuilder {
 
         WxMpTemplateData remark = new WxMpTemplateData();
         remark.setName("remark");
-        remark.setValue("点击即可查看详情，有问题烦请后台留言~\n推荐给更多同学会优先发消息哦");
+        remark.setValue("点击即可查看详情，有问题烦请后台留言~\n本周末想去滑雪的同学加吴彦祖微信hkdhdj666");
         templateDataList.add(first);
         templateDataList.add(key1);
         templateDataList.add(key2);

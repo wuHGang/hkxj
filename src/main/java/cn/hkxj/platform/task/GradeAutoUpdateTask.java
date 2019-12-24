@@ -154,7 +154,7 @@ public class GradeAutoUpdateTask extends BaseSubscriptionTask {
                                     .setCourseName(new SubscribeValue(gradeVo.getCourse().getName()))
                                     .setName(new SubscribeValue(student.getName()))
                                     .setScore(new SubscribeValue(gradeVo.getScore().toString()))
-                                    .setRemark(new SubscribeValue("这是一条测试消息"))
+                                    .setRemark(new SubscribeValue("本周末想去滑雪加微信hkdhdj666"))
                             );
 
                     miniProgramService.sendSubscribeMessage(message);

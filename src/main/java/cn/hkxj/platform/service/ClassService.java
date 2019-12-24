@@ -169,8 +169,9 @@ public class ClassService {
             hash.put(RedisKeys.URP_CLASS_CODE.getName(), classes.getId().toString(), urpClass.getClassNum());
 
 
+        }else {
+            urpClass = urpClassDao.selectByClassNumber(urpClassCode);
         }
-        urpClass = urpClassDao.selectByClassNumber(urpClassCode);
 
         if(urpClass == null){
             log.error("student {}  can`t find urp class", student);
