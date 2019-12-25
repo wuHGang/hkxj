@@ -1,6 +1,7 @@
 package cn.hkxj.platform.controller;
 
 
+import cn.hkxj.platform.config.wechat.WechatMpConfiguration;
 import cn.hkxj.platform.exceptions.OpenidExistException;
 import cn.hkxj.platform.exceptions.PasswordUnCorrectException;
 import cn.hkxj.platform.exceptions.UrpVerifyCodeException;
@@ -9,6 +10,9 @@ import cn.hkxj.platform.pojo.WebResponse;
 import cn.hkxj.platform.pojo.constant.ErrorCode;
 import cn.hkxj.platform.service.wechat.StudentBindService;
 import lombok.extern.slf4j.Slf4j;
+import me.chanjar.weixin.common.error.WxErrorException;
+import me.chanjar.weixin.mp.api.WxMpService;
+import me.chanjar.weixin.mp.bean.result.WxMpOAuth2AccessToken;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,6 +43,29 @@ public class UserBindingController {
         return "LoginWeb/Login";
     }
 
+    /**
+     * 菜单点击的绑定界面用户识别
+     *
+     * @param code 用户换取微信用户openid的code
+     * @param state 菜单回传的状态码  这里填appid来区别公众号
+     */
+    @RequestMapping(value = "/bind/menu", method = RequestMethod.GET)
+    public String menu(@RequestParam(value = "code") String code,
+                       @RequestParam(value = "state") String state) {
+
+        WxMpService wxMpService = WechatMpConfiguration.getMpServices().get(state);
+
+        try {
+            WxMpOAuth2AccessToken token = wxMpService.oauth2getAccessToken(code);
+            httpSession.setAttribute("openid", token.getOpenId());
+            httpSession.setAttribute("appid", state);
+        } catch (WxErrorException e) {
+            log.error("get token error", e);
+        }
+
+        return "LoginWeb/Login";
+    }
+
 
     @RequestMapping(value = "/bind/wechat", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
     @ResponseBody
@@ -47,12 +74,12 @@ public class UserBindingController {
                                      @RequestParam(value = "appid", required = false) String appid,
                                      @RequestParam(value = "openid", required = false) String openid
     ) {
-		if (appid == null) {
-			appid = (String) httpSession.getAttribute("appid");
-		}
-		if (openid == null) {
-			openid = (String) httpSession.getAttribute("openid");
-		}
+        if (appid == null) {
+            appid = (String) httpSession.getAttribute("appid");
+        }
+        if (openid == null) {
+            openid = (String) httpSession.getAttribute("openid");
+        }
 
         log.info("student bind start account:{} password:{} appId:{} openid:{}", account, password, appid, openid);
 

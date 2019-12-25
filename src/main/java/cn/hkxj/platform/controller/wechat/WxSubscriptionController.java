@@ -91,6 +91,7 @@ public class WxSubscriptionController {
     private void actionEqualToConfirm(Student student, String action, String appid, String openid, String scene){
         if (Objects.equals(ACTION_CONFIRM, action)) {
             WxMpService wxMpService = WechatMpConfiguration.getMpServices().get(appid);
+
             if(Objects.equals(SubscribeScene.COURSE_PUSH.getScene(), scene)){
                 processCourseSubscription(wxMpService, openid, scene, student);
             }
