@@ -250,7 +250,7 @@ public class TemplateBuilder {
 
         WxMpTemplateData remark = new WxMpTemplateData();
         remark.setName("remark");
-        remark.setValue("点击即可查看详情，有问题烦请后台留言~\n本周末想去滑雪的同学加吴彦祖微信hkdhdj666");
+        remark.setValue("点击卡片即可查看详情\n如果觉得好用把我们介绍给你的朋友吧~比心");
         templateDataList.add(first);
         templateDataList.add(key1);
         templateDataList.add(key2);

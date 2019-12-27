@@ -201,9 +201,6 @@ public class StudentBindService {
             update.setAccount(Integer.parseInt(account));
             update.setIsBind(true);
             origin = update.getAccount().toString();
-            if (update.getAccount().toString().equals(account)) {
-                return;
-            }
         }
 
 
