@@ -29,7 +29,7 @@ public class ExceptionHandlerAdvice {
 		}else if(e instanceof UrpRequestException) {
 			return WebResponse.fail(ErrorCode.LOGIN_ERROR.getErrorCode(), "can`t verify user");
 		}else if(e instanceof UrpEvaluationException) {
-			return WebResponse.fail(ErrorCode.LOGIN_ERROR.getErrorCode(), "未完成评估");
+			return WebResponse.fail(ErrorCode.Evaluation_ERROR.getErrorCode(), "未完成评估");
 		}
 		log.error("request fail", e);
 		return WebResponse.fail(ErrorCode.SYSTEM_ERROR.getErrorCode(), "服务器出了点小问题");
