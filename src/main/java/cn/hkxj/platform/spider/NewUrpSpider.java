@@ -756,6 +756,8 @@ public class NewUrpSpider {
         if (html.contains("invalidSession") || html.contains("login")) {
             COOKIE_JAR.clearSession();
             throw new UrpSessionExpiredException("account: " + account + " session expired");
+        }else if(html.contains("没有完成评估")){
+            throw new UrpEvaluationException("account："+ account + " 评估未完成无法查看个人信息");
         }
         HashMap<String, String> infoMap = new HashMap<>();
         Document document = Jsoup.parse(html);

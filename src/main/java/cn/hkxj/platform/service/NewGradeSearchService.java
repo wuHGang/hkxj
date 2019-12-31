@@ -2,7 +2,9 @@ package cn.hkxj.platform.service;
 
 import cn.hkxj.platform.MDCThreadPool;
 import cn.hkxj.platform.dao.*;
+import cn.hkxj.platform.exceptions.UrpEvaluationException;
 import cn.hkxj.platform.pojo.*;
+import cn.hkxj.platform.pojo.constant.ErrorCode;
 import cn.hkxj.platform.pojo.vo.GradeDetailVo;
 import cn.hkxj.platform.pojo.vo.GradeVo;
 import cn.hkxj.platform.spider.newmodel.grade.CurrentGrade;
@@ -121,7 +123,12 @@ public class NewGradeSearchService {
         List<GradeDetail> gradeDetailList;
         try {
             gradeDetailList = future.get(5000L, TimeUnit.MILLISECONDS);
-        } catch (InterruptedException | ExecutionException | TimeoutException e) {
+        } catch (ExecutionException e){
+            Throwable cause = e.getCause();
+            List<GradeVo> gradeVoList = gradeToVo(gradeDao.getCurrentTermGradeByAccount(student.getAccount()));
+            gradeVoList.forEach(x-> x.setErrorCode(ErrorCode.Evaluation_ERROR.getErrorCode()).setMsg(cause.getMessage()));
+            return gradeVoList;
+        } catch (InterruptedException | TimeoutException e) {
             return gradeToVo(gradeDao.getCurrentTermGradeByAccount(student.getAccount()));
         }
 

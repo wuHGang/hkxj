@@ -19,6 +19,11 @@ public enum  ErrorCode {
 	LOGIN_ERROR(405),
 
 	/**
+	 * 未完成评估，需要手动到教务网上完成评估
+	 */
+	Evaluation_ERROR(406),
+
+	/**
 	 *服务器端错误
 	 */
 	SYSTEM_ERROR(500),

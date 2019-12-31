@@ -7,6 +7,7 @@ import cn.hkxj.platform.config.wechat.WechatMpConfiguration;
 import cn.hkxj.platform.config.wechat.WechatMpPlusProperties;
 import cn.hkxj.platform.config.wechat.WechatTemplateProperties;
 import cn.hkxj.platform.dao.ScheduleTaskDao;
+import cn.hkxj.platform.exceptions.UrpEvaluationException;
 import cn.hkxj.platform.exceptions.UrpException;
 import cn.hkxj.platform.exceptions.UrpTimeoutException;
 import cn.hkxj.platform.pojo.ScheduleTask;
@@ -110,6 +111,8 @@ public class GradeAutoUpdateTask extends BaseSubscriptionTask {
                             if (task.timeoutCount < 3) {
                                 queue.add(task);
                             }
+                        } catch (UrpEvaluationException e){
+                          log.info("{} 评估未完成", task);
                         } catch (Exception e) {
                             log.error("grade update task {} error ", task, e);
                         } finally {

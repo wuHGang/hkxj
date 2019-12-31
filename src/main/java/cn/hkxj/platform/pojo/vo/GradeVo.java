@@ -52,5 +52,9 @@ public class GradeVo {
 
     private Integer termOrder;
 
+    private Integer errorCode = 0;
+
+    private String msg;
+
     private boolean update = false;
 }
