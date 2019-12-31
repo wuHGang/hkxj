@@ -753,6 +753,10 @@ public class NewUrpSpider {
      * 解析学生信息页面的html
      */
     private Map<String, String> parseUserInfo(String html) {
+        if (html.contains("invalidSession") || html.contains("login")) {
+            COOKIE_JAR.clearSession();
+            throw new UrpSessionExpiredException("account: " + account + " session expired");
+        }
         HashMap<String, String> infoMap = new HashMap<>();
         Document document = Jsoup.parse(html);
         Elements elements = document.getElementsByClass("profile-info-row");

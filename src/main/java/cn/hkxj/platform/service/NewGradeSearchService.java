@@ -90,10 +90,10 @@ public class NewGradeSearchService {
 
             // TODO 将其它对象重新整理入库
             //对教学计划相关的信息进行判断是否需要保存
-//            Plan plan = getPlan(generalGradeForSpider);
+            Plan plan = urpGradeForSpider.convertToPlan();
             //对专业相关的信息进行判断是否需要保存
-//            Major major = getMajor(generalGradeForSpider);
-//            UrpExam urpExam = getUrpExam(generalGradeForSpider, plan, major, student);
+            Major major = urpGradeForSpider.convertToMajor();
+//            UrpExam urpExam = getUrpExam(urpGradeForSpider, plan, major, student);
             Grade grade = urpGradeForSpider.convertToGrade();
 
 
@@ -306,15 +306,4 @@ public class NewGradeSearchService {
         return urpExamDao.saveOrGetUrpExamFromDb(urpExamFromSpider, currentTerm);
     }
 
-    private UrpGrade getUrpGrade(UrpGeneralGradeForSpider generalGradeForSpider, UrpExam urpExam, Student student) {
-        UrpGrade urpGradeFromSpider = generalGradeForSpider.convertToUrpGrade();
-        urpGradeFromSpider.setExamId(urpExam.getId());
-        urpGradeFromSpider.setAccount(student.getAccount());
-        return urpGradeDao.saveOrGetUrpGradeFromDb(urpGradeFromSpider);
-    }
-
-    private List<UrpGradeDetail> getUrpGradeDetail(UrpGradeDetailForSpider gradeDetailForSpider, UrpGrade urpGrade) {
-        List<UrpGradeDetail> urpGradeDetailListFromSpider = gradeDetailForSpider.convertToUrpGradeDetail();
-        return urpGradeDetailDao.saveOrGetUrpGradeDetailFromDb(urpGradeDetailListFromSpider, urpGrade.getId());
-    }
 }
