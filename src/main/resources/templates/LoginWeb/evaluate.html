@@ -66,7 +66,6 @@
                     "account": account,
                     "password": password
                 };
-                alert("绑定中,请稍候");
                 if (!isCommitted) { //当表单被成功提交过一次后isCommitted将变为true,根据判断将无法进行提交。
                     isCommitted = true;//提交表单后，将表单是否已经提交标识设置为true
                     $.ajax({
@@ -75,7 +74,7 @@
                         data: data,
                         success : function (data) {
                             if (data.status === 200) {
-                                alert("自动教评中");
+                                alert("自动教评中，这个过程可能需要10秒");
                                 isCommitted = false;//提交完成，可以继续提交
                             }
                             else if (data.status === 402) {
@@ -109,7 +108,7 @@
         <div class="mysign">
             <div align="center">
                 <img src="/platform/img/hkxjLogo.JPG"/>
-                <h2> 用户绑定</h2>
+                <h2>一键教评</h2>
             </div>
             <div class="form-group col-lg-12">
                 <label for="account">学号</label>
@@ -121,7 +120,7 @@
             </div>
 
             <div class="form-group " align="center" >
-                <button class="btn btn-success" type="button" id="login" >绑定</button>
+                <button class="btn btn-success" type="button" id="login" >开始教评</button>
             </div>
         </div>
     </div>

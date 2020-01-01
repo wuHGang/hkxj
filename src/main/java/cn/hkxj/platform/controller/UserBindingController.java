@@ -203,7 +203,7 @@ public class UserBindingController {
         return WebResponse.success();
     }
 
-    private Student login(String openid, String account, String password, String appid) {
+    private Student login( String account, String password, String appid, String openid) {
         Student student;
         if (StringUtils.isEmpty(openid)) {
             student = studentBindService.studentLogin(account, password);
