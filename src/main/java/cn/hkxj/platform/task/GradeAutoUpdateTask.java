@@ -112,7 +112,7 @@ public class GradeAutoUpdateTask extends BaseSubscriptionTask {
                                 queue.add(task);
                             }
                         } catch (UrpEvaluationException e){
-                          log.info("{} 评估未完成", task);
+                          log.debug("{} 评估未完成", task);
                         } catch (Exception e) {
                             log.error("grade update task {} error ", task, e);
                         } finally {

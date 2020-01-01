@@ -85,7 +85,7 @@ public class UserBindingController {
      * @param code  用户换取微信用户openid的code
      * @param state 菜单回传的状态码  这里填appid来区别公众号
      */
-    @RequestMapping(value = "/bind/menu", method = RequestMethod.GET)
+    @RequestMapping(value = "/bind/evaluate", method = RequestMethod.GET)
     public String autoEvaluate(@RequestParam(value = "code") String code,
                                @RequestParam(value = "state") String state) {
 
