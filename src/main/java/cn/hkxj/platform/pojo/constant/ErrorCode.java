@@ -24,6 +24,11 @@ public enum  ErrorCode {
 	Evaluation_ERROR(406),
 
 	/**
+	 * 教务网的异常，通常网络波动等原因，提醒用户重试即可
+	 */
+	URP_EXCEPTION(406),
+
+	/**
 	 *服务器端错误
 	 */
 	SYSTEM_ERROR(500),

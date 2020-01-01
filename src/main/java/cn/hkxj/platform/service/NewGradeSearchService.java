@@ -126,7 +126,15 @@ public class NewGradeSearchService {
         } catch (ExecutionException e){
             Throwable cause = e.getCause();
             List<GradeVo> gradeVoList = gradeToVo(gradeDao.getCurrentTermGradeByAccount(student.getAccount()));
-            gradeVoList.forEach(x-> x.setErrorCode(ErrorCode.Evaluation_ERROR.getErrorCode()).setMsg(cause.getMessage()));
+
+            if(cause instanceof UrpEvaluationException){
+                if(gradeVoList.isEmpty()){
+                    UrpEvaluationException exception = (UrpEvaluationException) cause;
+                    throw exception;
+                }
+                gradeVoList.forEach(x-> x.setErrorCode(ErrorCode.Evaluation_ERROR.getErrorCode()).setMsg(cause.getMessage()));
+            }
+
             return gradeVoList;
         } catch (InterruptedException | TimeoutException e) {
             return gradeToVo(gradeDao.getCurrentTermGradeByAccount(student.getAccount()));

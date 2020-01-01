@@ -1,9 +1,6 @@
 package cn.hkxj.platform.controller;
 
-import cn.hkxj.platform.exceptions.PasswordUnCorrectException;
-import cn.hkxj.platform.exceptions.ReadTimeoutException;
-import cn.hkxj.platform.exceptions.UrpEvaluationException;
-import cn.hkxj.platform.exceptions.UrpRequestException;
+import cn.hkxj.platform.exceptions.*;
 import cn.hkxj.platform.pojo.WebResponse;
 import cn.hkxj.platform.pojo.constant.ErrorCode;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +27,8 @@ public class ExceptionHandlerAdvice {
 			return WebResponse.fail(ErrorCode.LOGIN_ERROR.getErrorCode(), "can`t verify user");
 		}else if(e instanceof UrpEvaluationException) {
 			return WebResponse.fail(ErrorCode.Evaluation_ERROR.getErrorCode(), "未完成评估");
+		}else if(e instanceof UrpException){
+			return WebResponse.fail(ErrorCode.URP_EXCEPTION.getErrorCode(), "教务网异常，请重试");
 		}
 		log.error("request fail", e);
 		return WebResponse.fail(ErrorCode.SYSTEM_ERROR.getErrorCode(), "服务器出了点小问题");

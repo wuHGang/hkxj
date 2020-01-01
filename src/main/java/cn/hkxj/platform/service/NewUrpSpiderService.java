@@ -55,12 +55,6 @@ public class NewUrpSpiderService {
     private StudentDao studentDao;
 
     @Retryable(value = UrpException.class, maxAttempts = 3)
-    CurrentGrade getCurrentTermGrade(String account, String password){
-        NewUrpSpider spider = getSpider(account, password);
-        return spider.getCurrentGrade();
-    }
-
-    @Retryable(value = UrpException.class, maxAttempts = 3)
     CurrentGrade getCurrentTermGrade(Student student){
         NewUrpSpider spider = getSpider(student.getAccount().toString(), student.getPassword());
         return spider.getCurrentGrade();
@@ -203,7 +197,6 @@ public class NewUrpSpiderService {
 
     @Retryable(value = UrpException.class, maxAttempts = 3)
     public List<UrpExamTime> getExamTime(Student student){
-
         return getExamTime(student.getAccount().toString(), student.getPassword());
     }
 
