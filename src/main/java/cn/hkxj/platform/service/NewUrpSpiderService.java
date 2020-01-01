@@ -12,6 +12,9 @@ import cn.hkxj.platform.spider.model.UrpStudentInfo;
 import cn.hkxj.platform.spider.newmodel.SearchResult;
 import cn.hkxj.platform.spider.newmodel.course.UrpCourseForSpider;
 import cn.hkxj.platform.spider.newmodel.coursetimetable.UrpCourseTimeTableForSpider;
+import cn.hkxj.platform.spider.newmodel.evaluation.EvaluationPagePost;
+import cn.hkxj.platform.spider.newmodel.evaluation.EvaluationPost;
+import cn.hkxj.platform.spider.newmodel.evaluation.searchresult.TeachingEvaluation;
 import cn.hkxj.platform.spider.newmodel.examtime.UrpExamTime;
 import cn.hkxj.platform.spider.newmodel.grade.CurrentGrade;
 import cn.hkxj.platform.spider.newmodel.grade.detail.GradeDetailSearchPost;
@@ -154,6 +157,26 @@ public class NewUrpSpiderService {
     public UrpCourseTimeTableForSpider getUrpCourseTimeTable(Student student){
         NewUrpSpider spider = getSpider(student.getAccount().toString(), student.getPassword());
         return spider.getUrpCourseTimeTable();
+    }
+
+
+    @Retryable(value = UrpException.class, maxAttempts = 3)
+    public TeachingEvaluation searchTeachingEvaluationInfo(Student student){
+        NewUrpSpider spider = getSpider(student.getAccount().toString(), student.getPassword());
+        return spider.searchTeachingEvaluationInfo();
+    }
+
+
+    @Retryable(value = UrpException.class, maxAttempts = 3)
+    public void evaluate(Student student, EvaluationPost evaluationPost){
+        NewUrpSpider spider = getSpider(student.getAccount().toString(), student.getPassword());
+        spider.evaluation(evaluationPost);
+    }
+
+    @Retryable(value = UrpException.class, maxAttempts = 3)
+    public String getEvaluationToken(Student student, EvaluationPagePost evaluationPagePost){
+        NewUrpSpider spider = getSpider(student.getAccount().toString(), student.getPassword());
+        return spider.getEvaluationToken(evaluationPagePost);
     }
 
     /**

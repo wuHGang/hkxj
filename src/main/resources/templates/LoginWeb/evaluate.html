@@ -1,4 +1,4 @@
-﻿<html>
+<html>
 <head>
     <title>黑科校际</title>
     <meta charset="utf-8"/>
@@ -6,7 +6,7 @@
                                      initial-scale=1.0,
                                      maximum-scale=1.0,
                                      user-scalable=no">
-    <title>用户登录</title>
+    <title>一键教评</title>
     <!-- 新 Bootstrap 核心 CSS 文件 -->
     <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css">
     <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
@@ -45,8 +45,8 @@
     </style>
     <script type="text/javascript">
         function isPositiveInteger(s){
-                re = /^[0-9]\d+$/ ;
-                return re.test(s)
+            re = /^[0-9]\d+$/ ;
+            return re.test(s)
         }
 
         var isCommitted = false; //设置初始提交标识
@@ -71,11 +71,11 @@
                     isCommitted = true;//提交表单后，将表单是否已经提交标识设置为true
                     $.ajax({
                         type: "post",
-                        url: "/platform/bind/wechat",
+                        url: "/platform/autoEvaluate",
                         data: data,
                         success : function (data) {
                             if (data.status === 200) {
-                                alert("绑定成功");
+                                alert("自动教评中");
                                 isCommitted = false;//提交完成，可以继续提交
                             }
                             else if (data.status === 402) {

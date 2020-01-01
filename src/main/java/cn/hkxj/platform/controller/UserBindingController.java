@@ -1,13 +1,16 @@
 package cn.hkxj.platform.controller;
 
 
+import cn.hkxj.platform.MDCThreadPool;
 import cn.hkxj.platform.config.wechat.WechatMpConfiguration;
 import cn.hkxj.platform.exceptions.OpenidExistException;
 import cn.hkxj.platform.exceptions.PasswordUnCorrectException;
+import cn.hkxj.platform.exceptions.UrpEvaluationException;
 import cn.hkxj.platform.exceptions.UrpVerifyCodeException;
 import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.pojo.WebResponse;
 import cn.hkxj.platform.pojo.constant.ErrorCode;
+import cn.hkxj.platform.service.TeachingEvaluationService;
 import cn.hkxj.platform.service.wechat.StudentBindService;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
@@ -23,6 +26,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Controller
@@ -31,6 +38,11 @@ public class UserBindingController {
     private HttpSession httpSession;
     @Resource
     private StudentBindService studentBindService;
+    @Resource
+    private TeachingEvaluationService teachingEvaluationService;
+
+    private static ExecutorService evaluatePool = new MDCThreadPool(8, 8,
+            0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(), r -> new Thread(r, "evaluate"));
 
     private static final int ACCOUNT_LENGTH = 10;
     private static final String ACCOUNT_PREFIX = "20";
@@ -46,7 +58,7 @@ public class UserBindingController {
     /**
      * 菜单点击的绑定界面用户识别
      *
-     * @param code 用户换取微信用户openid的code
+     * @param code  用户换取微信用户openid的code
      * @param state 菜单回传的状态码  这里填appid来区别公众号
      */
     @RequestMapping(value = "/bind/menu", method = RequestMethod.GET)
@@ -64,6 +76,30 @@ public class UserBindingController {
         }
 
         return "LoginWeb/Login";
+    }
+
+
+    /**
+     * 菜单点击的绑定界面用户识别
+     *
+     * @param code  用户换取微信用户openid的code
+     * @param state 菜单回传的状态码  这里填appid来区别公众号
+     */
+    @RequestMapping(value = "/bind/menu", method = RequestMethod.GET)
+    public String autoEvaluate(@RequestParam(value = "code") String code,
+                               @RequestParam(value = "state") String state) {
+
+        WxMpService wxMpService = WechatMpConfiguration.getMpServices().get(state);
+
+        try {
+            WxMpOAuth2AccessToken token = wxMpService.oauth2getAccessToken(code);
+            httpSession.setAttribute("openid", token.getOpenId());
+            httpSession.setAttribute("appid", state);
+        } catch (WxErrorException e) {
+            log.error("get token error", e);
+        }
+
+        return "LoginWeb/evaluate";
     }
 
 
@@ -110,6 +146,73 @@ public class UserBindingController {
 
         log.info("student bind success account:{} password:{}, appId:{} openid:{}", account, password, appid, openid);
         return WebResponse.success(student);
+    }
+
+
+    @RequestMapping(value = "/autoEvaluate", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public WebResponse autoEvaluate(@RequestParam("account") String account,
+                                    @RequestParam("password") String password,
+                                    @RequestParam(value = "appid", required = false) String appid,
+                                    @RequestParam(value = "openid", required = false) String openid
+    ) {
+        if (appid == null) {
+            appid = (String) httpSession.getAttribute("appid");
+        }
+        if (openid == null) {
+            openid = (String) httpSession.getAttribute("openid");
+        }
+
+        log.info("student evaluate start account:{} password:{} appId:{} openid:{}", account, password, appid, openid);
+
+        if (!isAccountValid(account)) {
+            log.info("student getStudentInfo fail--invalid account:{}", account);
+            return WebResponse.fail(ErrorCode.ACCOUNT_OR_PASSWORD_INVALID.getErrorCode(), "账号无效");
+        }
+
+        Student student;
+        try {
+            student = login(account, password, appid, openid);
+            evaluatePool.submit(() -> teachingEvaluationService.evaluate(student));
+
+        } catch (UrpVerifyCodeException e) {
+            log.info("student bind fail verify code error account:{} password:{} openid:{}", account, password,
+                    openid);
+            return WebResponse.fail(ErrorCode.VERIFY_CODE_ERROR.getErrorCode(), "验证码错误");
+        } catch (PasswordUnCorrectException e) {
+            log.info("student bind fail Password not correct account:{} password:{} openid:{}", account, password, openid);
+            return WebResponse.fail(ErrorCode.ACCOUNT_OR_PASSWORD_INVALID.getErrorCode(), "账号或者密码错误");
+        } catch (OpenidExistException e) {
+            evaluatePool.submit(() -> teachingEvaluationService.evaluate(account));
+            return WebResponse.success();
+        } catch (UrpEvaluationException e) {
+            Student student1 = new Student()
+                    .setAccount(Integer.parseInt(account))
+                    .setPassword(password);
+            teachingEvaluationService.evaluate(student1);
+
+            String appid1 = appid;
+            String openid1 = openid;
+            evaluatePool.submit(() -> {
+                teachingEvaluationService.evaluate(student1);
+                login(account, password, appid1, openid1);
+            });
+
+        }
+
+        return WebResponse.success();
+    }
+
+    private Student login(String openid, String account, String password, String appid) {
+        Student student;
+        if (StringUtils.isEmpty(openid)) {
+            student = studentBindService.studentLogin(account, password);
+        } else {
+            student = studentBindService.studentBind(openid, account, password, appid);
+        }
+        httpSession.setAttribute("account", account);
+
+        return student;
     }
 
 

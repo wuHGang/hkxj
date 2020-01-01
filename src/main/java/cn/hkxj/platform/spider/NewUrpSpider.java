@@ -6,13 +6,15 @@ import cn.hkxj.platform.pojo.UrpClassroom;
 import cn.hkxj.platform.pojo.constant.RedisKeys;
 import cn.hkxj.platform.spider.model.UrpStudentInfo;
 import cn.hkxj.platform.spider.model.VerifyCode;
-import cn.hkxj.platform.spider.newmodel.CourseRelativeInfo;
 import cn.hkxj.platform.spider.newmodel.SearchResult;
 import cn.hkxj.platform.spider.newmodel.SearchResultDateWrapper;
 import cn.hkxj.platform.spider.newmodel.course.UrpCourseForSpider;
 import cn.hkxj.platform.spider.newmodel.coursetimetable.UrpCourseTimeTableForSpider;
 import cn.hkxj.platform.spider.newmodel.emptyroom.EmptyRoomPojo;
 import cn.hkxj.platform.spider.newmodel.emptyroom.EmptyRoomPost;
+import cn.hkxj.platform.spider.newmodel.evaluation.EvaluationPagePost;
+import cn.hkxj.platform.spider.newmodel.evaluation.EvaluationPost;
+import cn.hkxj.platform.spider.newmodel.evaluation.searchresult.TeachingEvaluation;
 import cn.hkxj.platform.spider.newmodel.examtime.UrpExamTime;
 import cn.hkxj.platform.spider.newmodel.grade.CurrentGrade;
 import cn.hkxj.platform.spider.newmodel.grade.detail.GradeDetailSearchPost;
@@ -136,6 +138,23 @@ public class NewUrpSpider {
      * 课程基本信息 这个url抓取的主要目的是，有些课程的详细信息无法查询到，只能用这个来查询基本信息
      */
     private static final String COURSE_BASIC_INFO = ROOT + "/student/integratedQuery/course/courseBasicInformation/show";
+
+
+    /**
+     * 教学评估 teachingEvaluation/teachingEvaluation/search
+     */
+    private static final String Teaching_Evaluation = ROOT + "/student/teachingEvaluation/teachingEvaluation/search";
+
+    /**
+     * 问卷提交
+     */
+    private static final String EVALUATION = ROOT + "/student/teachingEvaluation/teachingEvaluation/evaluation";
+
+    /**
+     * 问卷页面
+     */
+    private static final String EVALUATION_PAGE = ROOT + "/student/teachingEvaluation/teachingEvaluation" +
+            "/evaluationPage";
 
     private static StringRedisTemplate stringRedisTemplate;
 
@@ -717,6 +736,70 @@ public class NewUrpSpider {
         return parseObject(new String(execute(request)), typeReference);
     }
 
+    public TeachingEvaluation searchTeachingEvaluationInfo() {
+        Request request = new Request.Builder()
+                .url(Teaching_Evaluation)
+                .headers(HEADERS)
+                .build();
+
+        return parseObject(new String(execute(request)), TeachingEvaluation.class);
+    }
+
+
+    public String getEvaluationToken(EvaluationPagePost evaluationPagePost) {
+        FormBody.Builder params = new FormBody.Builder();
+        FormBody body = params
+                .add("evaluatedPeople", evaluationPagePost.getEvaluatedPeople())
+                .add("evaluatedPeopleNumber", evaluationPagePost.getEvaluatedPeopleNumber())
+                .add("questionnaireCode", evaluationPagePost.getQuestionnaireCode())
+                .add("questionnaireName", evaluationPagePost.getQuestionnaireName())
+                .add("evaluationContentNumber", evaluationPagePost.getEvaluationContentNumber())
+                .add("evaluationContentContent", evaluationPagePost.getEvaluationContentContent())
+                .build();
+
+        Request request = new Request.Builder()
+                .url(EVALUATION_PAGE)
+                .headers(HEADERS)
+                .post(body)
+                .build();
+
+        String s = getContent(request);
+
+        Document document = Jsoup.parse(s);
+        Element element = document.getElementById("tokenValue");
+
+        return element.attr("value");
+    }
+
+
+    public void evaluation(EvaluationPost  evaluationPost) {
+        FormBody.Builder params = new FormBody.Builder();
+        FormBody body = params
+                .add("0000000050", evaluationPost.getFirst())
+                .add("0000000051", evaluationPost.getSecond())
+                .add("0000000052", evaluationPost.getThird())
+                .add("0000000053", evaluationPost.getFourth())
+                .add("zgpj", evaluationPost.getComment())
+                .add("questionnaireCode", evaluationPost.getQuestionnaireCode())
+                .add("evaluationContentNumber", evaluationPost.getEvaluationContentNumber())
+                .add("evaluatedPeopleNumber", evaluationPost.getEvaluatedPeopleNumber())
+                .add("tokenValue", evaluationPost.getTokenValue())
+                .add("count", evaluationPost.getCount())
+                .build();
+
+        Request request = new Request.Builder()
+                .url(EVALUATION)
+                .headers(HEADERS)
+                .post(body)
+                .build();
+        String s = getContent(request);
+
+
+
+    }
+
+
+
     private <T> T parseObject(String text, TypeReference<T> type) {
         try {
             return JSON.parseObject(text, type);
@@ -792,6 +875,18 @@ public class NewUrpSpider {
         } catch (IOException e) {
             throw new UrpTimeoutException(request.url().toString(), e);
         }
+    }
+
+
+    private static String getContent(Request request) {
+        String content = new String(execute(request));
+        if (content.contains("invalidSession") || content.contains("login")) {
+            COOKIE_JAR.clearSession();
+            throw new UrpSessionExpiredException("session expired");
+        }else if(content.contains("没有完成评估")){
+            throw new UrpEvaluationException("评估未完成无法查看个人信息");
+        }
+        return content;
     }
 
 

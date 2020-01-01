@@ -76,7 +76,7 @@ public class NewGradeSearchServiceTest {
 
     @Test
     public void getCurrentTermGrade(){
-        Student student = studentDao.selectStudentByAccount(2016025296);
+        Student student = studentDao.selectStudentByAccount(2017025375);
         for (GradeVo grade : newGradeSearchService.getCurrentTermGrade(student)) {
             System.out.println(grade);
         }
