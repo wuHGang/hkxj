@@ -23,7 +23,7 @@ public class TeachingEvaluationService {
     @Resource
     private StudentDao studentDao;
 
-    public void evaluate(String account){
+    public void evaluate(String account) {
         Student student = studentDao.selectStudentByAccount(Integer.parseInt(account));
         evaluate(student);
     }
@@ -32,28 +32,27 @@ public class TeachingEvaluationService {
         List<EvaluationPagePost> postList;
         long l = System.currentTimeMillis();
         log.info("start evaluate {}", student);
-        while ((postList = getEvaluationPagePost(student)).size() != 0){
-            postList.forEach(pagePost -> {
-                String token = newUrpSpiderService.getEvaluationToken(student, pagePost);
-                EvaluationPost post = new EvaluationPost()
-                        .setTokenValue(token)
-                        .setEvaluatedPeopleNumber(pagePost.getEvaluatedPeopleNumber())
-                        .setEvaluationContentNumber(pagePost.getEvaluationContentNumber())
-                        .setQuestionnaireCode(pagePost.getQuestionnaireCode());
-                try {
-                    Thread.sleep(1000L);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                newUrpSpiderService.evaluate(student, post);
-            });
-        }
+        postList = getEvaluationPagePost(student);
+        postList.forEach(pagePost -> {
+            String token = newUrpSpiderService.getEvaluationToken(student, pagePost);
+            EvaluationPost post = new EvaluationPost()
+                    .setTokenValue(token)
+                    .setEvaluatedPeopleNumber(pagePost.getEvaluatedPeopleNumber())
+                    .setEvaluationContentNumber(pagePost.getEvaluationContentNumber())
+                    .setQuestionnaireCode(pagePost.getQuestionnaireCode());
+            try {
+                Thread.sleep(1000L);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            newUrpSpiderService.evaluate(student, post);
+        });
 
-        log.info("finish evaluate {} in {}ms", student, System.currentTimeMillis()- l);
+        log.info("finish evaluate {} in {}ms", student, System.currentTimeMillis() - l);
 
     }
 
-    private List<EvaluationPagePost> getEvaluationPagePost(Student student){
+    private List<EvaluationPagePost> getEvaluationPagePost(Student student) {
         TeachingEvaluation teachingEvaluation = newUrpSpiderService.searchTeachingEvaluationInfo(student);
         return teachingEvaluation.getData().stream()
                 .filter(x -> "否".equals(x.getIsEvaluated()))

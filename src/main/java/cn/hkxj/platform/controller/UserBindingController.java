@@ -41,7 +41,7 @@ public class UserBindingController {
     @Resource
     private TeachingEvaluationService teachingEvaluationService;
 
-    private static ExecutorService evaluatePool = new MDCThreadPool(8, 8,
+    private static ExecutorService evaluatePool = new MDCThreadPool(4, 4,
             0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(), r -> new Thread(r, "evaluate"));
 
     private static final int ACCOUNT_LENGTH = 10;

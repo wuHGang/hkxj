@@ -91,7 +91,7 @@ public class GradeAutoUpdateTask extends BaseSubscriptionTask {
         List<ScheduleTask> subscribeTask = scheduleTaskDao.getPlusSubscribeTask(SubscribeScene.GRADE_AUTO_UPDATE);
         List<ScheduleTask> miniProgramSubscribeTask = scheduleTaskDao.getMiniProgramSubscribeTask(SubscribeScene.GRADE_AUTO_UPDATE);
 
-        log.info("{} grade update task to run", subscribeTask.size());
+        log.info("grade update task run, queue size {}", queue.size());
         queue.addAll(subscribeTask.stream().map(UrpFetchTask::new).collect(Collectors.toList()));
         queue.addAll(miniProgramSubscribeTask.stream().map(UrpFetchTask::new).collect(Collectors.toList()));
         for (int x = 0; x < 8; x++) {
@@ -106,10 +106,10 @@ public class GradeAutoUpdateTask extends BaseSubscriptionTask {
                         } catch (UrpException e) {
                             // TODO  这个可以根据异常类来优化
                             task.timeoutCount++;
-                            log.error("grade update task {} urp exception {}", task, e.getMessage());
-
                             if (task.timeoutCount < 3) {
                                 queue.add(task);
+                            }else {
+                                log.error("grade update task {} urp exception {}", task, e.getMessage());
                             }
                         } catch (UrpEvaluationException e){
                           log.debug("{} 评估未完成", task);
