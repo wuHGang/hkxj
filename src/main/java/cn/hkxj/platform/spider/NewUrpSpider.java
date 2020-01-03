@@ -216,7 +216,7 @@ public class NewUrpSpider {
     private String account;
     private String password;
 
-    private static BlockingQueue<PreLoadCaptcha> queue = new ArrayBlockingQueue<>(20);
+    private final static BlockingQueue<PreLoadCaptcha> queue = new ArrayBlockingQueue<>(5);
 
 
 

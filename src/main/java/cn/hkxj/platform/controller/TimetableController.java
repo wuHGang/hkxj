@@ -2,14 +2,12 @@ package cn.hkxj.platform.controller;
 
 
 import cn.hkxj.platform.elasticsearch.CourseTimeTableSearchService;
-import cn.hkxj.platform.elasticsearch.document.CourseTimeTableDocument;
 import cn.hkxj.platform.pojo.Exam;
 import cn.hkxj.platform.pojo.WebResponse;
 import cn.hkxj.platform.pojo.constant.ErrorCode;
 import cn.hkxj.platform.pojo.vo.CourseTimeTableVo;
 import cn.hkxj.platform.service.CourseTimeTableService;
 import cn.hkxj.platform.service.ExamTimeTableService;
-import cn.hkxj.platform.spider.newmodel.examtime.UrpExamTime;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -99,7 +97,7 @@ public class TimetableController {
             return WebResponse.fail(ErrorCode.ACCOUNT_OR_PASSWORD_INVALID.getErrorCode(), "账号无效");
         }
 
-        List<Exam> examTimeList = examTimeTableService.getExamtimeList(Integer.parseInt(account));
+        List<Exam> examTimeList = examTimeTableService.getExamTimeList(Integer.parseInt(account));
         return WebResponse.success(examTimeList);
     }
 

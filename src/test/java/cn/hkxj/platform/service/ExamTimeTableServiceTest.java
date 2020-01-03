@@ -10,8 +10,6 @@ import org.springframework.test.context.web.WebAppConfiguration;
 
 import javax.annotation.Resource;
 
-import static org.junit.Assert.*;
-
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = PlatformApplication.class)
 @WebAppConfiguration
@@ -23,9 +21,8 @@ public class ExamTimeTableServiceTest {
     @Test
     public void getExamtimeList() {
 
-        for (Exam exam : examTimeTableService.getExamtimeList(2017023480)) {
+        for (Exam exam : examTimeTableService.getExamTimeList(2017023480)) {
             System.out.println(exam);
         }
-        ;
     }
 }

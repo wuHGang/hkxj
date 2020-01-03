@@ -98,7 +98,7 @@ public class UrpSpiderProxySelector extends ProxySelector {
         }
 
         boolean isExpire() {
-            return System.currentTimeMillis() - createDate.getTime() > 1000 * 60 * (proxyData.during - 0.5);
+            return System.currentTimeMillis() - createDate.getTime() > 1000 * 60;
         }
     }
 }
