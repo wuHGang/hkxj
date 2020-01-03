@@ -109,7 +109,7 @@ public class ExamTimeTableService {
             }
         } else {
             return currentTermExam.stream()
-                    .map(x -> examTimetableDao.selectByPrimaryKey(x.getId()))
+                    .map(x -> examTimetableDao.selectByPrimaryKey(x.getExamTimetableId()))
                     .map(x -> new Exam()
                             .setCourse(
                                     urpCourseService.getCurrentTermCourse(x.getCourseNum(), x.getCourseOrder(),
