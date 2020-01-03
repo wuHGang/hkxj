@@ -40,7 +40,6 @@ public class UrpSpiderProxySelector extends ProxySelector {
     @Override
     public void connectFailed(URI uri, SocketAddress sa, IOException ioe) {
 
-
         if(ioe instanceof SocketTimeoutException){
             log.info("update proxy");
             ProxyData proxyData = getProxyDataFromRemote();
@@ -68,7 +67,7 @@ public class UrpSpiderProxySelector extends ProxySelector {
 
     }
 
-    @Retryable(value = RuntimeException.class, maxAttempts = 2, backoff =@Backoff(value = 500,
+    @Retryable(value = RuntimeException.class, maxAttempts = 2, backoff =@Backoff(value = 2000,
             multiplier = 2))
     private ProxyData getProxyDataFromRemote() {
         RestTemplate restTemplate = new RestTemplate();
