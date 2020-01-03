@@ -111,7 +111,9 @@ public class ExamTimeTableService {
             return currentTermExam.stream()
                     .map(x -> examTimetableDao.selectByPrimaryKey(x.getId()))
                     .map(x -> new Exam()
-                            .setCourse(courseDao.selectByNumAndOrder(x.getCourseNum(), x.getCourseOrder()))
+                            .setCourse(
+                                    urpCourseService.getCurrentTermCourse(x.getCourseNum(), x.getCourseOrder(),
+                                            new Course().setCourseOrder(x.getCourseOrder())))
                             .setDate(x.getExamDate())
                             .setExamName(x.getName())
                             .setStartTime(x.getStartTime())

@@ -21,7 +21,7 @@ public class ExamTimeTableServiceTest {
     @Test
     public void getExamtimeList() {
 
-        for (Exam exam : examTimeTableService.getExamTimeList(2017023480)) {
+        for (Exam exam : examTimeTableService.getExamTimeList(2019025880)) {
             System.out.println(exam);
         }
     }
