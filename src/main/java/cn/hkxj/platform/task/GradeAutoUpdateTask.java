@@ -84,7 +84,7 @@ public class GradeAutoUpdateTask extends BaseSubscriptionTask {
     //    @Async
     @Scheduled(cron = "0 0/20 * * * ? ")
     //每20分钟执行一次
-    void autoUpdateGrade() {
+    public void autoUpdateGrade() {
         if (!isSwitchOn()) {
             return;
         }

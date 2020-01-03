@@ -133,6 +133,8 @@ public class NewGradeSearchService {
                     throw exception;
                 }
                 gradeVoList.forEach(x-> x.setErrorCode(ErrorCode.Evaluation_ERROR.getErrorCode()).setMsg(cause.getMessage()));
+            }else {
+                log.error("get grade error", cause);
             }
 
             return gradeVoList;

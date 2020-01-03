@@ -53,6 +53,9 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.net.ProxySelector;
 import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -63,6 +66,23 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 public class NewUrpSpider {
+
+    static {
+        Thread produceThread1 = new Thread(new CaptchaProducer());
+        Thread produceThread2 = new Thread(new CaptchaProducer());
+        Thread cleanThread = new Thread(new CaptchaCleaner());
+        produceThread1.start();
+        produceThread2.start();
+        cleanThread.start();
+        try {
+            stringRedisTemplate = ApplicationUtil.getBean("stringRedisTemplate");
+            proxyselector = ApplicationUtil.getBean("urpSpiderProxySelector");
+        } catch (Exception e) {
+            log.error("inject error ", e);
+        }
+
+    }
+
     private static final String ROOT = "http://xsurp.usth.edu.cn";
     /**
      * 验证码
@@ -171,12 +191,15 @@ public class NewUrpSpider {
 
     private static final UrpCookieJar COOKIE_JAR = new UrpCookieJar();
 
+    private static ProxySelector proxyselector;
+
     private static final OkHttpClient CLIENT = new OkHttpClient.Builder()
             .cookieJar(COOKIE_JAR)
             .retryOnConnectionFailure(true)
             .connectTimeout(500L, TimeUnit.MILLISECONDS)
             .addInterceptor(new RetryInterceptor(5))
             .followRedirects(false)
+            .proxySelector(proxyselector)
             .build();
 
     private final static Headers HEADERS = new Headers.Builder()
@@ -196,20 +219,7 @@ public class NewUrpSpider {
     private static BlockingQueue<PreLoadCaptcha> queue = new ArrayBlockingQueue<>(20);
 
 
-    static {
-        Thread produceThread1 = new Thread(new CaptchaProducer());
-        Thread produceThread2 = new Thread(new CaptchaProducer());
-        Thread cleanThread = new Thread(new CaptchaCleaner());
-        produceThread1.start();
-        produceThread2.start();
-        cleanThread.start();
-        try {
-            stringRedisTemplate = ApplicationUtil.getBean("stringRedisTemplate");
-        } catch (Exception e) {
-            log.error("inject error ", e);
-        }
 
-    }
 
     /**
      * @param account  学号

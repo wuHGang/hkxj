@@ -10,6 +10,7 @@ import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.service.CourseTimeTableService;
 import cn.hkxj.platform.service.NewUrpSpiderService;
 import cn.hkxj.platform.spider.NewUrpSpider;
+import cn.hkxj.platform.task.GradeAutoUpdateTask;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,7 +31,7 @@ public class TestController {
     @Resource
     private CourseTimeTableService courseTimeTableService;
     @Resource
-    private WechatMpProProperties wechatMpProProperties;
+    private GradeAutoUpdateTask gradeAutoUpdateTask;
 
     @Resource
     private ClassDao classDao;
@@ -112,6 +113,12 @@ public class TestController {
     @RequestMapping("/log")
     public String testLog(){
         throw new NullPointerException();
+    }
+
+    @RequestMapping("/update")
+    public String testGrade(){
+        gradeAutoUpdateTask.autoUpdateGrade();
+        return "ok";
     }
 
 
