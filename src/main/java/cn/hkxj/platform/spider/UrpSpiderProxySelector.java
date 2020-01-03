@@ -27,7 +27,7 @@ public class UrpSpiderProxySelector extends ProxySelector {
     private String appSecret;
 
     @Override
-    public synchronized List<Proxy> select(URI uri) {
+    public List<Proxy> select(URI uri) {
 
         ProxyData proxyData = getProxyData();
 
@@ -40,10 +40,9 @@ public class UrpSpiderProxySelector extends ProxySelector {
     @Override
     public void connectFailed(URI uri, SocketAddress sa, IOException ioe) {
 
-        if(ioe instanceof SocketTimeoutException){
+        if(ioe instanceof SocketTimeoutException && proxyCache.canUpdate()){
             log.info("update proxy");
-            ProxyData proxyData = getProxyDataFromRemote();
-            proxyCache = new ProxyCache(proxyData);
+            updateProxy();
         }else {
             log.error("poxy connectFailed", ioe);
         }
@@ -56,8 +55,7 @@ public class UrpSpiderProxySelector extends ProxySelector {
 
         synchronized (UrpSpiderProxySelector.class) {
             if (proxyCache == null || proxyCache.isExpire()) {
-                proxyData = getProxyDataFromRemote();
-                proxyCache = new ProxyCache(proxyData);
+                proxyData = updateProxy();
             } else {
                 proxyData = proxyCache.proxyData;
             }
@@ -65,6 +63,13 @@ public class UrpSpiderProxySelector extends ProxySelector {
 
         return proxyData;
 
+    }
+
+    private synchronized ProxyData updateProxy(){
+
+        ProxyData proxyData = getProxyDataFromRemote();
+        proxyCache = new ProxyCache(proxyData);
+        return proxyData;
     }
 
     @Retryable(value = RuntimeException.class, maxAttempts = 2, backoff =@Backoff(value = 2000,
@@ -115,7 +120,11 @@ public class UrpSpiderProxySelector extends ProxySelector {
         }
 
         boolean isExpire() {
-            return System.currentTimeMillis() - createDate.getTime() > 1000 * 60 * proxyData.during;
+            return System.currentTimeMillis() - createDate.getTime() > 1000 * 60 * (proxyData.during-0.5);
+        }
+
+        boolean canUpdate() {
+            return System.currentTimeMillis() - createDate.getTime() > 15 * 1000;
         }
     }
 }
