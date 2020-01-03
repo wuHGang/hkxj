@@ -3,6 +3,7 @@ package cn.hkxj.platform.spider;
 import cn.hkxj.platform.exceptions.UrpException;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
@@ -25,16 +26,23 @@ public class UrpSpiderProxySelector extends ProxySelector {
 
     @Value("${appSecret}")
     private String appSecret;
+    @Value("${useProxy}")
+    private String useProxy;
 
     @Override
     public List<Proxy> select(URI uri) {
 
-        ProxyData proxyData = getProxyData();
-
         List<Proxy> list = new ArrayList<>();
-        list.add(new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyData.ip, proxyData.port)));
 
+        if(BooleanUtils.toBoolean(useProxy)){
+            ProxyData proxyData = getProxyData();
+            list.add(new Proxy(Proxy.Type.SOCKS, new InetSocketAddress(proxyData.ip, proxyData.port)));
+
+        }else {
+            list.add(Proxy.NO_PROXY);
+        }
         return list;
+
     }
 
     @Override
@@ -43,7 +51,7 @@ public class UrpSpiderProxySelector extends ProxySelector {
         if(ioe instanceof SocketTimeoutException && proxyCache.canUpdate()){
             log.info("update proxy");
             updateProxy();
-        }else {
+        }else if(!(ioe instanceof SocketTimeoutException)){
             log.error("poxy connectFailed", ioe);
         }
 
@@ -81,7 +89,7 @@ public class UrpSpiderProxySelector extends ProxySelector {
         map.put("appKey", "529923302983356416");
         map.put("appSecret", appSecret);
         map.put("wt", "json");
-        map.put("method", "http");
+        map.put("method", "s5");
         Response response = restTemplate.getForObject(server, Response.class, map);
         if(response.getCode() == 200){
             return response.getData().stream().findFirst().orElseThrow(RuntimeException::new);
