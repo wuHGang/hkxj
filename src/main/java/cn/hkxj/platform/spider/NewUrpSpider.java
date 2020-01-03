@@ -273,6 +273,7 @@ public class NewUrpSpider {
 
         Request request = new Request.Builder()
                 .url(MAKE_UP_GRADE)
+                .headers(HEADERS)
                 .post(body)
                 .build();
         String result = new String(execute(request));
@@ -305,6 +306,7 @@ public class NewUrpSpider {
         Request request = new Request.Builder()
                 .url(CURRENT_TERM_GRADE)
                 .get()
+                .headers(HEADERS)
                 .build();
         String result = new String(execute(request));
         log.debug("{} {} current grade {}", MDC.get("preLoad"), MDC.get("account"), result);

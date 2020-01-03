@@ -41,7 +41,7 @@ public class UrpSpiderProxySelector extends ProxySelector {
     }
 
 
-    public ProxyData getProxyData(){
+    public ProxyData getProxyData() {
         ProxyData proxyData;
 
         synchronized (UrpSpiderProxySelector.class) {
@@ -98,7 +98,7 @@ public class UrpSpiderProxySelector extends ProxySelector {
         }
 
         boolean isExpire() {
-            return System.currentTimeMillis() - createDate.getTime() > 1000 * 60 * proxyData.during;
+            return System.currentTimeMillis() - createDate.getTime() > 1000 * 60 * (proxyData.during - 0.5);
         }
     }
 }
