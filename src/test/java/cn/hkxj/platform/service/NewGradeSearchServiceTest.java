@@ -81,4 +81,26 @@ public class NewGradeSearchServiceTest {
             System.out.println(grade);
         }
     }
+
+
+
+    @Test
+    public void testProxy(){
+        Student student = studentDao.selectStudentByAccount(2019030404);
+        for (int x=0; x<10 ; x++){
+            try {
+                newGradeSearchService.getCurrentTermGradeSync(student);
+            }catch (Exception e){
+                e.printStackTrace();
+            }finally {
+                System.out.println(x);
+            }
+
+            try {
+                Thread.sleep(1000L);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }

@@ -1,8 +1,11 @@
 package cn.hkxj.platform.spider;
 
+import cn.hkxj.platform.exceptions.UrpException;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -24,7 +27,7 @@ public class UrpSpiderProxySelector extends ProxySelector {
     private String appSecret;
 
     @Override
-    public List<Proxy> select(URI uri) {
+    public synchronized List<Proxy> select(URI uri) {
 
         ProxyData proxyData = getProxyData();
 
@@ -36,8 +39,16 @@ public class UrpSpiderProxySelector extends ProxySelector {
 
     @Override
     public void connectFailed(URI uri, SocketAddress sa, IOException ioe) {
-        log.error("poxy connectFailed", ioe);
-        getProxyData();
+
+
+        if(ioe instanceof SocketTimeoutException){
+            log.info("update proxy");
+            ProxyData proxyData = getProxyDataFromRemote();
+            proxyCache = new ProxyCache(proxyData);
+        }else {
+            log.error("poxy connectFailed", ioe);
+        }
+
     }
 
 
@@ -57,6 +68,8 @@ public class UrpSpiderProxySelector extends ProxySelector {
 
     }
 
+    @Retryable(value = UrpException.class, maxAttempts = 2, backoff =@Backoff(value = 500,
+            multiplier = 2))
     private ProxyData getProxyDataFromRemote() {
         RestTemplate restTemplate = new RestTemplate();
         Map<String, String> map = new HashMap<>();
@@ -66,7 +79,10 @@ public class UrpSpiderProxySelector extends ProxySelector {
         map.put("wt", "json");
         map.put("method", "http");
         Response response = restTemplate.getForObject(server, Response.class, map);
-        return response.getData().stream().findFirst().orElseThrow(RuntimeException::new);
+        if(response.getCode() == 200){
+            return response.getData().stream().findFirst().orElseThrow(RuntimeException::new);
+        }
+        throw new RuntimeException();
 
     }
 
@@ -98,7 +114,7 @@ public class UrpSpiderProxySelector extends ProxySelector {
         }
 
         boolean isExpire() {
-            return System.currentTimeMillis() - createDate.getTime() > 1000 * 60;
+            return System.currentTimeMillis() - createDate.getTime() > 1000 * 60 * proxyData.during;
         }
     }
 }
