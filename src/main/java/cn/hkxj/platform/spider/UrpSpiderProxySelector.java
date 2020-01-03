@@ -68,7 +68,7 @@ public class UrpSpiderProxySelector extends ProxySelector {
 
     }
 
-    @Retryable(value = UrpException.class, maxAttempts = 2, backoff =@Backoff(value = 500,
+    @Retryable(value = RuntimeException.class, maxAttempts = 2, backoff =@Backoff(value = 500,
             multiplier = 2))
     private ProxyData getProxyDataFromRemote() {
         RestTemplate restTemplate = new RestTemplate();
@@ -81,6 +81,8 @@ public class UrpSpiderProxySelector extends ProxySelector {
         Response response = restTemplate.getForObject(server, Response.class, map);
         if(response.getCode() == 200){
             return response.getData().stream().findFirst().orElseThrow(RuntimeException::new);
+        }else {
+            log.error("get proxy error {}", response);
         }
         throw new RuntimeException();
 
