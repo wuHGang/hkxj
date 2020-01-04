@@ -198,6 +198,15 @@ public class WechatMpConfiguration {
                 .async(false)
                 .event("subscribe")
                 .handler(subscribeEventHandler)
+                .end()
+
+
+                .rule()
+                .async(false)
+                .interceptor(wechatOpenIdInterceptor)
+                .event("CLICK")
+                .eventKey("evaluate")
+                .handler(subscribeEventHandler)
                 .end();
 
         ;

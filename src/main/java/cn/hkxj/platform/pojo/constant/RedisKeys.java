@@ -34,7 +34,14 @@ public enum RedisKeys {
      * 班级课时排行详情
      */
     MINI_PROGRAM_ACCESS_TOKEN("miniProgram_AccessToken"),
-
+    /**
+     * 待评估的学号集合
+     */
+    WAITING_EVALUATION_SET("teaching_evaluation"),
+    /**
+     * 待评估的学号集合
+     */
+    FINISH_EVALUATION_SET("teaching_evaluation"),
 
     ;
     private String name;
