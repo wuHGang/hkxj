@@ -117,7 +117,7 @@ public class ExamTimeTableService {
                             .setDate(x.getExamDate())
                             .setExamName(x.getName())
                             .setStartTime(x.getStartTime())
-                            .setEndTime(x.getStartTime())
+                            .setEndTime(x.getEndTime())
                             .setClassRoom(urpClassRoomDao.selectByName(x.getRoomName()))
                             .setExamDay(x.getDay())
                             .setExamWeekOfTerm(x.getSchoolWek()))
