@@ -118,9 +118,9 @@ public class NewGradeSearchService {
      * @return 学生成绩
      */
     public List<GradeVo> getCurrentTermGrade(Student student) {
-        CompletableFuture<List<GradeDetail>> future =
-                CompletableFuture.supplyAsync(() -> getCurrentTermGradeFromSpider(student), gradeAutoUpdatePool);
-        List<GradeDetail> gradeDetailList;
+        CompletableFuture<List<GradeVo>> future =
+                CompletableFuture.supplyAsync(() -> getCurrentTermGradeSync(student), gradeAutoUpdatePool);
+        List<GradeVo> gradeDetailList;
         try {
             gradeDetailList = future.get(5000L, TimeUnit.MILLISECONDS);
         } catch (ExecutionException e){
@@ -142,13 +142,7 @@ public class NewGradeSearchService {
             return gradeToVo(gradeDao.getCurrentTermGradeByAccount(student.getAccount()));
         }
 
-        List<Grade> gradeList = gradeDetailList.stream().map(GradeDetail::getGrade).collect(Collectors.toList());
-        // 检查哪些是新的成绩数据
-        List<Grade> updateList = checkUpdate(student, gradeList);
-        // 新的数据插入，原有得数据更新
-        saveUpdateGrade(updateList);
-
-        return gradeToVo(gradeList);
+        return gradeDetailList;
     }
 
 
