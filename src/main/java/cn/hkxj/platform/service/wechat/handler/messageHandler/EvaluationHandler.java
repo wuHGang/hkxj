@@ -48,6 +48,7 @@ public class EvaluationHandler implements WxMpMessageHandler {
                 content = "稍待片刻，已经在队列中了，评估完成后立刻给你发通知提醒你";
             } else {
                 content = "我们很快会为你完成评估，评估完成后立刻给你发通知提醒你";
+                stringRedisTemplate.opsForSet().add(key, account);
             }
         }
 
