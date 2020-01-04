@@ -24,7 +24,7 @@ public class WechatOpenIdInterceptor implements WxMessageInterceptor {
 	private OpenIdService openIdService;
 	@Value("${domain}")
 	private String domain;
-	private static final String PATTERN = "<a href=\"%s/bind?openid=%s&appid=%s\">点击我绑定</a>";
+	private static final String PATTERN = "<a href=\"%s/bind?openid=%s&appid=%s\">使用这个功能需前请点击这个按钮绑定</a>";
 
 
 	@Override
