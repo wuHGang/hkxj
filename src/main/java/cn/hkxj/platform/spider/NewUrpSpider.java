@@ -220,8 +220,6 @@ public class NewUrpSpider {
     private final static BlockingQueue<PreLoadCaptcha> queue = new ArrayBlockingQueue<>(5);
 
 
-
-
     /**
      * @param account  学号
      * @param password 密码
@@ -309,7 +307,8 @@ public class NewUrpSpider {
                 .get()
                 .headers(HEADERS)
                 .build();
-        String result = new String(execute(request));
+
+        String result = getContent(request);
         log.debug("{} {} current grade {}", MDC.get("preLoad"), MDC.get("account"), result);
         List<Map<String, Object>> list = parseObject(result, new TypeReference<List<Map<String, Object>>>() {
         });
@@ -318,7 +317,7 @@ public class NewUrpSpider {
         List<UrpGeneralGradeForSpider> grade = jsonArray.toJavaList(UrpGeneralGradeForSpider.class);
 
         grade.stream().findFirst().ifPresent(x -> {
-            if(!account.equals(x.getId().getStudentNumber())){
+            if (!account.equals(x.getId().getStudentNumber())) {
                 log.error("date error. user account: {} return account {} data {}", account,
                         x.getId().getStudentNumber(), grade);
                 COOKIE_JAR.clearSession();
@@ -493,10 +492,10 @@ public class NewUrpSpider {
                 .headers(HEADERS)
                 .get()
                 .build();
-        String result = new String(execute(request));
+        String result = getContent(request);
         String regex = "\"dateList\": [.*]}$";
         result = result.replaceAll(regex, "");
-        if(log.isDebugEnabled()){
+        if (log.isDebugEnabled()) {
             log.debug("{} {} urp course timetable {}", MDC.get("preLoad"), MDC.get("account"), result);
         }
 
@@ -525,7 +524,7 @@ public class NewUrpSpider {
                 .get()
                 .build();
 
-        Map<String, String> userInfo = parseUserInfo(new String(execute(request)));
+        Map<String, String> userInfo = parseUserInfo(getContent(request));
 
         UrpStudentInfo student = new UrpStudentInfo();
         student.setAccount(Integer.parseInt(account));
@@ -755,7 +754,7 @@ public class NewUrpSpider {
                 .headers(HEADERS)
                 .build();
 
-        return parseObject(new String(execute(request)), TeachingEvaluation.class);
+        return parseObject(getContent(request), TeachingEvaluation.class);
     }
 
 
@@ -785,7 +784,7 @@ public class NewUrpSpider {
     }
 
 
-    public void evaluation(EvaluationPost  evaluationPost) {
+    public void evaluation(EvaluationPost evaluationPost) {
         FormBody.Builder params = new FormBody.Builder();
         FormBody body = params
                 .add("0000000050", evaluationPost.getFirst())
@@ -808,26 +807,14 @@ public class NewUrpSpider {
         String s = getContent(request);
 
 
-
     }
-
 
 
     private <T> T parseObject(String text, TypeReference<T> type) {
         try {
             return JSON.parseObject(text, type);
         } catch (JSONException e) {
-
-            if (text.length() > 1000) {
-                log.error("parse courseTimeTable error {}", text, e);
-                throw new UrpEvaluationException("account: " + account + " 未完成评估无法查成绩");
-            }
-            COOKIE_JAR.clearSession();
-            if (!(text.contains("login") || text.contains("invalidSession"))) {
-                log.error("parse courseTimeTable error {}", text, e);
-            }
-            throw new UrpSessionExpiredException("account: " + account + " session expired");
-
+            throw new UrpException("json 解析异常", e);
         }
 
     }
@@ -836,11 +823,7 @@ public class NewUrpSpider {
         try {
             return JSON.parseObject(text, clazz);
         } catch (JSONException e) {
-            if (!text.contains("login")) {
-                log.error("parse courseTimeTable error {}", text, e);
-            }
-            COOKIE_JAR.clearSession();
-            throw new UrpSessionExpiredException("account: " + account + " session expired");
+            throw new UrpException("json 解析异常", e);
         }
 
     }
@@ -849,12 +832,7 @@ public class NewUrpSpider {
      * 解析学生信息页面的html
      */
     private Map<String, String> parseUserInfo(String html) {
-        if (html.contains("invalidSession") || html.contains("login")) {
-            COOKIE_JAR.clearSession();
-            throw new UrpSessionExpiredException("account: " + account + " session expired");
-        }else if(html.contains("没有完成评估")){
-            throw new UrpEvaluationException("account："+ account + " 评估未完成无法查看个人信息");
-        }
+
         HashMap<String, String> infoMap = new HashMap<>();
         Document document = Jsoup.parse(html);
         Elements elements = document.getElementsByClass("profile-info-row");
@@ -896,7 +874,7 @@ public class NewUrpSpider {
         if (content.contains("invalidSession") || content.contains("login")) {
             COOKIE_JAR.clearSession();
             throw new UrpSessionExpiredException("session expired");
-        }else if(content.contains("没有完成评估")){
+        } else if (content.contains("没有完成评估")) {
             throw new UrpEvaluationException("评估未完成无法查看个人信息");
         }
         return content;

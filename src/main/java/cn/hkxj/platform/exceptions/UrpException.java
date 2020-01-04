@@ -15,7 +15,7 @@ public class UrpException extends RuntimeException {
         super(desc);
     }
 
-    public UrpException(String description, IOException e) {
+    public UrpException(String description, Throwable e) {
         super(description, e);
     }
 }

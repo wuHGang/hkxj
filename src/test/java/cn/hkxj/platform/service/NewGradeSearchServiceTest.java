@@ -1,12 +1,14 @@
 package cn.hkxj.platform.service;
 
+import cn.hkxj.platform.MDCThreadPool;
 import cn.hkxj.platform.PlatformApplication;
+import cn.hkxj.platform.dao.MiniProgramOpenIdDao;
 import cn.hkxj.platform.dao.StudentDao;
-import cn.hkxj.platform.pojo.Grade;
-import cn.hkxj.platform.pojo.GradeDetail;
-import cn.hkxj.platform.pojo.Student;
-import cn.hkxj.platform.pojo.UrpGradeAndUrpCourse;
+import cn.hkxj.platform.exceptions.UrpEvaluationException;
+import cn.hkxj.platform.exceptions.UrpException;
+import cn.hkxj.platform.pojo.*;
 import cn.hkxj.platform.pojo.vo.GradeVo;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,12 +17,16 @@ import org.springframework.test.context.web.WebAppConfiguration;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
  * @author Yuki
  * @date 2019/8/1 20:15
  */
+@Slf4j
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = PlatformApplication.class)
 @WebAppConfiguration
@@ -30,6 +36,8 @@ public class NewGradeSearchServiceTest {
     private NewGradeSearchService newGradeSearchService;
     @Resource
     private StudentDao studentDao;
+    @Resource
+    private MiniProgramOpenIdDao miniProgramOpenIdDao;
 
     @Test
     public void test(){
@@ -102,5 +110,49 @@ public class NewGradeSearchServiceTest {
                 e.printStackTrace();
             }
         }
+    }
+
+
+    @Test
+    public void updateAllGrade(){
+        List<Student> studentList = studentDao.selectAllStudent();
+        MDCThreadPool pool = new MDCThreadPool(8, 8,
+                0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(), r -> new Thread(r, "gradeSearch"));
+
+        CountDownLatch latch = new CountDownLatch(studentList.size());
+
+        for (Student student : studentList) {
+
+            pool.submit(() ->{
+                long l = System.currentTimeMillis();
+                try {
+                    log.info("{} start", student.getAccount());
+                    if(student.getIsCorrect()){
+                        newGradeSearchService.getCurrentTermGradeSync(student);
+                    }
+
+                }catch (Exception e){
+                    if(e instanceof UrpException){
+                        log.error("error {}", e.getMessage());
+                    }else if(e instanceof UrpEvaluationException){
+                        log.error("error {}", e.getMessage());
+                    }else {
+                        log.error("error", e);
+                    }
+
+                }finally {
+                    latch.countDown();
+                    log.info("{} finish in {}ms", student.getAccount(), (System.currentTimeMillis() - l));
+                }
+
+            });
+        }
+
+        try {
+            latch.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
     }
 }

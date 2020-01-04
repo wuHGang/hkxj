@@ -25,5 +25,3 @@
 /dist/
 /nbdist/
 /.nb-gradle/
-/src/main/resources/generatorConfig.xml
-/src/main/resources/generatorConfig.xml
