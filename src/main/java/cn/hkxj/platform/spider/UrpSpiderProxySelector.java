@@ -48,7 +48,7 @@ public class UrpSpiderProxySelector extends ProxySelector {
     @Override
     public void connectFailed(URI uri, SocketAddress sa, IOException ioe) {
 
-        if(ioe instanceof SocketTimeoutException && proxyCache.canUpdate()){
+        if((ioe instanceof SocketTimeoutException || ioe instanceof SocketException) && proxyCache.canUpdate()){
             log.info("update proxy");
             updateProxy();
         }else if(!(ioe instanceof SocketTimeoutException)){

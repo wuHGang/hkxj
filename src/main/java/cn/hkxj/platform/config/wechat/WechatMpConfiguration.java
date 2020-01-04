@@ -6,6 +6,9 @@ import cn.hkxj.platform.interceptor.WechatOpenIdInterceptor;
 import cn.hkxj.platform.service.wechat.WxMessageRouter;
 import cn.hkxj.platform.service.wechat.handler.messageHandler.*;
 import com.google.common.collect.Maps;
+import me.chanjar.weixin.common.bean.menu.WxMenu;
+import me.chanjar.weixin.common.bean.menu.WxMenuButton;
+import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.mp.api.WxMpInMemoryConfigStorage;
 import me.chanjar.weixin.mp.api.WxMpMessageRouter;
 import me.chanjar.weixin.mp.api.WxMpService;
@@ -17,6 +20,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -77,6 +82,9 @@ public class WechatMpConfiguration {
 
     @Resource
     private SubscribeEventHandler subscribeEventHandler;
+
+    @Resource
+    private EvaluationHandler evaluationHandler;
 
     private static Map<String, WxMpMessageRouter> routers = Maps.newHashMap();
     private static Map<String, WxMpService> mpServices = Maps.newHashMap();
@@ -206,11 +214,46 @@ public class WechatMpConfiguration {
                 .interceptor(wechatOpenIdInterceptor)
                 .event("CLICK")
                 .eventKey("evaluate")
-                .handler(subscribeEventHandler)
+                .handler(evaluationHandler)
                 .end();
 
         ;
         return newRouter;
+    }
+
+
+    public void setPlusMenu(){
+        WxMpService service = getMpServices().get(wechatMpPlusProperties.getAppId());
+        WxMenu menu = new WxMenu();
+
+        List<WxMenuButton> buttons = new ArrayList<>();
+        WxMenuButton button1 = new WxMenuButton();
+        button1.setName("一键教评");
+        button1.setType("click");
+        button1.setKey("evaluation");
+
+        WxMenuButton button2 = new WxMenuButton();
+        button2.setName("用户绑定");
+        button2.setType("view");
+        button2.setUrl("https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx541fd36e6b400648&redirect_uri" +
+                "=https://platform.hackerda.com/platform/bind/menu&response_type=code&scope=snsapi_base&state=wx541fd36e6b400648");
+
+        WxMenuButton button3 = new WxMenuButton();
+        button3.setName("成绩&考试");
+        button3.setType("miniprogram");
+        button3.setAppId("wx05f7264e83fa40e9");
+        button3.setPagePath("pages/index/index");
+        button3.setUrl("http://mp.weixin.qq.com");
+
+        buttons.add(button1);
+        buttons.add(button2);
+        buttons.add(button3);
+
+        try {
+            service.getMenuService().menuCreate(menu);
+        } catch (WxErrorException e) {
+            e.printStackTrace();
+        }
     }
 
     public static Map<String, WxMpMessageRouter> getRouters() {
