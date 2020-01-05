@@ -71,6 +71,9 @@ public class NewUrpSpider {
         Thread produceThread1 = new Thread(new CaptchaProducer());
         Thread produceThread2 = new Thread(new CaptchaProducer());
         Thread cleanThread = new Thread(new CaptchaCleaner());
+
+        produceThread1.setName("produceThread1");
+        produceThread2.setName("produceThread2");
         produceThread1.start();
         produceThread2.start();
         cleanThread.start();
