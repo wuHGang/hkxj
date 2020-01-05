@@ -213,7 +213,6 @@ public class WechatMpConfiguration {
 
                 .rule()
                 .async(false)
-                .interceptor(wechatOpenIdInterceptor)
                 .event("CLICK")
                 .eventKey("evaluation")
                 .handler(evaluationHandler)

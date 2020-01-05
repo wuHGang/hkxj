@@ -27,6 +27,10 @@ public class WebResponse<T> {
 		return new WebResponse<Void>().setStatus(SUCCESS_CODE).setMessage("");
 	}
 
+	public static WebResponse<Void> successWithMessage(String msg) {
+		return new WebResponse<Void>().setStatus(SUCCESS_CODE).setMessage(msg);
+	}
+
 	public static <T> WebResponse<T> success(T data) {
 		Objects.requireNonNull(data);
 		return new WebResponse<T>().setStatus(SUCCESS_CODE).setMessage("").setData(data);

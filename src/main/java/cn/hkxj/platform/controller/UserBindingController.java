@@ -173,7 +173,16 @@ public class UserBindingController {
         Student student;
         try {
             student = login(account, password, appid, openid);
-            evaluatePool.submit(() -> teachingEvaluationService.evaluate(student));
+            if(teachingEvaluationService.hasEvaluate(student.getAccount().toString())){
+                return WebResponse.successWithMessage("你的账号已经评估完成啦");
+            }
+
+            if(teachingEvaluationService.isWaitingEvaluate(student.getAccount().toString())){
+                return WebResponse.successWithMessage("你的账号已经在队列中啦，可以关闭此页面。评估完成会发信息通知你的");
+            }
+
+            teachingEvaluationService.addEvaluateAccount(student.getAccount().toString());
+            return WebResponse.successWithMessage("我们很快会为你完成评估，可以关闭此页面。评估完成会发信息通知你的");
 
         } catch (UrpVerifyCodeException e) {
             log.info("student bind fail verify code error account:{} password:{} openid:{}", account, password,
@@ -189,18 +198,28 @@ public class UserBindingController {
             Student student1 = new Student()
                     .setAccount(Integer.parseInt(account))
                     .setPassword(password);
-            teachingEvaluationService.evaluate(student1);
 
             String appid1 = appid;
             String openid1 = openid;
             evaluatePool.submit(() -> {
-                teachingEvaluationService.evaluate(student1);
-                login(account, password, appid1, openid1);
+                try {
+                    while (teachingEvaluationService.evaluate(student1) != 0){
+
+                    }
+                    login(account, password, appid1, openid1);
+
+                    teachingEvaluationService.sendMessage(Integer.parseInt(account), "评估已经完成,已经评估完成");
+                }catch (Exception e1){
+                    log.info("evaluate fail account:{} password:{} appid:{} openid:{}", account, password,
+                            appid1, openid1, e);
+
+                }
+
             });
 
         }
 
-        return WebResponse.success();
+        return WebResponse.successWithMessage("我们很快会为你完成评估，可以关闭此页面。评估完成会发信息通知你的");
     }
 
     private Student login( String account, String password, String appid, String openid) {

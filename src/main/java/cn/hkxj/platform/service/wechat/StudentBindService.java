@@ -52,6 +52,8 @@ public class StudentBindService {
     @Value("${domain}")
     private String domain;
     private static final String PATTERN = "<a href=\"%s/bind?openid=%s&appid=%s\">%s</a>";
+
+    private static final String TEXT_LINK = "<a href=\"%s\">%s</a>";
     @Resource
     private ScheduleTaskService scheduleTaskService;
     @Resource
@@ -232,6 +234,9 @@ public class StudentBindService {
         return String.format(PATTERN, domain, fromUser, appId, content);
     }
 
+    public String getTextLink(String url, String content) {
+        return String.format(TEXT_LINK, url, content);
+    }
 
     private void subscribeGradeUpdateTask(String openid, String appid) {
         ScheduleTask scheduleTask = new ScheduleTask(appid, openid, SubscribeScene.GRADE_AUTO_UPDATE.getScene());

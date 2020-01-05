@@ -28,27 +28,30 @@ public class EvaluationHandler implements WxMpMessageHandler {
     @Resource
     private TeachingEvaluationService teachingEvaluationService;
     @Resource
-    private StringRedisTemplate stringRedisTemplate;
-    @Resource
     private TextBuilder textBuilder;
+
 
     @Override
     public WxMpXmlOutMessage handle(WxMpXmlMessage wxMpXmlMessage, Map<String, Object> context, WxMpService wxMpService, WxSessionManager sessionManager) {
         String appId = wxMpService.getWxMpConfigStorage().getAppId();
         Student student = openIdService.getStudentByOpenId(wxMpXmlMessage.getFromUser(), appId);
 
+        String appid = wxMpService.getWxMpConfigStorage().getAppId();
+        if(openIdService.openidIsExist(wxMpXmlMessage.getFromUser(), appid) && openIdService.openidIsBind(wxMpXmlMessage.getFromUser(), appid)){
+            return textBuilder.build(teachingEvaluationService.getEvaluationLink(), wxMpXmlMessage, wxMpService);
+        }
+
         String account = student.getAccount().toString();
-        String key = RedisKeys.WAITING_EVALUATION_SET.getName();
         String content;
 
-        if (BooleanUtils.toBoolean(stringRedisTemplate.opsForSet().isMember(RedisKeys.FINISH_EVALUATION_SET.getName(), account))) {
+        if (teachingEvaluationService.hasEvaluate(account)) {
             content = "您的评估已经完成评估啦！~";
         } else {
-            if (BooleanUtils.toBoolean(stringRedisTemplate.opsForSet().isMember(key, account))) {
+            if (teachingEvaluationService.isWaitingEvaluate(account)) {
                 content = "稍待片刻，已经在队列中了，评估完成后立刻给你发通知提醒你";
             } else {
                 content = "我们很快会为你完成评估，评估完成后立刻给你发通知提醒你";
-                stringRedisTemplate.opsForSet().add(key, account);
+                teachingEvaluationService.addEvaluateAccount(account);
             }
         }
 

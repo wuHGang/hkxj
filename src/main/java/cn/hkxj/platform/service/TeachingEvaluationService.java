@@ -5,8 +5,10 @@ import cn.hkxj.platform.config.wechat.WechatMpPlusProperties;
 import cn.hkxj.platform.dao.StudentDao;
 import cn.hkxj.platform.mapper.OpenidPlusMapper;
 import cn.hkxj.platform.pojo.Student;
+import cn.hkxj.platform.pojo.constant.RedisKeys;
 import cn.hkxj.platform.pojo.example.OpenidExample;
 import cn.hkxj.platform.pojo.wechat.Openid;
+import cn.hkxj.platform.service.wechat.StudentBindService;
 import cn.hkxj.platform.spider.newmodel.evaluation.EvaluationPagePost;
 import cn.hkxj.platform.spider.newmodel.evaluation.EvaluationPost;
 import cn.hkxj.platform.spider.newmodel.evaluation.searchresult.TeachingEvaluation;
@@ -14,6 +16,8 @@ import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.kefu.WxMpKefuMessage;
+import org.apache.commons.lang3.BooleanUtils;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -31,6 +35,10 @@ public class TeachingEvaluationService {
     private OpenidPlusMapper openidPlusMapper;
     @Resource
     private WechatMpPlusProperties wechatMpPlusProperties;
+    @Resource
+    private StudentBindService studentBindService;
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
 
     public int evaluate(String account) {
         Student student = studentDao.selectStudentByAccount(Integer.parseInt(account));
@@ -80,6 +88,27 @@ public class TeachingEvaluationService {
         return getEvaluationPagePost(student);
     }
 
+    public boolean hasEvaluate(String account){
+        return BooleanUtils.toBoolean(stringRedisTemplate.opsForSet().isMember(RedisKeys.FINISH_EVALUATION_SET.getName(), account));
+    }
+
+    public boolean isWaitingEvaluate(String account){
+        return BooleanUtils.toBoolean(stringRedisTemplate.opsForSet().isMember(RedisKeys.WAITING_EVALUATION_SET.getName(), account));
+    }
+
+    public void addEvaluateAccount(String account){
+        stringRedisTemplate.opsForSet().add(RedisKeys.WAITING_EVALUATION_SET.getName(), account);
+    }
+
+    public String getEvaluationLink(){
+        return studentBindService.getTextLink("https://open.weixin.qq.com/connect/oauth2/authorize?appid" +
+                        "=wx541fd36e6b400648" +
+                "&redirect_uri=https://platform.hackerda.com/platform/bind/evaluate&response_type=code&scope=snsapi_base&state=wx541fd36e6b400648",
+                "使用一键订阅之前请先点击蓝字进行绑定"
+                );
+
+    }
+
 
     private List<String> getOpenIdByAccount(int account){
         OpenidExample example = new OpenidExample();
@@ -104,8 +133,6 @@ public class TeachingEvaluationService {
                 e.printStackTrace();
             }
         }
-
-
 
     }
 

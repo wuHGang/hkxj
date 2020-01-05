@@ -88,43 +88,52 @@ public class GradeAutoUpdateTask extends BaseSubscriptionTask {
         if (!isSwitchOn()) {
             return;
         }
-        List<ScheduleTask> subscribeTask = scheduleTaskDao.getPlusSubscribeTask(SubscribeScene.GRADE_AUTO_UPDATE);
-        List<ScheduleTask> miniProgramSubscribeTask = scheduleTaskDao.getMiniProgramSubscribeTask(SubscribeScene.GRADE_AUTO_UPDATE);
 
-        log.info("grade update task run, queue size {}", queue.size());
-        queue.addAll(subscribeTask.stream().map(UrpFetchTask::new).collect(Collectors.toList()));
-        queue.addAll(miniProgramSubscribeTask.stream().map(UrpFetchTask::new).collect(Collectors.toList()));
-        for (int x = 0; x < 8; x++) {
-            CompletableFuture.runAsync(() -> {
-                UrpFetchTask task;
-                try {
-                    while ((task = queue.take()) != null) {
-                        UUID uuid = UUID.randomUUID();
-                        MDC.put("traceId", "gradeUpdateTask-" + uuid.toString());
+        while (true){
+            try {
+                List<ScheduleTask> subscribeTask = scheduleTaskDao.getPlusSubscribeTask(SubscribeScene.GRADE_AUTO_UPDATE);
+                List<ScheduleTask> miniProgramSubscribeTask = scheduleTaskDao.getMiniProgramSubscribeTask(SubscribeScene.GRADE_AUTO_UPDATE);
+
+                log.info("grade update task run, queue size {}", queue.size());
+                queue.addAll(subscribeTask.stream().map(UrpFetchTask::new).collect(Collectors.toList()));
+                queue.addAll(miniProgramSubscribeTask.stream().map(UrpFetchTask::new).collect(Collectors.toList()));
+                for (int x = 0; x < 8; x++) {
+                    CompletableFuture.runAsync(() -> {
+                        UrpFetchTask task;
                         try {
-                            processScheduleTask(task);
-                        } catch (UrpException e) {
-                            // TODO  这个可以根据异常类来优化
-                            task.timeoutCount++;
-                            if (task.timeoutCount < 3) {
-                                queue.add(task);
-                            }else {
-                                log.error("grade update task {} urp exception {}", task, e.getMessage());
+                            while ((task = queue.take()) != null) {
+                                UUID uuid = UUID.randomUUID();
+                                MDC.put("traceId", "gradeUpdateTask-" + uuid.toString());
+                                try {
+                                    processScheduleTask(task);
+                                } catch (UrpException e) {
+                                    // TODO  这个可以根据异常类来优化
+                                    task.timeoutCount++;
+                                    if (task.timeoutCount < 3) {
+                                        queue.add(task);
+                                    }else {
+                                        log.error("grade update task {} urp exception {}", task, e.getMessage());
+                                    }
+                                } catch (UrpEvaluationException e){
+                                    log.debug("{} 评估未完成", task);
+                                } catch (Exception e) {
+                                    log.error("grade update task {} error ", task, e);
+                                } finally {
+                                    MDC.clear();
+                                }
                             }
-                        } catch (UrpEvaluationException e){
-                          log.debug("{} 评估未完成", task);
-                        } catch (Exception e) {
-                            log.error("grade update task {} error ", task, e);
-                        } finally {
-                            MDC.clear();
+                        } catch (InterruptedException e) {
+                            log.error("get grade update task error", e);
                         }
-                    }
-                } catch (InterruptedException e) {
-                    log.error("get grade update task error", e);
-                }
 
-            }, gradeAutoUpdatePool);
+                    }, gradeAutoUpdatePool);
+                }
+            }catch (Exception e){
+                continue;
+            }
+            break;
         }
+
 
 
     }

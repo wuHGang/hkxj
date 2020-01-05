@@ -26,7 +26,7 @@ public enum  ErrorCode {
 	/**
 	 * 教务网的异常，通常网络波动等原因，提醒用户重试即可
 	 */
-	URP_EXCEPTION(406),
+	URP_EXCEPTION(407),
 
 	/**
 	 *服务器端错误

@@ -12,6 +12,7 @@ import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -29,25 +30,9 @@ public class RedisTests {
 
     @Test
     public void redisAdd() {
-        redisTemplate.opsForValue().set(RedisKeys.OPENID_TO_ACCOUNT + "11", "2014025838");
-        String account = redisTemplate.opsForValue().get(RedisKeys.OPENID_TO_ACCOUNT + "11");
-
+        Set<String> members = redisTemplate.opsForSet().members(RedisKeys.WAITING_EVALUATION_SET.getName());
+        System.out.println(members);
     }
 
-    @Test
-    public void expire() {
-        boolean key = redisTemplate.hasKey(RedisKeys.URP_COOKIE.genKey("2017021458"))
-                && redisTemplate.hasKey(RedisKeys.URP_LOGIN_COOKIE.genKey("2017021458"));
-        System.out.println(key);
-
-    }
-
-    @Test
-    public void zadd() {
-        ValueOperations<String, String> ops = redisTemplate.opsForValue();
-        ops.set(RedisKeys.URP_LOGIN_COOKIE.genKey("test"), "123", 25L,
-                TimeUnit.MINUTES);
-
-    }
 
 }

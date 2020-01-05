@@ -44,8 +44,8 @@
         }
     </style>
     <script type="text/javascript">
-        function isPositiveInteger(s){
-            re = /^[0-9]\d+$/ ;
+        function isPositiveInteger(s) {
+            re = /^[0-9]\d+$/;
             return re.test(s)
         }
 
@@ -54,13 +54,13 @@
             $("#login").click(function () {
                 var account = $("#account").val();
                 var password = $("#password").val();
-                if(account.length !== 10|| !isPositiveInteger(account)){
+                if (account.length !== 10 || !isPositiveInteger(account)) {
                     alert("请正确填写账号!");
-                    return ;
+                    return;
                 }
-                if(password === ""){
+                if (password === "") {
                     alert("请正确填写密码!");
-                    return ;
+                    return;
                 }
                 var data = {
                     "account": account,
@@ -72,21 +72,27 @@
                         type: "post",
                         url: "/platform/autoEvaluate",
                         data: data,
-                        success : function (data) {
+                        success: function (data) {
                             if (data.status === 200) {
-                                alert("自动教评中，这个过程可能需要10秒");
+                                alert(data.msg);
                                 isCommitted = false;//提交完成，可以继续提交
-                            }
-                            else if (data.status === 402) {
+                            } else if (data.status === 402) {
                                 alert("账号密码错误");
                                 isCommitted = false;//提交完成，可以继续提交
                                 window.location.reload();
-                            }
-                            else if (data.status === 403) {
+                            } else if (data.status === 403) {
                                 alert("账号已经绑定");
                                 isCommitted = false;//提交完成，可以继续提交
-                            }
-                            else {
+                            } else if (data.status === 405) {
+                                alert("暂时无法登录");
+                                isCommitted = false;//提交完成，可以继续提交
+                            } else if (data.status === 406) {
+                                alert("评估未完成");
+                                isCommitted = false;//提交完成，可以继续提交
+                            } else if (data.status === 407) {
+                                alert("网络异常，请重试");
+                                isCommitted = false;//提交完成，可以继续提交
+                            } else {
                                 alert("服务器读取超时");
                                 isCommitted = false;//提交完成，可以继续提交
                                 window.location.reload();
@@ -119,8 +125,8 @@
                 <input type="password" class="form-control" id="password" placeholder="请输入密码">
             </div>
 
-            <div class="form-group " align="center" >
-                <button class="btn btn-success" type="button" id="login" >开始教评</button>
+            <div class="form-group " align="center">
+                <button class="btn btn-success" type="button" id="login">开始教评</button>
             </div>
         </div>
     </div>
