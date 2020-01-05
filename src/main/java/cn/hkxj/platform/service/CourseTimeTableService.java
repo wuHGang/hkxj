@@ -357,7 +357,15 @@ public class CourseTimeTableService {
     }
 
     private void saveToDbAsync(UrpCourseTimeTableForSpider spiderResult, Student student) {
-        saveDbPool.execute(() -> saveCourseTimeTableToDb(spiderResult, student));
+        saveDbPool.execute(() -> {
+            try {
+                saveCourseTimeTableToDb(spiderResult, student);
+            }catch (Throwable throwable){
+                log.error("account {} save course error", student.getAccount(), throwable);
+
+            }
+
+        });
     }
 
     /**
