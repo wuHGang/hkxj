@@ -247,19 +247,19 @@ public class WechatMpConfiguration {
         button3.setPagePath("pages/index/index");
         button3.setUrl("http://mp.weixin.qq.com");
 
-        buttons.add(button2);
         buttons.add(button1);
+        buttons.add(button2);
         buttons.add(button3);
 
         menu.setButtons(buttons);
-
-        try {
-            WxMpMenuService menuService = service.getMenuService();
-            System.out.println(menu.toJson());
-            menuService.menuCreate(menu);
-        } catch (WxErrorException e) {
-            e.printStackTrace();
-        }
+        System.out.println(menu.toJson());
+//        try {
+//            WxMpMenuService menuService = service.getMenuService();
+//
+//            menuService.menuCreate(menu);
+//        } catch (WxErrorException e) {
+//            e.printStackTrace();
+//        }
     }
 
     public static Map<String, WxMpMessageRouter> getRouters() {

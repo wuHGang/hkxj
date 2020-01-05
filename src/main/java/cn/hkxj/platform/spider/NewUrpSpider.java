@@ -919,7 +919,7 @@ public class NewUrpSpider {
             while (!Thread.interrupted()) {
                 log.debug("produce captcha thread start");
                 UUID uuid = UUID.randomUUID();
-                MDC.put("preLoad", uuid.toString());
+//                MDC.put("preLoad", uuid.toString());
                 try {
                     VerifyCode captcha = getCaptcha();
                     PreLoadCaptcha preLoadCaptcha = new PreLoadCaptcha(captcha, uuid.toString(), new Date());

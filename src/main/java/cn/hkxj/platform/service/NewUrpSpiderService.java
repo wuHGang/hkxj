@@ -60,6 +60,11 @@ public class NewUrpSpiderService {
         return spider.getCurrentGrade();
     }
 
+    CurrentGrade getCurrentTermGrade(String account){
+        Student student = studentDao.selectStudentByAccount(Integer.parseInt(account));
+        return getCurrentTermGrade(student);
+    }
+
     /**
      * 这个方法只有基本得成绩信息  包括相信成绩信息的抓取使用{@see #getCurrentTermGrade()}
      */
@@ -67,6 +72,11 @@ public class NewUrpSpiderService {
     List<UrpGeneralGradeForSpider> getCurrentGeneralGrade(Student student){
         NewUrpSpider spider = getSpider(student.getAccount().toString(), student.getPassword());
         return spider.getCurrentGeneralGrade();
+    }
+
+    List<UrpGeneralGradeForSpider> getCurrentGeneralGrade(String account){
+        Student student = studentDao.selectStudentByAccount(Integer.parseInt(account));
+        return getCurrentGeneralGrade(student);
     }
 
     UrpCourseForSpider getCourseFromSpider(String account, String password, String uid){

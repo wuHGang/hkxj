@@ -39,7 +39,7 @@ public enum RedisKeys {
      */
     WAITING_EVALUATION_SET("waiting_evaluation_set"),
     /**
-     * 待评估的学号集合
+     * 已经完成的账号
      */
     FINISH_EVALUATION_SET("teaching_evaluation"),
 
