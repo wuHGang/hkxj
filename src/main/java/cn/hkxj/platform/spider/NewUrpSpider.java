@@ -74,9 +74,9 @@ public class NewUrpSpider {
 
         produceThread1.setName("produceThread1");
         produceThread2.setName("produceThread2");
-        produceThread1.start();
-        produceThread2.start();
-        cleanThread.start();
+//        produceThread1.start();
+//        produceThread2.start();
+//        cleanThread.start();
         try {
             stringRedisTemplate = ApplicationUtil.getBean("stringRedisTemplate");
             proxyselector = ApplicationUtil.getBean("urpSpiderProxySelector");
