@@ -120,6 +120,7 @@ public class TeachingEvaluationService {
     }
 
     public void sendMessage(int account, String content){
+        log.info("send message {} to account {}", account, content);
         WxMpService service = WechatMpConfiguration.getMpServices().get(wechatMpPlusProperties.getAppId());
         for (String s : getOpenIdByAccount(account)) {
             WxMpKefuMessage wxMpKefuMessage = new WxMpKefuMessage();

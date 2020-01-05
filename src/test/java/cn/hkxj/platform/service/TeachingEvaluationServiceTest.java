@@ -4,11 +4,14 @@ import cn.hkxj.platform.MDCThreadPool;
 import cn.hkxj.platform.PlatformApplication;
 import cn.hkxj.platform.config.wechat.WechatMpConfiguration;
 import cn.hkxj.platform.config.wechat.WechatMpPlusProperties;
+import cn.hkxj.platform.dao.ScheduleTaskDao;
 import cn.hkxj.platform.dao.StudentDao;
 import cn.hkxj.platform.exceptions.PasswordUnCorrectException;
 import cn.hkxj.platform.mapper.OpenidPlusMapper;
+import cn.hkxj.platform.pojo.ScheduleTask;
 import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.pojo.constant.RedisKeys;
+import cn.hkxj.platform.pojo.constant.SubscribeScene;
 import cn.hkxj.platform.pojo.example.OpenidExample;
 import cn.hkxj.platform.pojo.wechat.Openid;
 import cn.hkxj.platform.spider.newmodel.evaluation.EvaluationPagePost;
@@ -54,7 +57,10 @@ public class TeachingEvaluationServiceTest {
     private OpenidPlusMapper openidPlusMapper;
     @Resource
     private NewUrpSpiderService newUrpSpiderService;
-
+    @Resource
+    private ScheduleTaskDao scheduleTaskDao;
+    @Resource
+    private OpenIdService openIdService;
 
     @Test
     public void evaluate() {
@@ -160,18 +166,25 @@ public class TeachingEvaluationServiceTest {
 
     @Test
     public void lookUp2() {
+        List<Student> studentList = scheduleTaskDao.getMiniProgramSubscribeTask(SubscribeScene.GRADE_AUTO_UPDATE)
+                .stream()
+                .map(x -> openIdService.getStudentByOpenId(x.getOpenid(), "wx05f7264e83fa40e9"))
+                .collect(Collectors.toList());
 
-        Set<String> members = stringRedisTemplate.opsForSet().members(RedisKeys.FINISH_EVALUATION_SET.getName());
-
-        for (String member : members) {
-            System.out.println(member);
+        for (Student member : studentList) {
             try {
-                UrpGeneralGradeForSpider grade = newUrpSpiderService.getCurrentGeneralGrade(member).stream().findFirst().get();
+                newUrpSpiderService.getCurrentGeneralGrade(member);
                 String preLoad = MDC.get("preLoad");
-                System.out.println(member + " "+ preLoad);
+                System.out.println(member.getAccount() + " "+ preLoad);
             } catch (Exception e) {
                 String preLoad = MDC.get("preLoad");
-                System.out.println(e.getMessage() + " " + preLoad);
+                try {
+                    System.out.println(e.getMessage() + " " + member.getAccount() + " " + preLoad);
+                }catch (Exception e1){
+                    log.error("student account {}", member);
+                    e1.printStackTrace();
+                }
+
             }
 
             System.out.println("-------------------");

@@ -216,10 +216,9 @@ public class UserBindingController {
                 }
 
             });
-
+            return WebResponse.successWithMessage("我们很快会为你完成评估，可以关闭此页面。评估完成会发信息通知你的");
         }
 
-        return WebResponse.successWithMessage("我们很快会为你完成评估，可以关闭此页面。评估完成会发信息通知你的");
     }
 
     private Student login( String account, String password, String appid, String openid) {
