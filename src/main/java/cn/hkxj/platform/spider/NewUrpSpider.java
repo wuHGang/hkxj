@@ -921,10 +921,10 @@ public class NewUrpSpider {
         public void run() {
             while (!Thread.interrupted()) {
                 log.debug("produce captcha thread start");
-                UUID uuid = UUID.randomUUID();
 //                MDC.put("preLoad", uuid.toString());
                 try {
                     VerifyCode captcha = getCaptcha();
+                    UUID uuid = UUID.randomUUID();
                     PreLoadCaptcha preLoadCaptcha = new PreLoadCaptcha(captcha, uuid.toString(), new Date());
                     queue.put(preLoadCaptcha);
                 } catch (Throwable e) {
