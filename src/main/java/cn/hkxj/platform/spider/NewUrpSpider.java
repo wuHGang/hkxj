@@ -74,9 +74,9 @@ public class NewUrpSpider {
 
         produceThread1.setName("produceThread1");
         produceThread2.setName("produceThread2");
-//        produceThread1.start();
-//        produceThread2.start();
-//        cleanThread.start();
+        produceThread1.start();
+        produceThread2.start();
+        cleanThread.start();
         try {
             stringRedisTemplate = ApplicationUtil.getBean("stringRedisTemplate");
             proxyselector = ApplicationUtil.getBean("urpSpiderProxySelector");
@@ -220,7 +220,7 @@ public class NewUrpSpider {
     private String account;
     private String password;
 
-    private final static BlockingQueue<PreLoadCaptcha> queue = new ArrayBlockingQueue<>(5);
+    private final static BlockingQueue<PreLoadCaptcha> queue = new ArrayBlockingQueue<>(20);
 
 
     /**
@@ -230,6 +230,7 @@ public class NewUrpSpider {
      */
     public NewUrpSpider(String account, String password) {
         MDC.put("account", account);
+        MDC.remove("preLoad");
         this.account = account;
         this.password = password;
         if (hasLoginCookieCache(account)) {
@@ -321,8 +322,8 @@ public class NewUrpSpider {
 
         grade.stream().findFirst().ifPresent(x -> {
             if (!account.equals(x.getId().getStudentNumber())) {
-                log.error("date error. user account: {} return account {} data {}", account,
-                        x.getId().getStudentNumber(), grade);
+                log.error("date error. user account: {} return account {}", account,
+                        x.getId().getStudentNumber());
                 COOKIE_JAR.clearSession();
                 throw new UrpException(String.format("date error. user account: %s return account %s", account,
                         x.getId().getStudentNumber()));
@@ -845,7 +846,6 @@ public class NewUrpSpider {
             Elements value = e.getElementsByClass("profile-info-value");
             List<Element> valueList = Lists.newArrayList(value.iterator());
 
-
             for (int x = 0; x < nameList.size(); x++) {
                 infoMap.put(nameList.get(x).text(), valueList.get(x).text());
             }
@@ -921,10 +921,12 @@ public class NewUrpSpider {
         public void run() {
             while (!Thread.interrupted()) {
                 log.debug("produce captcha thread start");
-//                MDC.put("preLoad", uuid.toString());
+
                 try {
-                    VerifyCode captcha = getCaptcha();
+
                     UUID uuid = UUID.randomUUID();
+                    MDC.put("preLoad", uuid.toString());
+                    VerifyCode captcha = getCaptcha();
                     PreLoadCaptcha preLoadCaptcha = new PreLoadCaptcha(captcha, uuid.toString(), new Date());
                     queue.put(preLoadCaptcha);
                 } catch (Throwable e) {
