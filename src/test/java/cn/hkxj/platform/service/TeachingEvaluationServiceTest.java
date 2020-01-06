@@ -77,8 +77,6 @@ public class TeachingEvaluationServiceTest {
 
         long size;
 
-
-
         while (true) {
             String account = null;
             try {
@@ -186,25 +184,13 @@ public class TeachingEvaluationServiceTest {
                     log.error("student account {}", member);
                     e1.printStackTrace();
                 }
-
             }
 
             System.out.println("-------------------");
 
         }
-        ;
-
-
     }
 
-    private List<String> getOpenIdByAccount(int account) {
-        OpenidExample example = new OpenidExample();
-        OpenidExample.Criteria criteria = example.createCriteria();
-        criteria.andAccountEqualTo(account);
-
-        return openidPlusMapper.selectByExample(example).stream().map(Openid::getOpenid).collect(Collectors.toList());
-
-    }
 
     @Test
     public void test(){

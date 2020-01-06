@@ -108,8 +108,9 @@ public class GradeAutoUpdateTaskTest {
     @Test
     public void miniProgramUpdateTest() {
 
-        ScheduleTask task = scheduleTaskDao.selectByOpenid("oOzb90OTAmqThH_sXTdhWoxXiCAg",
-                miniProgramProperties.getAppId(), SubscribeScene.GRADE_AUTO_UPDATE);
+        ScheduleTask task = scheduleTaskDao.selectByOpenid("oCxRO1KktG1kI_RLWGbeGjvoahrU",
+                wechatMpPlusProperties.getAppId(), SubscribeScene.GRADE_AUTO_UPDATE);
+        System.out.println(task);
         gradeAutoUpdateTask.processScheduleTask(task);
     }
 }

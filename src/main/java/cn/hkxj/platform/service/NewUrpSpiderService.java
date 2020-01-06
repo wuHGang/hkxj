@@ -53,6 +53,8 @@ public class NewUrpSpiderService {
     private ClassService classService;
     @Resource
     private StudentDao studentDao;
+    @Resource
+    private OpenIdService openIdService;
 
     @Retryable(value = UrpException.class, maxAttempts = 3)
     CurrentGrade getCurrentTermGrade(Student student){
@@ -230,6 +232,7 @@ public class NewUrpSpiderService {
             return new NewUrpSpider(account, password);
         }catch (PasswordUnCorrectException e){
             studentDao.updatePasswordUnCorrect(Integer.parseInt(account));
+            openIdService.openIdUnbindAllPlatform(Integer.parseInt(account));
             throw e;
         }
 

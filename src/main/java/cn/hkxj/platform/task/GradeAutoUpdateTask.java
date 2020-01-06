@@ -184,9 +184,6 @@ public class GradeAutoUpdateTask extends BaseSubscriptionTask {
                 }else {
                     throw new RuntimeException("unknown appId "+ task.getAppid());
                 }
-
-
-
             }
 
         }

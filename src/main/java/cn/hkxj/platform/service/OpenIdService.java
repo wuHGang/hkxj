@@ -85,23 +85,15 @@ public class OpenIdService {
         }
     }
 
-    public void openIdUnbindAllPlatform(Openid openid, String appid) {
+    /**
+     * 对于密码错误的账号全平台解绑
+     * @param account
+     */
+    public void openIdUnbindAllPlatform(int account) {
         OpenidExample openidExample = new OpenidExample();
-        openidExample.createCriteria().andAccountEqualTo(openid.getAccount());
-        openid.setIsBind(false);
-        if (isPlus(appid)) {
-            openidPlusMapper.openidUnbind(openid.getOpenid());
-            openidMapper.selectByExample(openidExample).stream().findFirst().ifPresent((proOpenid) -> {
-                proOpenid.setIsBind(false);
-                openidMapper.updateByPrimaryKey(proOpenid);
-            });
-        } else {
-            openidMapper.openidUnbind(openid.getOpenid());
-            openidPlusMapper.selectByExample(openidExample).stream().findFirst().ifPresent(proOpenid -> {
-                proOpenid.setIsBind(false);
-                openidPlusMapper.updateByPrimaryKey(proOpenid);
-            });
-        }
+        openidExample.createCriteria().andAccountEqualTo(account);
+        openidPlusMapper.updateByExampleSelective(new Openid().setIsBind(false), openidExample);
+        openidMapper.updateByExampleSelective(new Openid().setIsBind(false), openidExample);
     }
 
     public List<String> getAllOpenidsFromOneClass(int classId, String openid, String appid) {

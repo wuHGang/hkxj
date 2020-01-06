@@ -31,12 +31,13 @@ public class UnbindMessageHandler implements WxMpMessageHandler {
         try {
             String appid = wxMpService.getWxMpConfigStorage().getAppId();
             openIdService.openIdUnbind(wxMpXmlMessage.getFromUser(), appid);
-            String gradesMsg=("你的账号已解绑成功\n");
+            String gradesMsg=("你的账号已解绑成功");
             return textBuilder.build(gradesMsg, wxMpXmlMessage, wxMpService);
         } catch (Exception e) {
             log.error("在组装返回信息时出现错误", e);
+            return textBuilder.build("解绑失败" , wxMpXmlMessage, wxMpService);
         }
 
-        return textBuilder.build("没有查询到相关成绩，晚点再来查吧~" , wxMpXmlMessage, wxMpService);
+
     }
 }
