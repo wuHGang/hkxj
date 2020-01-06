@@ -177,7 +177,6 @@ public class UserBindingController {
         try {
             student = login(account, password, appid, openid);
             return getWebResponse(student);
-
         } catch (UrpVerifyCodeException e) {
             log.info("student bind fail verify code error account:{} password:{} openid:{}", account, password,
                     openid);
@@ -188,27 +187,23 @@ public class UserBindingController {
         } catch (OpenidExistException e) {
             student = openIdService.getStudentByOpenId(openid, appid);
             return getWebResponse(student);
-
         } catch (UrpEvaluationException e) {
-            Student student1 = new Student()
-                    .setAccount(Integer.parseInt(account))
-                    .setPassword(password);
-
+            // TODO 丑陋
             String appid1 = appid;
             String openid1 = openid;
             evaluatePool.submit(() -> {
-                try {
-                    while (teachingEvaluationService.evaluate(student1) != 0){
-
+                int count = 0;
+                while (count < 4){
+                    try {
+                        teachingEvaluationService.evaluateForNotBind(Integer.parseInt(account), password, appid1, openid1);
+                    }catch (Exception e1){
+                        log.info("evaluate fail {}, {}, {}, {}", account, password,
+                                appid1, openid1, e1);
+                        count ++;
+                        continue;
                     }
-                    login(account, password, appid1, openid1);
-
-                    teachingEvaluationService.sendMessage(Integer.parseInt(account), "久等了,已经评估完成");
-                }catch (Exception e1){
-                    log.info("evaluate fail account:{} password:{} appid:{} openid:{}", account, password,
-                            appid1, openid1, e1);
+                    break;
                 }
-
             });
             return WebResponse.successWithMessage("我们很快会为你完成评估，可以关闭此页面。评估完成会发信息通知你的");
         }

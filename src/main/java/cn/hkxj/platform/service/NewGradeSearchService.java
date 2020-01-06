@@ -2,6 +2,7 @@ package cn.hkxj.platform.service;
 
 import cn.hkxj.platform.MDCThreadPool;
 import cn.hkxj.platform.dao.*;
+import cn.hkxj.platform.exceptions.PasswordUnCorrectException;
 import cn.hkxj.platform.exceptions.UrpEvaluationException;
 import cn.hkxj.platform.pojo.*;
 import cn.hkxj.platform.pojo.constant.ErrorCode;
@@ -127,6 +128,10 @@ public class NewGradeSearchService {
             Throwable cause = e.getCause();
             List<GradeVo> gradeVoList = gradeToVo(gradeDao.getCurrentTermGradeByAccount(student.getAccount()));
 
+            if (cause instanceof PasswordUnCorrectException){
+                PasswordUnCorrectException exception = (PasswordUnCorrectException) cause;
+                throw exception;
+            }
             if(cause instanceof UrpEvaluationException){
                 if(gradeVoList.isEmpty()){
                     UrpEvaluationException exception = (UrpEvaluationException) cause;

@@ -3,6 +3,8 @@ package cn.hkxj.platform.service;
 import cn.hkxj.platform.config.wechat.WechatMpConfiguration;
 import cn.hkxj.platform.config.wechat.WechatMpPlusProperties;
 import cn.hkxj.platform.dao.StudentDao;
+import cn.hkxj.platform.exceptions.OpenidExistException;
+import cn.hkxj.platform.exceptions.PasswordUnCorrectException;
 import cn.hkxj.platform.mapper.OpenidPlusMapper;
 import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.pojo.constant.RedisKeys;
@@ -34,11 +36,14 @@ public class TeachingEvaluationService {
     @Resource
     private OpenidPlusMapper openidPlusMapper;
     @Resource
+    private OpenIdService openIdService;
+    @Resource
     private WechatMpPlusProperties wechatMpPlusProperties;
     @Resource
     private StudentBindService studentBindService;
     @Resource
     private StringRedisTemplate stringRedisTemplate;
+
 
     public int evaluate(String account) {
         Student student = studentDao.selectStudentByAccount(Integer.parseInt(account));
@@ -67,6 +72,30 @@ public class TeachingEvaluationService {
 
         log.info("finish evaluate {} in {}ms", student, System.currentTimeMillis() - l);
         return getEvaluationPagePost(student).size();
+    }
+
+
+    public int evaluateForNotBind(Integer account, String password){
+        Student student = new Student().setAccount(account).setPassword(password);
+        return evaluate(student);
+    }
+
+    public void evaluateForNotBind(Integer account, String password, String appId, String openid){
+        Student student = new Student().setAccount(account).setPassword(password);
+        try {
+            while (evaluate(student) != 0){
+
+            }
+            sendMessageToOpenId(openid, "评估已完成");
+            studentBindService.studentBind(openid, account.toString(), password ,appId);
+        }catch (OpenidExistException exception){
+            Student studentByOpenId = openIdService.getStudentByOpenId(openid, appId);
+
+        }catch (PasswordUnCorrectException e){
+            sendMessageToOpenId(openid, "密码错误请重试");
+        }
+
+
     }
 
     public List<EvaluationPagePost> getEvaluationPagePost(Student student) {
@@ -119,7 +148,7 @@ public class TeachingEvaluationService {
 
     }
 
-    public void sendMessage(int account, String content){
+    public void sendMessageToStudent(int account, String content){
         log.info("send message {} to account {}", account, content);
         WxMpService service = WechatMpConfiguration.getMpServices().get(wechatMpPlusProperties.getAppId());
         for (String s : getOpenIdByAccount(account)) {
@@ -134,6 +163,23 @@ public class TeachingEvaluationService {
                 e.printStackTrace();
             }
         }
+
+    }
+
+    public void sendMessageToOpenId(String openid, String content){
+        log.info("send message {} to openid {}", openid, content);
+        WxMpService service = WechatMpConfiguration.getMpServices().get(wechatMpPlusProperties.getAppId());
+        WxMpKefuMessage wxMpKefuMessage = new WxMpKefuMessage();
+        wxMpKefuMessage.setContent(content);
+        wxMpKefuMessage.setMsgType("text");
+        wxMpKefuMessage.setToUser(openid);
+        try {
+            service.getKefuService().sendKefuMessage(wxMpKefuMessage);
+            log.info("send openid {} info {}", openid, wxMpKefuMessage);
+        } catch (WxErrorException e) {
+            e.printStackTrace();
+        }
+
 
     }
 
