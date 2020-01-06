@@ -32,6 +32,8 @@ import org.springframework.test.context.web.WebAppConfiguration;
 
 import javax.annotation.Resource;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
@@ -51,8 +53,6 @@ public class TeachingEvaluationServiceTest {
     private StudentDao studentDao;
     @Resource
     private StringRedisTemplate stringRedisTemplate;
-    @Resource
-    private WechatMpPlusProperties wechatMpPlusProperties;
     @Resource
     private OpenidPlusMapper openidPlusMapper;
     @Resource
@@ -77,9 +77,24 @@ public class TeachingEvaluationServiceTest {
 
         long size;
 
+
+
         while (true) {
             String account = null;
             try {
+
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(new Date());
+                int i = cal.get(Calendar.HOUR_OF_DAY);
+
+                if(i<7){
+                    try {
+                        Thread.sleep(1000 * 60 * 45);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    continue;
+                }
 
                 while ((size = stringRedisTemplate.opsForSet().size(key)) != 0) {
                     log.info("evaluate size {}", size);
@@ -90,20 +105,7 @@ public class TeachingEvaluationServiceTest {
                     log.info("evaluate account {} finish", account);
                     stringRedisTemplate.opsForSet().add(RedisKeys.FINISH_EVALUATION_SET.getName(), account);
 
-                    WxMpService service = WechatMpConfiguration.getMpServices().get(wechatMpPlusProperties.getAppId());
-
-                    for (String s : getOpenIdByAccount(Integer.parseInt(account))) {
-                        WxMpKefuMessage wxMpKefuMessage = new WxMpKefuMessage();
-                        wxMpKefuMessage.setContent("久等了,评估已完成");
-                        wxMpKefuMessage.setMsgType("text");
-                        wxMpKefuMessage.setToUser(s);
-                        try {
-                            service.getKefuService().sendKefuMessage(wxMpKefuMessage);
-                            log.info("send account {} info {}", account, wxMpKefuMessage);
-                        } catch (WxErrorException e) {
-                            e.printStackTrace();
-                        }
-                    }
+                    teachingEvaluationService.sendMessageToStudent(Integer.parseInt(account), "久等了,评估已完成");
 
                 }
 
@@ -116,7 +118,7 @@ public class TeachingEvaluationServiceTest {
                 e.printStackTrace();
                 if (account != null) {
                     if(e instanceof PasswordUnCorrectException){
-                        teachingEvaluationService.sendMessage(Integer.parseInt(account), "密码错误，请重新绑定");
+                        teachingEvaluationService.sendMessageToStudent(Integer.parseInt(account), "密码错误，请重新绑定");
                     }else {
                         stringRedisTemplate.opsForSet().add(key, account);
                     }
@@ -202,5 +204,10 @@ public class TeachingEvaluationServiceTest {
 
         return openidPlusMapper.selectByExample(example).stream().map(Openid::getOpenid).collect(Collectors.toList());
 
+    }
+
+    @Test
+    public void test(){
+        teachingEvaluationService.evaluateForNotBind(2018022950, "1" ,"wx541fd36e6b400648", "oCxRO1BywucCEtvi2O8D1Nl_TDOY");
     }
 }
