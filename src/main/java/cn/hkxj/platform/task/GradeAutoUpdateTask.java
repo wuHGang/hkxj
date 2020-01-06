@@ -36,10 +36,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
@@ -215,8 +212,10 @@ public class GradeAutoUpdateTask extends BaseSubscriptionTask {
      * @return 可用结果
      */
     boolean isSwitchOn() {
-        log.info(updateSwitch);
-        return BooleanUtils.toBoolean(updateSwitch);
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        int hour = cal.get(Calendar.HOUR_OF_DAY);
+        return BooleanUtils.toBoolean(updateSwitch) && (hour > 7 || hour < 1);
     }
 
     @Data
