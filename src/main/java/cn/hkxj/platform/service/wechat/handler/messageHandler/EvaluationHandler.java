@@ -34,12 +34,13 @@ public class EvaluationHandler implements WxMpMessageHandler {
     @Override
     public WxMpXmlOutMessage handle(WxMpXmlMessage wxMpXmlMessage, Map<String, Object> context, WxMpService wxMpService, WxSessionManager sessionManager) {
         String appId = wxMpService.getWxMpConfigStorage().getAppId();
-        Student student = openIdService.getStudentByOpenId(wxMpXmlMessage.getFromUser(), appId);
 
         String appid = wxMpService.getWxMpConfigStorage().getAppId();
         if(!(openIdService.openidIsExist(wxMpXmlMessage.getFromUser(), appid) && openIdService.openidIsBind(wxMpXmlMessage.getFromUser(), appid))){
             return textBuilder.build(teachingEvaluationService.getEvaluationLink(), wxMpXmlMessage, wxMpService);
         }
+
+        Student student = openIdService.getStudentByOpenId(wxMpXmlMessage.getFromUser(), appId);
 
         String account = student.getAccount().toString();
         String content;
