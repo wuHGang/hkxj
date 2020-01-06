@@ -166,7 +166,7 @@ public class GradeAutoUpdateTask extends BaseSubscriptionTask {
                                     .setCourseName(new SubscribeValue(gradeVo.getCourse().getName()))
                                     .setName(new SubscribeValue(student.getName()))
                                     .setScore(new SubscribeValue(gradeVo.getScore().toString()))
-                                    .setRemark(new SubscribeValue("需要获取新提醒需要重新点击订阅~"))
+                                    .setRemark(new SubscribeValue("如需获取新提醒，请重新点击订阅~"))
                             );
 
                     miniProgramService.sendSubscribeMessage(message);

@@ -10,6 +10,7 @@ import cn.hkxj.platform.exceptions.UrpVerifyCodeException;
 import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.pojo.WebResponse;
 import cn.hkxj.platform.pojo.constant.ErrorCode;
+import cn.hkxj.platform.service.OpenIdService;
 import cn.hkxj.platform.service.TeachingEvaluationService;
 import cn.hkxj.platform.service.wechat.StudentBindService;
 import lombok.extern.slf4j.Slf4j;
@@ -40,6 +41,8 @@ public class UserBindingController {
     private StudentBindService studentBindService;
     @Resource
     private TeachingEvaluationService teachingEvaluationService;
+    @Resource
+    private OpenIdService openIdService;
 
     private static ExecutorService evaluatePool = new MDCThreadPool(4, 4,
             0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(), r -> new Thread(r, "evaluate"));
@@ -173,16 +176,7 @@ public class UserBindingController {
         Student student;
         try {
             student = login(account, password, appid, openid);
-            if(teachingEvaluationService.hasEvaluate(student.getAccount().toString())){
-                return WebResponse.successWithMessage("你的账号已经评估完成啦");
-            }
-
-            if(teachingEvaluationService.isWaitingEvaluate(student.getAccount().toString())){
-                return WebResponse.successWithMessage("你的账号已经在队列中啦，可以关闭此页面。评估完成会发信息通知你的");
-            }
-
-            teachingEvaluationService.addEvaluateAccount(student.getAccount().toString());
-            return WebResponse.successWithMessage("我们很快会为你完成评估，可以关闭此页面。评估完成会发信息通知你的");
+            return getWebResponse(student);
 
         } catch (UrpVerifyCodeException e) {
             log.info("student bind fail verify code error account:{} password:{} openid:{}", account, password,
@@ -192,8 +186,9 @@ public class UserBindingController {
             log.info("student bind fail Password not correct account:{} password:{} openid:{}", account, password, openid);
             return WebResponse.fail(ErrorCode.ACCOUNT_OR_PASSWORD_INVALID.getErrorCode(), "账号或者密码错误");
         } catch (OpenidExistException e) {
-            evaluatePool.submit(() -> teachingEvaluationService.evaluate(account));
-            return WebResponse.success();
+            student = openIdService.getStudentByOpenId(openid, appid);
+            return getWebResponse(student);
+
         } catch (UrpEvaluationException e) {
             Student student1 = new Student()
                     .setAccount(Integer.parseInt(account))
@@ -208,17 +203,30 @@ public class UserBindingController {
                     }
                     login(account, password, appid1, openid1);
 
-                    teachingEvaluationService.sendMessage(Integer.parseInt(account), "评估已经完成,已经评估完成");
+                    teachingEvaluationService.sendMessage(Integer.parseInt(account), "久等了,已经评估完成");
                 }catch (Exception e1){
                     log.info("evaluate fail account:{} password:{} appid:{} openid:{}", account, password,
-                            appid1, openid1, e);
-
+                            appid1, openid1, e1);
                 }
 
             });
             return WebResponse.successWithMessage("我们很快会为你完成评估，可以关闭此页面。评估完成会发信息通知你的");
         }
 
+
+    }
+
+    private WebResponse getWebResponse(Student student) {
+        if(teachingEvaluationService.hasEvaluate(student.getAccount().toString())){
+            return WebResponse.successWithMessage("你的账号已经评估完成啦");
+        }
+
+        if(teachingEvaluationService.isWaitingEvaluate(student.getAccount().toString())){
+            return WebResponse.successWithMessage("你的账号已经在队列中啦，可以关闭此页面。评估完成会发信息通知你的");
+        }
+
+        teachingEvaluationService.addEvaluateAccount(student.getAccount().toString());
+        return WebResponse.successWithMessage("我们很快会为你完成评估，可以关闭此页面。评估完成会发信息通知你的");
     }
 
     private Student login( String account, String password, String appid, String openid) {
