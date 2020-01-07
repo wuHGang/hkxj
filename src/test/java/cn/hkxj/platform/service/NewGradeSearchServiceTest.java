@@ -39,15 +39,6 @@ public class NewGradeSearchServiceTest {
     @Resource
     private MiniProgramOpenIdDao miniProgramOpenIdDao;
 
-    @Test
-    public void test(){
-        Student student = studentDao.selectStudentByAccount(2018022512);
-        for (UrpGradeAndUrpCourse course : newGradeSearchService.getCurrentGrade(student).getData()) {
-            System.out.println(course);
-        }
-
-    }
-
 
     @Test
     public void getCurrentTermGradeFromSpider(){
@@ -76,7 +67,7 @@ public class NewGradeSearchServiceTest {
 
     @Test
     public void getCurrentTermGradeSync(){
-        Student student = studentDao.selectStudentByAccount(2019030404);
+        Student student = studentDao.selectStudentByAccount(2016023195);
         for (GradeVo grade : newGradeSearchService.getCurrentTermGradeSync(student)) {
             System.out.println(grade);
         }

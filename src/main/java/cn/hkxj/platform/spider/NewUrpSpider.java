@@ -279,7 +279,7 @@ public class NewUrpSpider {
                 .headers(HEADERS)
                 .post(body)
                 .build();
-        String result = new String(execute(request));
+        String result = getContent(request);
         return parseObject(result, new TypeReference<List<Map<String, Object>>>() {
         });
     }
@@ -722,7 +722,7 @@ public class NewUrpSpider {
 
         TypeReference<SearchResult<SearchCourseResult>> typeReference = new TypeReference<SearchResult<SearchCourseResult>>() {
         };
-        return parseObject(new String(execute(request)), typeReference);
+        return parseObject(getContent(request), typeReference);
     }
 
     /**
@@ -818,6 +818,7 @@ public class NewUrpSpider {
         try {
             return JSON.parseObject(text, type);
         } catch (JSONException e) {
+            log.error("json {} 解析异常", text, e);
             throw new UrpException("json 解析异常", e);
         }
 

@@ -44,7 +44,7 @@
 
 
 
-        <table tableName="wechat_bind_record">
+        <table tableName="student_exam_timetable">
             <property name="ignoreQualifiersAtRuntime" value="true"/>
         </table>
 

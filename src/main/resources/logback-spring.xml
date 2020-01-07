@@ -98,7 +98,7 @@
         </filter>
     </appender>
 
-    <logger name="cn.hkxj.platform.controller.wechat" additivity="fales">
+    <logger name="cn.hkxj.platform.controller.wechat" additivity="false">
         <level value="INFO"/>
         <appender-ref ref="wechatAppender"/>
     </logger>
@@ -123,14 +123,14 @@
         <appender-ref ref="errorAppender"/>
     </logger>
 
-    <logger name="cn.hkxj.platform.spider.NewUrpSpider" additivity="false">
-        <level value="INFO"/>
-        <appender-ref ref="urpSpiderAppender"/>
-    </logger>
-
     <logger name="cn.hkxj.platform.aop.ControllerLogger" additivity="false">
         <level value="INFO"/>
         <appender-ref ref="requestAppender"/>
+    </logger>
+
+    <logger name="cn.hkxj.platform.spider.NewUrpSpider" additivity="false">
+        <level value="INFO"/>
+        <appender-ref ref="urpSpiderAppender"/>
     </logger>
 
     <root level="DEBUG">
