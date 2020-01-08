@@ -42,10 +42,7 @@ public enum RedisKeys {
      * 已经完成的账号
      */
     FINISH_EVALUATION_SET("teaching_evaluation"),
-    /**
-     * 已经完成的账号
-     */
-    PROXY_SELECT_SWITCH("PROXY_DIRECT_SWITCH"),
+
     ;
     private String name;
 
