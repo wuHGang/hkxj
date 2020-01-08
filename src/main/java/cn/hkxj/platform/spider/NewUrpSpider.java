@@ -279,7 +279,7 @@ public class NewUrpSpider {
                 .headers(HEADERS)
                 .post(body)
                 .build();
-        String result = new String(execute(request));
+        String result = getContent(request);
         return parseObject(result, new TypeReference<List<Map<String, Object>>>() {
         });
     }
@@ -346,7 +346,7 @@ public class NewUrpSpider {
                 .url(CURRENT_TERM_GRADE_DETAIL)
                 .post(body)
                 .build();
-        String result = new String(execute(request));
+        String result = getContent(request);
         return parseObject(result, gradeDetailTypeReference);
     }
 
@@ -357,7 +357,7 @@ public class NewUrpSpider {
                 .url(COURSE_DETAIL)
                 .post(body)
                 .build();
-        String result = new String(execute(request));
+        String result = getContent(request);
         flashCache();
         //因为爬虫爬取的结果是个集合，所以先转成list
         List<UrpCourseForSpider> courses = parseObject(result, courseTypeReference);
@@ -437,7 +437,7 @@ public class NewUrpSpider {
                 .headers(HEADERS)
                 .post(body)
                 .build();
-        String result = new String(execute(request));
+        String result = getContent(request);
         try {
             List<EmptyRoomPojo> pojo = JSON.parseObject(result, new TypeReference<List<EmptyRoomPojo>>() {
             });
@@ -458,7 +458,7 @@ public class NewUrpSpider {
                 .headers(HEADERS)
                 .get()
                 .build();
-        String s = new String(execute(request));
+        String s = getContent(request);
         if (s.contains("invalidSession") || s.contains("login")) {
             COOKIE_JAR.clearSession();
             throw new UrpSessionExpiredException("account: " + account + " session expired");
@@ -559,7 +559,7 @@ public class NewUrpSpider {
                 .headers(HEADERS)
                 .post(body)
                 .build();
-        String result = new String(execute(request));
+        String result = getContent(request);
         TypeReference<List<SearchResult<ClassInfoSearchResult>>> reference = new TypeReference<List<SearchResult<ClassInfoSearchResult>>>() {
         };
 
@@ -578,7 +578,7 @@ public class NewUrpSpider {
                 .headers(HEADERS)
                 .get()
                 .build();
-        String result = new String(execute(request));
+        String result = getContent(request);
 
         return parseObject(result, classCourseSearchResultReference);
 
@@ -598,7 +598,7 @@ public class NewUrpSpider {
                 .headers(HEADERS)
                 .get()
                 .build();
-        String result = new String(execute(request));
+        String result = getContent(request);
 
         return parseObject(result, classCourseSearchResultReference);
 
@@ -618,7 +618,7 @@ public class NewUrpSpider {
                 .headers(HEADERS)
                 .get()
                 .build();
-        String result = new String(execute(request));
+        String result = getContent(request);
 
         return parseObject(result, classCourseSearchResultReference);
 
@@ -636,7 +636,7 @@ public class NewUrpSpider {
                 .headers(HEADERS)
                 .get()
                 .build();
-        String result = new String(execute(request));
+        String result = getContent(request);
 
         return parseObject(result, classCourseSearchResultReference);
 
@@ -666,7 +666,7 @@ public class NewUrpSpider {
 
         TypeReference<List<SearchResult<SearchTeacherResult>>> reference = new TypeReference<List<SearchResult<SearchTeacherResult>>>() {
         };
-        return parseObject(new String(execute(request)), reference);
+        return parseObject(getContent(request), reference);
     }
 
     /**
@@ -693,7 +693,7 @@ public class NewUrpSpider {
 
         TypeReference<List<SearchResultWrapper<SearchClassroomResult>>> reference = new TypeReference<List<SearchResultWrapper<SearchClassroomResult>>>() {
         };
-        return parseObject(new String(execute(request)), reference);
+        return parseObject(getContent(request), reference);
     }
 
     /**
@@ -722,7 +722,7 @@ public class NewUrpSpider {
 
         TypeReference<SearchResult<SearchCourseResult>> typeReference = new TypeReference<SearchResult<SearchCourseResult>>() {
         };
-        return parseObject(new String(execute(request)), typeReference);
+        return parseObject(getContent(request), typeReference);
     }
 
     /**
@@ -749,7 +749,7 @@ public class NewUrpSpider {
         TypeReference<SearchResultDateWrapper<SearchCourseResult>> typeReference =
                 new TypeReference<SearchResultDateWrapper<SearchCourseResult>>() {
                 };
-        return parseObject(new String(execute(request)), typeReference);
+        return parseObject(getContent(request), typeReference);
     }
 
     public TeachingEvaluation searchTeachingEvaluationInfo() {
@@ -873,7 +873,7 @@ public class NewUrpSpider {
 
 
     private static String getContent(Request request) {
-        String content = new String(execute(request));
+        String content = getContent(request);
         if (content.contains("invalidSession") || content.contains("login")) {
             COOKIE_JAR.clearSession();
             throw new UrpSessionExpiredException("session expired");
