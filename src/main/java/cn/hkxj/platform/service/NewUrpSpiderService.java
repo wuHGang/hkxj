@@ -222,7 +222,7 @@ public class NewUrpSpiderService {
 
         Classes classes = classService.parseSpiderResult(studentInfo);
         Student student = wrapperToStudent(studentInfo);
-        student.setClasses(classes);
+        student.setClasses(classes.getId());
 
         return student;
     }

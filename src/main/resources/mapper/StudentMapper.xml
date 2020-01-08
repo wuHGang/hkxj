@@ -8,7 +8,7 @@
     <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="sex" jdbcType="VARCHAR" property="sex" />
     <result column="ethnic" jdbcType="VARCHAR" property="ethnic" />
-    <result column="class_id" jdbcType="INTEGER" property="classes" typeHandler="cn.hkxj.platform.handler.ClassesHandler" />
+    <result column="class_id" jdbcType="INTEGER" property="classes"/>
     <result column="is_correct" jdbcType="BIT" property="isCorrect" />
     <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
     <result column="gmt_modified" jdbcType="TIMESTAMP" property="gmtModified" />
@@ -151,7 +151,7 @@
       is_correct, gmt_create, gmt_modified
       )
     values (#{account,jdbcType=INTEGER}, #{password,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
-      #{sex,jdbcType=VARCHAR}, #{ethnic,jdbcType=VARCHAR}, #{classes,jdbcType=INTEGER,typeHandler=cn.hkxj.platform.handler.ClassesHandler}, 
+      #{sex,jdbcType=VARCHAR}, #{ethnic,jdbcType=VARCHAR}, #{classes,jdbcType=INTEGER},
       #{isCorrect,jdbcType=BIT}, #{gmtCreate,jdbcType=TIMESTAMP}, #{gmtModified,jdbcType=TIMESTAMP}
       )
   </insert>
@@ -271,7 +271,7 @@
       name = #{record.name,jdbcType=VARCHAR},
       sex = #{record.sex,jdbcType=VARCHAR},
       ethnic = #{record.ethnic,jdbcType=VARCHAR},
-      class_id = #{record.classes,jdbcType=INTEGER,typeHandler=cn.hkxj.platform.handler.ClassesHandler},
+      class_id = #{record.classes,jdbcType=INTEGER},
       is_correct = #{record.isCorrect,jdbcType=BIT},
       gmt_create = #{record.gmtCreate,jdbcType=TIMESTAMP},
       gmt_modified = #{record.gmtModified,jdbcType=TIMESTAMP}

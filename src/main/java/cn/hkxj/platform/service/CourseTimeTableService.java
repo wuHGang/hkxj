@@ -268,7 +268,7 @@ public class CourseTimeTableService {
 
     UrpCourseTimeTableForSpider getCourseTimeTableDetails(Student student) {
         UrpCourseTimeTableForSpider spiderResult = newUrpSpiderService.getUrpCourseTimeTable(student);
-        saveToDbAsync(spiderResult, student);
+//        saveToDbAsync(spiderResult, student);
         return spiderResult;
     }
 
@@ -521,7 +521,7 @@ public class CourseTimeTableService {
 
             if (!CollectionUtils.isEmpty(needInsertDetailList)) {
                 List<Integer> list = saveTimeTableDetail(needInsertDetailList, timeAndPlace, basicInfo);
-                log.info("class {} 插入detail size:{}  id:{}", student.getClasses().getId(), list.size(), list.toString());
+                log.info("class {} 插入detail size:{}  id:{}", student.getClasses(), list.size(), list.toString());
                 idList.addAll(list);
             }
 

@@ -317,7 +317,7 @@ public class NewGradeSearchService {
         UrpExam urpExamFromSpider = generalGradeForSpider.convertToUrpExam();
         urpExamFromSpider.setPlanId(plan.getId());
         urpExamFromSpider.setMajorId(major.getId());
-        urpExamFromSpider.setClassId(student.getClasses().getId());
+        urpExamFromSpider.setClassId(student.getClasses());
         //判断对应的考试是否存在
         return urpExamDao.saveOrGetUrpExamFromDb(urpExamFromSpider, currentTerm);
     }

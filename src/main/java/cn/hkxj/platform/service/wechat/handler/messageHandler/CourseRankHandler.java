@@ -45,7 +45,7 @@ public class CourseRankHandler implements WxMpMessageHandler {
         Student student = openIdService.getStudentByOpenId(openid, appId);
 
         HashOperations<String, String, String> hash = redisTemplate.opsForHash();
-        String urpClassCode = hash.get(RedisKeys.URP_CLASS_CODE.getName(), student.getClasses().getId().toString());
+        String urpClassCode = hash.get(RedisKeys.URP_CLASS_CODE.getName(), student.getClasses().toString());
 
         if(StringUtils.isEmpty(urpClassCode)){
             return textBuilder.build("没有查询到你的排名", wxMpXmlMessage, wxMpService);
