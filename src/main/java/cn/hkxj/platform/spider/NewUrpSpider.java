@@ -873,7 +873,7 @@ public class NewUrpSpider {
 
 
     private static String getContent(Request request) {
-        String content = getContent(request);
+        String content = new String(execute(request));
         if (content.contains("invalidSession") || content.contains("login")) {
             COOKIE_JAR.clearSession();
             throw new UrpSessionExpiredException("session expired");
