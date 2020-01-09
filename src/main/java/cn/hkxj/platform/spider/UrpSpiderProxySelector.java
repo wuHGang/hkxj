@@ -40,14 +40,12 @@ public class UrpSpiderProxySelector extends ProxySelector {
         List<Proxy> list = new ArrayList<>();
 
         if(BooleanUtils.toBoolean(useProxy)){
-            String name = RedisKeys.PROXY_SELECT_SWITCH.getName();
-
-            if (BooleanUtils.toBoolean(stringRedisTemplate.opsForValue().get(name))) {
+            if (usePayProxy()) {
+                ProxyData proxyData = getProxyData();
+                list.add(new Proxy(Proxy.Type.SOCKS, new InetSocketAddress(proxyData.ip, proxyData.port)));
+            }else {
                 list.add(new Proxy(Proxy.Type.SOCKS, new InetSocketAddress("49.234.214.204", 8888)));
             }
-
-            ProxyData proxyData = getProxyData();
-            list.add(new Proxy(Proxy.Type.SOCKS, new InetSocketAddress(proxyData.ip, proxyData.port)));
 
         }else {
             list.add(Proxy.NO_PROXY);
