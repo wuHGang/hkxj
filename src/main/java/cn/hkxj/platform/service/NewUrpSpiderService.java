@@ -20,6 +20,7 @@ import cn.hkxj.platform.spider.newmodel.grade.CurrentGrade;
 import cn.hkxj.platform.spider.newmodel.grade.detail.GradeDetailSearchPost;
 import cn.hkxj.platform.spider.newmodel.grade.detail.UrpGradeDetailForSpider;
 import cn.hkxj.platform.spider.newmodel.grade.general.UrpGeneralGradeForSpider;
+import cn.hkxj.platform.spider.newmodel.grade.scheme.Scheme;
 import cn.hkxj.platform.spider.newmodel.searchclass.ClassInfoSearchResult;
 import cn.hkxj.platform.spider.newmodel.searchclassroom.SearchClassroomPost;
 import cn.hkxj.platform.spider.newmodel.searchclassroom.SearchClassroomResult;
@@ -217,6 +218,14 @@ public class NewUrpSpiderService {
         NewUrpSpider spider = getSpider(student.getAccount().toString(), student.getPassword());
         return spider.getUrpGradeDetail(gradeDetailSearchPost);
     }
+
+
+    @Retryable(value = UrpException.class, maxAttempts = 3)
+    public List<Scheme> getSchemeGrade(Student student){
+        NewUrpSpider spider = getSpider(student.getAccount().toString(), student.getPassword());
+        return spider.getSchemeGrade();
+    }
+
 
     private Student getUserInfo(UrpStudentInfo studentInfo){
 

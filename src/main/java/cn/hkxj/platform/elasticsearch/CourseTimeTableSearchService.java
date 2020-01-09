@@ -89,7 +89,7 @@ public class CourseTimeTableSearchService {
     }
 
     public List<CourseTimetableSearchResultVo> searchCourseTimeTableV2(int page, int size, String query) {
-        return searchCourseTimeTable(page, size, query).parallelStream()
+        return searchCourseTimeTable(page, size, query).stream()
                 .map(x -> new CourseTimetableSearchResultVo()
                         .setAcademyName(x.getAcademyName())
                         .setClassDay(x.getClassDay())

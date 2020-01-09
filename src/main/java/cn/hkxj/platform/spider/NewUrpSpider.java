@@ -21,6 +21,7 @@ import cn.hkxj.platform.spider.newmodel.grade.detail.GradeDetailSearchPost;
 import cn.hkxj.platform.spider.newmodel.grade.detail.UrpGradeDetailForSpider;
 import cn.hkxj.platform.spider.newmodel.grade.general.UrpGeneralGradeForSpider;
 import cn.hkxj.platform.spider.newmodel.grade.general.UrpGradeForSpider;
+import cn.hkxj.platform.spider.newmodel.grade.scheme.Scheme;
 import cn.hkxj.platform.spider.newmodel.searchclass.ClassInfoSearchResult;
 import cn.hkxj.platform.spider.newmodel.searchclassroom.SearchClassroomPost;
 import cn.hkxj.platform.spider.newmodel.searchclassroom.SearchClassroomResult;
@@ -179,6 +180,13 @@ public class NewUrpSpider {
     private static final String EVALUATION_PAGE = ROOT + "/student/teachingEvaluation/teachingEvaluation" +
             "/evaluationPage";
 
+
+    /**
+     * 方案成绩页面  包含所有的成绩
+     * 选用这个地址的原因是因为，他在所有这些不规范的接口中算是比较规范的一个了
+     */
+    private static final String SCHEME_GRADE = ROOT + "/student/integratedQuery/scoreQuery/schemeScores/callback";
+
     private static StringRedisTemplate stringRedisTemplate;
 
     private static final TypeReference<UrpGradeDetailForSpider> gradeDetailTypeReference
@@ -284,6 +292,10 @@ public class NewUrpSpider {
         });
     }
 
+    /**
+     * 获取当期学期成绩 包含详细数据
+     * @return
+     */
     public CurrentGrade getCurrentGrade() {
         List<UrpGeneralGradeForSpider> urpGeneralGradeForSpiders = getCurrentGeneralGrade();
         List<UrpGradeForSpider> urpGradeForSpiderList = Lists.newArrayList();
@@ -295,6 +307,21 @@ public class NewUrpSpider {
         CurrentGrade currentGrade = new CurrentGrade();
         currentGrade.setList(urpGradeForSpiderList);
         return currentGrade;
+    }
+
+    public List<Scheme> getSchemeGrade() {
+
+        Request request = new Request.Builder()
+                .url(SCHEME_GRADE)
+                .headers(HEADERS)
+                .get()
+                .build();
+
+        String content = getContent(request);
+        TypeReference<List<Scheme>> typeReference = new TypeReference<List<Scheme>>() {
+        };
+        return parseObject(content, typeReference);
+
     }
 
 
@@ -350,6 +377,7 @@ public class NewUrpSpider {
         return parseObject(result, gradeDetailTypeReference);
     }
 
+    @Deprecated
     public UrpCourseForSpider getUrpCourse(String uid) {
         FormBody.Builder params = new FormBody.Builder();
         FormBody body = params.add("kch", uid).build();
@@ -419,8 +447,7 @@ public class NewUrpSpider {
     /**
      * 获取空教室信息
      *
-     * @param emptyRoomPost
-     * @return
+     * @param emptyRoomPost 请求参数
      */
     public EmptyRoomPojo getEmptyRoom(EmptyRoomPost emptyRoomPost) {
         FormBody.Builder params = new FormBody.Builder();
@@ -569,7 +596,7 @@ public class NewUrpSpider {
     /**
      * 通过教务网的班级号查询班级课表
      *
-     * @param classCode
+     * @param classCode 教务网的班级号
      */
     public List<List<CourseTimetableSearchResult>> getUrpCourseTimeTableByClassCode(String classCode) {
 
