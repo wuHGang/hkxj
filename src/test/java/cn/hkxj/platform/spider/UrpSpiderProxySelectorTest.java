@@ -24,4 +24,12 @@ public class UrpSpiderProxySelectorTest {
 
         urpSpiderProxySelector.select(null);
     }
+
+
+
+    @Test
+    public void usePayProxy() {
+
+        System.out.println(urpSpiderProxySelector.usePayProxy());
+    }
 }
