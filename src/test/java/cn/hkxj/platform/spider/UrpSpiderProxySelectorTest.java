@@ -22,13 +22,24 @@ public class UrpSpiderProxySelectorTest {
     @Resource
     private StringRedisTemplate stringRedisTemplate;
 
+
     @Test
     public void select() {
+
+        urpSpiderProxySelector.select(null);
+    }
+
+
+
+    @Test
+    public void usePayProxy() {
         System.out.println(urpSpiderProxySelector.usePayProxy());
     }
 
+
     @Test
-    public void setKey(){
-        stringRedisTemplate.opsForValue().set(RedisKeys.PROXY_SELECT_SWITCH.getName(), "true");
+    public void updateSwitch() {
+        String name = RedisKeys.PROXY_SELECT_SWITCH.getName();
+        stringRedisTemplate.opsForValue().set(name, "true");
     }
 }

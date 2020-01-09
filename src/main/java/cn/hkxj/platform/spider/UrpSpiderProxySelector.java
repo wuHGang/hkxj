@@ -1,15 +1,18 @@
 package cn.hkxj.platform.spider;
 
 import cn.hkxj.platform.exceptions.UrpException;
+import cn.hkxj.platform.pojo.constant.RedisKeys;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import javax.annotation.Resource;
 import java.io.IOException;
 import java.net.*;
 import java.util.*;
@@ -28,6 +31,8 @@ public class UrpSpiderProxySelector extends ProxySelector {
     private String appSecret;
     @Value("${useProxy}")
     private String useProxy;
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
 
     @Override
     public List<Proxy> select(URI uri) {
@@ -35,8 +40,12 @@ public class UrpSpiderProxySelector extends ProxySelector {
         List<Proxy> list = new ArrayList<>();
 
         if(BooleanUtils.toBoolean(useProxy)){
-            ProxyData proxyData = getProxyData();
-            list.add(new Proxy(Proxy.Type.SOCKS, new InetSocketAddress(proxyData.ip, proxyData.port)));
+            if (usePayProxy()) {
+                ProxyData proxyData = getProxyData();
+                list.add(new Proxy(Proxy.Type.SOCKS, new InetSocketAddress(proxyData.ip, proxyData.port)));
+            }else {
+                list.add(new Proxy(Proxy.Type.SOCKS, new InetSocketAddress("49.234.214.204", 8888)));
+            }
 
         }else {
             list.add(Proxy.NO_PROXY);
@@ -55,6 +64,11 @@ public class UrpSpiderProxySelector extends ProxySelector {
             log.error("poxy connectFailed", ioe);
         }
 
+    }
+
+    public boolean usePayProxy(){
+        String name = RedisKeys.PROXY_SELECT_SWITCH.getName();
+        return BooleanUtils.toBoolean(stringRedisTemplate.opsForValue().get(name));
     }
 
 
