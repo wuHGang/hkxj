@@ -22,30 +22,13 @@ public class Student {
 
     private String ethnic;
 
-    private Classes classes;
+    private Integer classes;
 
     private Boolean isCorrect;
 
     private Date gmtCreate;
 
     private Date gmtModified;
-
-
-    @Override
-    public String toString() {
-        return MoreObjects.toStringHelper(this)
-                .add("id", id)
-                .add("account", account)
-                .add("password", password)
-                .add("name", name)
-                .add("sex", sex)
-                .add("ethnic", ethnic)
-                .add("classes", classes)
-                .add("isCorrect", isCorrect)
-                .add("gmtCreate", gmtCreate)
-                .add("gmtModified", gmtModified)
-                .toString();
-    }
 
     @Override
     public boolean equals(Object o) {

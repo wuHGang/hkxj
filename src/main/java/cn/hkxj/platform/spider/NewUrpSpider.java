@@ -21,6 +21,7 @@ import cn.hkxj.platform.spider.newmodel.grade.detail.GradeDetailSearchPost;
 import cn.hkxj.platform.spider.newmodel.grade.detail.UrpGradeDetailForSpider;
 import cn.hkxj.platform.spider.newmodel.grade.general.UrpGeneralGradeForSpider;
 import cn.hkxj.platform.spider.newmodel.grade.general.UrpGradeForSpider;
+import cn.hkxj.platform.spider.newmodel.grade.scheme.Scheme;
 import cn.hkxj.platform.spider.newmodel.searchclass.ClassInfoSearchResult;
 import cn.hkxj.platform.spider.newmodel.searchclassroom.SearchClassroomPost;
 import cn.hkxj.platform.spider.newmodel.searchclassroom.SearchClassroomResult;
@@ -179,6 +180,13 @@ public class NewUrpSpider {
     private static final String EVALUATION_PAGE = ROOT + "/student/teachingEvaluation/teachingEvaluation" +
             "/evaluationPage";
 
+
+    /**
+     * 方案成绩页面  包含所有的成绩
+     * 选用这个地址的原因是因为，他在所有这些不规范的接口中算是比较规范的一个了
+     */
+    private static final String SCHEME_GRADE = ROOT + "/student/integratedQuery/scoreQuery/schemeScores/callback";
+
     private static StringRedisTemplate stringRedisTemplate;
 
     private static final TypeReference<UrpGradeDetailForSpider> gradeDetailTypeReference
@@ -284,6 +292,10 @@ public class NewUrpSpider {
         });
     }
 
+    /**
+     * 获取当期学期成绩 包含详细数据
+     * @return
+     */
     public CurrentGrade getCurrentGrade() {
         List<UrpGeneralGradeForSpider> urpGeneralGradeForSpiders = getCurrentGeneralGrade();
         List<UrpGradeForSpider> urpGradeForSpiderList = Lists.newArrayList();
@@ -295,6 +307,21 @@ public class NewUrpSpider {
         CurrentGrade currentGrade = new CurrentGrade();
         currentGrade.setList(urpGradeForSpiderList);
         return currentGrade;
+    }
+
+    public List<Scheme> getSchemeGrade() {
+
+        Request request = new Request.Builder()
+                .url(SCHEME_GRADE)
+                .headers(HEADERS)
+                .get()
+                .build();
+
+        String content = getContent(request);
+        TypeReference<List<Scheme>> typeReference = new TypeReference<List<Scheme>>() {
+        };
+        return parseObject(content, typeReference);
+
     }
 
 
@@ -346,10 +373,11 @@ public class NewUrpSpider {
                 .url(CURRENT_TERM_GRADE_DETAIL)
                 .post(body)
                 .build();
-        String result = new String(execute(request));
+        String result = getContent(request);
         return parseObject(result, gradeDetailTypeReference);
     }
 
+    @Deprecated
     public UrpCourseForSpider getUrpCourse(String uid) {
         FormBody.Builder params = new FormBody.Builder();
         FormBody body = params.add("kch", uid).build();
@@ -357,7 +385,7 @@ public class NewUrpSpider {
                 .url(COURSE_DETAIL)
                 .post(body)
                 .build();
-        String result = new String(execute(request));
+        String result = getContent(request);
         flashCache();
         //因为爬虫爬取的结果是个集合，所以先转成list
         List<UrpCourseForSpider> courses = parseObject(result, courseTypeReference);
@@ -419,8 +447,7 @@ public class NewUrpSpider {
     /**
      * 获取空教室信息
      *
-     * @param emptyRoomPost
-     * @return
+     * @param emptyRoomPost 请求参数
      */
     public EmptyRoomPojo getEmptyRoom(EmptyRoomPost emptyRoomPost) {
         FormBody.Builder params = new FormBody.Builder();
@@ -437,7 +464,7 @@ public class NewUrpSpider {
                 .headers(HEADERS)
                 .post(body)
                 .build();
-        String result = new String(execute(request));
+        String result = getContent(request);
         try {
             List<EmptyRoomPojo> pojo = JSON.parseObject(result, new TypeReference<List<EmptyRoomPojo>>() {
             });
@@ -458,7 +485,7 @@ public class NewUrpSpider {
                 .headers(HEADERS)
                 .get()
                 .build();
-        String s = new String(execute(request));
+        String s = getContent(request);
         if (s.contains("invalidSession") || s.contains("login")) {
             COOKIE_JAR.clearSession();
             throw new UrpSessionExpiredException("account: " + account + " session expired");
@@ -559,7 +586,7 @@ public class NewUrpSpider {
                 .headers(HEADERS)
                 .post(body)
                 .build();
-        String result = new String(execute(request));
+        String result = getContent(request);
         TypeReference<List<SearchResult<ClassInfoSearchResult>>> reference = new TypeReference<List<SearchResult<ClassInfoSearchResult>>>() {
         };
 
@@ -569,7 +596,7 @@ public class NewUrpSpider {
     /**
      * 通过教务网的班级号查询班级课表
      *
-     * @param classCode
+     * @param classCode 教务网的班级号
      */
     public List<List<CourseTimetableSearchResult>> getUrpCourseTimeTableByClassCode(String classCode) {
 
@@ -578,7 +605,7 @@ public class NewUrpSpider {
                 .headers(HEADERS)
                 .get()
                 .build();
-        String result = new String(execute(request));
+        String result = getContent(request);
 
         return parseObject(result, classCourseSearchResultReference);
 
@@ -598,7 +625,7 @@ public class NewUrpSpider {
                 .headers(HEADERS)
                 .get()
                 .build();
-        String result = new String(execute(request));
+        String result = getContent(request);
 
         return parseObject(result, classCourseSearchResultReference);
 
@@ -618,7 +645,7 @@ public class NewUrpSpider {
                 .headers(HEADERS)
                 .get()
                 .build();
-        String result = new String(execute(request));
+        String result = getContent(request);
 
         return parseObject(result, classCourseSearchResultReference);
 
@@ -636,7 +663,7 @@ public class NewUrpSpider {
                 .headers(HEADERS)
                 .get()
                 .build();
-        String result = new String(execute(request));
+        String result = getContent(request);
 
         return parseObject(result, classCourseSearchResultReference);
 
@@ -666,7 +693,7 @@ public class NewUrpSpider {
 
         TypeReference<List<SearchResult<SearchTeacherResult>>> reference = new TypeReference<List<SearchResult<SearchTeacherResult>>>() {
         };
-        return parseObject(new String(execute(request)), reference);
+        return parseObject(getContent(request), reference);
     }
 
     /**
@@ -693,7 +720,7 @@ public class NewUrpSpider {
 
         TypeReference<List<SearchResultWrapper<SearchClassroomResult>>> reference = new TypeReference<List<SearchResultWrapper<SearchClassroomResult>>>() {
         };
-        return parseObject(new String(execute(request)), reference);
+        return parseObject(getContent(request), reference);
     }
 
     /**
@@ -749,7 +776,7 @@ public class NewUrpSpider {
         TypeReference<SearchResultDateWrapper<SearchCourseResult>> typeReference =
                 new TypeReference<SearchResultDateWrapper<SearchCourseResult>>() {
                 };
-        return parseObject(new String(execute(request)), typeReference);
+        return parseObject(getContent(request), typeReference);
     }
 
     public TeachingEvaluation searchTeachingEvaluationInfo() {

@@ -78,7 +78,7 @@ public class TestController {
         student.setPassword(password);
         Classes classes = new Classes();
         classes.setId(316);
-        student.setClasses(classes);
+//        student.setClasses(classes);
 //        GradeSearchResult gradeSearchResult = newGradeSearchService.getCurrentGrade(student);
 //        log.info(NewGradeSearchService.gradeListToText(gradeSearchResult.getData()));
         return newUrpSpiderService.getUrpCourseTimeTable(student).toString();
@@ -91,7 +91,7 @@ public class TestController {
         student.setAccount(2017026003);
         student.setPassword("1");
         classes.setId(503);
-        student.setClasses(classes);
+//        student.setClasses(classes);
         System.out.println(courseTimeTableService.convertToText(courseTimeTableService.getDetailsForCurrentDay(student)));
     }
 

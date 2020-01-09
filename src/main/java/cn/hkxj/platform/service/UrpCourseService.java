@@ -45,6 +45,10 @@ public class UrpCourseService {
             .maximumSize(500)
             .build();
 
+    private static final Cache<String, Course> currentTermCourseCache = CacheBuilder.newBuilder()
+            .maximumSize(2000)
+            .build();
+
     public void checkOrSaveUrpCourseToDb(String uid, Student student) {
         if (!urpCourseDao.ifExistCourse(uid)) {
             UrpCourseForSpider urpCourseForSpider = newUrpSpiderService.getCourseFromSpider(student, uid);
@@ -59,8 +63,17 @@ public class UrpCourseService {
 
     public Course getCurrentTermCourse(String courseId, String sequenceNumber, Course updateCourse) {
         SchoolTime schoolTime = DateUtils.getCurrentSchoolTime();
-        return getCourse(courseId, sequenceNumber, schoolTime.getTerm().getTermYear(),
-                schoolTime.getTerm().getOrder(), updateCourse);
+        String termYear = schoolTime.getTerm().getTermYear();
+        int order = schoolTime.getTerm().getOrder();
+        String key = courseId + sequenceNumber + termYear + order;
+        try {
+            return currentTermCourseCache.get(key, ()-> getCourse(courseId, sequenceNumber, termYear,
+                    order, updateCourse));
+        } catch (ExecutionException e) {
+            log.error("get course cache error", e);
+            throw new RuntimeException(e);
+        }
+
 
     }
 

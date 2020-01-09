@@ -12,6 +12,8 @@ import cn.hkxj.platform.spider.newmodel.grade.CurrentGrade;
 import cn.hkxj.platform.spider.newmodel.grade.detail.GradeDetailSearchPost;
 import cn.hkxj.platform.spider.newmodel.grade.detail.UrpGradeDetailForSpider;
 import cn.hkxj.platform.spider.newmodel.grade.general.UrpGeneralGradeForSpider;
+import cn.hkxj.platform.spider.newmodel.grade.scheme.Scheme;
+import cn.hkxj.platform.spider.newmodel.grade.scheme.SchemeGradeItem;
 import cn.hkxj.platform.utils.DateUtils;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -201,13 +203,34 @@ public class NewGradeSearchService {
                     .setUpdate(x.isUpdate())
                     .setExamTime(DateUtils.localDateToDate(x.getExamTime(), DateUtils.YYYY_MM_DD_PATTERN))
                     .setExamTimeStr(x.getExamTime())
-                    .setOperateTime(DateUtils.localDateToDate(x.getOperateTime(), DateUtils.PATTERN_WITHOUT_SPILT))
+                    .setOperateTime(parseGradeOperateTime(x.getOperateTime()))
                     .setOperator(x.getOperator());
         })
 
                 .sorted(Comparator.comparing(GradeVo::getOperateTime).reversed())
                 .collect(Collectors.toList());
 
+    }
+
+    public void getSchemeGrade(Student student){
+        List<SchemeGradeItem> items = newUrpSpiderService.getSchemeGrade(student)
+                .stream()
+                .map(Scheme::getCjList)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
+
+        for (SchemeGradeItem item : items) {
+            System.out.println(item);
+        }
+
+
+    }
+
+    private Date parseGradeOperateTime(String text){
+        if(text.length() == 12){
+            text = text +"00";
+        }
+        return DateUtils.localDateToDate(text, DateUtils.PATTERN_WITHOUT_SPILT);
     }
 
     /**
@@ -317,7 +340,7 @@ public class NewGradeSearchService {
         UrpExam urpExamFromSpider = generalGradeForSpider.convertToUrpExam();
         urpExamFromSpider.setPlanId(plan.getId());
         urpExamFromSpider.setMajorId(major.getId());
-        urpExamFromSpider.setClassId(student.getClasses().getId());
+        urpExamFromSpider.setClassId(student.getClasses());
         //判断对应的考试是否存在
         return urpExamDao.saveOrGetUrpExamFromDb(urpExamFromSpider, currentTerm);
     }

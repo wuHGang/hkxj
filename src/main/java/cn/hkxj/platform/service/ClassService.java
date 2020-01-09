@@ -2,6 +2,7 @@ package cn.hkxj.platform.service;
 
 import cn.hkxj.platform.dao.ClassDao;
 import cn.hkxj.platform.dao.UrpClassDao;
+import cn.hkxj.platform.mapper.ClassesMapper;
 import cn.hkxj.platform.pojo.*;
 import cn.hkxj.platform.pojo.constant.Academy;
 import cn.hkxj.platform.pojo.constant.RedisKeys;
@@ -32,6 +33,8 @@ public class ClassService {
     private RedisTemplate<String, String> redisTemplate;
     @Resource
     private UrpClassDao urpClassDao;
+    @Resource
+    private ClassesMapper classesMapper;
 
 
     private static Classes parseText(String classname) {
@@ -153,7 +156,8 @@ public class ClassService {
 
         UrpClass urpClass;
 
-        Classes classes = student.getClasses();
+        Integer classId = student.getClasses();
+        Classes classes = classesMapper.selectByPrimaryKey(classId);
         String urpClassCode = hash.get(RedisKeys.URP_CLASS_CODE.getName(), classes.getId().toString());
 
         if(StringUtils.isEmpty(urpClassCode)){

@@ -34,7 +34,5 @@ public class StudentInfoVo {
         this.name = student.getName();
         this.sex = student.getSex();
         this.ethnic = student.getEthnic();
-        this.className = student.getClasses().getName();
-        this.academy = Academy.getAcademyByCode(student.getClasses().getAcademy());
     }
 }

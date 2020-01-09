@@ -81,6 +81,13 @@ public class NewGradeSearchServiceTest {
         }
     }
 
+    @Test
+    public void getSchemeGrade(){
+        Student student = studentDao.selectStudentByAccount(2017025838);
+        newGradeSearchService.getSchemeGrade(student);
+
+    }
+
 
 
     @Test

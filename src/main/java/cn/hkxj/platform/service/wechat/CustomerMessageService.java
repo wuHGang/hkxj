@@ -81,7 +81,7 @@ public class CustomerMessageService {
     }
 
     private void sendGradeUpdateNotice(WxMpService wxMpService, Student student, String openid){
-        List<String> openids = openIdService.getAllOpenidsFromOneClass(student.getClasses().getId(), openid, wxMpService.getWxMpConfigStorage().getAppId());
+        List<String> openids = openIdService.getAllOpenidsFromOneClass(student.getClasses(), openid, wxMpService.getWxMpConfigStorage().getAppId());
         String content = "通知/n你有新的成绩，请注意查收";
         for(String noticedOpenid : openids){
             WxMpKefuMessage wxMpKefuMessage = new WxMpKefuMessage();
