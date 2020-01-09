@@ -6,7 +6,7 @@ import lombok.experimental.Accessors;
 
 @Data
 @Accessors(chain = true)
-public class SubscribeMessage {
+public class SubscribeMessage<T> {
 
     @JSONField(name = "touser")
     private String toUser;
@@ -16,6 +16,6 @@ public class SubscribeMessage {
 
     private String page;
 
-    private SubscribeGradeData data;
+    private T data;
 
 }

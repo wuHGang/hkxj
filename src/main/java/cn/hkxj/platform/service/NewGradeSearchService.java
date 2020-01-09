@@ -43,13 +43,9 @@ public class NewGradeSearchService {
     @Resource
     private UrpExamDao urpExamDao;
     @Resource
-    private UrpGradeDao urpGradeDao;
-    @Resource
     private StudentDao studentDao;
     @Resource
     private UrpCourseService urpCourseService;
-    @Resource
-    private UrpGradeDetailDao urpGradeDetailDao;
     @Resource
     private NewUrpSpiderService newUrpSpiderService;
     @Resource
@@ -126,21 +122,21 @@ public class NewGradeSearchService {
         List<GradeVo> gradeDetailList;
         try {
             gradeDetailList = future.get(5000L, TimeUnit.MILLISECONDS);
-        } catch (ExecutionException e){
+        } catch (ExecutionException e) {
             Throwable cause = e.getCause();
             List<GradeVo> gradeVoList = gradeToVo(gradeDao.getCurrentTermGradeByAccount(student.getAccount()));
 
-            if (cause instanceof PasswordUnCorrectException){
+            if (cause instanceof PasswordUnCorrectException) {
                 PasswordUnCorrectException exception = (PasswordUnCorrectException) cause;
                 throw exception;
             }
-            if(cause instanceof UrpEvaluationException){
-                if(gradeVoList.isEmpty()){
+            if (cause instanceof UrpEvaluationException) {
+                if (gradeVoList.isEmpty()) {
                     UrpEvaluationException exception = (UrpEvaluationException) cause;
                     throw exception;
                 }
-                gradeVoList.forEach(x-> x.setErrorCode(ErrorCode.Evaluation_ERROR.getErrorCode()).setMsg(cause.getMessage()));
-            }else {
+                gradeVoList.forEach(x -> x.setErrorCode(ErrorCode.Evaluation_ERROR.getErrorCode()).setMsg(cause.getMessage()));
+            } else {
                 log.error("get grade error", cause);
             }
 
@@ -212,7 +208,7 @@ public class NewGradeSearchService {
 
     }
 
-    public void getSchemeGrade(Student student){
+    public void getSchemeGrade(Student student) {
         List<SchemeGradeItem> items = newUrpSpiderService.getSchemeGrade(student)
                 .stream()
                 .map(Scheme::getCjList)
@@ -226,9 +222,9 @@ public class NewGradeSearchService {
 
     }
 
-    private Date parseGradeOperateTime(String text){
-        if(text.length() == 12){
-            text = text +"00";
+    private Date parseGradeOperateTime(String text) {
+        if (text.length() == 12) {
+            text = text + "00";
         }
         return DateUtils.localDateToDate(text, DateUtils.PATTERN_WITHOUT_SPILT);
     }

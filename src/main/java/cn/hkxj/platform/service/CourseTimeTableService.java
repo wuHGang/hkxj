@@ -246,8 +246,8 @@ public class CourseTimeTableService {
                         .setTermOrder(x.getTermOrder())
                         .setTermYear(x.getTermYear())
                         .setStudentCount(x.getStudentCount())
-                        .setCourse(urpCourseService.getCourse(x.getCourseId(), x.getCourseSequenceNumber(), x.getTermYear(),
-                                x.getTermOrder()))).collect(Collectors.toList());
+                        .setCourse(urpCourseService.getCurrentTermCourse(x.getCourseId(), x.getCourseSequenceNumber())))
+                .collect(Collectors.toList());
     }
 
     /**
