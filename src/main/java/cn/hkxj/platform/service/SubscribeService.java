@@ -85,6 +85,7 @@ public class SubscribeService {
 
         return scheduleTaskList.stream()
                 .map(x-> openIdService.getStudentByOpenId(x.getOpenid(), x.getAppid()))
+                .filter(Objects::nonNull)
                 .filter(Student::getIsCorrect)
                 .collect(Collectors.toSet());
 

@@ -61,17 +61,9 @@ public class GradeAutoUpdateTask extends BaseSubscriptionTask {
     @Resource
     private NewGradeSearchService newGradeSearchService;
     @Resource
-    private OpenIdService openIdService;
-    @Resource
-    private WechatMpPlusProperties wechatMpPlusProperties;
-    @Resource
     private TemplateBuilder templateBuilder;
     @Resource
     private WechatTemplateProperties wechatTemplateProperties;
-    @Resource
-    private MiniProgramProperties miniProgramProperties;
-    @Resource
-    private MiniProgramService miniProgramService;
     @Resource
     private SubscribeService subscribeService;
     @Resource
@@ -89,11 +81,13 @@ public class GradeAutoUpdateTask extends BaseSubscriptionTask {
         if (!isSwitchOn()) {
             return;
         }
-
+        log.info("grade update task run");
         while (true) {
             try {
 
-                Set<UrpFetchTask> fetchTasks = subscribeService.getGradeUpdateSubscribeStudent().stream().map(UrpFetchTask::new).collect(Collectors.toSet());
+                Set<UrpFetchTask> fetchTasks = subscribeService.getGradeUpdateSubscribeStudent()
+                        .stream().map(UrpFetchTask::new)
+                        .collect(Collectors.toSet());
 
                 queue.addAll(fetchTasks);
 

@@ -35,4 +35,9 @@ public class SubscribeServiceTest {
     public void updateCourseSubscribeMsgState() {
         subscribeService.updateCourseSubscribeMsgState("asda", (byte)1);
     }
+
+    @Test
+    public void getGradeUpdateSubscribeStudent() {
+        subscribeService.getGradeUpdateSubscribeStudent();
+    }
 }

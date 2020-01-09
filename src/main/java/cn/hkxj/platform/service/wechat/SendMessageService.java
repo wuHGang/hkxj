@@ -34,7 +34,7 @@ public class SendMessageService {
     public void sendTemplateMessage(String appId, WxMpTemplateMessage templateMessage){
         WxMpService wxMpService = WechatMpConfiguration.getMpServices().get(appId);
         try {
-            log.info("send template message {}", templateMessage);
+            log.info("send template message {}", templateMessage.getData());
             wxMpService.getTemplateMsgService().sendTemplateMsg(templateMessage);
         } catch (WxErrorException e) {
             log.error("send template message error", e);
