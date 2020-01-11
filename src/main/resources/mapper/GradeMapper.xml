@@ -157,7 +157,7 @@
       #{gmtCreate,jdbcType=TIMESTAMP}, #{gmtModify,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="cn.hkxj.platform.pojo.Grade" >
-    insert into grade
+    insert ignore grade
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         id,

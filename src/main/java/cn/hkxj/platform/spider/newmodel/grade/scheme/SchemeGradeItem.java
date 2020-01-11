@@ -3,6 +3,8 @@
  */
 package cn.hkxj.platform.spider.newmodel.grade.scheme;
 
+import cn.hkxj.platform.pojo.Grade;
+import cn.hkxj.platform.utils.DateUtils;
 import com.alibaba.fastjson.annotation.JSONField;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
@@ -47,7 +49,7 @@ public class SchemeGradeItem {
     private String academicYearCode;
     private String termTypeCode;
     private String termTypeName;
-    private String termCode;
+    private Integer termCode;
     private String termName;
     private String gradeName;
     @JSONField(name = "cj")
@@ -66,5 +68,50 @@ public class SchemeGradeItem {
             return "0" + credit;
         }
         return credit;
+    }
+
+    public String getTermYear() {
+        // 这里是个补偿做法 由于有些课程没有该数据  所以存储当前的学期
+        return this.getId().getExecutiveEducationPlanNumber().substring(0, 9);
+    }
+
+    public String getExamTypeName() {
+        if(StringUtils.isEmpty(this.getExamTypeCode())){
+            return "";
+        }else if("01".equals(this.getExamTypeCode())){
+            return "考试";
+        }else if("02".equals(this.getExamTypeCode())){
+            return "考查";
+        }
+        return "";
+    }
+
+
+    public Grade transToGrade(){
+        return new Grade()
+                .setCredit(Double.parseDouble(this.getCredit()))
+                .setExamTypeCode(this.getExamTypeCode())
+                .setCoursePropertyName(this.getCourseAttributeName())
+                .setCoursePropertyCode(this.getCourseAttributeCode())
+                .setCourseName(this.getCourseName())
+                .setCourseNumber(this.getId().getCourseNumber())
+                .setCourseOrder(this.getId().getCourseSequenceNumber())
+                .setOperator(this.getOperator())
+                .setOperateTime(this.getOperatingTime())
+                .setScore(Double.parseDouble(this.getScore()))
+                .setExamTime(this.getExamTime())
+                .setAccount(Integer.parseInt(this.getId().getStudentId()))
+                .setExamTypeCode(this.getExamTypeCode())
+                .setExamTypeName(this.getExamTypeName())
+                .setLevelName(this.getGradeName())
+                .setStandardPoint(this.getStandardScore())
+                .setLevelPoint(Integer.toString(this.getGradeScore()))
+                .setGradePoint(Double.parseDouble(this.getGradePointScore()))
+                .setTermYear(this.getTermYear())
+                .setTermOrder(this.getTermCode())
+                .setStudyHour(this.getCycle() == null ? 0 : Integer.parseInt(this.getCycle()))
+                .setRank(0);
+
+
     }
 }

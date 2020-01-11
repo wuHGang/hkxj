@@ -67,8 +67,16 @@ public class UrpCourseService {
         int order = schoolTime.getTerm().getOrder();
         String key = courseId + sequenceNumber + termYear + order;
         try {
-            return currentTermCourseCache.get(key, ()-> getCourse(courseId, sequenceNumber, termYear,
-                    order, updateCourse));
+            return currentTermCourseCache.get(key, () -> {
+                Course course = getCourse(courseId, sequenceNumber, termYear,
+                        order, updateCourse);
+
+                if (course == null) {
+                    log.info(" {} {} {} {}", courseId, sequenceNumber, termYear,
+                            order);
+                }
+                return course;
+            });
         } catch (ExecutionException e) {
             log.error("get course cache error", e);
             throw new RuntimeException(e);
@@ -86,7 +94,7 @@ public class UrpCourseService {
      * @param sequenceNumber
      * @param termYear
      * @param termOrder
-     * @param updateCourse          这个传入的course主要作用是课程查询的时候有比较多缺省的值，从该对象中获取
+     * @param updateCourse   这个传入的course主要作用是课程查询的时候有比较多缺省的值，从该对象中获取
      * @return
      */
     public Course getCourse(String courseId, String sequenceNumber, String termYear, int termOrder, Course updateCourse) {
@@ -127,6 +135,7 @@ public class UrpCourseService {
                 course.setExamType(updateCourse.getExamType());
                 course.setExamTypeCode(updateCourse.getExamTypeCode());
                 course.setCourseOrder(updateCourse.getCourseOrder());
+                course.setTeacherAccount(course.getTeacherAccount() == null ? "" : course.getTeacherAccount());
             }
             courseDao.insertSelective(course);
             return course;
@@ -135,7 +144,7 @@ public class UrpCourseService {
     }
 
 
-    public void getTimetable(String courseId, String sequenceNumber, String termYear, int termOrder){
+    public void getTimetable(String courseId, String sequenceNumber, String termYear, int termOrder) {
         List<Course> courseList = courseDao.selectCourseByPojo(
                 new Course()
                         .setNum(courseId)
@@ -158,7 +167,6 @@ public class UrpCourseService {
     }
 
     /**
-     *
      * @param courseId
      * @return
      */
