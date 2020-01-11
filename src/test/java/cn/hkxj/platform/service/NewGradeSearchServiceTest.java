@@ -76,8 +76,10 @@ public class NewGradeSearchServiceTest {
 
     @Test
     public void getCurrentTermGradeSync(){
-        Student student = studentDao.selectStudentByAccount(2019030404);
-        for (GradeVo grade : newGradeSearchService.getCurrentTermGradeSync(student)) {
+        Student student = studentDao.selectStudentByAccount(2017025838);
+        List<GradeVo> gradeVoList = newGradeSearchService.getCurrentTermGradeSync(student);
+        System.out.println(gradeVoList.size());
+        for (GradeVo grade : gradeVoList) {
             System.out.println(grade);
         }
     }
@@ -92,8 +94,8 @@ public class NewGradeSearchServiceTest {
 
     @Test
     public void getSchemeGrade(){
-        Student student = studentDao.selectStudentByAccount(2017025838);
-        newGradeSearchService.getSchemeGrade(student);
+        Student student = studentDao.selectStudentByAccount(2017021517);
+        newGradeSearchService.getSchemeGradeFromSpider(student);
 
     }
 
