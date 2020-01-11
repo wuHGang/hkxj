@@ -1,8 +1,11 @@
 package cn.hkxj.platform.service;
 
+import cn.hkxj.platform.dao.ScheduleTaskDao;
 import cn.hkxj.platform.mapper.OpenidMapper;
 import cn.hkxj.platform.mapper.SubscribeOpenidMapper;
 import cn.hkxj.platform.pojo.ScheduleTask;
+import cn.hkxj.platform.pojo.Student;
+import cn.hkxj.platform.pojo.constant.SubscribeScene;
 import cn.hkxj.platform.pojo.wechat.SubscribeOpenid;
 import cn.hkxj.platform.pojo.example.SubscribeOpenidExample;
 import lombok.AllArgsConstructor;
@@ -10,7 +13,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author Yuki
@@ -22,7 +28,9 @@ import java.util.Objects;
 public class SubscribeService {
 
     private SubscribeOpenidMapper subscribeOpenidMapper;
+    private ScheduleTaskDao scheduleTaskDao;
     private OpenidMapper openidMapper;
+    private OpenIdService openIdService;
 
     public boolean isSubscribe(String openid){
         SubscribeOpenidExample example = new SubscribeOpenidExample();
@@ -69,6 +77,19 @@ public class SubscribeService {
             return;
         }
         log.info("update msgState success --openid {} is_send {}", openid, sub_type);
+    }
+
+
+    public Set<Student> getGradeUpdateSubscribeStudent(){
+        List<ScheduleTask> scheduleTaskList = scheduleTaskDao.selectByPojo(new ScheduleTask().setScene(Integer.parseInt(SubscribeScene.GRADE_AUTO_UPDATE.getScene())));
+
+        return scheduleTaskList.stream()
+                .map(x-> openIdService.getStudentByOpenId(x.getOpenid(), x.getAppid()))
+                .filter(Objects::nonNull)
+                .filter(Student::getIsCorrect)
+                .collect(Collectors.toSet());
+
+
     }
 
 }

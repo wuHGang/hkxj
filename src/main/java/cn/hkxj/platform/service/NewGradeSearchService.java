@@ -43,13 +43,9 @@ public class NewGradeSearchService {
     @Resource
     private UrpExamDao urpExamDao;
     @Resource
-    private UrpGradeDao urpGradeDao;
-    @Resource
     private StudentDao studentDao;
     @Resource
     private UrpCourseService urpCourseService;
-    @Resource
-    private UrpGradeDetailDao urpGradeDetailDao;
     @Resource
     private NewUrpSpiderService newUrpSpiderService;
     @Resource
@@ -126,21 +122,21 @@ public class NewGradeSearchService {
         List<GradeVo> gradeDetailList;
         try {
             gradeDetailList = future.get(5000L, TimeUnit.MILLISECONDS);
-        } catch (ExecutionException e){
+        } catch (ExecutionException e) {
             Throwable cause = e.getCause();
             List<GradeVo> gradeVoList = gradeToVo(gradeDao.getCurrentTermGradeByAccount(student.getAccount()));
 
-            if (cause instanceof PasswordUnCorrectException){
+            if (cause instanceof PasswordUnCorrectException) {
                 PasswordUnCorrectException exception = (PasswordUnCorrectException) cause;
                 throw exception;
             }
-            if(cause instanceof UrpEvaluationException){
-                if(gradeVoList.isEmpty()){
+            if (cause instanceof UrpEvaluationException) {
+                if (gradeVoList.isEmpty()) {
                     UrpEvaluationException exception = (UrpEvaluationException) cause;
                     throw exception;
                 }
-                gradeVoList.forEach(x-> x.setErrorCode(ErrorCode.Evaluation_ERROR.getErrorCode()).setMsg(cause.getMessage()));
-            }else {
+                gradeVoList.forEach(x -> x.setErrorCode(ErrorCode.Evaluation_ERROR.getErrorCode()).setMsg(cause.getMessage()));
+            } else {
                 log.error("get grade error", cause);
             }
 
@@ -162,14 +158,16 @@ public class NewGradeSearchService {
     public List<GradeVo> getCurrentTermGradeSync(Student student) {
         List<GradeDetail> gradeDetailList = getCurrentTermGradeFromSpider(student);
 
-        List<Grade> gradeList = gradeDetailList.stream().map(GradeDetail::getGrade).collect(Collectors.toList());
+        List<Grade> gradeList = gradeDetailList.stream()
+                .map(GradeDetail::getGrade)
+                .collect(Collectors.toList());
         // 检查哪些是新的成绩数据
         List<Grade> updateList = checkUpdate(student, gradeList);
         // 新的数据插入，原有得数据更新
         saveUpdateGrade(updateList);
 
 
-        return gradeToVo(gradeList);
+        return gradeToVo(updateList);
     }
 
 
@@ -212,23 +210,19 @@ public class NewGradeSearchService {
 
     }
 
-    public void getSchemeGrade(Student student){
-        List<SchemeGradeItem> items = newUrpSpiderService.getSchemeGrade(student)
+    public List<Grade> getSchemeGradeFromSpider(Student student) {
+        return newUrpSpiderService.getSchemeGrade(student)
                 .stream()
                 .map(Scheme::getCjList)
                 .flatMap(Collection::stream)
+                .map(SchemeGradeItem::transToGrade)
                 .collect(Collectors.toList());
-
-        for (SchemeGradeItem item : items) {
-            System.out.println(item);
-        }
-
 
     }
 
-    private Date parseGradeOperateTime(String text){
-        if(text.length() == 12){
-            text = text +"00";
+    private Date parseGradeOperateTime(String text) {
+        if (text.length() == 12) {
+            text = text + "00";
         }
         return DateUtils.localDateToDate(text, DateUtils.PATTERN_WITHOUT_SPILT);
     }
@@ -242,21 +236,53 @@ public class NewGradeSearchService {
             return gradeList;
         }
 
-        Map<String, Grade> gradeMap = gradeListFromDb.stream().collect(Collectors.toMap(x -> x.getCourseNumber() + x.getCourseOrder(), x -> x));
-        return gradeList.stream()
-                .filter(grade -> {
-                    Grade checkGrade = gradeMap.get(grade.getCourseNumber() + grade.getCourseOrder());
 
-                    if (checkGrade == null) {
-                        return true;
+        // 这个逻辑是处理教务网同一个课程返回两个结果
+        Map<String, Grade> spiderGradeMap = gradeList.stream()
+                .collect(Collectors.toMap(x -> x.getCourseNumber() + x.getCourseOrder(), x -> x,
+                        (oldValue, newValue) -> {
+                            if (oldValue.getScore() == -1) {
+                                return newValue;
+                            } else {
+                                return oldValue;
+                            }
+                        }
+
+                ));
+
+
+        Map<String, Grade> dbGradeMap = gradeList.stream()
+                .collect(Collectors.toMap(x -> x.getCourseNumber() + x.getCourseOrder(), x -> x,
+                        (oldValue, newValue) -> {
+                            if (oldValue.getScore() == -1) {
+                                return newValue;
+                            } else {
+                                return oldValue;
+                            }
+                        }
+
+                ));
+
+        List<Grade> resultList = spiderGradeMap.entrySet().stream()
+                .map(entry -> {
+                    Grade grade = dbGradeMap.remove(entry.getKey());
+                    if (grade == null) {
+                        entry.getValue().setUpdate(true);
+                        return entry.getValue();
                     }
-                    boolean update = !Objects.equals(grade, checkGrade);
 
-                    grade.setId(checkGrade.getId());
-                    grade.setUpdate(update);
+                    if (!Objects.equals(grade, entry.getValue())) {
+                        entry.getValue().setUpdate(true);
+                        entry.getValue().setId(grade.getId());
+                        return entry.getValue();
+                    }
 
-                    return update;
+                    return grade;
                 }).collect(Collectors.toList());
+
+        resultList.addAll(dbGradeMap.values());
+
+        return resultList;
     }
 
 

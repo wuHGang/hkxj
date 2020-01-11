@@ -40,6 +40,6 @@ public class UrpSpiderProxySelectorTest {
     @Test
     public void updateSwitch() {
         String name = RedisKeys.PROXY_SELECT_SWITCH.getName();
-        stringRedisTemplate.opsForValue().set(name, "true");
+        stringRedisTemplate.opsForValue().set(name, "false");
     }
 }

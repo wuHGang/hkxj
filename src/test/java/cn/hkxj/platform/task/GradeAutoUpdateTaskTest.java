@@ -110,7 +110,7 @@ public class GradeAutoUpdateTaskTest {
 
         ScheduleTask task = scheduleTaskDao.selectByOpenid("oCxRO1KktG1kI_RLWGbeGjvoahrU",
                 wechatMpPlusProperties.getAppId(), SubscribeScene.GRADE_AUTO_UPDATE);
-        System.out.println(task);
-        gradeAutoUpdateTask.processScheduleTask(task);
+        Student student= openIdService.getStudentByOpenId(task.getOpenid(), task.getAppid());
+        gradeAutoUpdateTask.processScheduleTask(student);
     }
 }
