@@ -251,7 +251,7 @@ public class NewGradeSearchService {
                 ));
 
 
-        Map<String, Grade> dbGradeMap = gradeList.stream()
+        Map<String, Grade> dbGradeMap = gradeListFromDb.stream()
                 .collect(Collectors.toMap(x -> x.getCourseNumber() + x.getCourseOrder(), x -> x,
                         (oldValue, newValue) -> {
                             if (oldValue.getScore() == -1) {
