@@ -33,13 +33,11 @@ public class ExamTimeTableService {
     @Resource
     private UrpCourseService urpCourseService;
     @Resource
-    private UrpClassRoomDao urpClassRoomDao;
-    @Resource
     private ExamTimetableDao examTimetableDao;
     @Resource
     private StudentExamTimeTableDao studentExamTimeTableDao;
     @Resource
-    private CourseDao courseDao;
+    private RoomService roomService;
 
 
     public List<Exam> getExamTimeListFromSpider(int account) {
@@ -118,7 +116,7 @@ public class ExamTimeTableService {
                             .setExamName(x.getName())
                             .setStartTime(x.getStartTime())
                             .setEndTime(x.getEndTime())
-                            .setClassRoom(urpClassRoomDao.selectByName(x.getRoomName()))
+                            .setClassRoom(roomService.getClassRoomByName(x.getRoomName()))
                             .setExamDay(x.getDay())
                             .setExamWeekOfTerm(x.getSchoolWek()))
                     .collect(Collectors.toList());
@@ -179,9 +177,9 @@ public class ExamTimeTableService {
 
     private UrpClassroom getClassRoomFromText(String date) {
         String[] split = date.split(" ");
-
-        if (urpClassRoomDao.selectByName(split[3]) != null) {
-            return urpClassRoomDao.selectByName(split[3]);
+        UrpClassroom room = roomService.getClassRoomByName(split[3]);
+        if (room != null) {
+            return room;
         }
         return new UrpClassroom();
     }

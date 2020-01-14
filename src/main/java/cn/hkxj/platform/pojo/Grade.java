@@ -21,6 +21,7 @@ public class Grade {
 
     private Double credit;
 
+    @EqualsAndHashCode.Exclude
     private Double gradePoint;
 
     private String levelName;
@@ -78,4 +79,21 @@ public class Grade {
     private Date gmtModify;
 
     private boolean update = false;
+
+
+    public Grade setGradePoint(Double gradePoint) {
+        if (gradePoint == 0 && this.score != -1) {
+            double v = this.getScore() - 60;
+            if (v < 0) {
+                this.gradePoint = 0.0;
+            } else {
+                this.gradePoint = 1 + v / 10;
+            }
+
+        }else {
+            this.gradePoint = gradePoint;
+        }
+        return this;
+    }
+
 }

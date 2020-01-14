@@ -36,7 +36,7 @@ public class EmptyRoomService {
     @Autowired
     RedisTemplate redisTemplate;
     @Resource
-    private UrpClassRoomDao urpClassRoomDao;
+    private RoomService roomService;
 
 
     /**
@@ -129,7 +129,7 @@ public class EmptyRoomService {
         }
 
         return classRoomMap.values().stream()
-                .map(emptyRoom -> new EmptyRoomVo(urpClassRoomDao.selectByName(emptyRoom.getName()),
+                .map(emptyRoom -> new EmptyRoomVo(roomService.getClassRoomByName(emptyRoom.getName()),
                         emptyRoom.getOrderList()))
                 .filter(emptyRoomVo -> emptyRoomVo.getUrpClassroom() != null)
                 .sorted(Comparator.comparing(o -> o.getUrpClassroom().getNumber()))

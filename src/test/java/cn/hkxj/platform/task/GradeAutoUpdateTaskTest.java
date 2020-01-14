@@ -5,6 +5,7 @@ import cn.hkxj.platform.config.wechat.MiniProgramProperties;
 import cn.hkxj.platform.config.wechat.WechatMpPlusProperties;
 import cn.hkxj.platform.dao.GradeDao;
 import cn.hkxj.platform.dao.ScheduleTaskDao;
+import cn.hkxj.platform.dao.StudentDao;
 import cn.hkxj.platform.exceptions.UrpException;
 import cn.hkxj.platform.pojo.ScheduleTask;
 import cn.hkxj.platform.pojo.Student;
@@ -35,13 +36,11 @@ public class GradeAutoUpdateTaskTest {
     @Resource
     private OpenIdService openIdService;
     @Resource
-    private GradeDao gradeDao;
-    @Resource
     private NewGradeSearchService newGradeSearchService;
     @Resource
-    private MiniProgramProperties miniProgramProperties;
-    @Resource
     private WechatMpPlusProperties wechatMpPlusProperties;
+    @Resource
+    private StudentDao studentDao;
 
     //这里设置拒绝策略为调用者运行，这样可以降低产生任务的速率
     private static ExecutorService gradeAutoUpdatePool = new MDCThreadPool(8, 8,
@@ -108,9 +107,8 @@ public class GradeAutoUpdateTaskTest {
     @Test
     public void miniProgramUpdateTest() {
 
-        ScheduleTask task = scheduleTaskDao.selectByOpenid("oCxRO1KktG1kI_RLWGbeGjvoahrU",
-                wechatMpPlusProperties.getAppId(), SubscribeScene.GRADE_AUTO_UPDATE);
-        Student student= openIdService.getStudentByOpenId(task.getOpenid(), task.getAppid());
+
+        Student student = studentDao.selectStudentByAccount(2019020696);
         gradeAutoUpdateTask.processScheduleTask(student);
     }
 }

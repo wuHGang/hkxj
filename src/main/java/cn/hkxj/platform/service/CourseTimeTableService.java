@@ -356,18 +356,6 @@ public class CourseTimeTableService {
         return result;
     }
 
-    private void saveToDbAsync(UrpCourseTimeTableForSpider spiderResult, Student student) {
-        saveDbPool.execute(() -> {
-            try {
-                saveCourseTimeTableToDb(spiderResult, student);
-            }catch (Throwable throwable){
-                log.error("account {} save course error", student.getAccount(), throwable);
-
-            }
-
-        });
-    }
-
     /**
      * 将爬虫返回的数据中用于显示的部分全部提取出来，提取的部分为当前学期当前周的所有课程时间表
      *

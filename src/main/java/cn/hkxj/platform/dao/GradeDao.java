@@ -52,6 +52,13 @@ public class GradeDao {
                 .setAccount(account));
     }
 
+
+    public List<Grade> getGradeByAccount(int account){
+
+        return selectByPojo(new Grade()
+                .setAccount(account));
+    }
+
     public void updateByPrimaryKeySelective(Grade grade){
         gradeMapper.updateByPrimaryKeySelective(grade);
 

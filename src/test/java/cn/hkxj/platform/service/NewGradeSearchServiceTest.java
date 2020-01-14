@@ -2,11 +2,11 @@ package cn.hkxj.platform.service;
 
 import cn.hkxj.platform.MDCThreadPool;
 import cn.hkxj.platform.PlatformApplication;
-import cn.hkxj.platform.dao.MiniProgramOpenIdDao;
 import cn.hkxj.platform.dao.StudentDao;
 import cn.hkxj.platform.exceptions.UrpEvaluationException;
 import cn.hkxj.platform.exceptions.UrpException;
 import cn.hkxj.platform.pojo.*;
+import cn.hkxj.platform.pojo.vo.GradeResultVo;
 import cn.hkxj.platform.pojo.vo.GradeVo;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
@@ -16,7 +16,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import javax.annotation.Resource;
+import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -37,10 +40,10 @@ public class NewGradeSearchServiceTest {
     @Resource
     private StudentDao studentDao;
     @Resource
-    private MiniProgramOpenIdDao miniProgramOpenIdDao;
+    private SubscribeService subscribeService;
 
     @Test
-    public void test(){
+    public void test() {
         Student student = studentDao.selectStudentByAccount(2018022512);
         for (UrpGradeAndUrpCourse course : newGradeSearchService.getCurrentGrade(student).getData()) {
             System.out.println(course);
@@ -50,7 +53,7 @@ public class NewGradeSearchServiceTest {
 
 
     @Test
-    public void getCurrentTermGradeFromSpider(){
+    public void getCurrentTermGradeFromSpider() {
         Student student = studentDao.selectStudentByAccount(2019020856);
         List<GradeDetail> gradeDetailList = newGradeSearchService.getCurrentTermGradeFromSpider(student);
         List<Grade> gradeList = gradeDetailList.stream().map(GradeDetail::getGrade).collect(Collectors.toList());
@@ -61,31 +64,36 @@ public class NewGradeSearchServiceTest {
     }
 
     @Test
-    public void checkUpdate(){
-        Student student = studentDao.selectStudentByAccount(2017021593);
+    public void checkUpdate() {
+        Student student = studentDao.selectStudentByAccount(2017021546);
         List<GradeDetail> gradeDetailList = newGradeSearchService.getCurrentTermGradeFromSpider(student);
         List<Grade> gradeList = gradeDetailList.stream().map(GradeDetail::getGrade).collect(Collectors.toList());
 
         List<Grade> updateList = newGradeSearchService.checkUpdate(student, gradeList);
+
         for (Grade update : updateList) {
-            System.out.println(update);
+            if (update.isUpdate()) {
+                System.out.println(update);
+            }
+
         }
-//        newGradeSearchService.saveUpdateGrade(updateList);
 
     }
 
     @Test
-    public void getCurrentTermGradeSync(){
-        Student student = studentDao.selectStudentByAccount(2017025838);
-        List<GradeVo> gradeVoList = newGradeSearchService.getCurrentTermGradeSync(student);
-        System.out.println(gradeVoList.size());
-        for (GradeVo grade : gradeVoList) {
-            System.out.println(grade);
+    public void getCurrentTermGradeSync() {
+        Student student = studentDao.selectStudentByAccount(2019024639);
+
+        List<GradeVo> gradeVoList = newGradeSearchService.getCurrentTermGradeVoSync(student);
+
+        for (GradeVo vo : gradeVoList) {
+            System.out.println(vo);
         }
+
     }
 
     @Test
-    public void getCurrentTermGrade(){
+    public void getCurrentTermGrade() {
         Student student = studentDao.selectStudentByAccount(2019030404);
         for (GradeVo grade : newGradeSearchService.getCurrentTermGrade(student)) {
             System.out.println(grade);
@@ -93,23 +101,32 @@ public class NewGradeSearchServiceTest {
     }
 
     @Test
-    public void getSchemeGrade(){
+    public void getSchemeGrade() {
         Student student = studentDao.selectStudentByAccount(2017021517);
         newGradeSearchService.getSchemeGradeFromSpider(student);
 
     }
 
 
+    @Test
+    public void getGrade() {
+        Student student = studentDao.selectStudentByAccount(2017025838);
+        GradeResultVo grade = newGradeSearchService.getGrade(student);
+
+        System.out.println(grade);
+    }
+
 
     @Test
-    public void testProxy(){
-        Student student = studentDao.selectStudentByAccount(2019030404);
-        for (int x=0; x<10 ; x++){
+    public void testProxy() {
+
+        for (int x = 0; x < 10; x++) {
             try {
-                newGradeSearchService.getCurrentTermGradeSync(student);
-            }catch (Exception e){
+                Student student = studentDao.selectStudentByAccount(2017021517);
+                newGradeSearchService.getCurrentTermGradeVoSync(student);
+            } catch (Exception e) {
                 e.printStackTrace();
-            }finally {
+            } finally {
                 System.out.println(x);
             }
 
@@ -123,8 +140,8 @@ public class NewGradeSearchServiceTest {
 
 
     @Test
-    public void updateAllGrade(){
-        List<Student> studentList = studentDao.selectAllStudent();
+    public void updateAllGrade() {
+        Set<Student> studentList = subscribeService.getGradeUpdateSubscribeStudent();
         MDCThreadPool pool = new MDCThreadPool(8, 8,
                 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(), r -> new Thread(r, "gradeSearch"));
 
@@ -132,24 +149,31 @@ public class NewGradeSearchServiceTest {
 
         for (Student student : studentList) {
 
-            pool.submit(() ->{
+            pool.submit(() -> {
                 long l = System.currentTimeMillis();
                 try {
                     log.info("{} start", student.getAccount());
-                    if(student.getIsCorrect()){
-                        newGradeSearchService.getCurrentTermGradeSync(student);
+                    List<GradeDetail> gradeDetailList = newGradeSearchService.getCurrentTermGradeFromSpider(student);
+                    List<Grade> gradeList = gradeDetailList.stream().map(GradeDetail::getGrade).collect(Collectors.toList());
+
+                    List<Grade> updateList = newGradeSearchService.checkUpdate(student, gradeList);
+                    for (Grade update : updateList) {
+                        if (update.isUpdate()) {
+                            System.out.println(update);
+                        }
+
                     }
 
-                }catch (Exception e){
-                    if(e instanceof UrpException){
+                } catch (Exception e) {
+                    if (e instanceof UrpException) {
                         log.error("error {}", e.getMessage());
-                    }else if(e instanceof UrpEvaluationException){
+                    } else if (e instanceof UrpEvaluationException) {
                         log.error("error {}", e.getMessage());
-                    }else {
+                    } else {
                         log.error("error", e);
                     }
 
-                }finally {
+                } finally {
                     latch.countDown();
                     log.info("{} finish in {}ms", student.getAccount(), (System.currentTimeMillis() - l));
                 }

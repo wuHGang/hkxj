@@ -68,8 +68,8 @@ public class CourseController {
             return WebResponse.fail(ErrorCode.ACCOUNT_OR_PASSWORD_INVALID.getErrorCode(), "账号无效");
         }
 
-//        List<CourseTimeTableVo> courseTimeTableVoList = courseTimeTableService.getCourseTimeTableByStudent(Integer.parseInt(account));
-        return WebResponse.success();
+        List<CourseTimeTableVo> courseTimeTableVoList = courseTimeTableService.getCourseTimeTableByStudent(Integer.parseInt(account));
+        return WebResponse.success(courseTimeTableVoList);
     }
 
     @GetMapping("/timetable/search")

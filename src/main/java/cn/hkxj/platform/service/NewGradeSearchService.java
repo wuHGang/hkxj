@@ -7,22 +7,22 @@ import cn.hkxj.platform.exceptions.UrpEvaluationException;
 import cn.hkxj.platform.pojo.*;
 import cn.hkxj.platform.pojo.constant.ErrorCode;
 import cn.hkxj.platform.pojo.vo.GradeDetailVo;
+import cn.hkxj.platform.pojo.vo.GradeResultVo;
 import cn.hkxj.platform.pojo.vo.GradeVo;
-import cn.hkxj.platform.spider.newmodel.grade.CurrentGrade;
+import cn.hkxj.platform.pojo.vo.TermGradeVo;
 import cn.hkxj.platform.spider.newmodel.grade.detail.GradeDetailSearchPost;
 import cn.hkxj.platform.spider.newmodel.grade.detail.UrpGradeDetailForSpider;
 import cn.hkxj.platform.spider.newmodel.grade.general.UrpGeneralGradeForSpider;
 import cn.hkxj.platform.spider.newmodel.grade.scheme.Scheme;
 import cn.hkxj.platform.spider.newmodel.grade.scheme.SchemeGradeItem;
 import cn.hkxj.platform.utils.DateUtils;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.lucene.search.MultiCollectorManager;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.*;
 import java.util.concurrent.*;
@@ -118,22 +118,22 @@ public class NewGradeSearchService {
      */
     public List<GradeVo> getCurrentTermGrade(Student student) {
         CompletableFuture<List<GradeVo>> future =
-                CompletableFuture.supplyAsync(() -> getCurrentTermGradeSync(student), gradeAutoUpdatePool);
+                CompletableFuture.supplyAsync(() -> getCurrentTermGradeVoSync(student), gradeAutoUpdatePool);
         List<GradeVo> gradeDetailList;
         try {
             gradeDetailList = future.get(5000L, TimeUnit.MILLISECONDS);
         } catch (ExecutionException e) {
             Throwable cause = e.getCause();
-            List<GradeVo> gradeVoList = gradeToVo(gradeDao.getCurrentTermGradeByAccount(student.getAccount()));
 
             if (cause instanceof PasswordUnCorrectException) {
-                PasswordUnCorrectException exception = (PasswordUnCorrectException) cause;
-                throw exception;
+                throw (PasswordUnCorrectException) cause;
             }
+
+            List<GradeVo> gradeVoList = gradeToVo(gradeDao.getCurrentTermGradeByAccount(student.getAccount()));
+
             if (cause instanceof UrpEvaluationException) {
                 if (gradeVoList.isEmpty()) {
-                    UrpEvaluationException exception = (UrpEvaluationException) cause;
-                    throw exception;
+                    throw (UrpEvaluationException) cause;
                 }
                 gradeVoList.forEach(x -> x.setErrorCode(ErrorCode.Evaluation_ERROR.getErrorCode()).setMsg(cause.getMessage()));
             } else {
@@ -155,7 +155,12 @@ public class NewGradeSearchService {
      * @param student 学生实体
      * @return 学生成绩
      */
-    public List<GradeVo> getCurrentTermGradeSync(Student student) {
+    public List<GradeVo> getCurrentTermGradeVoSync(Student student) {
+
+        return gradeToVo(getCurrentTermGradeSync(student));
+    }
+
+    public List<Grade> getCurrentTermGradeSync(Student student) {
         List<GradeDetail> gradeDetailList = getCurrentTermGradeFromSpider(student);
 
         List<Grade> gradeList = gradeDetailList.stream()
@@ -167,9 +172,109 @@ public class NewGradeSearchService {
         saveUpdateGrade(updateList);
 
 
-        return gradeToVo(updateList);
+        return updateList;
     }
 
+    public GradeResultVo getGrade(String account, String password) {
+        Student student = studentDao.selectStudentByAccount(Integer.parseInt(account));
+        return getGrade(student);
+
+    }
+
+    /**
+     * 获取所有成绩
+     *
+     * @param student
+     * @return
+     */
+    public GradeResultVo getGrade(Student student) {
+        CompletableFuture<List<Grade>> currentFuture =
+                CompletableFuture.supplyAsync(() -> getCurrentTermGradeSync(student));
+
+        CompletableFuture<List<Grade>> schemeFuture = CompletableFuture.supplyAsync(() -> getSchemeGradeFromSpider(student));
+
+
+        CompletableFuture<List<Grade>> completableFuture = currentFuture.thenCombine(schemeFuture,
+                (x, y) -> {
+                    x.addAll(y);
+                    return x;
+                });
+
+        GradeResultVo resultVo;
+
+        try {
+            List<Grade> gradeList = completableFuture.get(5000L, TimeUnit.MILLISECONDS);
+            resultVo = gradeToResultVo(gradeList);
+        } catch (InterruptedException e) {
+            resultVo = gradeToResultVo(gradeDao.getGradeByAccount(student.getAccount()));
+            resultVo.setErrorCode(ErrorCode.SYSTEM_ERROR.getErrorCode()).setMessage(e.getMessage());
+        } catch (ExecutionException e) {
+            Throwable cause = e.getCause();
+            if (cause instanceof PasswordUnCorrectException) {
+                throw (PasswordUnCorrectException) cause;
+            }
+
+            resultVo = gradeToResultVo(gradeDao.getGradeByAccount(student.getAccount()));
+            resultVo.setMessage(cause.getMessage());
+            if (cause instanceof UrpEvaluationException) {
+                if (resultVo.getTermGradeList().isEmpty()) {
+                    throw (UrpEvaluationException) cause;
+                }
+                resultVo.setErrorCode(ErrorCode.Evaluation_ERROR.getErrorCode());
+            } else {
+                resultVo.setErrorCode(ErrorCode.SYSTEM_ERROR.getErrorCode());
+                log.error("get grade error", cause);
+            }
+        } catch (TimeoutException e) {
+            resultVo = gradeToResultVo(gradeDao.getGradeByAccount(student.getAccount()));
+            resultVo.setErrorCode(ErrorCode.READ_TIMEOUT.getErrorCode()).setMessage("抓取超时");
+        }
+
+        return resultVo;
+    }
+
+    public GradeResultVo gradeToResultVo(List<Grade> gradeList) {
+        GradeResultVo gradeResultVo = new GradeResultVo();
+        List<TermGradeVo> termGradeVoList = gradeToTermGradeList(gradeList);
+        gradeResultVo.setTermGradeList(termGradeVoList);
+
+        Double sumScore = 0.0;
+        double sumCredit = 0.0;
+
+        List<GradeVo> collect = termGradeVoList.stream().flatMap(x -> x.getGradeList().stream()).collect(Collectors.toList());
+
+        for (GradeVo gradeVo : collect) {
+            sumScore = gradeVo.getGradePoint() + sumScore;
+            if(gradeVo.getCoursePropertyCode().equals("003")){
+                sumCredit = Double.parseDouble(gradeVo.getCourse().getCredit()) + sumCredit;
+            }
+        }
+
+        double f = sumScore / collect.size();
+        BigDecimal b = new BigDecimal(f);
+
+        gradeResultVo.setGpa(b.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+        gradeResultVo.setOptionalCourseCredit(sumCredit);
+
+        return gradeResultVo;
+
+    }
+
+    public List<TermGradeVo> gradeToTermGradeList(List<Grade> gradeList) {
+        SchoolTime schoolTime = DateUtils.getCurrentSchoolTime();
+
+        return gradeList.stream()
+                .collect(Collectors.groupingBy(x -> new Term(x.getTermYear(), x.getTermOrder())))
+                .entrySet().stream()
+                .map(x -> new TermGradeVo()
+                        .setTermYear(x.getKey().getTermYear())
+                        .setTermOrder(x.getKey().getOrder())
+                        .setGradeList(gradeToVo(x.getValue()))
+                        .setCurrentTerm(schoolTime.getTerm().equals(x.getKey()))
+                )
+                .sorted(Comparator.reverseOrder())
+                .collect(Collectors.toList());
+    }
 
     public List<GradeVo> gradeToVo(List<Grade> gradeList) {
         return gradeList.stream().map(x ->
@@ -199,24 +304,37 @@ public class NewGradeSearchService {
                     .setTermYear(x.getTermYear())
                     .setTermOrder(x.getTermOrder())
                     .setUpdate(x.isUpdate())
+                    .setCoursePropertyCode(x.getCoursePropertyCode())
+                    .setCoursePropertyName(x.getCoursePropertyName())
                     .setExamTime(DateUtils.localDateToDate(x.getExamTime(), DateUtils.YYYY_MM_DD_PATTERN))
                     .setExamTimeStr(x.getExamTime())
                     .setOperateTime(parseGradeOperateTime(x.getOperateTime()))
                     .setOperator(x.getOperator());
         })
-
-                .sorted(Comparator.comparing(GradeVo::getOperateTime).reversed())
+                .sorted()
                 .collect(Collectors.toList());
 
     }
 
     public List<Grade> getSchemeGradeFromSpider(Student student) {
-        return newUrpSpiderService.getSchemeGrade(student)
+
+        log.info("get scheme grade start");
+        long l = System.currentTimeMillis();
+        List<Grade> gradeList = newUrpSpiderService.getSchemeGrade(student)
                 .stream()
                 .map(Scheme::getCjList)
                 .flatMap(Collection::stream)
                 .map(SchemeGradeItem::transToGrade)
                 .collect(Collectors.toList());
+
+        for (Grade grade : gradeList) {
+            gradeDao.insertSelective(grade);
+        }
+
+        log.info("get scheme grade finish in {}", System.currentTimeMillis() - l);
+
+
+        return gradeList;
 
     }
 
