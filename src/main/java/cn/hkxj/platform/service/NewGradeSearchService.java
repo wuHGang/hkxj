@@ -214,18 +214,17 @@ public class NewGradeSearchService {
             if (cause instanceof PasswordUnCorrectException) {
                 throw (PasswordUnCorrectException) cause;
             }
-
-            resultVo = gradeToResultVo(gradeDao.getGradeByAccount(student.getAccount()));
-            resultVo.setMessage(cause.getMessage());
             if (cause instanceof UrpEvaluationException) {
-                if (resultVo.getTermGradeList().isEmpty()) {
-                    throw (UrpEvaluationException) cause;
-                }
-                resultVo.setErrorCode(ErrorCode.Evaluation_ERROR.getErrorCode());
+                throw (UrpEvaluationException) cause;
             } else {
+                resultVo = gradeToResultVo(gradeDao.getGradeByAccount(student.getAccount()));
                 resultVo.setErrorCode(ErrorCode.SYSTEM_ERROR.getErrorCode());
+                resultVo.setMessage(cause.getMessage());
                 log.error("get grade error", cause);
             }
+
+
+
         } catch (TimeoutException e) {
             resultVo = gradeToResultVo(gradeDao.getGradeByAccount(student.getAccount()));
             resultVo.setErrorCode(ErrorCode.READ_TIMEOUT.getErrorCode()).setMessage("抓取超时");
