@@ -46,6 +46,18 @@ public enum RedisKeys {
      * 已经完成的账号
      */
     PROXY_SELECT_SWITCH("PROXY_DIRECT_SWITCH"),
+
+    /**
+     * 当前学期完成抓取学号
+     */
+    CURRENT_GRAD_FINISH_ACCOUNT("CURRENT_GRAD_FINISH_ACCOUNT"),
+
+    /**
+     * 过往学期完成抓取学号
+     */
+    EVER_GRAD_FINISH_ACCOUNT("EVER_GRAD_FINISH_ACCOUNT"),
+
+
     ;
     private String name;
 

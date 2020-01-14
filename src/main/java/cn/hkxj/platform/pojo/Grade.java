@@ -1,5 +1,6 @@
 package cn.hkxj.platform.pojo;
 
+import cn.hkxj.platform.utils.DateUtils;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -94,6 +95,12 @@ public class Grade {
             this.gradePoint = gradePoint;
         }
         return this;
+    }
+
+    public boolean isCurrentTermGrade() {
+        Term term = DateUtils.getCurrentSchoolTime().getTerm();
+        return this.getTermYear().equals(term.getTermYear()) && this.getTermOrder().equals(term.getOrder());
+
     }
 
 }

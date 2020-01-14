@@ -6,6 +6,7 @@ import cn.hkxj.platform.exceptions.PasswordUnCorrectException;
 import cn.hkxj.platform.exceptions.UrpEvaluationException;
 import cn.hkxj.platform.pojo.*;
 import cn.hkxj.platform.pojo.constant.ErrorCode;
+import cn.hkxj.platform.pojo.constant.RedisKeys;
 import cn.hkxj.platform.pojo.vo.GradeDetailVo;
 import cn.hkxj.platform.pojo.vo.GradeResultVo;
 import cn.hkxj.platform.pojo.vo.GradeVo;
@@ -17,8 +18,11 @@ import cn.hkxj.platform.spider.newmodel.grade.scheme.Scheme;
 import cn.hkxj.platform.spider.newmodel.grade.scheme.SchemeGradeItem;
 import cn.hkxj.platform.utils.DateUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.search.MultiCollectorManager;
+import org.springframework.data.redis.core.SetOperations;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -51,6 +55,8 @@ public class NewGradeSearchService {
     private NewUrpSpiderService newUrpSpiderService;
     @Resource
     private GradeDao gradeDao;
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
 
 
     private static final Term currentTerm = new Term(2019, 2020, 1);
@@ -172,10 +178,26 @@ public class NewGradeSearchService {
         // 新的数据插入，原有得数据更新
         saveUpdateGrade(updateList);
 
+        if(checkFinishUpdate(updateList)){
+            addCurrentFinishFetchAccount(student.getAccount().toString());
+        }
 
         return updateList;
     }
 
+
+    public boolean checkFinishUpdate(List<Grade> gradeList){
+        boolean finishUpdate = true;
+
+        for (Grade grade : gradeList) {
+            if(grade.getScore() == -1){
+                finishUpdate = false;
+                break;
+            }
+        }
+
+        return finishUpdate;
+    }
     public GradeResultVo getGrade(String account, String password) {
         Student student = studentDao.selectStudentByAccount(Integer.parseInt(account));
         return getGrade(student);
@@ -185,24 +207,37 @@ public class NewGradeSearchService {
     /**
      * 获取所有成绩
      *
-     * @param student
-     * @return
+     * 为了减少不必要的抓取
+     *
+     * @param student 学生实体
+     * @return 所有的成绩数据
      */
     public GradeResultVo getGrade(Student student) {
-        CompletableFuture<List<Grade>> currentFuture =
-                CompletableFuture.supplyAsync(() -> getCurrentTermGradeSync(student), gradeAutoUpdatePool);
+        GradeResultVo resultVo;
 
-        CompletableFuture<List<Grade>> schemeFuture =
-                CompletableFuture.supplyAsync(() -> getSchemeGradeFromSpider(student), gradeAutoUpdatePool);
+        CompletableFuture<List<Grade>> currentFuture;
+        if(isCurrentFinishFetch(student.getAccount().toString())){
+            currentFuture =
+                    CompletableFuture.completedFuture(gradeDao.getCurrentTermGradeByAccount(student.getAccount()));
+        }else {
+            currentFuture =
+                    CompletableFuture.supplyAsync(() -> getCurrentTermGradeSync(student), gradeAutoUpdatePool);
+        }
 
+        CompletableFuture<List<Grade>> schemeFuture;
+        if(isEverFinishFetch(student.getAccount().toString())){
+            schemeFuture =
+                    CompletableFuture.completedFuture(gradeDao.getEverTermGradeByAccount(student.getAccount()));
+        }else {
+            schemeFuture =
+                    CompletableFuture.supplyAsync(() -> getSchemeGradeFromSpider(student), gradeAutoUpdatePool);
+        }
 
         CompletableFuture<List<Grade>> completableFuture = currentFuture.thenCombine(schemeFuture,
                 (x, y) -> {
                     x.addAll(y);
                     return x;
                 });
-
-        GradeResultVo resultVo;
 
         try {
             List<Grade> gradeList = completableFuture.get(5000L, TimeUnit.MILLISECONDS);
@@ -290,7 +325,8 @@ public class NewGradeSearchService {
             course.setTermYear(x.getTermYear());
             course.setTermOrder(x.getTermOrder());
             return new GradeVo()
-                    .setCourse(urpCourseService.getCurrentTermCourse(x.getCourseNumber(), x.getCourseOrder(),
+                    .setCourse(urpCourseService.getCourseFromCache(x.getCourseNumber(), x.getCourseOrder(),
+                            x.getTermYear(), x.getTermOrder(),
                             course))
                     .setAccount(x.getAccount())
                     .setScore(x.getScore())
@@ -338,7 +374,7 @@ public class NewGradeSearchService {
 
         log.info("get scheme grade finish in {}", System.currentTimeMillis() - l);
 
-
+        addEverFinishFetchAccount(student.getAccount().toString());
         return gradeList;
 
     }
@@ -421,12 +457,6 @@ public class NewGradeSearchService {
 
     }
 
-    public GradeSearchResult getCurrentGrade(String account, String password) {
-        Student student = Optional.ofNullable(studentDao.selectStudentByAccount(Integer.parseInt(account)))
-                .orElseGet(() -> newUrpSpiderService.getStudentInfo(account, password));
-
-        return getCurrentGrade(student);
-    }
 
     public GradeDetailVo getGradeDetail(String account, GradeDetailSearchPost gradeDetailSearchPost) {
 
@@ -474,6 +504,42 @@ public class NewGradeSearchService {
             buffer.append("- - - - - - - - - - - - - -");
         }
         return buffer.toString();
+    }
+
+    private boolean isCurrentFinishFetch(String account){
+
+        Term term = DateUtils.getCurrentSchoolTime().getTerm();
+        String currentKey = RedisKeys.CURRENT_GRAD_FINISH_ACCOUNT.genKey(term.getTermYear() + term.getOrder());
+        return isFinishFetch(currentKey, account);
+    }
+
+    private boolean isEverFinishFetch(String account){
+        Term term = DateUtils.getCurrentSchoolTime().getTerm();
+        String everKey = RedisKeys.EVER_GRAD_FINISH_ACCOUNT.genKey(term.getTermYear() + term.getOrder());
+        return isFinishFetch(everKey, account);
+    }
+
+    private boolean isFinishFetch(String key, String account){
+
+        SetOperations<String, String> opsForSet = stringRedisTemplate.opsForSet();
+        return BooleanUtils.toBoolean(opsForSet.isMember(key, account));
+    }
+
+    private void addCurrentFinishFetchAccount(String account){
+        Term term = DateUtils.getCurrentSchoolTime().getTerm();
+        addFinishFetchAccount(RedisKeys.CURRENT_GRAD_FINISH_ACCOUNT.genKey(term.getTermYear()+term.getOrder()),
+                account);
+    }
+
+    private void addEverFinishFetchAccount(String account){
+        Term term = DateUtils.getCurrentSchoolTime().getTerm();
+        addFinishFetchAccount(RedisKeys.EVER_GRAD_FINISH_ACCOUNT.genKey(term.getTermYear()+term.getOrder()),
+                account);
+    }
+
+    private void addFinishFetchAccount(String key, String account){
+        SetOperations<String, String> opsForSet = stringRedisTemplate.opsForSet();
+        opsForSet.add(key, account);
     }
 
 

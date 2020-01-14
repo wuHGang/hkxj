@@ -4,12 +4,14 @@ import cn.hkxj.platform.mapper.GradeMapper;
 import cn.hkxj.platform.pojo.Grade;
 import cn.hkxj.platform.pojo.GradeExample;
 import cn.hkxj.platform.pojo.SchoolTime;
+import cn.hkxj.platform.pojo.Term;
 import cn.hkxj.platform.utils.DateUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -53,8 +55,15 @@ public class GradeDao {
     }
 
 
-    public List<Grade> getGradeByAccount(int account){
+    public List<Grade> getEverTermGradeByAccount(int account){
+        List<Grade> gradeList = getGradeByAccount(account);
 
+        return gradeList.stream().filter(grade -> !grade.isCurrentTermGrade())
+                .collect(Collectors.toList());
+    }
+
+
+    public List<Grade> getGradeByAccount(int account){
         return selectByPojo(new Grade()
                 .setAccount(account));
     }
