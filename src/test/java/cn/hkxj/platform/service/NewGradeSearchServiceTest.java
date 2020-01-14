@@ -110,7 +110,7 @@ public class NewGradeSearchServiceTest {
 
     @Test
     public void getGrade() {
-        Student student = studentDao.selectStudentByAccount(2016026520);
+        Student student = studentDao.selectStudentByAccount(2016025067);
 
         for (int x=0; x<2 ; x++){
             GradeResultVo grade = newGradeSearchService.getGrade(student);
