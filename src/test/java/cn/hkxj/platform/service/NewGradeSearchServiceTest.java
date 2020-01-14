@@ -110,10 +110,12 @@ public class NewGradeSearchServiceTest {
 
     @Test
     public void getGrade() {
-        Student student = studentDao.selectStudentByAccount(2017025838);
-        GradeResultVo grade = newGradeSearchService.getGrade(student);
+        Student student = studentDao.selectStudentByAccount(2016025067);
 
-        System.out.println(grade);
+        for (int x=0; x<2 ; x++){
+            GradeResultVo grade = newGradeSearchService.getGrade(student);
+        }
+
     }
 
 

@@ -284,6 +284,10 @@ public class NewGradeSearchService {
             course.setExamType(x.getExamTypeName());
             course.setExamTypeCode(x.getExamTypeCode());
             course.setCourseOrder(x.getCourseOrder());
+            course.setNum(x.getCourseOrder());
+            course.setName(x.getCourseName());
+            course.setTermYear(x.getTermYear());
+            course.setTermOrder(x.getTermOrder());
             return new GradeVo()
                     .setCourse(urpCourseService.getCurrentTermCourse(x.getCourseNumber(), x.getCourseOrder(),
                             course))
