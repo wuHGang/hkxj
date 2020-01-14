@@ -190,9 +190,10 @@ public class NewGradeSearchService {
      */
     public GradeResultVo getGrade(Student student) {
         CompletableFuture<List<Grade>> currentFuture =
-                CompletableFuture.supplyAsync(() -> getCurrentTermGradeSync(student));
+                CompletableFuture.supplyAsync(() -> getCurrentTermGradeSync(student), gradeAutoUpdatePool);
 
-        CompletableFuture<List<Grade>> schemeFuture = CompletableFuture.supplyAsync(() -> getSchemeGradeFromSpider(student));
+        CompletableFuture<List<Grade>> schemeFuture =
+                CompletableFuture.supplyAsync(() -> getSchemeGradeFromSpider(student), gradeAutoUpdatePool);
 
 
         CompletableFuture<List<Grade>> completableFuture = currentFuture.thenCombine(schemeFuture,
