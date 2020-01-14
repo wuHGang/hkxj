@@ -17,6 +17,7 @@ import cn.hkxj.platform.spider.newmodel.grade.scheme.Scheme;
 import cn.hkxj.platform.spider.newmodel.grade.scheme.SchemeGradeItem;
 import cn.hkxj.platform.utils.DateUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.search.MultiCollectorManager;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -245,7 +246,7 @@ public class NewGradeSearchService {
 
         for (GradeVo gradeVo : collect) {
             sumScore = gradeVo.getGradePoint() + sumScore;
-            if(gradeVo.getCoursePropertyCode().equals("003")){
+            if(gradeVo.getCoursePropertyCode().equals("003") && StringUtils.isNotEmpty(gradeVo.getCourse().getCredit())){
                 sumCredit = Double.parseDouble(gradeVo.getCourse().getCredit()) + sumCredit;
             }
         }
