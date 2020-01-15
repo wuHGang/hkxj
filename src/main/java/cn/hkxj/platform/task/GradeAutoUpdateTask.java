@@ -198,6 +198,7 @@ public class GradeAutoUpdateTask extends BaseSubscriptionTask {
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Date());
         int hour = cal.get(Calendar.HOUR_OF_DAY);
+        log.info("switch  {} hour {}", updateSwitch, hour);
         return BooleanUtils.toBoolean(updateSwitch) && (hour > 7 || hour < 1);
     }
 
