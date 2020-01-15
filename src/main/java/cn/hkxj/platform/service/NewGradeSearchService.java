@@ -215,6 +215,15 @@ public class NewGradeSearchService {
     public GradeResultVo getGrade(Student student) {
         GradeResultVo resultVo;
 
+        if(isCurrentFinishFetch(student.getAccount().toString()) && isEverFinishFetch(student.getAccount().toString())){
+
+            resultVo = gradeToResultVo(gradeDao.getGradeByAccount(student.getAccount()));
+            resultVo.setMessage("完成抓取");
+
+            return resultVo;
+        }
+
+
         CompletableFuture<List<Grade>> currentFuture;
         if(isCurrentFinishFetch(student.getAccount().toString())){
             currentFuture =
@@ -506,7 +515,7 @@ public class NewGradeSearchService {
         return buffer.toString();
     }
 
-    private boolean isCurrentFinishFetch(String account){
+    public boolean isCurrentFinishFetch(String account){
 
         Term term = DateUtils.getCurrentSchoolTime().getTerm();
         String currentKey = RedisKeys.CURRENT_GRAD_FINISH_ACCOUNT.genKey(term.getTermYear() + term.getOrder());

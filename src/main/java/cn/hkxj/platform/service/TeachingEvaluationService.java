@@ -65,7 +65,7 @@ public class TeachingEvaluationService {
             try {
                 Thread.sleep(1000L);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                log.error("sleep error", e);
             }
             newUrpSpiderService.evaluate(student, post);
         });
@@ -126,6 +126,10 @@ public class TeachingEvaluationService {
     }
 
     public void addEvaluateAccount(String account){
+        stringRedisTemplate.opsForSet().add(RedisKeys.WAITING_EVALUATION_SET.getName(), account);
+    }
+
+    public void addFinishEvaluateAccount(String account){
         stringRedisTemplate.opsForSet().add(RedisKeys.WAITING_EVALUATION_SET.getName(), account);
     }
 
