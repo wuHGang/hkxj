@@ -1,6 +1,7 @@
 package cn.hkxj.platform.pojo;
 
 import com.google.common.base.MoreObjects;
+import lombok.Data;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -8,6 +9,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * @author JR Chan
  * @date 2019/5/1
  */
+@Data
 public class Term {
     /**
      * 如果是2018到2019年第一学期
@@ -23,33 +25,15 @@ public class Term {
 
     }
 
-    public Term(int startYear, int endYear, int order) {
-        this.startYear = startYear;
-        this.endYear = endYear;
+    public Term(String termYear, int order) {
+        this.startYear = Integer.parseInt(termYear.substring(0, 4));
+        this.endYear = Integer.parseInt(termYear.substring(5, 9));
         this.order = order;
     }
 
-    public int getStartYear() {
-        return startYear;
-    }
-
-    public void setStartYear(int startYear) {
+    public Term(int startYear, int endYear, int order) {
         this.startYear = startYear;
-    }
-
-    public int getEndYear() {
-        return endYear;
-    }
-
-    public void setEndYear(int endYear) {
         this.endYear = endYear;
-    }
-
-    public int getOrder() {
-        return order;
-    }
-
-    public void setOrder(int order) {
         this.order = order;
     }
 
@@ -74,37 +58,10 @@ public class Term {
     public String getExecutiveEducationPlanNum() {
         return this.startYear + "-" + this.endYear + "-" + this.order+ "-1";
     }
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
 
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Term term = (Term) o;
-
-        return new EqualsBuilder()
-                .append(startYear, term.startYear)
-                .append(endYear, term.endYear)
-                .append(order, term.order)
-                .isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder(17, 37)
-                .append(startYear)
-                .append(endYear)
-                .append(order)
-                .toHashCode();
-    }
-
-    @Override
-    public String toString() {
-        return MoreObjects.toStringHelper(this)
-                .add("startYear", startYear)
-                .add("endYear", endYear)
-                .add("order", order)
-                .toString();
+    public static void main(String[] args) {
+        Term term = new Term("2018-2019", 1);
+        System.out.println(term);
     }
 
 }

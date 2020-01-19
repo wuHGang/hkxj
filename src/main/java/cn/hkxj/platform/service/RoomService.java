@@ -1,8 +1,10 @@
 package cn.hkxj.platform.service;
 
+import cn.hkxj.platform.dao.UrpClassRoomDao;
 import cn.hkxj.platform.exceptions.RoomParseException;
 import cn.hkxj.platform.mapper.RoomMapper;
 import cn.hkxj.platform.mapper.UrpClassroomMapper;
+import cn.hkxj.platform.pojo.Course;
 import cn.hkxj.platform.pojo.Room;
 import cn.hkxj.platform.pojo.UrpClassroom;
 import cn.hkxj.platform.pojo.constant.Building;
@@ -11,6 +13,8 @@ import cn.hkxj.platform.pojo.example.RoomExample;
 import cn.hkxj.platform.spider.newmodel.searchclassroom.SearchClassroomPost;
 import cn.hkxj.platform.spider.newmodel.searchclassroom.SearchClassroomResult;
 import cn.hkxj.platform.spider.newmodel.searchclassroom.SearchResultWrapper;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.CharUtils;
 import org.springframework.stereotype.Service;
@@ -19,6 +23,7 @@ import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 /**
  * @author junrong.chen
@@ -28,32 +33,31 @@ import java.util.Map;
 @Slf4j
 public class RoomService {
 
-	@Resource
-	private RoomMapper roomMapper;
+
 	@Resource
 	private NewUrpSpiderService newUrpSpiderService;
 	@Resource
 	private UrpClassroomMapper urpClassroomMapper;
+	@Resource
+	private UrpClassRoomDao urpClassRoomDao;
 
 	private final static byte NOT_ALLOW = 0;
 	private final static byte ALLOW = 1;
 
-	private static Map<String, Room> roomMap = new HashMap<>();
+	private static final Cache<String, UrpClassroom> urpRoomCache = CacheBuilder.newBuilder()
+			.maximumSize(100)
+			.build();
 
-	private Room getRoomByNameFromDB (String name){
-		RoomExample roomExample = new RoomExample();
-		roomExample.createCriteria()
-				.andNameEqualTo(name);
-		List<Room> roomList = roomMapper.selectByExample(roomExample);
-		if(roomList.size() != 1){
-            log.error("getRoomByName exception name{}  list{}", name, roomList);
-            Room room = new Room();
-            room.setName(name);
-            return room;
+	public UrpClassroom getClassRoomByName(String name){
+		try {
+			return urpRoomCache.get(name, (() -> urpClassRoomDao.selectByName(name)));
+		} catch (ExecutionException e) {
+			log.error("get urp classroom form cache error", e);
+			throw new RuntimeException(e);
 		}
-		return roomList.get(0);
-	}
 
+
+	}
 	public void saveAllClassRoom(){
 		SearchClassroomPost post = new SearchClassroomPost();
 		post.setExecutiveEducationPlanNum("2019-2020-1-1");
@@ -75,30 +79,6 @@ public class RoomService {
 
 		}
 
-	}
-
-	public void searchCourseTimeTableByClassRoom(UrpClassroom urpClassroom){
-	}
-
-
-
-	/**
-	 * 通过教室名取到教室实体，如果缓存有从缓存读取
-	 * 缓存没有从数据库读取后再存入缓存
-	 *
-	 * @param position 教室名
-	 */
-	public Room getRoomByName(String position){
-		Room room;
-		if (!roomMap.containsKey(position) ){
-			room = getRoomByNameFromDB(position);
-			roomMap.put(position, room);
-		}
-		else {
-			room = roomMap.get(position);
-		}
-
-		return room;
 	}
 
 	public Room parseToRoomForSpider(String classroomName, String buildingName) throws RoomParseException {

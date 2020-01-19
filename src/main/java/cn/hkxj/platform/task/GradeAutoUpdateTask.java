@@ -2,32 +2,20 @@ package cn.hkxj.platform.task;
 
 import cn.hkxj.platform.MDCThreadPool;
 import cn.hkxj.platform.builder.TemplateBuilder;
-import cn.hkxj.platform.config.wechat.MiniProgramProperties;
-import cn.hkxj.platform.config.wechat.WechatMpConfiguration;
-import cn.hkxj.platform.config.wechat.WechatMpPlusProperties;
 import cn.hkxj.platform.config.wechat.WechatTemplateProperties;
-import cn.hkxj.platform.dao.ScheduleTaskDao;
 import cn.hkxj.platform.exceptions.UrpEvaluationException;
 import cn.hkxj.platform.exceptions.UrpException;
-import cn.hkxj.platform.exceptions.UrpTimeoutException;
-import cn.hkxj.platform.pojo.ScheduleTask;
 import cn.hkxj.platform.pojo.Student;
 import cn.hkxj.platform.pojo.constant.MiniProgram;
-import cn.hkxj.platform.pojo.constant.SubscribeScene;
 import cn.hkxj.platform.pojo.vo.GradeVo;
 import cn.hkxj.platform.pojo.wechat.miniprogram.SubscribeGradeData;
 import cn.hkxj.platform.pojo.wechat.miniprogram.SubscribeMessage;
 import cn.hkxj.platform.pojo.wechat.miniprogram.SubscribeValue;
 import cn.hkxj.platform.service.NewGradeSearchService;
-import cn.hkxj.platform.service.OpenIdService;
-import cn.hkxj.platform.service.ScheduleTaskService;
 import cn.hkxj.platform.service.SubscribeService;
-import cn.hkxj.platform.service.wechat.MiniProgramService;
 import cn.hkxj.platform.service.wechat.SendMessageService;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import me.chanjar.weixin.mp.api.WxMpService;
-import me.chanjar.weixin.mp.bean.kefu.WxMpKefuMessage;
 import me.chanjar.weixin.mp.bean.template.WxMpTemplateData;
 import me.chanjar.weixin.mp.bean.template.WxMpTemplateMessage;
 import org.apache.commons.lang3.BooleanUtils;
@@ -184,6 +172,7 @@ public class GradeAutoUpdateTask extends BaseSubscriptionTask {
     }
 
     public void sendGradeToAccount(Student student, GradeVo gradeVo) {
+
         sendMessageToApp(student, gradeVo);
         sendMessageToPlus(student, gradeVo);
 
@@ -191,13 +180,12 @@ public class GradeAutoUpdateTask extends BaseSubscriptionTask {
 
 
     List<GradeVo> getUpdateList(Student student) {
-        if (!student.getIsCorrect()) {
-            return Collections.emptyList();
-        }
-        List<GradeVo> termGrade = newGradeSearchService.getCurrentTermGradeSync(student);
+
+        List<GradeVo> termGrade = newGradeSearchService.getCurrentTermGradeVoSync(student);
         return termGrade.stream()
                 .filter(GradeVo::isUpdate)
                 .filter(x -> !x.getScore().equals(-1.0))
+                .filter(x-> !x.getCoursePropertyCode().equals("003"))
                 .collect(Collectors.toList());
     }
 
@@ -210,6 +198,7 @@ public class GradeAutoUpdateTask extends BaseSubscriptionTask {
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Date());
         int hour = cal.get(Calendar.HOUR_OF_DAY);
+        log.info("switch  {} hour {}", updateSwitch, hour);
         return BooleanUtils.toBoolean(updateSwitch) && (hour > 7 || hour < 1);
     }
 

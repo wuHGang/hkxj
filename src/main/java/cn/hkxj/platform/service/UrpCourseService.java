@@ -65,29 +65,30 @@ public class UrpCourseService {
         SchoolTime schoolTime = DateUtils.getCurrentSchoolTime();
         String termYear = schoolTime.getTerm().getTermYear();
         int order = schoolTime.getTerm().getOrder();
-        String key = courseId + sequenceNumber + termYear + order;
+        return getCourseFromCache(courseId, sequenceNumber,termYear, order, updateCourse);
+    }
+
+
+    public Course getCourseFromCache(String courseId, String sequenceNumber, String termYear, int termOrder, Course updateCourse){
+        String key = courseId + sequenceNumber + termYear + termOrder;
         try {
             return currentTermCourseCache.get(key, () -> {
                 Course course = getCourse(courseId, sequenceNumber, termYear,
-                        order, updateCourse);
+                        termOrder, updateCourse);
 
                 if (course == null) {
                     log.info(" {} {} {} {}", courseId, sequenceNumber, termYear,
-                            order);
+                            termOrder);
                 }
                 return course;
             });
         } catch (ExecutionException e) {
-            log.error("get course cache error", e);
+            log.error("get course cache error key {}", key, e);
             throw new RuntimeException(e);
         }
 
-
     }
 
-    public Course getCourse(String courseId, String sequenceNumber, String termYear, int termOrder) {
-        return getCourse(courseId, sequenceNumber, termYear, termOrder, null);
-    }
 
     /**
      * @param courseId
@@ -111,10 +112,12 @@ public class UrpCourseService {
             post.setExecutiveEducationPlanNum(termYear + "-" + termOrder + "-1");
             SearchResult<SearchCourseResult> searchResult = newUrpSpiderService.searchCourseInfo(post);
             if (CollectionUtils.isEmpty(searchResult.getRecords())) {
-                searchResult = newUrpSpiderService.searchCourseBasicInfo(post);
+                courseDao.insertSelective(updateCourse);
+                return updateCourse;
             }
 
             List<SearchCourseResult> resultList = searchResult.getRecords();
+
             if (resultList.size() > 1) {
                 resultList = resultList.stream()
                         .filter(x -> post.getCourseNumber().equals(x.getCourseId()))

@@ -3,13 +3,14 @@ package cn.hkxj.platform.pojo.vo;
 import cn.hkxj.platform.pojo.Course;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NonNull;
 import lombok.experimental.Accessors;
 
 import java.util.Date;
 
 @Data
 @Accessors(chain = true)
-public class GradeVo {
+public class GradeVo implements Comparable{
     private Course course;
 
     private Integer account;
@@ -56,5 +57,24 @@ public class GradeVo {
 
     private String msg;
 
+    private String coursePropertyCode;
+
+    private String coursePropertyName;
+
     private boolean update = false;
+
+    @Override
+    public int compareTo(@NonNull Object o) {
+        GradeVo o1 = (GradeVo) o;
+        if(o1.getTermYear().compareTo(this.getTermYear()) == 0){
+            if(o1.getTermOrder().compareTo(this.getTermOrder()) == 0){
+                return o1.getOperateTime().compareTo(this.getOperateTime());
+            }else {
+                return o1.getTermOrder().compareTo(this.getTermOrder());
+            }
+        }else {
+            return o1.getTermYear().compareTo(this.getTermYear());
+        }
+
+    }
 }

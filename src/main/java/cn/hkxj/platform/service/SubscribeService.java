@@ -31,6 +31,7 @@ public class SubscribeService {
     private ScheduleTaskDao scheduleTaskDao;
     private OpenidMapper openidMapper;
     private OpenIdService openIdService;
+    private NewGradeSearchService newGradeSearchService;
 
     public boolean isSubscribe(String openid){
         SubscribeOpenidExample example = new SubscribeOpenidExample();
@@ -87,6 +88,7 @@ public class SubscribeService {
                 .map(x-> openIdService.getStudentByOpenId(x.getOpenid(), x.getAppid()))
                 .filter(Objects::nonNull)
                 .filter(Student::getIsCorrect)
+                .filter(x-> !newGradeSearchService.isCurrentFinishFetch(x.getAccount().toString()))
                 .collect(Collectors.toSet());
 
 
