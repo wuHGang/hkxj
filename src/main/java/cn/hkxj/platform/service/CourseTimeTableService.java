@@ -452,25 +452,6 @@ public class CourseTimeTableService {
 
     }
 
-    private void saveCourseTimeTableToDb(UrpCourseTimeTableForSpider spiderResult, Student student) {
-        for (Map<String, UrpCourseTimeTable> map : spiderResult.getDetails()) {
-            for (Map.Entry<String, UrpCourseTimeTable> entry : map.entrySet()) {
-                UrpCourseTimeTable urpCourseTimeTable = entry.getValue();
-
-                if (!urpCourseTimeTable.getCourseRelativeInfo().getStudentNumber().equals(String.valueOf(student.getAccount()))) {
-                    return;
-                }
-                String courseId = urpCourseTimeTable.getCourseRelativeInfo().getCourseNumber();
-                //查看课程是否存在，不存在就插入数据库
-                urpCourseService.checkOrSaveUrpCourseToDb(courseId, student);
-//                urpCourseService.saveCourse(courseId, sequenceNumber);
-                CourseTimeTableBasicInfo basicInfo = getCourseTimeTableBasicInfo(urpCourseTimeTable);
-                //将课程时间表存储到数据库
-                saveCourseTimeTableDetailsToDb(urpCourseTimeTable, basicInfo, student);
-            }
-        }
-    }
-
     /**
      * 将课程搜索结果保存到数据库中
      */

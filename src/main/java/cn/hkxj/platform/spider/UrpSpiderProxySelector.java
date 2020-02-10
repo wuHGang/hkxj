@@ -1,6 +1,5 @@
 package cn.hkxj.platform.spider;
 
-import cn.hkxj.platform.exceptions.UrpException;
 import cn.hkxj.platform.pojo.constant.RedisKeys;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -66,7 +65,7 @@ public class UrpSpiderProxySelector extends ProxySelector {
 
     }
 
-    public boolean usePayProxy(){
+    boolean usePayProxy(){
         String name = RedisKeys.PROXY_SELECT_SWITCH.getName();
         return BooleanUtils.toBoolean(stringRedisTemplate.opsForValue().get(name));
     }

@@ -1,23 +1,22 @@
 package cn.hkxj.platform.service;
 
-import cn.hkxj.platform.dao.*;
+import cn.hkxj.platform.dao.CourseDao;
+import cn.hkxj.platform.dao.ExamTimetableDao;
+import cn.hkxj.platform.dao.StudentDao;
+import cn.hkxj.platform.dao.StudentExamTimeTableDao;
 import cn.hkxj.platform.pojo.*;
 import cn.hkxj.platform.utils.DateUtils;
-import cn.hkxj.platform.utils.SchoolTimeUtil;
-import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * @author junrong.chen
@@ -80,8 +79,7 @@ public class ExamTimeTableService {
      */
     public List<Exam> getExamTimeList(int account) {
 
-        List<StudentExamTimetable> currentTermExam = studentExamTimeTableDao.selectCurrentTermExam(Integer.toString(account));
-
+        List<ExamTimetable> currentTermExam = examTimetableDao.selectCurrentExamByAccount(String.valueOf(account));
         if (currentTermExam.isEmpty()) {
             List<Exam> examList = getExamTimeListFromSpider(account);
             SchoolTime schoolTime = DateUtils.getCurrentSchoolTime();
@@ -106,25 +104,20 @@ public class ExamTimeTableService {
                 return examList;
             }
         } else {
-            return currentTermExam.stream()
-                    .map(x -> examTimetableDao.selectByPrimaryKey(x.getExamTimetableId()))
-                    .map(x -> new Exam()
-                            .setCourse(
-                                    urpCourseService.getCurrentTermCourse(x.getCourseNum(), x.getCourseOrder(),
-                                            new Course().setCourseOrder(x.getCourseOrder())))
-                            .setDate(x.getExamDate())
-                            .setExamName(x.getName())
-                            .setStartTime(x.getStartTime())
-                            .setEndTime(x.getEndTime())
-                            .setClassRoom(roomService.getClassRoomByName(x.getRoomName()))
-                            .setExamDay(x.getDay())
-                            .setExamWeekOfTerm(x.getSchoolWek()))
-                    .collect(Collectors.toList());
+            List<CourseDao.CourseKey> keyList = currentTermExam.stream()
+                    .map(x -> new CourseDao.CourseKey()
+                            .setCourseOrder(x.getCourseOrder())
+                            .setNum(x.getCourseNum())
+                            .setTermOrder(x.getTermOrder())
+                            .setTermYear(x.getTermYear())
+                    ).collect(Collectors.toList());
+
+            return collect;
         }
     }
 
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void saveExamTimeTable(int account, List<ExamTimetable> examTimetableList) {
         examTimetableList.stream()
                 .map(examTimetable -> {

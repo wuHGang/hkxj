@@ -2,48 +2,51 @@ package cn.hkxj.platform.dao;
 
 import cn.hkxj.platform.mapper.CourseMapper;
 import cn.hkxj.platform.pojo.Course;
-import cn.hkxj.platform.pojo.example.CourseExample;
+import lombok.Data;
+import lombok.experimental.Accessors;
+import org.mybatis.dynamic.sql.select.SelectDSLCompleter;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
-import java.util.Optional;
 
+import static cn.hkxj.platform.mapper.CourseDynamicSqlSupport.*;
+import static org.mybatis.dynamic.sql.SqlBuilder.isEqualToWhenPresent;
+
+/**
+ * @author chenjuanrong
+ */
 @Service
 public class CourseDao {
     @Resource
     private CourseMapper courseMapper;
 
-    public List<Course> getAllCourse(){
-        CourseExample example = new CourseExample();
-        return courseMapper.selectByExample(example);
+    public List<Course> getAllCourse() {
+        return courseMapper.select(SelectDSLCompleter.allRows());
     }
 
-    public List<Course> selectCourseByPojo(Course course){
-        CourseExample example = new CourseExample();
-        CourseExample.Criteria criteria = example.createCriteria();
-        if(course.getCourseOrder() != null){
-            criteria.andCourseOrderEqualTo(course.getCourseOrder());
-        }
-        if(course.getNum() != null){
-            criteria.andNumEqualTo(course.getNum());
-        }
-        if(course.getTermYear() != null){
-            criteria.andTermYearEqualTo(course.getTermYear());
-        }
-        if(course.getTermOrder() != null){
-            criteria.andTermOrderEqualTo(course.getTermOrder());
-        }
+    public List<Course> selectCourseByPojo(Course course) {
+        return courseMapper.select(c -> c.where(courseOrder, isEqualToWhenPresent(course.getCourseOrder()))
+                .and(num, isEqualToWhenPresent(course.getNum()))
+                .and(termOrder, isEqualToWhenPresent(course.getTermOrder()))
+                .and(termYear, isEqualToWhenPresent(course.getTermYear())));
 
-        return courseMapper.selectByExample(example);
+
     }
 
-    public Course selectByNumAndOrder(String number, String order){
-
-        return selectCourseByPojo(new Course().setNum(number).setCourseOrder(order)).stream().findFirst().orElse(null);
-    }
-
-    public void insertSelective(Course course){
+    public void insertSelective(Course course) {
         courseMapper.insertSelective(course);
+    }
+
+    /**
+     * 保证课程唯一性的约束
+     */
+    @Data
+    @Accessors(chain = true)
+    public static class CourseKey {
+        private String courseOrder;
+        private String num;
+        private int termOrder;
+        private String termYear;
     }
 }

@@ -1,10 +1,9 @@
 package cn.hkxj.platform.service;
 
 import cn.hkxj.platform.dao.CourseDao;
-import cn.hkxj.platform.dao.UrpCourseDao;
-import cn.hkxj.platform.pojo.*;
+import cn.hkxj.platform.pojo.Course;
+import cn.hkxj.platform.pojo.SchoolTime;
 import cn.hkxj.platform.spider.newmodel.SearchResult;
-import cn.hkxj.platform.spider.newmodel.course.UrpCourseForSpider;
 import cn.hkxj.platform.spider.newmodel.searchclass.CourseTimetableSearchResult;
 import cn.hkxj.platform.spider.newmodel.searchcourse.SearchCoursePost;
 import cn.hkxj.platform.spider.newmodel.searchcourse.SearchCourseResult;
@@ -14,13 +13,10 @@ import com.google.common.cache.CacheBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -30,9 +26,6 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class UrpCourseService {
-
-    @Resource
-    private UrpCourseDao urpCourseDao;
     @Resource
     private CourseDao courseDao;
 
@@ -41,27 +34,16 @@ public class UrpCourseService {
     @Resource
     private UrpSearchService urpSearchService;
 
-    private static final Cache<String, UrpCourse> cache = CacheBuilder.newBuilder()
-            .maximumSize(500)
-            .build();
-
     private static final Cache<String, Course> currentTermCourseCache = CacheBuilder.newBuilder()
             .maximumSize(2000)
             .build();
-
-    public void checkOrSaveUrpCourseToDb(String uid, Student student) {
-        if (!urpCourseDao.ifExistCourse(uid)) {
-            UrpCourseForSpider urpCourseForSpider = newUrpSpiderService.getCourseFromSpider(student, uid);
-            urpCourseDao.insertUrpCourse(urpCourseForSpider.convertToUrpCourse());
-        }
-    }
 
     public Course getCurrentTermCourse(String courseId, String sequenceNumber) {
         return getCurrentTermCourse(courseId, sequenceNumber, null);
 
     }
 
-    public Course getCurrentTermCourse(String courseId, String sequenceNumber, Course updateCourse) {
+    Course getCurrentTermCourse(String courseId, String sequenceNumber, Course updateCourse) {
         SchoolTime schoolTime = DateUtils.getCurrentSchoolTime();
         String termYear = schoolTime.getTerm().getTermYear();
         int order = schoolTime.getTerm().getOrder();
@@ -69,7 +51,7 @@ public class UrpCourseService {
     }
 
 
-    public Course getCourseFromCache(String courseId, String sequenceNumber, String termYear, int termOrder, Course updateCourse){
+    Course getCourseFromCache(String courseId, String sequenceNumber, String termYear, int termOrder, Course updateCourse){
         String key = courseId + sequenceNumber + termYear + termOrder;
         try {
             return currentTermCourseCache.get(key, () -> {
@@ -169,27 +151,9 @@ public class UrpCourseService {
         }
     }
 
-    /**
-     * @param courseId
-     * @return
-     */
-    @Deprecated
-    public UrpCourse getUrpCourseByCourseId(String courseId) {
 
-        try {
-            return cache.get(courseId, () -> {
-                UrpCourse urpCourse = urpCourseDao.getUrpCourseByCourseId(courseId);
-                if (urpCourse == null) {
-                    UrpCourseForSpider urpCourseForSpider = newUrpSpiderService.getCourseFromSpider("2014025838", "1", courseId);
-                    urpCourse = urpCourseForSpider.convertToUrpCourse();
-                    urpCourseDao.insertUrpCourse(urpCourse);
-                }
-                return urpCourse;
-            });
-        } catch (ExecutionException e) {
-            log.error("get course.json cache error", e);
-        }
+    public List<Course> selectBathByCourseKey(List<CourseDao.CourseKey> keyList){
 
-        return urpCourseDao.getUrpCourseByCourseId(courseId);
+        return null;
     }
 }
